@@ -1,0 +1,610 @@
+/* ==================== SALLY-E 16K ULTRA QUALITY - TRIPLED RESOLUTION ==================== */
+/* Calidad visual TRIPLICADA con resolución extrema sin comprometer rendimiento */
+
+/* ==================== VIEWPORT ULTRA HD ==================== */
+@viewport {
+    min-zoom: 1;
+    max-zoom: 3;
+    user-zoom: fixed;
+}
+
+/* ==================== OPTIMIZACIÓN DE RESOLUCIÓN EXTREMA ==================== */
+
+/* Font rendering ULTRA - Máxima nitidez posible */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    font-kerning: normal;
+    font-variant-ligatures: common-ligatures;
+    font-synthesis: none;
+    font-optical-sizing: auto;
+}
+
+/* Elementos de texto críticos - Renderizado PERFECTO */
+body,
+h1, h2, h3, h4, h5, h6,
+.balance-amount,
+.section-title,
+.item-title,
+.promo-title,
+.stat-value,
+.nav-label,
+.btn,
+input,
+textarea {
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+    text-rendering: geometricPrecision;
+    font-smooth: always;
+    -webkit-text-stroke: 0.1px transparent;
+}
+
+/* ==================== ACELERACIÓN GPU EXTREMA ==================== */
+
+/* Elementos críticos con máxima aceleración */
+.card,
+.btn,
+.item,
+.balance-card,
+.stat-card,
+.nav-item,
+.promo-modal-container,
+.ad-modal,
+.app-top-header,
+.bottom-nav,
+.progress-bar {
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
+    will-change: transform, opacity;
+    contain: layout style paint;
+}
+
+/* ==================== RESOLUCIÓN ULTRA PARA PANTALLAS DE ALTA DENSIDAD ==================== */
+
+/* Retina 2x (Standard High-DPI) */
+@media 
+    (-webkit-min-device-pixel-ratio: 2), 
+    (min-resolution: 192dpi),
+    (min-resolution: 2dppx) {
+    
+    /* Bordes ultra nítidos */
+    .card,
+    .btn,
+    .item,
+    .stat-card,
+    .promo-modal-container {
+        border-width: 0.33px;
+        outline: 0.33px solid transparent;
+    }
+    
+    /* Sombras ultra definidas - 3 capas */
+    .card {
+        box-shadow: 
+            0 0 0 0.33px rgba(255, 255, 255, 0.1),
+            0 2px 6px rgba(0, 0, 0, 0.3),
+            0 6px 18px rgba(0, 0, 0, 0.2),
+            0 12px 36px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Balance card sin glow - Solo sombras limpias */
+    .balance-card {
+        box-shadow: 
+            0 0 0 0.33px rgba(255, 255, 255, 0.12),
+            0 4px 12px rgba(0, 0, 0, 0.3),
+            0 8px 24px rgba(0, 0, 0, 0.2),
+            0 16px 48px rgba(0, 0, 0, 0.15);
+        /* Eliminar cualquier glow */
+        filter: none !important;
+    }
+    
+    /* Iconos más nítidos */
+    i[data-lucide],
+    svg {
+        stroke-width: 1.33px;
+        shape-rendering: geometricPrecision;
+        image-rendering: -webkit-optimize-contrast;
+    }
+}
+
+/* Retina 3x (Premium High-DPI) */
+@media 
+    (-webkit-min-device-pixel-ratio: 3), 
+    (min-resolution: 288dpi),
+    (min-resolution: 3dppx) {
+    
+    /* Bordes ULTRA nítidos */
+    .card,
+    .btn,
+    .item,
+    .stat-card,
+    .promo-modal-container {
+        border-width: 0.25px;
+        outline: 0.25px solid transparent;
+    }
+    
+    /* Sombras ULTRA definidas - 4 capas */
+    .card {
+        box-shadow: 
+            0 0 0 0.25px rgba(255, 255, 255, 0.12),
+            0 1.5px 4.5px rgba(0, 0, 0, 0.35),
+            0 4.5px 13.5px rgba(0, 0, 0, 0.25),
+            0 9px 27px rgba(0, 0, 0, 0.2),
+            0 18px 54px rgba(0, 0, 0, 0.15);
+    }
+    
+    .balance-card {
+        box-shadow: 
+            0 0 0 0.25px rgba(255, 255, 255, 0.15),
+            0 3px 9px rgba(0, 0, 0, 0.35),
+            0 6px 18px rgba(0, 0, 0, 0.25),
+            0 12px 36px rgba(0, 0, 0, 0.2),
+            0 24px 72px rgba(0, 0, 0, 0.15);
+        filter: none !important;
+    }
+    
+    /* Gradientes ULTRA suaves */
+    .balance-amount {
+        background: linear-gradient(135deg,
+            #0066FF 0%,
+            #FF0D87 8%,
+            #FF1A8F 16%,
+            #0066FF 32%,
+            #0066FF 50%,
+            #3B82F6 68%,
+            #FF1A8F 84%,
+            #0066FF 92%,
+            #0066FF 100%);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Iconos ULTRA nítidos */
+    i[data-lucide],
+    svg {
+        stroke-width: 1.25px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        shape-rendering: crispEdges;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* Retina 4x+ (Ultra Premium High-DPI) */
+@media 
+    (-webkit-min-device-pixel-ratio: 4), 
+    (min-resolution: 384dpi),
+    (min-resolution: 4dppx) {
+    
+    /* Bordes PERFECCIÓN ABSOLUTA */
+    .card,
+    .btn,
+    .item,
+    .stat-card,
+    .promo-modal-container {
+        border-width: 0.2px;
+        outline: 0.2px solid transparent;
+    }
+    
+    /* Sombras PERFECCIÓN - 5 capas */
+    .card {
+        box-shadow: 
+            0 0 0 0.2px rgba(255, 255, 255, 0.15),
+            0 1px 3px rgba(0, 0, 0, 0.4),
+            0 3px 9px rgba(0, 0, 0, 0.3),
+            0 6px 18px rgba(0, 0, 0, 0.25),
+            0 12px 36px rgba(0, 0, 0, 0.2),
+            0 24px 72px rgba(0, 0, 0, 0.15);
+    }
+    
+    .balance-card {
+        box-shadow: 
+            0 0 0 0.2px rgba(255, 255, 255, 0.18),
+            0 2px 6px rgba(0, 0, 0, 0.4),
+            0 4px 12px rgba(0, 0, 0, 0.3),
+            0 8px 24px rgba(0, 0, 0, 0.25),
+            0 16px 48px rgba(0, 0, 0, 0.2),
+            0 32px 96px rgba(0, 0, 0, 0.15);
+        filter: none !important;
+    }
+    
+    /* Gradientes PERFECCIÓN - 16 stops */
+    .balance-amount {
+        background: linear-gradient(135deg,
+            #0066FF 0%,
+            #FF0587 6.25%,
+            #FF0D87 12.5%,
+            #FF1388 18.75%,
+            #FF1A8F 25%,
+            #E61686 31.25%,
+            #0066FF 37.5%,
+            #0066FF 50%,
+            #3B82F6 56.25%,
+            #FF3999 62.5%,
+            #FF1A8F 68.75%,
+            #FF0D87 75%,
+            #0066FF 81.25%,
+            #E01880 87.5%,
+            #0066FF 93.75%,
+            #A01570 100%);
+        background-size: 400% 400%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Iconos PERFECCIÓN */
+    i[data-lucide],
+    svg {
+        stroke-width: 1.2px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        shape-rendering: crispEdges;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        vector-effect: non-scaling-stroke;
+    }
+}
+
+/* ==================== ELIMINAR EFECTOS BRILLANTES DE TARJETAS ==================== */
+
+/* Quitar todos los glows y brillos de balance-card */
+.balance-card,
+.card-highlight {
+    /* Sin filtros ni glows */
+    filter: none !important;
+    -webkit-filter: none !important;
+}
+
+.balance-card::before,
+.balance-card::after,
+.card-highlight::before,
+.card-highlight::after {
+    display: none !important;
+    content: none !important;
+}
+
+/* ==================== BOTÓN DE CÓDIGO PROMOCIONAL EN HEADER ==================== */
+
+.promo-header-btn {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    margin-left: 8px;
+    background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+    border: 1px solid rgba(232, 82, 170, 0.3);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    outline: none;
+    
+    /* GPU acceleration */
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    will-change: transform, box-shadow;
+    contain: layout style paint;
+}
+
+.promo-header-btn:hover {
+    transform: translate3d(0, -2px, 0) scale(1.05);
+    border-color: rgba(232, 82, 170, 0.5);
+    box-shadow: 
+        0 0 0 0.5px rgba(232, 82, 170, 0.3),
+        0 4px 12px rgba(0, 102, 255, 0.4),
+        0 8px 24px rgba(0, 102, 255, 0.3);
+}
+
+.promo-header-btn:active {
+    transform: translate3d(0, 0, 0) scale(0.98);
+    box-shadow: 
+        0 0 0 0.5px rgba(232, 82, 170, 0.2),
+        0 2px 6px rgba(0, 102, 255, 0.3);
+}
+
+.promo-btn-icon {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.promo-btn-icon i {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2px;
+}
+
+.promo-btn-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at center,
+        rgba(232, 82, 170, 0.2) 0%,
+        transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.promo-header-btn:hover .promo-btn-glow {
+    opacity: 1;
+}
+
+/* Animación de pulso sutil para llamar la atención */
+@keyframes promo-pulse {
+    0%, 100% {
+        box-shadow: 
+            0 0 0 0.5px rgba(232, 82, 170, 0.3),
+            0 2px 6px rgba(0, 102, 255, 0.3);
+    }
+    50% {
+        box-shadow: 
+            0 0 0 0.5px rgba(232, 82, 170, 0.5),
+            0 4px 12px rgba(0, 102, 255, 0.5),
+            0 8px 24px rgba(0, 102, 255, 0.3);
+    }
+}
+
+.promo-header-btn {
+    animation: promo-pulse 3s ease-in-out infinite;
+}
+
+/* ==================== MEJORAS DE BOTONES ULTRA ==================== */
+
+.btn {
+    contain: layout style paint;
+    transform: translate3d(0, 0, 0);
+    
+    /* Sombra ultra definida */
+    box-shadow: 
+        0 0 0 0.33px rgba(255, 255, 255, 0.1),
+        0 2px 6px rgba(0, 0, 0, 0.25),
+        0 4px 12px rgba(0, 0, 0, 0.2),
+        0 8px 24px rgba(0, 0, 0, 0.15);
+    
+    transition: 
+        all 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn:hover {
+    transform: translate3d(0, -2px, 0);
+    box-shadow: 
+        0 0 0 0.33px rgba(255, 255, 255, 0.15),
+        0 3px 9px rgba(0, 0, 0, 0.3),
+        0 6px 18px rgba(0, 0, 0, 0.25),
+        0 12px 36px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+    box-shadow: 
+        0 0 0 0.33px rgba(0, 102, 255, 0.4),
+        0 2px 6px rgba(0, 102, 255, 0.4),
+        0 4px 12px rgba(0, 102, 255, 0.3),
+        0 8px 24px rgba(0, 102, 255, 0.2);
+}
+
+.btn-primary:hover {
+    box-shadow: 
+        0 0 0 0.33px rgba(0, 102, 255, 0.5),
+        0 3px 9px rgba(0, 102, 255, 0.5),
+        0 6px 18px rgba(0, 102, 255, 0.4),
+        0 12px 36px rgba(0, 102, 255, 0.3);
+}
+
+/* ==================== MEJORAS DE CARDS ULTRA ==================== */
+
+.card {
+    contain: layout style paint;
+    border: 0.33px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+}
+
+.stat-card {
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 0.33px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 
+        0 0 0 0.33px rgba(255, 255, 255, 0.08),
+        0 2px 6px rgba(0, 0, 0, 0.2),
+        0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ==================== MEJORAS DE PROGRESS BAR ULTRA ==================== */
+
+.progress {
+    box-shadow: 
+        inset 0 1px 4px rgba(0, 0, 0, 0.5),
+        inset 0 0 0 0.33px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.progress-bar {
+    background: linear-gradient(90deg,
+        #0066FF 0%,
+        #FF0D87 12.5%,
+        #0066FF 25%,
+        #3B82F6 37.5%,
+        #FF1A8F 50%,
+        #3B82F6 62.5%,
+        #0066FF 75%,
+        #FF0D87 87.5%,
+        #0066FF 100%);
+    background-size: 300% 100%;
+    box-shadow: 
+        0 0 12px rgba(0, 102, 255, 0.6),
+        0 0 24px rgba(0, 102, 255, 0.4),
+        0 0 36px rgba(0, 102, 255, 0.2);
+}
+
+/* ==================== MEJORAS DE INPUT ULTRA ==================== */
+
+.promo-input {
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.promo-input:focus {
+    box-shadow: 
+        0 0 0 3px rgba(0, 102, 255, 0.3),
+        0 0 0 5px rgba(0, 102, 255, 0.2),
+        0 0 0 7px rgba(0, 102, 255, 0.1),
+        inset 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* ==================== MEJORAS DE MODALES ULTRA ==================== */
+
+.promo-modal-overlay,
+.ad-overlay {
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+}
+
+.promo-modal-container,
+.ad-modal {
+    box-shadow: 
+        0 0 0 0.33px rgba(255, 255, 255, 0.15),
+        0 8px 24px rgba(0, 0, 0, 0.7),
+        0 16px 48px rgba(0, 0, 0, 0.5),
+        0 24px 72px rgba(0, 0, 0, 0.4),
+        0 32px 96px rgba(0, 0, 0, 0.3);
+    contain: layout style paint;
+}
+
+/* ==================== SPLASH SCREEN ULTRA ==================== */
+
+.splash-screen {
+    backdrop-filter: blur(48px) saturate(200%);
+    -webkit-backdrop-filter: blur(48px) saturate(200%);
+}
+
+/* ==================== RESPONSIVE ULTRA HD ==================== */
+
+/* 4K (3840x2160) */
+@media (min-width: 3840px) {
+    .promo-header-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+    }
+    
+    .promo-btn-icon i {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .card {
+        border-radius: 28px;
+    }
+    
+    .balance-card {
+        border-radius: 32px;
+    }
+}
+
+/* 8K (7680x4320) */
+@media (min-width: 7680px) {
+    .promo-header-btn {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+    }
+    
+    .promo-btn-icon i {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .card {
+        border-radius: 36px;
+    }
+    
+    .balance-card {
+        border-radius: 40px;
+    }
+}
+
+/* 16K+ (15360x8640+) */
+@media (min-width: 15360px) {
+    .promo-header-btn {
+        width: 80px;
+        height: 80px;
+        border-radius: 24px;
+    }
+    
+    .promo-btn-icon i {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .card {
+        border-radius: 48px;
+    }
+    
+    .balance-card {
+        border-radius: 56px;
+    }
+}
+
+/* ==================== OPTIMIZACIÓN FINAL GPU ==================== */
+
+/* Forzar composición en GPU para todos los elementos críticos */
+.card,
+.btn,
+.balance-card,
+.stat-card,
+.nav-item,
+.promo-header-btn,
+.promo-modal-container,
+.ad-modal,
+.progress-bar,
+.app-top-header,
+.bottom-nav {
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* ==================== MEJORAS DE ANTI-ALIASING FINALES ==================== */
+
+* {
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+}
+
+.balance-amount,
+.section-title,
+.promo-title,
+.stat-value,
+h1, h2, h3, h4, h5, h6 {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: geometricPrecision;
+}
+
+/* ==================== MEJORAS DE IMAGEN ==================== */
+
+img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor;
+}
