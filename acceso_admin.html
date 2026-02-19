@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=https://sallye.pythonanywhere.com/admin/login">
+    <title>Redirigiendo al Panel Admin - SALLY-E</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .redirect-container {
+            max-width: 600px;
+        }
+
+        .logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+
+        .manual-link {
+            display: inline-block;
+            padding: 15px 30px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .manual-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .info {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .info strong {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="redirect-container">
+        <div class="logo">🔐</div>
+        <h1>Panel Administrativo SALLY-E</h1>
+        <p>Redirigiendo al panel de administración...</p>
+
+        <div class="spinner"></div>
+
+        <a href="https://sallye.pythonanywhere.com/admin/login" class="manual-link">
+            Ir al Panel Manualmente →
+        </a>
+
+        <div class="info">
+            <strong>Acceso Directo:</strong>
+            https://sallye.pythonanywhere.com/admin/login
+            <br><br>
+            <strong>Credenciales por Defecto:</strong>
+            Usuario: admin | Contraseña: sallye3134
+            <br><br>
+            <small>⚠️ Cambia las credenciales en producción</small>
+        </div>
+    </div>
+
+    <script>
+        // Redirigir automáticamente después de 2 segundos
+        setTimeout(() => {
+            window.location.href = 'https://sallye.pythonanywhere.com/admin/login';
+        }, 2000);
+    </script>
+</body>
+</html>

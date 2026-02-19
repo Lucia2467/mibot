@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Admin - Balance Protection{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-bottom: 120px;">
+    <!-- Header -->
+    <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4);">
+        <a href="/admin/dashboard" style="text-decoration: none;">
+            <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                <i data-lucide="arrow-left" style="width: 22px; height: 22px; color: rgba(255, 255, 255, 0.7);"></i>
+            </div>
+        </a>
+        <div>
+            <h1 style="font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: var(--space-1);">🛡️ Balance Protection</h1>
+            <p style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Monitoring & Recovery System</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-bottom: var(--space-4);">
+        <div class="card" style="text-align: center; padding: var(--space-4); background: linear-gradient(135deg, rgba(0, 255, 136, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border-color: rgba(0, 255, 136, 0.2);">
+            <div style="font-size: 2rem; font-weight: 800; color: #00FF88;">{{ stats.total_users }}</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Total Users</div>
+        </div>
+        <div class="card" style="text-align: center; padding: var(--space-4); background: linear-gradient(135deg, rgba(255, 183, 0, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border-color: rgba(255, 183, 0, 0.2);">
+            <div style="font-size: 2rem; font-weight: 800; color: #FFB700;">{{ stats.pending_anomalies }}</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Pending Anomalies</div>
+        </div>
+        <div class="card" style="text-align: center; padding: var(--space-4); background: linear-gradient(135deg, rgba(255, 51, 102, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border-color: rgba(255, 51, 102, 0.2);">
+            <div style="font-size: 2rem; font-weight: 800; color: #FF3366;">{{ stats.critical_anomalies }}</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Critical Issues</div>
+        </div>
+        <div class="card" style="text-align: center; padding: var(--space-4); background: linear-gradient(135deg, rgba(0, 245, 255, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border-color: rgba(0, 245, 255, 0.2);">
+            <div style="font-size: 2rem; font-weight: 800; color: #00D4FF;">{{ stats.snapshots_today }}</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Snapshots Today</div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="card" style="margin-bottom: var(--space-4);">
+        <h3 style="font-size: 1rem; font-weight: 700; color: white; margin-bottom: var(--space-4);">
+            <i data-lucide="zap" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 8px; color: #FFD700;"></i>
+            Quick Actions
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3);">
+            <button onclick="runIntegrityCheck()" class="action-btn" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.15) 0%, rgba(0, 200, 255, 0.05) 100%); border: 1px solid rgba(0, 245, 255, 0.3); border-radius: 12px; padding: var(--space-4); color: white; cursor: pointer; text-align: center;">
+                <i data-lucide="shield-check" style="width: 24px; height: 24px; display: block; margin: 0 auto var(--space-2); color: #00D4FF;"></i>
+                <span style="font-weight: 600; font-size: 0.875rem;">Run Integrity Check</span>
+            </button>
+            <button onclick="createSnapshots()" class="action-btn" style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.15) 0%, rgba(0, 200, 100, 0.05) 100%); border: 1px solid rgba(0, 255, 136, 0.3); border-radius: 12px; padding: var(--space-4); color: white; cursor: pointer; text-align: center;">
+                <i data-lucide="camera" style="width: 24px; height: 24px; display: block; margin: 0 auto var(--space-2); color: #00FF88;"></i>
+                <span style="font-weight: 600; font-size: 0.875rem;">Create Snapshots</span>
+            </button>
+            <button onclick="showVerifyModal()" class="action-btn" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(200, 170, 0, 0.05) 100%); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 12px; padding: var(--space-4); color: white; cursor: pointer; text-align: center;">
+                <i data-lucide="search" style="width: 24px; height: 24px; display: block; margin: 0 auto var(--space-2); color: #FFD700;"></i>
+                <span style="font-weight: 600; font-size: 0.875rem;">Verify User Balance</span>
+            </button>
+            <button onclick="showRecoverModal()" class="action-btn" style="background: linear-gradient(135deg, rgba(0, 102, 255, 0.15) 0%, rgba(200, 0, 100, 0.05) 100%); border: 1px solid rgba(0, 102, 255, 0.3); border-radius: 12px; padding: var(--space-4); color: white; cursor: pointer; text-align: center;">
+                <i data-lucide="refresh-cw" style="width: 24px; height: 24px; display: block; margin: 0 auto var(--space-2); color: #0066FF;"></i>
+                <span style="font-weight: 600; font-size: 0.875rem;">Recover Balance</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Recent Anomalies -->
+    <div class="card" style="margin-bottom: var(--space-4);">
+        <h3 style="font-size: 1rem; font-weight: 700; color: white; margin-bottom: var(--space-4);">
+            <i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 8px; color: #FFB700;"></i>
+            Recent Anomalies
+        </h3>
+        
+        {% if anomalies %}
+        <div style="display: grid; gap: var(--space-3);">
+            {% for anomaly in anomalies %}
+            <div class="anomaly-item" style="background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: var(--space-3); border-left: 3px solid {% if anomaly.severity == 'critical' %}#FF3366{% elif anomaly.severity == 'high' %}#FFB700{% else %}#00D4FF{% endif %};">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-2);">
+                    <div>
+                        <span style="font-weight: 600; color: white;">{{ anomaly.anomaly_type }}</span>
+                        <span style="font-size: 0.75rem; background: {% if anomaly.severity == 'critical' %}rgba(255, 51, 102, 0.2){% elif anomaly.severity == 'high' %}rgba(255, 183, 0, 0.2){% else %}rgba(0, 245, 255, 0.2){% endif %}; color: {% if anomaly.severity == 'critical' %}#FF3366{% elif anomaly.severity == 'high' %}#FFB700{% else %}#00D4FF{% endif %}; padding: 2px 8px; border-radius: 10px; margin-left: 8px;">{{ anomaly.severity }}</span>
+                    </div>
+                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">{{ anomaly.created_at }}</span>
+                </div>
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-2);">
+                    User: <strong style="color: white;">{{ anomaly.user_id }}</strong>
+                </div>
+                {% if anomaly.description %}
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">{{ anomaly.description }}</div>
+                {% endif %}
+                {% if anomaly.discrepancy %}
+                <div style="font-size: 0.8125rem; color: #FFB700; margin-top: var(--space-2);">
+                    Discrepancy: {{ "%.8f"|format(anomaly.discrepancy) }} {{ anomaly.currency }}
+                </div>
+                {% endif %}
+                <div style="display: flex; gap: var(--space-2); margin-top: var(--space-3);">
+                    {% if not anomaly.reviewed %}
+                    <button onclick="markReviewed({{ anomaly.id }})" style="flex: 1; background: rgba(0, 255, 136, 0.15); border: 1px solid rgba(0, 255, 136, 0.3); border-radius: 8px; padding: 8px; color: #00FF88; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+                        Mark Reviewed
+                    </button>
+                    {% else %}
+                    <span style="flex: 1; text-align: center; color: rgba(255, 255, 255, 0.3); font-size: 0.75rem;">✓ Reviewed by {{ anomaly.reviewed_by }}</span>
+                    {% endif %}
+                    <button onclick="viewUserDetails('{{ anomaly.user_id }}')" style="flex: 1; background: rgba(0, 245, 255, 0.15); border: 1px solid rgba(0, 245, 255, 0.3); border-radius: 8px; padding: 8px; color: #00D4FF; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+                        View User
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: var(--space-6); color: rgba(255, 255, 255, 0.4);">
+            <i data-lucide="check-circle" style="width: 48px; height: 48px; display: block; margin: 0 auto var(--space-3); color: #00FF88;"></i>
+            No anomalies detected
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Daily Report -->
+    <div class="card">
+        <h3 style="font-size: 1rem; font-weight: 700; color: white; margin-bottom: var(--space-4);">
+            <i data-lucide="bar-chart-2" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 8px; color: #00D4FF;"></i>
+            Today's Report
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3);">
+            <div style="background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: var(--space-3); text-align: center;">
+                <div style="font-size: 1.25rem; font-weight: 700; color: white;">{{ report.total_transactions }}</div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Transactions</div>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: var(--space-3); text-align: center;">
+                <div style="font-size: 1.25rem; font-weight: 700; color: #00FF88;">{{ "%.4f"|format(report.total_credits) }}</div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Total Credits</div>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: var(--space-3); text-align: center;">
+                <div style="font-size: 1.25rem; font-weight: 700; color: #FF3366;">{{ "%.4f"|format(report.total_debits) }}</div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Total Debits</div>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: var(--space-3); text-align: center;">
+                <div style="font-size: 1.25rem; font-weight: 700; color: #00D4FF;">{{ report.total_users_active }}</div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Active Users</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Verify Modal -->
+<div id="verify-modal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center; padding: var(--space-4);">
+    <div style="background: var(--color-bg-secondary); border-radius: 16px; padding: var(--space-5); max-width: 400px; width: 100%;">
+        <h3 style="font-size: 1.125rem; font-weight: 700; color: white; margin-bottom: var(--space-4);">Verify User Balance</h3>
+        <input type="text" id="verify-user-id" placeholder="Enter User ID" style="width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 12px 16px; color: white; font-size: 1rem; margin-bottom: var(--space-4);">
+        <div id="verify-result" style="display: none; background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: var(--space-3); margin-bottom: var(--space-4);"></div>
+        <div style="display: flex; gap: var(--space-3);">
+            <button onclick="closeModal('verify-modal')" style="flex: 1; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 12px; color: white; font-weight: 600; cursor: pointer;">Cancel</button>
+            <button onclick="verifyBalance()" style="flex: 1; background: linear-gradient(135deg, #00D4FF 0%, #0088CC 100%); border: none; border-radius: 12px; padding: 12px; color: #0B0B0F; font-weight: 600; cursor: pointer;">Verify</button>
+        </div>
+    </div>
+</div>
+
+<!-- Recover Modal -->
+<div id="recover-modal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center; padding: var(--space-4);">
+    <div style="background: var(--color-bg-secondary); border-radius: 16px; padding: var(--space-5); max-width: 400px; width: 100%;">
+        <h3 style="font-size: 1.125rem; font-weight: 700; color: white; margin-bottom: var(--space-4);">Recover User Balance</h3>
+        <input type="text" id="recover-user-id" placeholder="Enter User ID" style="width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 12px 16px; color: white; font-size: 1rem; margin-bottom: var(--space-3);">
+        <select id="snapshot-select" style="width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 12px 16px; color: white; font-size: 1rem; margin-bottom: var(--space-4);">
+            <option value="">Load snapshots first...</option>
+        </select>
+        <button onclick="loadSnapshots()" style="width: 100%; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 10px; color: white; font-size: 0.875rem; cursor: pointer; margin-bottom: var(--space-4);">Load Snapshots</button>
+        <div style="display: flex; gap: var(--space-3);">
+            <button onclick="closeModal('recover-modal')" style="flex: 1; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 12px; color: white; font-weight: 600; cursor: pointer;">Cancel</button>
+            <button onclick="recoverBalance()" style="flex: 1; background: linear-gradient(135deg, #0066FF 0%, #CC0066 100%); border: none; border-radius: 12px; padding: 12px; color: white; font-weight: 600; cursor: pointer;">Recover</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+}
+
+.anomaly-item {
+    transition: all 0.3s ease;
+}
+
+.anomaly-item:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+
+function runIntegrityCheck() {
+    if (!confirm('Run integrity check on all users? This may take a moment.')) return;
+    
+    showLoading('Running integrity check...');
+    
+    fetch('/api/admin/balance/integrity-check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        if (data.success) {
+            alert(`Integrity check complete!\n\nUsers checked: ${data.result.users_checked}\nDiscrepancies: ${data.result.discrepancies_found}\nAuto-corrections: ${data.result.auto_corrections}`);
+            location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        alert('Error: ' + error);
+    });
+}
+
+function createSnapshots() {
+    if (!confirm('Create balance snapshots for all active users?')) return;
+    
+    showLoading('Creating snapshots...');
+    
+    fetch('/api/admin/balance/create-snapshots', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        if (data.success) {
+            alert(`Created ${data.count} snapshots successfully!`);
+            location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        alert('Error: ' + error);
+    });
+}
+
+function showVerifyModal() {
+    document.getElementById('verify-modal').style.display = 'flex';
+    document.getElementById('verify-result').style.display = 'none';
+}
+
+function showRecoverModal() {
+    document.getElementById('recover-modal').style.display = 'flex';
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
+
+function verifyBalance() {
+    const userId = document.getElementById('verify-user-id').value.trim();
+    if (!userId) {
+        alert('Please enter a User ID');
+        return;
+    }
+    
+    showLoading('Verifying balance...');
+    
+    fetch('/api/admin/balance/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        const resultDiv = document.getElementById('verify-result');
+        resultDiv.style.display = 'block';
+        
+        if (data.success) {
+            const r = data.result;
+            resultDiv.innerHTML = `
+                <div style="color: ${r.verified ? '#00FF88' : '#FF3366'}; font-weight: 600; margin-bottom: 8px;">
+                    ${r.verified ? '✓ Balance Verified' : '⚠️ Discrepancy Found'}
+                </div>
+                <div style="font-size: 0.8125rem; color: rgba(255,255,255,0.7);">
+                    <div>Actual Balance: <strong>${r.actual_balance.toFixed(8)}</strong></div>
+                    <div>Calculated: <strong>${r.calculated_balance.toFixed(8)}</strong></div>
+                    <div>Difference: <strong style="color: ${r.difference > 0.0001 ? '#FF3366' : '#00FF88'}">${r.difference.toFixed(8)}</strong></div>
+                </div>
+            `;
+        } else {
+            resultDiv.innerHTML = `<div style="color: #FF3366;">Error: ${data.error}</div>`;
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        alert('Error: ' + error);
+    });
+}
+
+function loadSnapshots() {
+    const userId = document.getElementById('recover-user-id').value.trim();
+    if (!userId) {
+        alert('Please enter a User ID first');
+        return;
+    }
+    
+    fetch(`/api/admin/balance/snapshots/${userId}`)
+    .then(response => response.json())
+    .then(data => {
+        const select = document.getElementById('snapshot-select');
+        select.innerHTML = '';
+        
+        if (data.success && data.snapshots.length > 0) {
+            data.snapshots.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.id;
+                option.textContent = `${s.created_at} - ${s.se_balance.toFixed(4)} S-E (${s.snapshot_type})`;
+                select.appendChild(option);
+            });
+        } else {
+            select.innerHTML = '<option value="">No snapshots found</option>';
+        }
+    })
+    .catch(error => {
+        alert('Error loading snapshots: ' + error);
+    });
+}
+
+function recoverBalance() {
+    const userId = document.getElementById('recover-user-id').value.trim();
+    const snapshotId = document.getElementById('snapshot-select').value;
+    
+    if (!userId) {
+        alert('Please enter a User ID');
+        return;
+    }
+    
+    if (!confirm(`Are you sure you want to recover balance for user ${userId}? This will overwrite current balances.`)) {
+        return;
+    }
+    
+    showLoading('Recovering balance...');
+    
+    fetch('/api/admin/balance/recover', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, snapshot_id: snapshotId || null })
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        if (data.success) {
+            alert('Balance recovered successfully!\n\n' + data.message);
+            closeModal('recover-modal');
+            location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        alert('Error: ' + error);
+    });
+}
+
+function markReviewed(anomalyId) {
+    fetch('/api/admin/balance/anomaly/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ anomaly_id: anomalyId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Unknown error'));
+        }
+    });
+}
+
+function viewUserDetails(userId) {
+    window.location.href = `/admin/users?search=${userId}`;
+}
+
+function showLoading(message) {
+    // Use existing loading system if available
+    if (window.showLoadingScreen) {
+        window.showLoadingScreen(message);
+    }
+}
+
+function hideLoading() {
+    if (window.hideLoadingScreen) {
+        window.hideLoadingScreen();
+    }
+}
+</script>
+{% endblock %}
