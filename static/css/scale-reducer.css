@@ -1,0 +1,38 @@
+/*
+🎨 REDUCCIÓN GLOBAL DEL 10% - SALLY-E
+Este archivo aplica una reducción visual del 10% a toda la aplicación
+sin modificar ningún aspecto del diseño original.
+
+IMPORTANTE: Este archivo debe incluirse ANTES de cualquier otro CSS
+para que el scale se aplique correctamente.
+*/
+
+/*
+Método 1: Usando transform scale en el body
+Este método es el más compatible y no afecta el layout
+*/
+body {
+    transform: scale(0.90);
+    transform-origin: top center;
+}
+
+/*
+Ajuste del viewport para centrar correctamente el contenido escalado
+*/
+html {
+    overflow-x: hidden;
+}
+
+body {
+    overflow-x: hidden;
+    min-height: 111.11vh; /* Compensación matemática: 100 / 0.90 = 111.11 */
+}
+
+/*
+NOTA IMPORTANTE:
+- NO se modifican colores, sombras, bordes, tipografías, tamaños de letra individuales
+- NO se modifican imágenes, íconos, paddings, margins o espacios internos
+- NO se modifica el layout, orden o posiciones de los elementos
+- NO se modifica la estructura HTML del frontend
+- SOLO se aplica una transformación de escala global del 90%
+*/

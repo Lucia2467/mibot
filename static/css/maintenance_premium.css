@@ -1,0 +1,430 @@
+/* ============================================
+   SALLY-E PREMIUM MAINTENANCE & ERROR STYLES
+   Ultra HD / 8K Quality Design System
+   Version: 1.0.0
+   ============================================ */
+
+/* CSS Custom Properties - Design Tokens */
+:root {
+    /* Brand Colors */
+    --se-primary-dark: #003D99;
+    --se-primary: #0066FF;
+    --se-primary-light: #3B82F6;
+    
+    /* Accent Colors */
+    --se-accent-gold: #FFD700;
+    --se-accent-orange: #FF8C42;
+    --se-accent-rose: #FF6B9D;
+    --se-warning: #FFA726;
+    --se-success: #4CAF50;
+    --se-error: #EF5350;
+    
+    /* Dark Theme */
+    --se-bg-dark: #0D0A1A;
+    --se-bg-gradient-1: #1A0E2E;
+    --se-bg-gradient-2: #2D1B4E;
+    
+    /* Text Colors */
+    --se-text-primary: #FFFFFF;
+    --se-text-secondary: rgba(255, 255, 255, 0.8);
+    --se-text-muted: rgba(255, 255, 255, 0.5);
+    
+    /* Glass Effects */
+    --se-glass-bg: rgba(255, 255, 255, 0.03);
+    --se-glass-border: rgba(255, 255, 255, 0.08);
+    
+    /* Glows */
+    --se-glow-primary: rgba(0, 102, 255, 0.4);
+    --se-glow-gold: rgba(255, 215, 0, 0.3);
+    --se-glow-warning: rgba(255, 167, 38, 0.4);
+    
+    /* Transitions */
+    --se-transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    --se-transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    --se-transition-slow: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    
+    /* Border Radius */
+    --se-radius-sm: 8px;
+    --se-radius-md: 12px;
+    --se-radius-lg: 16px;
+    --se-radius-xl: 24px;
+    --se-radius-2xl: 32px;
+}
+
+/* ============================================
+   PREMIUM ANIMATIONS
+   ============================================ */
+
+/* Fade In Up Animation */
+@keyframes se-fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fade In Scale Animation */
+@keyframes se-fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Pulse Glow Animation */
+@keyframes se-pulseGlow {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+/* Floating Animation */
+@keyframes se-float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Gradient Rotation */
+@keyframes se-gradientRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Orb Float Animation */
+@keyframes se-orbFloat {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    25% {
+        transform: translate(30px, -30px) scale(1.05);
+    }
+    50% {
+        transform: translate(-20px, 20px) scale(0.95);
+    }
+    75% {
+        transform: translate(20px, 30px) scale(1.02);
+    }
+}
+
+/* Particle Float Animation */
+@keyframes se-particleFloat {
+    0% {
+        opacity: 0;
+        transform: translateY(100vh) scale(0);
+    }
+    10% {
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100vh) scale(1);
+    }
+}
+
+/* Scan Line Animation */
+@keyframes se-scanMove {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(40px);
+    }
+}
+
+/* Shake Animation */
+@keyframes se-shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    20% {
+        transform: translateX(-5px);
+    }
+    40% {
+        transform: translateX(5px);
+    }
+    60% {
+        transform: translateX(-3px);
+    }
+    80% {
+        transform: translateX(3px);
+    }
+}
+
+/* Spinner Animation */
+@keyframes se-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Ripple Animation */
+@keyframes se-ripple {
+    0% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* ============================================
+   PREMIUM COMPONENTS
+   ============================================ */
+
+/* Glass Card */
+.se-glass-card {
+    background: var(--se-glass-bg);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid var(--se-glass-border);
+    border-radius: var(--se-radius-2xl);
+    padding: 50px 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Premium Button */
+.se-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, var(--se-primary) 0%, var(--se-primary-light) 100%);
+    border: none;
+    border-radius: var(--se-radius-lg);
+    color: white;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--se-transition-normal);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 8px 20px -8px rgba(0, 102, 255, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.se-btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 15px 30px -10px rgba(0, 102, 255, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+}
+
+.se-btn-primary:active {
+    transform: translateY(-1px);
+}
+
+/* Secondary Button */
+.se-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: transparent;
+    border: 1px solid var(--se-glass-border);
+    border-radius: var(--se-radius-md);
+    color: var(--se-text-secondary);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--se-transition-normal);
+}
+
+.se-btn-secondary:hover {
+    background: var(--se-glass-bg);
+    border-color: var(--se-primary-light);
+    color: var(--se-text-primary);
+    transform: translateY(-2px);
+}
+
+/* Loading Spinner */
+.se-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: se-spin 1s linear infinite;
+}
+
+/* Premium Badge */
+.se-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.se-badge-warning {
+    background: linear-gradient(135deg, rgba(255, 167, 38, 0.1) 0%, rgba(255, 107, 157, 0.1) 100%);
+    border: 1px solid rgba(255, 167, 38, 0.2);
+    color: var(--se-warning);
+}
+
+.se-badge-success {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(129, 199, 132, 0.1) 100%);
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    color: var(--se-success);
+}
+
+.se-badge-error {
+    background: linear-gradient(135deg, rgba(239, 83, 80, 0.1) 0%, rgba(255, 107, 107, 0.1) 100%);
+    border: 1px solid rgba(239, 83, 80, 0.2);
+    color: var(--se-error);
+}
+
+/* Status Indicator */
+.se-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: se-pulseGlow 1.5s ease-in-out infinite;
+}
+
+.se-status-dot-warning {
+    background: var(--se-warning);
+}
+
+.se-status-dot-success {
+    background: var(--se-success);
+}
+
+.se-status-dot-error {
+    background: var(--se-error);
+}
+
+/* ============================================
+   BACKGROUND EFFECTS
+   ============================================ */
+
+/* Gradient Orb */
+.se-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: se-orbFloat 20s ease-in-out infinite;
+}
+
+/* Grid Pattern */
+.se-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 70%);
+}
+
+/* Scan Lines */
+.se-scan-lines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 140, 66, 0.02) 2px,
+        rgba(255, 140, 66, 0.02) 4px
+    );
+    animation: se-scanMove 8s linear infinite;
+    pointer-events: none;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Animation Delays */
+.se-delay-1 { animation-delay: 0.1s; }
+.se-delay-2 { animation-delay: 0.2s; }
+.se-delay-3 { animation-delay: 0.3s; }
+.se-delay-4 { animation-delay: 0.4s; }
+.se-delay-5 { animation-delay: 0.5s; }
+
+/* Text Utilities */
+.se-text-gradient {
+    background: linear-gradient(135deg, var(--se-text-primary) 0%, var(--se-primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.se-text-center { text-align: center; }
+.se-text-primary { color: var(--se-text-primary); }
+.se-text-secondary { color: var(--se-text-secondary); }
+.se-text-muted { color: var(--se-text-muted); }
+
+/* Spacing */
+.se-mt-1 { margin-top: 0.5rem; }
+.se-mt-2 { margin-top: 1rem; }
+.se-mt-3 { margin-top: 1.5rem; }
+.se-mt-4 { margin-top: 2rem; }
+.se-mb-1 { margin-bottom: 0.5rem; }
+.se-mb-2 { margin-bottom: 1rem; }
+.se-mb-3 { margin-bottom: 1.5rem; }
+.se-mb-4 { margin-bottom: 2rem; }
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+@media (max-width: 768px) {
+    .se-glass-card {
+        padding: 30px 20px;
+        border-radius: var(--se-radius-xl);
+    }
+    
+    .se-btn-primary {
+        padding: 14px 24px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .se-glass-card {
+        padding: 25px 15px;
+        border-radius: var(--se-radius-lg);
+    }
+}

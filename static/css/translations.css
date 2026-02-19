@@ -1,0 +1,482 @@
+/**
+ * SALLY-E Translation System Styles
+ * Language selector button and modal
+ * Full RTL support for Arabic
+ */
+
+/* ========================================== */
+/* LANGUAGE SELECTOR BUTTON */
+/* ========================================== */
+
+.language-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--gradient-subtle, linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-size: 20px;
+}
+
+.language-btn:hover {
+    transform: scale(1.1);
+    border-color: var(--color-neon-pink, #3b82f6);
+    box-shadow: 0 0 20px rgba(0, 102, 255, 0.3);
+}
+
+.language-btn:active {
+    transform: scale(0.95);
+}
+
+/* ========================================== */
+/* LANGUAGE MODAL */
+/* ========================================== */
+
+.language-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.language-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.language-modal-content {
+    background: var(--color-surface, #1a1a2e);
+    border-radius: 16px;
+    padding: 24px;
+    width: 90%;
+    max-width: 320px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.language-modal.active .language-modal-content {
+    transform: scale(1);
+}
+
+.language-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.language-modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #fff);
+}
+
+.language-modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: var(--color-text-secondary, #a0a0a0);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s ease;
+}
+
+.language-modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-text-primary, #fff);
+}
+
+.language-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.language-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.language-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.language-option.active {
+    background: rgba(0, 102, 255, 0.1);
+    border-color: var(--color-neon-pink, #3b82f6);
+}
+
+.language-flag {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.language-name {
+    flex: 1;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-text-primary, #fff);
+}
+
+.language-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--color-neon-pink, #3b82f6);
+    color: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.language-option.active .language-check {
+    display: flex;
+}
+
+/* ========================================== */
+/* RTL SUPPORT FOR ARABIC */
+/* ========================================== */
+
+/* Base RTL adjustments */
+html[dir="rtl"] body,
+body.rtl {
+    text-align: right;
+    direction: rtl;
+}
+
+/* Language button position flip */
+body.rtl .language-btn {
+    right: auto;
+    left: 16px;
+}
+
+/* Navigation RTL */
+body.rtl .bottom-nav {
+    flex-direction: row-reverse;
+}
+
+body.rtl .nav-item {
+    /* Keep centered */
+}
+
+/* Container and content */
+body.rtl .container {
+    text-align: right;
+}
+
+/* Flexbox reversals */
+body.rtl .flex,
+body.rtl [style*="display: flex"],
+body.rtl [style*="display:flex"] {
+    /* Let individual components handle direction */
+}
+
+body.rtl .flex.items-center.justify-between {
+    flex-direction: row-reverse;
+}
+
+/* Cards and items */
+body.rtl .item {
+    flex-direction: row-reverse;
+}
+
+body.rtl .item-content {
+    text-align: right;
+}
+
+body.rtl .item-icon {
+    margin-right: 0;
+    margin-left: var(--space-3, 12px);
+}
+
+body.rtl .item-action {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+/* Stats grid */
+body.rtl .stats-grid {
+    direction: rtl;
+}
+
+/* Buttons with icons */
+body.rtl .btn i,
+body.rtl .btn svg {
+    margin-right: 0;
+    margin-left: 8px;
+}
+
+body.rtl .btn {
+    flex-direction: row-reverse;
+}
+
+/* Form elements */
+body.rtl input,
+body.rtl textarea,
+body.rtl select {
+    text-align: right;
+    direction: rtl;
+}
+
+body.rtl input::placeholder,
+body.rtl textarea::placeholder {
+    text-align: right;
+}
+
+/* Balance card */
+body.rtl .balance-card {
+    text-align: center; /* Keep centered */
+}
+
+/* Section titles */
+body.rtl .section-title {
+    text-align: right;
+}
+
+/* Page titles */
+body.rtl .page-title {
+    flex-direction: row-reverse;
+}
+
+body.rtl .page-title i,
+body.rtl .page-title svg {
+    margin-right: 0;
+    margin-left: 12px;
+}
+
+/* Chevron icons flip */
+body.rtl [data-lucide="chevron-right"] {
+    transform: scaleX(-1);
+}
+
+body.rtl [data-lucide="chevron-left"] {
+    transform: scaleX(-1);
+}
+
+body.rtl [data-lucide="arrow-right"] {
+    transform: scaleX(-1);
+}
+
+body.rtl [data-lucide="arrow-left"] {
+    transform: scaleX(-1);
+}
+
+/* Modals */
+body.rtl .modal-header {
+    flex-direction: row-reverse;
+}
+
+body.rtl .modal-close {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+/* Quick actions grid */
+body.rtl .quick-actions-grid {
+    direction: rtl;
+}
+
+/* Item list */
+body.rtl .item-list .item {
+    flex-direction: row-reverse;
+}
+
+/* Badges */
+body.rtl .badge {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+/* Pro tip card */
+body.rtl .pro-tip-card {
+    flex-direction: row-reverse;
+    text-align: right;
+}
+
+/* Transaction history */
+body.rtl .transaction-item {
+    flex-direction: row-reverse;
+}
+
+body.rtl .transaction-info {
+    text-align: right;
+}
+
+body.rtl .transaction-amount {
+    text-align: left;
+}
+
+/* Referral link */
+body.rtl .referral-link-box {
+    flex-direction: row-reverse;
+}
+
+body.rtl .referral-link-text {
+    text-align: right;
+}
+
+/* Wallet address */
+body.rtl .wallet-address {
+    direction: ltr; /* Keep addresses LTR */
+    text-align: left;
+}
+
+/* Numbers and currency */
+body.rtl .balance-amount,
+body.rtl .stat-value,
+body.rtl .price,
+body.rtl .amount {
+    direction: ltr;
+    text-align: center;
+}
+
+/* Ad modal */
+body.rtl .ad-modal {
+    direction: rtl;
+}
+
+body.rtl .ad-header {
+    text-align: center;
+}
+
+/* Promo modal */
+body.rtl .promo-modal-content {
+    direction: rtl;
+    text-align: right;
+}
+
+/* Error pages */
+body.rtl .error-page {
+    text-align: center;
+}
+
+/* Arabic font family */
+body.rtl,
+html[dir="rtl"] body {
+    font-family: 'Segoe UI', 'SF Pro Display', 'Tahoma', 'Arial', sans-serif;
+}
+
+/* ========================================== */
+/* LANGUAGE MODAL RTL */
+/* ========================================== */
+
+body.rtl .language-modal-header {
+    flex-direction: row-reverse;
+}
+
+body.rtl .language-option {
+    flex-direction: row-reverse;
+}
+
+body.rtl .language-name {
+    text-align: right;
+}
+
+body.rtl .language-check {
+    margin-right: 0;
+    margin-left: auto;
+}
+
+/* ========================================== */
+/* TOAST NOTIFICATIONS */
+/* ========================================== */
+
+body.rtl .toast {
+    left: 16px;
+    right: auto;
+}
+
+body.rtl .toast-content {
+    flex-direction: row-reverse;
+}
+
+body.rtl .toast-icon {
+    margin-right: 0;
+    margin-left: 12px;
+}
+
+/* ========================================== */
+/* ANIMATIONS */
+/* ========================================== */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.language-modal.active {
+    animation: fadeIn 0.3s ease;
+}
+
+.language-modal.active .language-modal-content {
+    animation: scaleIn 0.3s ease;
+}
+
+/* ========================================== */
+/* MOBILE RESPONSIVENESS */
+/* ========================================== */
+
+@media (max-width: 480px) {
+    .language-btn {
+        top: 12px;
+        right: 12px;
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    body.rtl .language-btn {
+        right: auto;
+        left: 12px;
+    }
+    
+    .language-modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .language-option {
+        padding: 12px 14px;
+    }
+}
