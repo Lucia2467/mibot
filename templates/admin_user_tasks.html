@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% block title %}Admin - User Tasks{% endblock %}
+{% block content %}
+<div class="container" style="padding-bottom: 100px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6);">
+        <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--color-text-primary); margin: 0;">
+            📢 Tareas de Usuarios
+        </h1>
+        <a href="/admin" class="btn btn-sm" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 8px 16px; color: var(--color-text-secondary); text-decoration: none;">
+            ← Volver
+        </a>
+    </div>
+
+    <!-- Estadísticas -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: var(--space-6);">
+        <div style="background: var(--glass-ultra); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--space-4); text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: 800; color: #FFA500;">{{ stats.total }}</div>
+            <div style="font-size: 0.75rem; color: var(--color-text-tertiary);">Total</div>
+        </div>
+        <div style="background: var(--glass-ultra); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--space-4); text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: 800; color: #00C864;">{{ stats.active }}</div>
+            <div style="font-size: 0.75rem; color: var(--color-text-tertiary);">Activas</div>
+        </div>
+        <div style="background: var(--glass-ultra); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--space-4); text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: 800; color: #00D4FF;">{{ "%.2f"|format(stats.total_doge) }}</div>
+            <div style="font-size: 0.75rem; color: var(--color-text-tertiary);">DOGE Gastados</div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div style="display: flex; gap: 10px; margin-bottom: var(--space-4); flex-wrap: wrap;">
+        <a href="/admin/user-tasks" class="filter-btn {{ 'active' if not status_filter else '' }}">Todas</a>
+        <a href="/admin/user-tasks?status=active" class="filter-btn {{ 'active' if status_filter == 'active' else '' }}">Activas</a>
+        <a href="/admin/user-tasks?status=paused" class="filter-btn {{ 'active' if status_filter == 'paused' else '' }}">Pausadas</a>
+        <a href="/admin/user-tasks?status=completed" class="filter-btn {{ 'active' if status_filter == 'completed' else '' }}">Completadas</a>
+    </div>
+
+    <!-- Lista de tareas -->
+    <div class="card">
+        {% if tasks %}
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid var(--glass-border);">
+                            <th style="text-align: left; padding: 12px 8px; color: var(--color-text-secondary);">Tarea</th>
+                            <th style="text-align: left; padding: 12px 8px; color: var(--color-text-secondary);">Creador</th>
+                            <th style="text-align: center; padding: 12px 8px; color: var(--color-text-secondary);">Progreso</th>
+                            <th style="text-align: center; padding: 12px 8px; color: var(--color-text-secondary);">Pagado</th>
+                            <th style="text-align: center; padding: 12px 8px; color: var(--color-text-secondary);">Estado</th>
+                            <th style="text-align: right; padding: 12px 8px; color: var(--color-text-secondary);">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);" id="task-row-{{ task.task_id }}">
+                            <td style="padding: 12px 8px;">
+                                <div style="font-weight: 600; color: var(--color-text-primary);">{{ task.title }}</div>
+                                <a href="{{ task.url }}" target="_blank" style="font-size: 0.75rem; color: var(--color-text-tertiary); text-decoration: none; word-break: break-all;">
+                                    {{ task.url[:40] }}{% if task.url|length > 40 %}...{% endif %}
+                                </a>
+                                <div style="font-size: 0.7rem; color: var(--color-text-muted); margin-top: 2px;">{{ task.task_id }}</div>
+                            </td>
+                            <td style="padding: 12px 8px;">
+                                <div style="font-weight: 500; color: var(--color-text-primary);">
+                                    {{ task.username or task.first_name or 'Unknown' }}
+                                </div>
+                                <div style="font-size: 0.75rem; color: var(--color-text-tertiary);">ID: {{ task.creator_id }}</div>
+                            </td>
+                            <td style="padding: 12px 8px; text-align: center;">
+                                <div style="font-weight: 600; color: var(--color-text-primary);">
+                                    {{ task.current_completions }} / {{ task.max_completions }}
+                                </div>
+                                <div style="background: rgba(255,255,255,0.1); border-radius: 3px; height: 4px; margin-top: 4px; width: 80px; margin: 4px auto 0;">
+                                    <div style="height: 100%; background: linear-gradient(90deg, #FFA500, #FF6B00); width: {{ (task.current_completions / task.max_completions * 100)|round }}%; border-radius: 3px;"></div>
+                                </div>
+                            </td>
+                            <td style="padding: 12px 8px; text-align: center;">
+                                <span style="color: #FFA500; font-weight: 600;">{{ "%.4f"|format(task.total_paid_doge) }}</span>
+                                <span style="font-size: 0.7rem; color: var(--color-text-tertiary);">DOGE</span>
+                            </td>
+                            <td style="padding: 12px 8px; text-align: center;">
+                                {% if task.status == 'active' %}
+                                    <span style="background: rgba(0, 200, 100, 0.2); color: #00C864; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">ACTIVA</span>
+                                {% elif task.status == 'paused' %}
+                                    <span style="background: rgba(255, 184, 0, 0.2); color: #FFB800; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">PAUSADA</span>
+                                {% else %}
+                                    <span style="background: rgba(100, 100, 100, 0.2); color: #888; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">COMPLETADA</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 12px 8px; text-align: right;">
+                                <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                                    {% if task.status == 'active' %}
+                                        <button onclick="toggleTask('{{ task.task_id }}', false)" class="action-btn pause-btn">Pausar</button>
+                                    {% elif task.status == 'paused' %}
+                                        <button onclick="toggleTask('{{ task.task_id }}', true)" class="action-btn resume-btn">Reanudar</button>
+                                    {% endif %}
+                                    <button onclick="deleteTask('{{ task.task_id }}', false)" class="action-btn delete-btn">Eliminar</button>
+                                    <button onclick="deleteTask('{{ task.task_id }}', true)" class="action-btn refund-btn">Reembolsar</button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: var(--space-6); color: var(--color-text-tertiary);">
+                <p>No hay tareas de usuarios {{ 'con este filtro' if status_filter else '' }}</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.filter-btn {
+    padding: 8px 16px;
+    background: var(--glass-ultra);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.filter-btn:hover {
+    border-color: #FFA500;
+    color: #FFA500;
+}
+.filter-btn.active {
+    background: rgba(255, 165, 0, 0.2);
+    border-color: #FFA500;
+    color: #FFA500;
+}
+.action-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.pause-btn {
+    background: rgba(255, 184, 0, 0.2);
+    color: #FFB800;
+}
+.resume-btn {
+    background: rgba(0, 200, 100, 0.2);
+    color: #00C864;
+}
+.delete-btn {
+    background: rgba(255, 50, 100, 0.2);
+    color: #FF3264;
+}
+.refund-btn {
+    background: rgba(0, 245, 255, 0.2);
+    color: #00D4FF;
+}
+.action-btn:hover {
+    transform: scale(1.05);
+}
+</style>
+
+<script>
+async function toggleTask(taskId, active) {
+    if (!confirm(`¿${active ? 'Reanudar' : 'Pausar'} esta tarea?`)) return;
+    
+    try {
+        const resp = await fetch('/api/admin/user-tasks/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task_id: taskId, active: active })
+        });
+        const data = await resp.json();
+        
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + (data.message || 'Unknown'));
+        }
+    } catch (e) {
+        alert('Error de conexión');
+    }
+}
+
+async function deleteTask(taskId, refund) {
+    const msg = refund 
+        ? '¿Eliminar esta tarea y REEMBOLSAR el DOGE restante al usuario?' 
+        : '¿Eliminar esta tarea SIN reembolso?';
+    
+    if (!confirm(msg)) return;
+    
+    try {
+        const resp = await fetch('/api/admin/user-tasks/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task_id: taskId, refund: refund })
+        });
+        const data = await resp.json();
+        
+        if (data.success) {
+            document.getElementById(`task-row-${taskId}`).remove();
+            alert(data.message || 'Tarea eliminada');
+        } else {
+            alert('Error: ' + (data.message || 'Unknown'));
+        }
+    } catch (e) {
+        alert('Error de conexión');
+    }
+}
+</script>
+{% endblock %}

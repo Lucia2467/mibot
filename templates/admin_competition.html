@@ -1,0 +1,678 @@
+{% extends "base.html" %}
+
+{% block title %}Admin | Competencia Semanal{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-bottom: 120px;">
+    
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4);">
+        <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--color-text-primary); margin: 0;">
+            Gestion de Competencias
+        </h1>
+        <a href="/admin" class="btn-secondary" style="font-size: 0.85rem; padding: 8px 16px;">
+            Volver
+        </a>
+    </div>
+
+    <!-- Estado Actual -->
+    <div id="current-state" class="admin-card">
+        <div class="card-header">
+            <h2>Estado Actual del Sistema</h2>
+            <button onclick="refreshState()" class="btn-icon" title="Actualizar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                    <path d="M21 3v5h-5"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div id="state-content">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <span>Cargando estado...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles de Administracion -->
+    <div class="admin-card">
+        <div class="card-header">
+            <h2>Controles de Competencia</h2>
+        </div>
+        
+        <div class="controls-grid">
+            <div class="control-item">
+                <div class="control-info">
+                    <h3>Finalizar Competencia</h3>
+                    <p>Congela el ranking actual e inicia la distribucion de recompensas</p>
+                </div>
+                <button id="btn-end" onclick="endCompetition()" class="btn-warning" disabled>
+                    Finalizar
+                </button>
+            </div>
+            
+            <div class="control-item">
+                <div class="control-info">
+                    <h3>Completar Distribucion</h3>
+                    <p>Acredita las recompensas a los usuarios calificados</p>
+                </div>
+                <button id="btn-distribute" onclick="completeDistribution()" class="btn-primary" disabled>
+                    Distribuir
+                </button>
+            </div>
+            
+            <div class="control-item">
+                <div class="control-info">
+                    <h3>Iniciar Nueva Competencia</h3>
+                    <p>Resetea los PTS e inicia una nueva competencia semanal</p>
+                </div>
+                <button id="btn-start-new" onclick="startNewCompetition()" class="btn-success" disabled>
+                    Nueva Competencia
+                </button>
+            </div>
+            
+            <div class="control-item">
+                <div class="control-info">
+                    <h3>Procesar Automatico</h3>
+                    <p>Ejecuta las transiciones automaticas pendientes</p>
+                </div>
+                <button id="btn-process" onclick="processAutomatic()" class="btn-secondary">
+                    Procesar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ranking Actual -->
+    <div class="admin-card">
+        <div class="card-header">
+            <h2>Ranking Actual</h2>
+            <span id="ranking-status" class="status-badge"></span>
+        </div>
+        
+        <div id="ranking-content">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <span>Cargando ranking...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de Competencias -->
+    <div class="admin-card">
+        <div class="card-header">
+            <h2>Historial de Competencias</h2>
+        </div>
+        
+        <div id="history-content">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <span>Cargando historial...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log de Eventos -->
+    <div class="admin-card">
+        <div class="card-header">
+            <h2>Log de Eventos</h2>
+        </div>
+        
+        <div id="log-content" class="log-container">
+            <p class="empty-state">Sin eventos recientes</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.admin-card {
+    background: var(--glass-ultra);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.card-header h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.btn-icon {
+    background: var(--glass-ultra);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 8px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    background: var(--glass-light);
+    color: var(--color-text-primary);
+}
+
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6);
+    color: var(--color-text-tertiary);
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--glass-border);
+    border-top-color: var(--color-neon-cyan);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: var(--space-3);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* State Display */
+.state-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+}
+
+.state-item {
+    background: var(--glass-ultra);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+.state-item-label {
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.state-item-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.state-item-value.state-active { color: #00D4FF; }
+.state-item-value.state-ended { color: #FFC107; }
+.state-item-value.state-distributing { color: #0052CC; }
+.state-item-value.state-distributed { color: #4CAF50; }
+.state-item-value.state-preparation { color: #FF9800; }
+
+/* Controls Grid */
+.controls-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.control-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3);
+    background: var(--glass-ultra);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+}
+
+.control-info h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0 0 4px;
+}
+
+.control-info p {
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+    margin: 0;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary, .btn-warning, .btn-success {
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--glass-ultra);
+    border: 1px solid var(--glass-border);
+    color: var(--color-text-secondary);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #FFC107, #FF9800);
+    color: #000;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+}
+
+.btn-primary:disabled, .btn-secondary:disabled, .btn-warning:disabled, .btn-success:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary:hover:not(:disabled), .btn-warning:hover:not(:disabled), .btn-success:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Status Badge */
+.status-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+}
+
+.status-badge.live {
+    background: rgba(0, 245, 255, 0.2);
+    color: #00D4FF;
+}
+
+.status-badge.frozen {
+    background: rgba(255, 193, 7, 0.2);
+    color: #FFC107;
+}
+
+/* Ranking Table */
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ranking-table th, .ranking-table td {
+    padding: var(--space-3);
+    text-align: left;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.ranking-table th {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+}
+
+.ranking-table td {
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+}
+
+.ranking-table tr.qualified td {
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.ranking-table tr.not-qualified td {
+    background: rgba(255, 193, 7, 0.05);
+}
+
+/* History Table */
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table th, .history-table td {
+    padding: var(--space-3);
+    text-align: left;
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 0.85rem;
+}
+
+.history-table th {
+    font-weight: 600;
+    color: var(--color-text-tertiary);
+}
+
+/* Log Container */
+.log-container {
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+.log-entry {
+    padding: var(--space-2);
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    gap: var(--space-3);
+}
+
+.log-time {
+    color: var(--color-text-tertiary);
+    flex-shrink: 0;
+}
+
+.log-action {
+    color: var(--color-neon-cyan);
+    flex-shrink: 0;
+}
+
+.log-details {
+    color: var(--color-text-secondary);
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--color-text-tertiary);
+    padding: var(--space-4);
+}
+</style>
+
+<script>
+let currentState = null;
+const eventLog = [];
+
+async function refreshState() {
+    try {
+        const resp = await fetch('/api/competition/ranking?user_id=admin&limit=10');
+        const data = await resp.json();
+        
+        if (data.success) {
+            currentState = data.state;
+            renderState(data.state);
+            renderRanking(data.ranking, data.state);
+            updateControls(data.state);
+        }
+    } catch (e) {
+        console.error('Error loading state:', e);
+        addLog('ERROR', 'Error cargando estado: ' + e.message);
+    }
+    
+    loadHistory();
+}
+
+function renderState(state) {
+    const container = document.getElementById('state-content');
+    const stateClass = 'state-' + (state.state || 'active').toLowerCase();
+    
+    container.innerHTML = `
+        <div class="state-display">
+            <div class="state-item">
+                <div class="state-item-label">Estado</div>
+                <div class="state-item-value ${stateClass}">${state.title || state.state}</div>
+            </div>
+            <div class="state-item">
+                <div class="state-item-label">Competencia</div>
+                <div class="state-item-value">#${state.competition_number || '-'}</div>
+            </div>
+            <div class="state-item">
+                <div class="state-item-label">Periodo</div>
+                <div class="state-item-value" style="font-size: 0.9rem;">
+                    ${state.period_start || '-'}<br>
+                    ${state.period_end || '-'}
+                </div>
+            </div>
+            <div class="state-item">
+                <div class="state-item-label">PTS Activos</div>
+                <div class="state-item-value">${state.can_earn_pts ? 'Si' : 'No'}</div>
+            </div>
+        </div>
+        <div style="margin-top: var(--space-4); padding: var(--space-3); background: var(--glass-ultra); border-radius: var(--radius-md);">
+            <p style="margin: 0; color: var(--color-text-secondary); font-size: 0.9rem;">${state.message || ''}</p>
+        </div>
+    `;
+}
+
+function renderRanking(ranking, state) {
+    const container = document.getElementById('ranking-content');
+    const statusBadge = document.getElementById('ranking-status');
+    
+    if (state.state === 'ACTIVE') {
+        statusBadge.className = 'status-badge live';
+        statusBadge.textContent = 'En vivo';
+    } else {
+        statusBadge.className = 'status-badge frozen';
+        statusBadge.textContent = 'Congelado';
+    }
+    
+    if (!ranking || ranking.length === 0) {
+        container.innerHTML = '<p class="empty-state">Sin participantes en el ranking</p>';
+        return;
+    }
+    
+    let html = `
+        <table class="ranking-table">
+            <thead>
+                <tr>
+                    <th>Pos</th>
+                    <th>Usuario</th>
+                    <th>PTS</th>
+                    <th>Premio</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    ranking.forEach(r => {
+        const rowClass = r.qualified ? 'qualified' : (r.in_prize_zone ? 'not-qualified' : '');
+        const status = r.reward_credited ? 'Acreditado' : (r.qualified ? 'Califica' : (r.in_prize_zone ? `Faltan ${r.needs_pts} PTS` : '-'));
+        
+        html += `
+            <tr class="${rowClass}">
+                <td><strong>${r.position}</strong></td>
+                <td>${r.first_name || r.username}</td>
+                <td>${r.pts.toLocaleString()}</td>
+                <td>${r.in_prize_zone ? r.reward_doge + ' DOGE' : '-'}</td>
+                <td>${status}</td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+function updateControls(state) {
+    const btnEnd = document.getElementById('btn-end');
+    const btnDistribute = document.getElementById('btn-distribute');
+    const btnStartNew = document.getElementById('btn-start-new');
+    
+    btnEnd.disabled = state.state !== 'ACTIVE';
+    btnDistribute.disabled = state.state !== 'DISTRIBUTING';
+    btnStartNew.disabled = state.state !== 'PREPARATION';
+}
+
+async function loadHistory() {
+    try {
+        const resp = await fetch('/api/competition/history?limit=5');
+        const data = await resp.json();
+        
+        if (data.success) {
+            renderHistory(data.history);
+        }
+    } catch (e) {
+        console.error('Error loading history:', e);
+    }
+}
+
+function renderHistory(history) {
+    const container = document.getElementById('history-content');
+    
+    if (!history || history.length === 0) {
+        container.innerHTML = '<p class="empty-state">Sin competencias anteriores</p>';
+        return;
+    }
+    
+    let html = `
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Periodo</th>
+                    <th>Completada</th>
+                    <th>Recompensas</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    history.forEach(h => {
+        html += `
+            <tr>
+                <td>${h.competition_number}</td>
+                <td>${h.period_start} - ${h.period_end}</td>
+                <td>${h.completed_at || '-'}</td>
+                <td>${h.rewards_distributed ? 'Distribuidas' : 'Pendiente'}</td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+function addLog(action, details) {
+    const time = new Date().toLocaleTimeString();
+    eventLog.unshift({ time, action, details });
+    
+    if (eventLog.length > 50) eventLog.pop();
+    
+    renderLog();
+}
+
+function renderLog() {
+    const container = document.getElementById('log-content');
+    
+    if (eventLog.length === 0) {
+        container.innerHTML = '<p class="empty-state">Sin eventos recientes</p>';
+        return;
+    }
+    
+    let html = '';
+    eventLog.forEach(entry => {
+        html += `
+            <div class="log-entry">
+                <span class="log-time">${entry.time}</span>
+                <span class="log-action">[${entry.action}]</span>
+                <span class="log-details">${entry.details}</span>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+async function endCompetition() {
+    if (!confirm('¿Finalizar la competencia actual? Esta accion congelara el ranking.')) return;
+    
+    try {
+        addLog('ADMIN', 'Finalizando competencia...');
+        const resp = await fetch('/api/admin/competition/end', { method: 'POST' });
+        const data = await resp.json();
+        
+        if (data.success) {
+            addLog('SUCCESS', data.message);
+            refreshState();
+        } else {
+            addLog('ERROR', data.error || data.message);
+        }
+    } catch (e) {
+        addLog('ERROR', e.message);
+    }
+}
+
+async function completeDistribution() {
+    if (!confirm('¿Completar distribucion y acreditar recompensas?')) return;
+    
+    try {
+        addLog('ADMIN', 'Completando distribucion...');
+        const resp = await fetch('/api/admin/competition/distribute', { method: 'POST' });
+        const data = await resp.json();
+        
+        if (data.success) {
+            addLog('SUCCESS', data.message);
+            refreshState();
+        } else {
+            addLog('ERROR', data.error || data.message);
+        }
+    } catch (e) {
+        addLog('ERROR', e.message);
+    }
+}
+
+async function startNewCompetition() {
+    if (!confirm('¿Iniciar nueva competencia? Esto reseteara TODOS los PTS.')) return;
+    
+    try {
+        addLog('ADMIN', 'Iniciando nueva competencia...');
+        const resp = await fetch('/api/admin/competition/start-new', { method: 'POST' });
+        const data = await resp.json();
+        
+        if (data.success) {
+            addLog('SUCCESS', data.message);
+            refreshState();
+        } else {
+            addLog('ERROR', data.error || data.message);
+        }
+    } catch (e) {
+        addLog('ERROR', e.message);
+    }
+}
+
+async function processAutomatic() {
+    try {
+        addLog('AUTO', 'Procesando transiciones automaticas...');
+        const resp = await fetch('/api/admin/competition/process', { method: 'POST' });
+        const data = await resp.json();
+        
+        if (data.success) {
+            addLog('SUCCESS', 'Estado actual: ' + data.state.state);
+            refreshState();
+        } else {
+            addLog('ERROR', data.error);
+        }
+    } catch (e) {
+        addLog('ERROR', e.message);
+    }
+}
+
+// Initial load
+document.addEventListener('DOMContentLoaded', () => {
+    refreshState();
+    
+    // Auto-refresh every 30 seconds
+    setInterval(refreshState, 30000);
+});
+</script>
+{% endblock %}

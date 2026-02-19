@@ -1,0 +1,1097 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Monetag{% endblock %}
+
+{% block extra_head %}
+<!-- SDK de Monetag - Cargar ANTES del contenido -->
+<script src="//libtl.com/sdk.js" data-zone="10311387" data-sdk="show_10311387"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(230, 81, 0, 0.08) 50%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
+        <!-- Elementos de fondo -->
+        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255, 107, 53, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(230, 81, 0, 0.12) 0%, transparent 70%); border-radius: 50%; animation: float 10s ease-in-out infinite reverse;"></div>
+
+        <div style="position: relative; z-index: 1; text-align: center; padding: var(--space-4);">
+            <!-- Icono principal -->
+            <div class="floating" style="width: 80px; height: 80px; margin: 0 auto var(--space-4); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(255, 107, 53, 0.2) 0%, rgba(230, 81, 0, 0.2) 100%); border-radius: 20px; box-shadow: 0 8px 32px rgba(255, 107, 53, 0.3);">
+                <i data-lucide="flame" style="width: 40px; height: 40px; color: #FF6B35;"></i>
+            </div>
+
+            <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: var(--space-2); background: linear-gradient(135deg, #FF6B35 0%, #E65100 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                Monetag
+            </h1>
+            <p style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.6); line-height: 1.6;" data-i18n="ad_reward_description_monetag">
+                Ver anuncio • Ganar 0.05 DOGE + 10 PTS
+            </p>
+            <!-- Recompensa clara visible -->
+            <div style="margin-top: var(--space-3); padding: var(--space-2) var(--space-3); background: rgba(255, 107, 53, 0.15); border-radius: 10px; display: inline-block;">
+                <span style="font-weight: 700; color: #FF6B35; font-size: 1rem;" data-i18n="ad_reward_monetag">Gana 0.05 DOGE + 10 PTS</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(255, 107, 53, 0.04) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(255, 107, 53, 0.2); margin-top: var(--space-4); position: relative; overflow: hidden;">
+        <div style="position: relative; z-index: 1;">
+            <!-- Progress Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255, 107, 53, 0.1); border-radius: 12px;">
+                        <i data-lucide="bar-chart-3" style="width: 22px; height: 22px; color: #FF6B35;"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9375rem; color: white;" data-i18n="ads_today">Anuncios Hoy</div>
+                        <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="max_12_per_day">Máximo 12 por día</div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div id="mtg-progress-text" style="font-weight: 700; font-size: 1.25rem; color: #FF6B35;">
+                        {{ progress.ads_watched }} / 10
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div style="height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; margin-bottom: var(--space-4);">
+                <div id="mtg-progress-bar" style="height: 100%; background: linear-gradient(90deg, #FF6B35 0%, #E65100 100%); border-radius: 4px; transition: width 0.5s ease; width: {{ (progress.ads_watched / 12 * 100) }}%;"></div>
+            </div>
+
+            <!-- Reward Info -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-3); background: rgba(255, 107, 53, 0.05); border-radius: 12px; border: 1px solid rgba(255, 107, 53, 0.1);">
+                <div style="display: flex; align-items: center; gap: var(--space-2);">
+                    <i data-lucide="coins" style="width: 18px; height: 18px; color: #FF6B35;"></i>
+                    <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7);" data-i18n="earned_today">Ganado hoy</span>
+                </div>
+                <div id="mtg-earned-amount" style="font-weight: 700; font-size: 1rem; color: #FF6B35;">
+                    {{ "%.3f"|format(progress.total_earned) }} DOGE
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(18, 18, 18, 0.98) 100%); border: 1px solid rgba(255, 107, 53, 0.15); margin-top: var(--space-4);">
+        <div style="text-align: center;">
+            <!-- Reward per view -->
+            <div style="margin-bottom: var(--space-4);">
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);" data-i18n="reward_per_ad">Recompensa por anuncio</div>
+                <div style="font-weight: 700; font-size: 1.5rem; color: #FF6B35;">
+                    +{{ config.reward_per_ad }} DOGE + 10 PTS
+                </div>
+            </div>
+
+            <!-- Main Action Button -->
+            <button id="mtg-watch-btn"
+                    onclick="startMoneTag()"
+                    {% if progress.completed %}disabled{% endif %}
+                    style="width: 100%; padding: var(--space-4); border-radius: 14px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; {% if progress.completed %}background: rgba(255, 107, 53, 0.15); color: rgba(255, 255, 255, 0.5);{% else %}background: linear-gradient(135deg, #FF6B35 0%, #E65100 100%); color: #fff;{% endif %}">
+                {% if progress.completed %}
+                    <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
+                        <span data-i18n="daily_limit_reached">Límite diario alcanzado</span>
+                    </span>
+                {% else %}
+                    <span id="mtg-btn-content" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i data-lucide="play-circle" style="width: 20px; height: 20px;"></i>
+                        <span data-i18n="watch_ad">Ver Anuncio</span>
+                    </span>
+                {% endif %}
+            </button>
+
+            <!-- Info text -->
+            <div id="mtg-status-text" style="margin-top: var(--space-3); font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">
+                {% if progress.completed %}
+                    ¡Límite diario alcanzado! Vuelve mañana para más.
+                {% else %}
+                    Máximo 10 anuncios por día • 1 minuto entre cada anuncio • 10 seg mínimo
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Timer Card (Hidden by default, shows during ad) -->
+    <div id="mtg-timer-card" class="card" style="display: none; background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(255, 107, 53, 0.3); margin-top: var(--space-4);">
+        <div style="text-align: center;">
+            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-2);" data-i18n="keep_ad_open">
+                Mantén el anuncio abierto
+            </div>
+            <div id="mtg-timer-display" style="font-weight: 800; font-size: 2.5rem; color: #FF6B35;">
+                15
+            </div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4); margin-top: var(--space-2);" data-i18n="seconds_to_validate">
+                segundos restantes para validar
+            </div>
+            <!-- Progress bar for timer -->
+            <div style="height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; margin-top: var(--space-3);">
+                <div id="mtg-timer-bar" style="height: 100%; background: linear-gradient(90deg, #FF6B35 0%, #E65100 100%); border-radius: 3px; transition: width 1s linear; width: 0%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Reward Info -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(255, 107, 53, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(255, 107, 53, 0.15); margin-top: var(--space-4);">
+        <div style="display: flex; align-items: center; gap: var(--space-3);">
+            <div style="flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255, 107, 53, 0.1); border-radius: 12px;">
+                <i data-lucide="gift" style="width: 22px; height: 22px; color: #FF6B35;"></i>
+            </div>
+            <div>
+                <div style="font-weight: 600; font-size: 0.9375rem; color: white; margin-bottom: var(--space-1);" data-i18n="total_reward">
+                    Recompensa Total
+                </div>
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="complete_12_ads">
+                    Completa los 12 anuncios para ganar <span style="color: #FF6B35; font-weight: 600;">hasta 0.024 DOGE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How it Works -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(255, 107, 53, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(255, 107, 53, 0.1); margin-top: var(--space-4);">
+        <div style="font-weight: 600; font-size: 0.9375rem; color: white; margin-bottom: var(--space-3);">
+            <i data-lucide="info" style="width: 16px; height: 16px; color: #FF6B35; vertical-align: middle; margin-right: 6px;"></i>
+            <span data-i18n="how_it_works">¿Cómo funciona?</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255, 107, 53, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #FF6B35;">1</div>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);" data-i18n="step_1_watch">Presiona "Ver Anuncio" para iniciar</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255, 107, 53, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #FF6B35;">2</div>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);" data-i18n="step_2_keep">Mantén el anuncio abierto <strong>15 segundos</strong></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255, 107, 53, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #FF6B35;">3</div>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);" data-i18n="step_3_receive">Recibe tu recompensa automáticamente</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Animación flotante */
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(10px, 10px);
+    }
+}
+
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Button states */
+#mtg-watch-btn:disabled {
+    cursor: not-allowed;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
+    }
+}
+
+.mtg-timer-active {
+    animation: pulse 1s ease infinite;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ============================================
+// VARIABLES DE ESTADO - EXCLUSIVAS DE MONETAG
+// ============================================
+let mtgIsWatching = false;
+let mtgSessionToken = null;
+let mtgWatchStartTime = null;
+let mtgCooldownTimer = null;
+let mtgCooldownSeconds = 0;
+let mtgWatchTimer = null;
+let mtgWatchSeconds = 0;
+
+// Variables para validación REAL de tiempo del anuncio
+let mtgAdStartTimestamp = null;      // Momento exacto cuando se abrió el anuncio
+let mtgAdWaitingForReturn = false;   // Flag: esperando que usuario regrese
+let mtgTimerInterval = null;         // Interval para actualizar UI del timer
+
+// Configuración de Monetag
+const MONETAG_CONFIG = {
+    zoneId: '{{ config.zone_id }}',
+    minWatchSeconds: {{ config.min_watch_seconds }},
+    cooldownSeconds: {{ config.cooldown_seconds }},
+    maxDailyAds: {{ config.max_daily_ads }},
+    rewardPerAd: {{ config.reward_per_ad }}
+};
+
+// ============================================
+// LISTENER DE VISIBILIDAD - DETECTA CUANDO USUARIO VUELVE
+// ============================================
+document.addEventListener('visibilitychange', function() {
+    // Solo procesar si estamos esperando que el usuario regrese del anuncio
+    if (!mtgAdWaitingForReturn || !mtgAdStartTimestamp) return;
+    
+    // El usuario volvió a la página
+    if (document.visibilityState === 'visible') {
+        handleUserReturnedFromAd();
+    }
+});
+
+// También escuchar el evento focus de la ventana como backup
+window.addEventListener('focus', function() {
+    if (!mtgAdWaitingForReturn || !mtgAdStartTimestamp) return;
+    
+    // Pequeño delay para asegurar que la página está visible
+    setTimeout(() => {
+        if (document.visibilityState === 'visible' || document.hasFocus()) {
+            handleUserReturnedFromAd();
+        }
+    }, 100);
+});
+
+// ============================================
+// MANEJAR REGRESO DEL USUARIO
+// ============================================
+function handleUserReturnedFromAd() {
+    if (!mtgAdWaitingForReturn || !mtgAdStartTimestamp) return;
+    
+    // Marcar que ya no esperamos (evitar múltiples llamadas)
+    mtgAdWaitingForReturn = false;
+    
+    // Calcular tiempo que el usuario estuvo viendo el anuncio
+    const timeSpentMs = Date.now() - mtgAdStartTimestamp;
+    const timeSpentSeconds = Math.floor(timeSpentMs / 1000);
+    const minSeconds = MONETAG_CONFIG.minWatchSeconds;
+    
+    // Limpiar el timer de UI
+    if (mtgTimerInterval) {
+        clearInterval(mtgTimerInterval);
+        mtgTimerInterval = null;
+    }
+    
+    console.log(`[Monetag] Usuario regresó después de ${timeSpentSeconds} segundos (mínimo requerido: ${minSeconds})`);
+    
+    const timerCard = document.getElementById('mtg-timer-card');
+    const timerDisplay = document.getElementById('mtg-timer-display');
+    
+    if (timeSpentSeconds >= minSeconds) {
+        // ✅ ÉXITO: El usuario vio el anuncio completo
+        timerDisplay.innerHTML = '<i data-lucide="check" style="width: 32px; height: 32px; color: #22C55E;"></i>';
+        lucide.createIcons();
+        
+        // Solicitar recompensa al backend
+        mtgWatchSeconds = timeSpentSeconds;
+        requestMoneTagReward();
+    } else {
+        // ❌ ERROR: El usuario NO vio el anuncio completo
+        const remainingSeconds = minSeconds - timeSpentSeconds;
+        console.log(`[Monetag] Anuncio NO completado. Faltaron ${remainingSeconds} segundos.`);
+        
+        // Mostrar X roja
+        timerDisplay.innerHTML = '<i data-lucide="x" style="width: 32px; height: 32px; color: #EF4444;"></i>';
+        lucide.createIcons();
+        
+        // Haptic feedback de error
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+        }
+        
+        // Mostrar notificación de error premium
+        showAdIncompleteNotification(remainingSeconds, timeSpentSeconds);
+        
+        // Resetear después de mostrar el error
+        setTimeout(() => {
+            timerCard.style.display = 'none';
+            timerCard.classList.remove('mtg-timer-active');
+            resetMtgButton();
+            mtgIsWatching = false;
+            mtgSessionToken = null;
+            mtgAdStartTimestamp = null;
+        }, 2500);
+    }
+}
+
+// ============================================
+// NOTIFICACIÓN PREMIUM - ANUNCIO NO COMPLETADO
+// ============================================
+function showAdIncompleteNotification(remainingSeconds, watchedSeconds) {
+    // Remover notificaciones anteriores
+    const existingOverlay = document.querySelector('.mtg-incomplete-overlay');
+    if (existingOverlay) existingOverlay.remove();
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'mtg-incomplete-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        background: linear-gradient(135deg, rgba(30, 30, 40, 0.98) 0%, rgba(20, 20, 30, 0.98) 100%);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        border-radius: 20px;
+        padding: 32px 28px;
+        max-width: 320px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(239, 68, 68, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+        animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    `;
+    
+    modal.innerHTML = `
+        <div style="width: 72px; height: 72px; margin: 0 auto 20px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.2) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+        </div>
+        
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: #EF4444; margin-bottom: 12px;">
+            Anuncio No Completado
+        </h3>
+        
+        <p style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 20px; line-height: 1.5;">
+            Debes ver el anuncio completo para recibir tu recompensa.
+        </p>
+        
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Tiempo visto:</span>
+                <span style="font-size: 0.875rem; font-weight: 600; color: #EF4444;">${watchedSeconds}s</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Tiempo requerido:</span>
+                <span style="font-size: 0.875rem; font-weight: 600; color: rgba(255, 255, 255, 0.8);">${MONETAG_CONFIG.minWatchSeconds}s</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Te faltaron:</span>
+                <span style="font-size: 0.9375rem; font-weight: 700; color: #EF4444;">${remainingSeconds} segundos</span>
+            </div>
+        </div>
+        
+        <button onclick="this.closest('.mtg-incomplete-overlay').remove()" style="
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            Entendido
+        </button>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Cerrar al hacer clic fuera
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+    
+    // Auto-cerrar después de 5 segundos
+    setTimeout(() => {
+        if (overlay.parentNode) {
+            overlay.style.animation = 'fadeOut 0.3s ease forwards';
+            setTimeout(() => overlay.remove(), 300);
+        }
+    }, 5000);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Verificar estado inicial
+    checkMoneTagStatus();
+});
+
+// ============================================
+// VERIFICAR ESTADO
+// ============================================
+function checkMoneTagStatus() {
+    const userId = window.USER_ID || new URLSearchParams(window.location.search).get('user_id');
+
+    fetch(`/monetag/status?user_id=${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (!data.can_watch && data.cooldown_remaining > 0) {
+                    startMtgCooldown(data.cooldown_remaining);
+                }
+                if (data.progress.completed) {
+                    setMtgCompleted();
+                }
+            }
+        })
+        .catch(console.error);
+}
+
+// ============================================
+// INICIAR ANUNCIO MONETAG
+// ============================================
+function startMoneTag() {
+    const btn = document.getElementById('mtg-watch-btn');
+    const btnContent = document.getElementById('mtg-btn-content');
+
+    // Anti-spam: prevenir múltiples clics
+    if (mtgIsWatching || btn.disabled) return;
+
+    // Verificar que el SDK de Monetag esté disponible
+    if (typeof show_10311387 !== 'function') {
+        showToast(window.tt ? window.tt('toast_loading_ads') : 'Cargando sistema de anuncios...', 'error');
+        console.error('[Monetag] SDK not loaded. Function show_10311387 not available.');
+        return;
+    }
+
+    // Haptic feedback
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+
+    mtgIsWatching = true;
+    btn.disabled = true;
+    const loadingText = window.tt ? window.tt('toast_system_loading') : 'Cargando...';
+    btnContent.innerHTML = `<i data-lucide="loader" style="width: 20px; height: 20px; animation: spin 1s linear infinite;"></i><span>${loadingText}</span>`;
+    lucide.createIcons();
+
+    const userId = window.USER_ID || new URLSearchParams(window.location.search).get('user_id');
+
+    // Paso 1: Solicitar inicio de sesión al backend
+    fetch('/monetag/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            mtgSessionToken = data.session_token;
+            mtgWatchStartTime = Date.now();
+            mtgWatchSeconds = 0;
+
+            // Paso 2: Mostrar el anuncio de Monetag
+            console.log('[Monetag] Mostrando anuncio...');
+            showMoneTagAd();
+        } else {
+            // Error o cooldown
+            if (data.cooldown_remaining > 0) {
+                startMtgCooldown(data.cooldown_remaining);
+            } else if (data.completed) {
+                setMtgCompleted();
+            } else {
+                showToast(data.error || (window.tt ? window.tt('toast_error_start') : 'Error al iniciar'), 'error');
+                resetMtgButton();
+            }
+            mtgIsWatching = false;
+        }
+    })
+    .catch(error => {
+        console.error('[Monetag] Error:', error);
+        showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+        resetMtgButton();
+        mtgIsWatching = false;
+    });
+}
+
+// ============================================
+// MOSTRAR ANUNCIO MONETAG - NUEVA LÓGICA ROBUSTA
+// ============================================
+function showMoneTagAd() {
+    const btnContent = document.getElementById('mtg-btn-content');
+    const timerCard = document.getElementById('mtg-timer-card');
+    const timerDisplay = document.getElementById('mtg-timer-display');
+    const timerBar = document.getElementById('mtg-timer-bar');
+
+    const adInProgressText = window.tt ? window.tt('toast_ad_in_progress') : 'Viendo anuncio...';
+    btnContent.innerHTML = `<i data-lucide="eye" style="width: 20px; height: 20px;"></i><span>${adInProgressText}</span>`;
+    lucide.createIcons();
+
+    // Mostrar tarjeta de timer
+    timerCard.style.display = 'block';
+    timerCard.classList.add('mtg-timer-active');
+
+    const minSeconds = MONETAG_CONFIG.minWatchSeconds;
+    
+    // Resetear y configurar estado
+    mtgWatchSeconds = 0;
+    timerDisplay.textContent = minSeconds;
+    timerBar.style.width = '0%';
+    
+    // Limpiar intervalos anteriores
+    if (mtgTimerInterval) {
+        clearInterval(mtgTimerInterval);
+        mtgTimerInterval = null;
+    }
+    
+    // IMPORTANTE: Registrar timestamp ANTES de mostrar el anuncio
+    mtgAdStartTimestamp = Date.now();
+    mtgAdWaitingForReturn = true;
+    
+    console.log('[Monetag] Iniciando anuncio. Timestamp:', mtgAdStartTimestamp);
+    
+    // Actualizar UI del timer cada segundo (solo visual)
+    mtgTimerInterval = setInterval(function() {
+        if (!mtgAdStartTimestamp) return;
+        
+        const elapsedSeconds = Math.floor((Date.now() - mtgAdStartTimestamp) / 1000);
+        const remaining = Math.max(0, minSeconds - elapsedSeconds);
+        
+        timerDisplay.textContent = remaining;
+        timerBar.style.width = `${Math.min(100, (elapsedSeconds / minSeconds) * 100)}%`;
+        
+        // Si el timer llega a 0 y el usuario sigue en la página esperando
+        if (remaining === 0 && !mtgAdWaitingForReturn) {
+            clearInterval(mtgTimerInterval);
+            mtgTimerInterval = null;
+        }
+    }, 1000);
+    
+    // Llamar a la función del SDK de Monetag
+    try {
+        show_10311387();
+        console.log('[Monetag] SDK llamado exitosamente');
+    } catch (error) {
+        console.error('[Monetag] Error al llamar SDK:', error);
+        // Aún así continuar esperando por si el anuncio se muestra
+    }
+    
+    // Timeout de seguridad: después de 120 segundos, resetear todo
+    setTimeout(() => {
+        if (mtgAdWaitingForReturn) {
+            console.log('[Monetag] Timeout de seguridad alcanzado');
+            mtgAdWaitingForReturn = false;
+            mtgAdStartTimestamp = null;
+            
+            if (mtgTimerInterval) {
+                clearInterval(mtgTimerInterval);
+                mtgTimerInterval = null;
+            }
+            
+            timerCard.style.display = 'none';
+            timerCard.classList.remove('mtg-timer-active');
+            resetMtgButton();
+            mtgIsWatching = false;
+            mtgSessionToken = null;
+            
+            showToast('Tiempo agotado. Intenta de nuevo.', 'error');
+        }
+    }, 120000);
+}
+
+// ============================================
+// SOLICITAR RECOMPENSA
+// ============================================
+function requestMoneTagReward() {
+    const userId = window.USER_ID || new URLSearchParams(window.location.search).get('user_id');
+    const watchDuration = mtgWatchStartTime ? Math.floor((Date.now() - mtgWatchStartTime) / 1000) : mtgWatchSeconds;
+
+    // Usar el mayor entre el tiempo real y el contador
+    const finalDuration = Math.max(watchDuration, mtgWatchSeconds);
+
+    const btnContent = document.getElementById('mtg-btn-content');
+    btnContent.innerHTML = '<i data-lucide="loader" style="width: 20px; height: 20px; animation: spin 1s linear infinite;"></i><span>Validando...</span>';
+    lucide.createIcons();
+
+    fetch('/monetag/reward', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            user_id: userId,
+            session_token: mtgSessionToken,
+            watch_duration: finalDuration
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const timerCard = document.getElementById('mtg-timer-card');
+        timerCard.style.display = 'none';
+        timerCard.classList.remove('mtg-timer-active');
+
+        if (data.success) {
+            updateMtgUI(data);
+            showToast(`+${data.reward} DOGE`, 'success');
+
+            // Haptic feedback
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+
+            // Iniciar cooldown si no está completo
+            if (!data.completed) {
+                startMtgCooldown(data.cooldown);
+            } else {
+                setMtgCompleted();
+            }
+        } else {
+            showToast(data.error || (window.tt ? window.tt('toast_error_validate') : 'Error al validar'), 'error');
+            resetMtgButton();
+        }
+
+        mtgIsWatching = false;
+        mtgSessionToken = null;
+    })
+    .catch(error => {
+        console.error('[Monetag] Error:', error);
+        showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+        resetMtgButton();
+        mtgIsWatching = false;
+
+        document.getElementById('mtg-timer-card').style.display = 'none';
+    });
+}
+
+// ============================================
+// ACTUALIZAR UI
+// ============================================
+function updateMtgUI(data) {
+    document.getElementById('mtg-progress-text').textContent = `${data.ads_watched} / 12`;
+    document.getElementById('mtg-progress-bar').style.width = `${(data.ads_watched / 12) * 100}%`;
+    document.getElementById('mtg-earned-amount').textContent = `${data.total_earned.toFixed(3)} DOGE`;
+
+    if (data.completed) {
+        setMtgCompleted();
+    }
+}
+
+// ============================================
+// COOLDOWN
+// ============================================
+function startMtgCooldown(seconds) {
+    const btn = document.getElementById('mtg-watch-btn');
+    const btnContent = document.getElementById('mtg-btn-content');
+    const statusText = document.getElementById('mtg-status-text');
+
+    mtgCooldownSeconds = seconds;
+    btn.disabled = true;
+    btn.style.background = 'rgba(255, 107, 53, 0.2)';
+    btn.style.color = 'rgba(255, 255, 255, 0.5)';
+
+    function formatTime(secs) {
+        const mins = Math.floor(secs / 60);
+        const remainSecs = secs % 60;
+        if (mins > 0) {
+            return `${mins}m ${remainSecs}s`;
+        }
+        return `${remainSecs}s`;
+    }
+
+    function updateCooldownTimer() {
+        if (mtgCooldownSeconds > 0) {
+            btnContent.innerHTML = `<i data-lucide="clock" style="width: 20px; height: 20px;"></i><span>Espera ${formatTime(mtgCooldownSeconds)}</span>`;
+            lucide.createIcons();
+            statusText.textContent = `Próximo anuncio disponible en ${formatTime(mtgCooldownSeconds)}`;
+            mtgCooldownSeconds--;
+            mtgCooldownTimer = setTimeout(updateCooldownTimer, 1000);
+        } else {
+            resetMtgButton();
+            statusText.textContent = 'Máximo 12 anuncios por día • 7 minutos entre cada anuncio • 15 seg mínimo';
+        }
+    }
+
+    if (mtgCooldownTimer) {
+        clearTimeout(mtgCooldownTimer);
+    }
+
+    updateCooldownTimer();
+}
+
+// ============================================
+// RESETEAR BOTÓN
+// ============================================
+function resetMtgButton() {
+    const btn = document.getElementById('mtg-watch-btn');
+    const btnContent = document.getElementById('mtg-btn-content');
+
+    btn.disabled = false;
+    btn.style.background = 'linear-gradient(135deg, #FF6B35 0%, #E65100 100%)';
+    btn.style.color = '#fff';
+    btnContent.innerHTML = '<i data-lucide="play-circle" style="width: 20px; height: 20px;"></i><span>Ver Anuncio</span>';
+    lucide.createIcons();
+}
+
+// ============================================
+// ESTADO COMPLETADO
+// ============================================
+function setMtgCompleted() {
+    const btn = document.getElementById('mtg-watch-btn');
+    const btnContent = document.getElementById('mtg-btn-content');
+    const statusText = document.getElementById('mtg-status-text');
+
+    if (mtgCooldownTimer) {
+        clearTimeout(mtgCooldownTimer);
+        mtgCooldownTimer = null;
+    }
+
+    btn.disabled = true;
+    btn.style.background = 'rgba(255, 107, 53, 0.15)';
+    btn.style.color = 'rgba(255, 255, 255, 0.5)';
+    btnContent.innerHTML = '<i data-lucide="check-circle" style="width: 20px; height: 20px;"></i><span>Límite diario alcanzado</span>';
+    lucide.createIcons();
+
+    statusText.textContent = '¡Límite diario alcanzado! Vuelve mañana para más.';
+}
+
+// ============================================
+// TOAST NOTIFICATION - PREMIUM
+// ============================================
+function showToast(message, type) {
+    // Crear overlay con backdrop premium
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    `;
+
+    // Crear contenedor principal de notificación
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: relative;
+        background: linear-gradient(135deg, rgba(18, 18, 18, 0.98) 0%, rgba(30, 30, 30, 0.98) 100%);
+        padding: 0;
+        border-radius: 32px;
+        text-align: center;
+        box-shadow:
+            0 0 0 1px ${type === 'success' ? 'rgba(255, 107, 53, 0.3)' : 'rgba(239, 68, 68, 0.3)'},
+            0 30px 90px rgba(0, 0, 0, 0.8),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        min-width: 320px;
+        max-width: 90vw;
+        overflow: hidden;
+    `;
+
+    // Efecto de brillo animado en el borde
+    const glowEffect = document.createElement('div');
+    glowEffect.style.cssText = `
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(135deg,
+            ${type === 'success' ? '#FF6B35, #E65100, #FF6B35' : '#EF4444, #DC2626, #EF4444'});
+        border-radius: 32px;
+        opacity: 0.6;
+        filter: blur(20px);
+        animation: rotateGlow 3s linear infinite;
+        z-index: -1;
+    `;
+
+    // Header con gradiente
+    const header = document.createElement('div');
+    header.style.cssText = `
+        background: linear-gradient(135deg,
+            ${type === 'success' ? 'rgba(255, 107, 53, 0.15)' : 'rgba(239, 68, 68, 0.15)'} 0%,
+            ${type === 'success' ? 'rgba(230, 81, 0, 0.05)' : 'rgba(220, 38, 38, 0.05)'} 100%);
+        padding: 40px 30px 30px;
+        border-bottom: 1px solid ${type === 'success' ? 'rgba(255, 107, 53, 0.2)' : 'rgba(239, 68, 68, 0.2)'};
+        position: relative;
+        overflow: hidden;
+    `;
+
+    // Partículas de fondo
+    const particles = document.createElement('div');
+    particles.innerHTML = `
+        <div style="position: absolute; top: 10%; left: 10%; width: 4px; height: 4px; background: ${type === 'success' ? '#FF6B35' : '#EF4444'}; border-radius: 50%; animation: particle1 2s ease-in-out infinite;"></div>
+        <div style="position: absolute; top: 30%; right: 15%; width: 3px; height: 3px; background: ${type === 'success' ? '#FF8A5B' : '#F87171'}; border-radius: 50%; animation: particle2 2.5s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: 20%; left: 20%; width: 5px; height: 5px; background: ${type === 'success' ? '#E65100' : '#DC2626'}; border-radius: 50%; animation: particle3 3s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: 40%; right: 25%; width: 3px; height: 3px; background: ${type === 'success' ? '#FF8A5B' : '#F87171'}; border-radius: 50%; animation: particle1 2.2s ease-in-out infinite;"></div>
+    `;
+    header.appendChild(particles);
+
+    // Contenedor del icono con anillo animado
+    const iconContainer = document.createElement('div');
+    iconContainer.style.cssText = `
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 20px;
+        z-index: 1;
+    `;
+
+    // Anillo exterior giratorio
+    const outerRing = document.createElement('div');
+    outerRing.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100px;
+        height: 100px;
+        border: 2px solid transparent;
+        border-top-color: ${type === 'success' ? '#FF6B35' : '#EF4444'};
+        border-right-color: ${type === 'success' ? '#FF6B35' : '#EF4444'};
+        border-radius: 50%;
+        animation: spin 2s linear infinite;
+        opacity: 0.6;
+    `;
+
+    // Icono central
+    const icon = document.createElement('div');
+    icon.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg,
+            ${type === 'success' ? 'rgba(255, 107, 53, 0.25)' : 'rgba(239, 68, 68, 0.25)'} 0%,
+            ${type === 'success' ? 'rgba(230, 81, 0, 0.15)' : 'rgba(220, 38, 38, 0.15)'} 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow:
+            0 0 30px ${type === 'success' ? 'rgba(255, 107, 53, 0.4)' : 'rgba(239, 68, 68, 0.4)'},
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        animation: iconPulse 1.5s ease-in-out infinite;
+    `;
+    icon.innerHTML = type === 'success'
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FF6B35" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+
+    iconContainer.appendChild(outerRing);
+    iconContainer.appendChild(icon);
+    header.appendChild(iconContainer);
+
+    // Título principal
+    const title = document.createElement('div');
+    title.style.cssText = `
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: ${type === 'success' ? '#FF8A5B' : '#F87171'};
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+    `;
+    title.textContent = type === 'success' ? '✨ Recompensa' : '⚠️ Error';
+    header.appendChild(title);
+
+    // Body con el mensaje principal
+    const body = document.createElement('div');
+    body.style.cssText = `
+        padding: 30px;
+    `;
+
+    // Mensaje principal con efecto gradiente
+    const messageText = document.createElement('div');
+    messageText.style.cssText = `
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg,
+            ${type === 'success' ? '#FF6B35 0%, #FF8A5B 50%, #FFB899 100%' : '#EF4444 0%, #F87171 50%, #FCA5A5 100%'});
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 12px;
+        text-shadow: 0 0 30px ${type === 'success' ? 'rgba(255, 107, 53, 0.3)' : 'rgba(239, 68, 68, 0.3)'};
+        animation: textGlow 2s ease-in-out infinite;
+        letter-spacing: 1px;
+    `;
+    messageText.textContent = message;
+
+    // Subtítulo
+    const subtitle = document.createElement('div');
+    subtitle.style.cssText = `
+        font-size: 0.9375rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-weight: 500;
+        margin-bottom: 20px;
+    `;
+    subtitle.textContent = type === 'success' ? '¡Se ha añadido a tu balance!' : 'Algo salió mal';
+
+    // Línea decorativa
+    const divider = document.createElement('div');
+    divider.style.cssText = `
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            ${type === 'success' ? '#FF6B35' : '#EF4444'} 50%,
+            transparent 100%);
+        margin: 0 auto;
+        border-radius: 2px;
+        animation: dividerGlow 2s ease-in-out infinite;
+    `;
+
+    body.appendChild(messageText);
+    body.appendChild(subtitle);
+    body.appendChild(divider);
+
+    // Ensamblar notificación
+    notification.appendChild(glowEffect);
+    notification.appendChild(header);
+    notification.appendChild(body);
+    overlay.appendChild(notification);
+    document.body.appendChild(overlay);
+
+    // Cerrar automáticamente después de 3 segundos
+    setTimeout(() => {
+        overlay.style.animation = 'fadeOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        notification.style.animation = 'scaleOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        setTimeout(() => overlay.remove(), 400);
+    }, 3000);
+
+    // Cerrar al hacer clic en el overlay
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.style.animation = 'fadeOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            notification.style.animation = 'scaleOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            setTimeout(() => overlay.remove(), 400);
+        }
+    });
+}
+
+// CSS animations premium
+const animStyle = document.createElement('style');
+animStyle.textContent = `
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    @keyframes scaleIn {
+        from {
+            transform: scale(0.5) rotateX(-30deg);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1) rotateX(0deg);
+            opacity: 1;
+        }
+    }
+    @keyframes scaleOut {
+        from {
+            transform: scale(1) rotateX(0deg);
+            opacity: 1;
+        }
+        to {
+            transform: scale(0.8) rotateX(30deg);
+            opacity: 0;
+        }
+    }
+    @keyframes iconPulse {
+        0%, 100% {
+            transform: translate(-50%, -50%) scale(1);
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.4);
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 0 50px rgba(255, 107, 53, 0.6);
+        }
+    }
+    @keyframes rotateGlow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    @keyframes particle1 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.3;
+        }
+        50% {
+            transform: translate(10px, -10px) scale(1.5);
+            opacity: 0.8;
+        }
+    }
+    @keyframes particle2 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.4;
+        }
+        50% {
+            transform: translate(-15px, 10px) scale(1.3);
+            opacity: 0.9;
+        }
+    }
+    @keyframes particle3 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.3;
+        }
+        50% {
+            transform: translate(8px, 12px) scale(1.4);
+            opacity: 0.7;
+        }
+    }
+    @keyframes textGlow {
+        0%, 100% {
+            filter: brightness(1);
+        }
+        50% {
+            filter: brightness(1.2);
+        }
+    }
+    @keyframes dividerGlow {
+        0%, 100% {
+            opacity: 0.5;
+            transform: scaleX(1);
+        }
+        50% {
+            opacity: 1;
+            transform: scaleX(1.1);
+        }
+    }
+`;
+document.head.appendChild(animStyle);
+</script>
+{% endblock %}

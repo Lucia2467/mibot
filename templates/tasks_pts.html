@@ -1,0 +1,729 @@
+{% extends "base.html" %}
+{% block title %}SALLY-E | Tasks{% endblock %}
+{% block content %}
+<div class="container" style="padding-bottom: 120px;">
+    <!-- Hidden PTS balance for JS -->
+    <span id="pts-balance" style="display: none;">0</span>
+    
+    <!-- BOTÓN FLOTANTE DE REGLAS -->
+    <button id="rules-button" onclick="openRulesModal()" style="position: fixed; top: 60px; right: 20px; width: 50px; height: 50px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.25) 0%, rgba(0, 61, 153, 0.25) 100%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid rgba(0, 102, 255, 0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9999; box-shadow: 0 8px 32px rgba(0, 102, 255, 0.3); transition: all 0.3s ease;">
+        <i data-lucide="book-open" style="width: 24px; height: 24px; color: #3B82F6;"></i>
+    </button>
+    
+    <!-- ============================================ -->
+    <!-- SECCIÓN: CHECK-IN DIARIO -->
+    <!-- ============================================ -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(0, 102, 255, 0.08) 0%, rgba(0, 61, 153, 0.08) 100%); border-color: rgba(0, 102, 255, 0.25); margin-bottom: var(--space-4);">
+        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+            <div class="pts-icon pts-icon-calendar" style="margin-right: var(--space-3);"></div>
+            <div>
+                <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); margin: 0;" data-i18n="pts_checkin_title"></h2>
+                <p style="font-size: 0.8rem; color: var(--color-text-tertiary); margin: 0;" data-i18n="pts_checkin_subtitle"></p>
+            </div>
+        </div>
+        
+        <div id="checkin-container" style="background: var(--glass-ultra); border-radius: var(--radius-lg); padding: var(--space-4); border: 1px solid rgba(0, 102, 255, 0.15);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3);">
+                <div>
+                    <span style="font-size: 0.85rem; color: var(--color-text-secondary);" data-i18n="pts_checkin_base_reward"></span>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #FFFFFF; text-shadow: 0 0 20px rgba(0, 102, 255, 0.5);">
+                        +10 PTS
+                    </div>
+                </div>
+                <div id="checkin-streak" style="text-align: right;">
+                    <span style="font-size: 0.75rem; color: var(--color-text-tertiary);" data-i18n="pts_checkin_streak"></span>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <div class="pts-icon pts-icon-fire" style="width: 18px; height: 18px;"></div>
+                        <span id="streak-count" style="font-size: 1.2rem; font-weight: 700; color: var(--color-neon-cyan);">0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="checkin-btn" class="pts-btn-primary" onclick="PTS.doCheckin()">
+                <div class="pts-icon pts-icon-check" style="width: 20px; height: 20px;"></div>
+                <span data-i18n="pts_checkin_do"></span>
+            </button>
+            
+            <button id="checkin-double-btn" class="pts-btn-secondary" onclick="PTS.doubleCheckin()" style="display: none; margin-top: var(--space-3);">
+                <div class="pts-icon pts-icon-play" style="width: 18px; height: 18px;"></div>
+                <span data-i18n="pts_checkin_double"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN: TAREAS DE LA COMUNIDAD -->
+    <!-- ============================================ -->
+    <div style="display: flex; align-items: center; margin: var(--space-4) 0;">
+        <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 102, 255, 0.3), transparent);"></div>
+        <span style="padding: 0 var(--space-4); font-size: 0.8rem; color: #00A3FF; font-weight: 600;">🌐 <span data-i18n="pts_community_tasks_section"></span></span>
+        <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 102, 255, 0.3), transparent);"></div>
+    </div>
+
+    <!-- BOTÓN: PROMOCIONA TU TAREA -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(0, 102, 255, 0.08) 0%, rgba(0, 61, 153, 0.08) 100%); border-color: rgba(0, 102, 255, 0.25); margin-bottom: var(--space-4);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center;">
+                <div style="width: 44px; height: 44px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.2) 0%, rgba(0, 163, 255, 0.2) 100%); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-right: var(--space-3);">
+                    <i data-lucide="megaphone" style="width: 22px; height: 22px; color: #00A3FF;"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 1rem; font-weight: 700; color: var(--color-text-primary); margin: 0;" data-i18n="pts_promote_task"></h3>
+                    <p style="font-size: 0.75rem; color: var(--color-text-tertiary); margin: 0;" data-i18n="pts_promote_subtitle"></p>
+                </div>
+            </div>
+            <a href="/promote?user_id={{ user_id }}" class="promote-btn" style="display: flex; align-items: center; gap: 6px; padding: 10px 16px; background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #00A3FF 100%); border-radius: var(--radius-md); color: #fff; font-size: 0.85rem; font-weight: 700; text-decoration: none; box-shadow: 0 4px 15px rgba(0, 102, 255, 0.4);">
+                <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i>
+                <span data-i18n="pts_promote_publish"></span>
+            </a>
+        </div>
+        <div style="margin-top: var(--space-3); padding: var(--space-2) var(--space-3); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-sm);">
+            <span style="font-size: 0.7rem; color: var(--color-text-tertiary);">
+                💰 <span data-i18n="pts_promote_from"></span> <strong style="color: #00D4FF;">20 DOGE</strong> • 👥 <span data-i18n="pts_promote_up_to"></span> <strong style="color: #00D4FF;">4000</strong> <span data-i18n="pts_promote_users"></span>
+            </span>
+        </div>
+    </div>
+
+    <!-- LISTA DE TAREAS DE LA COMUNIDAD -->
+    <div class="card" id="community-tasks-section" style="margin-bottom: var(--space-4);">
+        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+            <div style="width: 44px; height: 44px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 82, 204, 0.2) 100%); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-right: var(--space-3);">
+                <i data-lucide="users" style="width: 22px; height: 22px; color: var(--color-neon-cyan);"></i>
+            </div>
+            <div>
+                <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); margin: 0;" data-i18n="pts_community_tasks_title"></h2>
+                <p style="font-size: 0.8rem; color: var(--color-text-tertiary); margin: 0;" data-i18n="pts_community_tasks_reward"></p>
+            </div>
+        </div>
+        <div id="user-tasks-list" style="display: flex; flex-direction: column; gap: var(--space-3);">
+            <div class="loading-user-tasks" style="text-align: center; padding: var(--space-4); color: var(--color-text-tertiary);">
+                <i data-lucide="loader" class="spin" style="width: 24px; height: 24px; margin-bottom: var(--space-2);"></i>
+                <p style="margin: 0; font-size: 0.85rem;" data-i18n="pts_loading_tasks"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SEPARADOR: TAREAS NORMALES -->
+    <!-- ============================================ -->
+    <div style="display: flex; align-items: center; margin: var(--space-6) 0;">
+        <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);"></div>
+        <span style="padding: 0 var(--space-4); font-size: 0.8rem; color: var(--color-text-tertiary); font-weight: 600;" data-i18n="pts_normal_tasks"></span>
+        <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);"></div>
+    </div>
+
+    <!-- TAREAS NORMALES -->
+    <div class="card" style="margin-bottom: var(--space-4);">
+        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+            <div class="pts-icon pts-icon-tasks" style="margin-right: var(--space-3);"></div>
+            <div>
+                <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); margin: 0;" data-i18n="pts_available_tasks"></h2>
+                <p style="font-size: 0.8rem; color: var(--color-text-tertiary); margin: 0;" data-i18n="pts_available_tasks_subtitle"></p>
+            </div>
+        </div>
+        {% if available_tasks %}
+            <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+                {% for task_id, task in available_tasks.items() %}
+                <div style="display: flex; align-items: center; padding: var(--space-3); background: var(--glass-ultra); border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                    <div style="flex-shrink: 0; width: 40px; height: 40px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.2) 0%, rgba(0, 61, 153, 0.2) 100%); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-right: var(--space-3);">
+                        {% if task.task_type == 'telegram' %}<i data-lucide="send" style="width: 20px; height: 20px; color: #0088cc;"></i>
+                        {% elif task.task_type == 'social' %}<i data-lucide="share-2" style="width: 20px; height: 20px; color: #3B82F6;"></i>
+                        {% else %}<i data-lucide="external-link" style="width: 20px; height: 20px; color: #0066FF;"></i>{% endif %}
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: 600; color: var(--color-text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ task.title }}</div>
+                        <div style="font-size: 0.8rem; color: var(--color-neon-cyan);">+{{ task.reward }} S-E</div>
+                    </div>
+                    <button class="pts-btn-small" onclick="completeTask('{{ task_id }}', '{{ task.url or '' }}', '{{ task.task_type or 'link' }}')">
+                        <span data-i18n="pts_complete"></span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: var(--space-6); color: var(--color-text-tertiary);">
+                <i data-lucide="inbox" style="width: 48px; height: 48px; margin-bottom: var(--space-3); opacity: 0.5;"></i>
+                <p style="margin: 0;" data-i18n="pts_no_tasks_available"></p>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if completed_tasks %}
+    <div class="card" style="margin-bottom: var(--space-4);">
+        <h3 style="font-size: 1rem; font-weight: 600; color: var(--color-text-secondary); margin-bottom: var(--space-3);" data-i18n="pts_completed_tasks"></h3>
+        <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+            {% for task_id, task in completed_tasks.items() %}
+            <div style="display: flex; align-items: center; padding: var(--space-3); background: var(--glass-ultra); border-radius: var(--radius-md); border: 1px solid var(--glass-border); opacity: 0.6;">
+                <div style="flex-shrink: 0; width: 36px; height: 36px; background: rgba(0, 200, 100, 0.2); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-right: var(--space-3);">
+                    <i data-lucide="check" style="width: 18px; height: 18px; color: var(--color-success);"></i>
+                </div>
+                <div style="flex: 1;"><div style="font-weight: 500; color: var(--color-text-secondary);">{{ task.title }}</div><div style="font-size: 0.75rem; color: var(--color-text-muted);">{{ task.reward }} S-E</div></div>
+                <span style="color: var(--color-success); font-weight: 600; font-size: 0.8rem;">✓</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- SEPARADOR: ANUNCIOS -->
+    <div style="display: flex; align-items: center; margin: var(--space-6) 0;">
+        <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.2), transparent);"></div>
+        <span style="padding: 0 var(--space-4); font-size: 0.8rem; color: var(--color-neon-cyan); font-weight: 600;">📺 <span data-i18n="pts_ads_section"></span></span>
+        <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.2), transparent);"></div>
+    </div>
+
+    <!-- TAREAS DE ANUNCIOS -->
+    <div class="card" style="margin-bottom: var(--space-4);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4);">
+            <div style="display: flex; align-items: center;">
+                <div class="pts-icon pts-icon-video" style="margin-right: var(--space-3);"></div>
+                <div>
+                    <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); margin: 0;" data-i18n="pts_ad_tasks_title"></h2>
+                    <p style="font-size: 0.8rem; color: var(--color-text-tertiary); margin: 0;" data-i18n="pts_ad_tasks_subtitle"></p>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-size: 0.7rem; color: var(--color-text-tertiary);" data-i18n="pts_ads_available"></span>
+                <div style="font-size: 1rem; font-weight: 700; color: var(--color-neon-cyan);"><span id="ads-remaining">10</span>/10</div>
+            </div>
+        </div>
+        <div style="background: var(--glass-ultra); border-radius: var(--radius-lg); padding: var(--space-4); border: 1px solid var(--glass-border); margin-bottom: var(--space-3);">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center;">
+                    <div class="pts-icon pts-icon-play-circle" style="width: 36px; height: 36px; margin-right: var(--space-3);"></div>
+                    <div><div style="font-weight: 600; color: var(--color-text-primary);" data-i18n="pts_watch_1_ad"></div><div style="font-size: 0.8rem; color: var(--color-neon-cyan);">+5 PTS</div></div>
+                </div>
+                <button class="pts-btn-small" onclick="PTS.watchAd()"><div class="pts-icon pts-icon-play" style="width: 14px; height: 14px;"></div><span data-i18n="pts_watch_btn"></span></button>
+            </div>
+        </div>
+        <div id="ad-task-card" style="background: var(--glass-ultra); border-radius: var(--radius-lg); padding: var(--space-4); border: 1px solid var(--glass-border); transition: opacity 0.3s ease;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3);">
+                <div style="display: flex; align-items: center;">
+                    <div class="pts-icon pts-icon-trophy" style="width: 36px; height: 36px; margin-right: var(--space-3);"></div>
+                    <div><div style="font-weight: 600; color: var(--color-text-primary);" data-i18n="pts_watch_5_ads"></div><div style="font-size: 0.8rem; color: var(--color-warning);">+20 PTS <span data-i18n="pts_bonus"></span></div></div>
+                </div>
+                <span id="ad-task-progress" style="font-size: 1rem; font-weight: 700; color: var(--color-text-primary);">0/5</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.1); border-radius: 4px; height: 6px; overflow: hidden;">
+                <div id="ad-task-progress-bar" style="height: 100%; background: var(--gradient-primary); width: 0%; transition: width 0.3s ease;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.pts-icon{width:44px;height:44px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;position:relative}
+.pts-icon::before{content:'';position:absolute;width:24px;height:24px}
+.pts-icon-calendar{background:linear-gradient(135deg,rgba(232,82,170,0.2) 0%,rgba(112,11,73,0.2) 100%)}
+.pts-icon-calendar::before{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B82F6' stroke-width='2'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E") center/contain no-repeat}
+.pts-icon-video{background:linear-gradient(135deg,rgba(0,245,255,0.2) 0%,rgba(0, 64, 255,0.2) 100%)}
+.pts-icon-video::before{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300D4FF' stroke-width='2'%3E%3Crect x='2' y='2' width='20' height='20' rx='2.18'/%3E%3Cline x1='7' y1='2' x2='7' y2='22'/%3E%3Cline x1='17' y1='2' x2='17' y2='22'/%3E%3Cline x1='2' y1='12' x2='22' y2='12'/%3E%3C/svg%3E") center/contain no-repeat}
+.pts-icon-star{background:linear-gradient(135deg,rgba(232,82,170,0.2) 0%,rgba(0, 102, 255,0.2) 100%)}
+.pts-icon-star::before{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230066FF' stroke-width='2'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2'/%3E%3C/svg%3E") center/contain no-repeat}
+.pts-icon-tasks{background:linear-gradient(135deg,rgba(0, 82, 204,0.2) 0%,rgba(0, 64, 255,0.2) 100%)}
+.pts-icon-tasks::before{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230052CC' stroke-width='2'%3E%3Cpath d='M9 11l3 3L22 4'/%3E%3Cpath d='M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11'/%3E%3C/svg%3E") center/contain no-repeat}
+.pts-icon-check{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/contain no-repeat}
+.pts-icon-play{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpolygon points='5 3 19 12 5 21 5 3'/%3E%3C/svg%3E") center/contain no-repeat}
+.pts-icon-play-circle{background:linear-gradient(135deg,rgba(0,245,255,0.15) 0%,rgba(232,82,170,0.15) 100%)}
+.pts-icon-play-circle::before{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300D4FF' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolygon points='10 8 16 12 10 16 10 8' fill='%2300D4FF'/%3E%3C/svg%3E") center/contain no-repeat}
+.pts-icon-trophy{background:linear-gradient(135deg,rgba(255,215,0,0.2) 0%,rgba(255,165,0,0.2) 100%)}
+.pts-icon-trophy::before{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFD700' stroke-width='2'%3E%3Cpath d='M6 9H4.5a2.5 2.5 0 0 1 0-5H6'/%3E%3Cpath d='M18 9h1.5a2.5 2.5 0 0 0 0-5H18'/%3E%3Cpath d='M4 22h16'/%3E%3Cpath d='M18 2H6v7a6 6 0 0 0 12 0V2Z'/%3E%3C/svg%3E") center/contain no-repeat}
+.pts-icon-fire{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF6B00' stroke-width='2'%3E%3Cpath d='M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z'/%3E%3C/svg%3E") center/contain no-repeat}
+.pts-btn-primary{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;background:linear-gradient(135deg, #003D99 0%, #0066FF 50%, #00A3FF 100%);border:none;border-radius:var(--radius-lg);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.3s ease;box-shadow:0 4px 20px rgba(0,102,255,0.4)}
+.pts-btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,102,255,0.5)}
+.pts-btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+.pts-btn-secondary{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 18px;background:rgba(0,102,255,0.1);border:1px solid rgba(0,102,255,0.3);border-radius:var(--radius-lg);color:var(--color-text-secondary);font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.3s ease}
+.pts-btn-secondary:hover:not(:disabled){background:rgba(0,102,255,0.15);border-color:rgba(0,102,255,0.4)}
+.pts-btn-small{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;background:linear-gradient(135deg, #003D99 0%, #0066FF 50%, #00A3FF 100%);border:none;border-radius:var(--radius-md);color:#fff;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s ease;white-space:nowrap;box-shadow:0 4px 15px rgba(0,102,255,0.3)}
+.pts-btn-small:hover:not(:disabled){transform:scale(1.05);box-shadow:0 6px 20px rgba(0,102,255,0.4)}
+.pts-btn-small:disabled{opacity:0.5;cursor:not-allowed}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.promote-btn{transition:all 0.2s ease}
+.promote-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,215,0,0.4)}
+.user-task-item{transition:all 0.2s ease}
+.user-task-item:hover{border-color:rgba(255,215,0,0.3)!important;transform:translateX(2px)}
+</style>
+
+<script>
+// ============================================
+// PTS SYSTEM - Con GigaPub (OPTIMIZADO)
+// ============================================
+const PTS = {
+    userId: null,
+    ptsBalance: 0,
+
+    init() {
+        const p = new URLSearchParams(window.location.search);
+        this.userId = p.get('user_id');
+        if (!this.userId && window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
+            this.userId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
+        }
+        window.USER_ID = this.userId;
+        console.log('[PTS] Init user_id:', this.userId);
+        this.loadStatus();
+    },
+
+    async loadStatus() {
+        if (!this.userId) return;
+        try {
+            const r = await fetch(`/api/pts/status?user_id=${this.userId}`);
+            const d = await r.json();
+            if (d.success) {
+                this.ptsBalance = d.pts_balance || 0;
+                document.getElementById('pts-balance').textContent = Math.floor(this.ptsBalance);
+                
+                const cb = document.getElementById('checkin-btn');
+                const db = document.getElementById('checkin-double-btn');
+                
+                if (d.checkin_done) {
+                    cb.disabled = true;
+                    cb.innerHTML = `<span>${t('pts_checkin_completed')}</span>`;
+                    if (!d.checkin_doubled) {
+                        db.style.display = 'flex';
+                    } else {
+                        db.style.display = 'none';
+                    }
+                }
+                
+                document.getElementById('streak-count').textContent = d.streak || 0;
+                document.getElementById('ads-remaining').textContent = d.ads_remaining ?? 10;
+                
+                // Usar ad_task para el progreso de 5 anuncios
+                const adTask = d.ad_task || {};
+                const adsWatched = adTask.ads_watched || 0;
+                const pr = Math.min(adsWatched, 5);
+                const taskCompleted = adTask.completed || pr >= 5;
+                
+                document.getElementById('ad-task-progress').textContent = `${pr}/5`;
+                document.getElementById('ad-task-progress-bar').style.width = `${(pr / 5) * 100}%`;
+                
+                // Marcar tarea como completada visualmente
+                const adTaskCard = document.getElementById('ad-task-card');
+                if (adTaskCard) {
+                    if (taskCompleted) {
+                        adTaskCard.classList.add('task-completed');
+                        adTaskCard.style.opacity = '0.7';
+                        const progressText = document.getElementById('ad-task-progress');
+                        if (progressText) {
+                            progressText.innerHTML = '✓ Completado';
+                            progressText.style.color = 'var(--color-success, #22c55e)';
+                        }
+                    } else {
+                        adTaskCard.classList.remove('task-completed');
+                        adTaskCard.style.opacity = '1';
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('[PTS] Error:', e);
+        }
+    },
+
+    toast(m, t = 'info') {
+        if (typeof showToast === 'function') {
+            showToast(m, t);
+        } else {
+            alert(m);
+        }
+    },
+
+    haptic(t = 'light') {
+        if (window.Telegram?.WebApp?.HapticFeedback) {
+            if (t === 'success') {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            } else if (t === 'error' || t === 'warning') {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+            } else {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            }
+        }
+    },
+
+    async doCheckin() {
+        if (!this.userId) {
+            this.toast('Error: Usuario no identificado', 'error');
+            return;
+        }
+        
+        const b = document.getElementById('checkin-btn');
+        b.disabled = true;
+        b.innerHTML = '<span>Procesando...</span>';
+        
+        try {
+            const r = await fetch(`/api/checkin?user_id=${this.userId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const d = await r.json();
+            
+            if (d.success) {
+                this.toast(`✓ ${d.message}`, 'success');
+                this.haptic('success');
+                this.loadStatus();
+            } else {
+                this.toast(d.message || 'Error', 'error');
+                b.disabled = false;
+                b.innerHTML = '<div class="pts-icon pts-icon-check" style="width:20px;height:20px;"></div><span>Hacer Check-in</span>';
+            }
+        } catch (e) {
+            this.toast('Error de conexión', 'error');
+            b.disabled = false;
+            b.innerHTML = '<div class="pts-icon pts-icon-check" style="width:20px;height:20px;"></div><span>Hacer Check-in</span>';
+        }
+    },
+
+    // ============================================
+    // watchAd() - GigaPub para tareas PTS (separado de gigapub.html)
+    // LÍMITE: 10 anuncios diarios máximo
+    // ============================================
+    async watchAd() {
+        if (!this.userId) {
+            this.toast('Error', 'error');
+            return;
+        }
+
+        // Verificar SDK de GigaPub
+        if (typeof window.showGiga !== 'function') {
+            this.toast('Anuncios no disponibles', 'warning');
+            return;
+        }
+
+        // Verificar límite antes de mostrar anuncio
+        const adsRemainingEl = document.getElementById('ads-remaining');
+        const currentRemaining = parseInt(adsRemainingEl?.textContent || '10');
+        
+        if (currentRemaining <= 0) {
+            this.toast('❌ Límite diario alcanzado (10 anuncios)', 'error');
+            this.haptic('error');
+            return;
+        }
+
+        try {
+            // Mostrar anuncio directamente
+            await window.showGiga("principal");
+            
+            // Anuncio completado - registrar recompensa PTS
+            this.haptic('success');
+            
+            // Llamar al endpoint de PTS (separado de gigapub.html)
+            const response = await fetch('/gigapub/pts-reward', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: this.userId })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Actualizar contador de anuncios restantes
+                if (data.ads_remaining !== undefined) {
+                    document.getElementById('ads-remaining').textContent = data.ads_remaining;
+                }
+                
+                // Mostrar mensaje con o sin bonus
+                if (data.bonus && data.pts > 5) {
+                    this.toast(`🎉 +${data.pts} PTS (¡Bonus 5 anuncios!)`, 'success');
+                } else {
+                    this.toast(`✓ +${data.pts || 5} PTS`, 'success');
+                }
+                this.loadStatus();
+            } else {
+                // Verificar si es error de límite
+                if (data.limit_reached) {
+                    this.toast('❌ Límite diario alcanzado (10 anuncios)', 'error');
+                    document.getElementById('ads-remaining').textContent = '0';
+                } else {
+                    this.toast(data.error || 'Error', 'error');
+                }
+            }
+
+        } catch (e) {
+            console.warn('[PTS] Ad error:', e);
+            this.toast('Anuncio cancelado', 'warning');
+        }
+    },
+
+    // ============================================
+    // doubleCheckin() - GigaPub OPTIMIZADO
+    // ============================================
+    async doubleCheckin() {
+        if (!this.userId) {
+            this.toast('Error', 'error');
+            return;
+        }
+
+        // Verificar SDK de GigaPub
+        if (typeof window.showGiga !== 'function') {
+            this.toast('Anuncios no disponibles', 'error');
+            return;
+        }
+
+        try {
+            // Mostrar anuncio directamente
+            await window.showGiga("principal");
+            
+            // Anuncio completado - duplicar check-in inmediatamente
+            this.haptic('success');
+            this.toast('Procesando...', 'info');
+
+            // Llamar al endpoint de duplicar
+            const r = await fetch(`/api/checkin/double?user_id=${this.userId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const d = await r.json();
+
+            if (d.success) {
+                this.toast(`✓ ${d.message}`, 'success');
+                // Ocultar botón de duplicar
+                const db = document.getElementById('checkin-double-btn');
+                if (db) db.style.display = 'none';
+                this.loadStatus();
+            } else {
+                this.toast(d.message || 'Error', 'error');
+            }
+
+        } catch (e) {
+            console.warn('[PTS] Double checkin error:', e);
+            this.toast('Anuncio cancelado', 'warning');
+        }
+    }
+};
+
+async function completeTask(taskId,taskUrl,taskType){try{const u=new URLSearchParams(window.location.search);const userId=u.get('user_id');if(!userId){showToast('Error','error');return}const b=event.target.closest('button');b.disabled=true;b.textContent='Verificando...';if(taskUrl&&(taskType==='telegram'||taskUrl.includes('t.me'))){if(window.Telegram?.WebApp){window.Telegram.WebApp.openTelegramLink(taskUrl)}else{window.open(taskUrl,'_blank')}await new Promise(r=>setTimeout(r,5000))}else if(taskUrl){window.open(taskUrl,'_blank');await new Promise(r=>setTimeout(r,2000))}const r=await fetch(`/api/task/complete?user_id=${userId}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task_id:taskId})});const d=await r.json();if(d.success){showToast(`✓ +${d.reward} S-E`,'success');if(window.Telegram?.WebApp)window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');setTimeout(()=>location.reload(),1500)}else{showToast(d.message||'Error','error');b.disabled=false;b.textContent='Completar'}}catch(e){showToast('Error','error');event.target.closest('button').disabled=false;event.target.closest('button').textContent='Completar'}}
+
+async function loadUserTasks(){
+    const u=new URLSearchParams(window.location.search);
+    const userId=u.get('user_id');
+    if(!userId){
+        document.getElementById('user-tasks-list').innerHTML='<div style="text-align:center;padding:var(--space-4);color:var(--color-error);"><p style="margin:0;">Usuario no identificado</p></div>';
+        return;
+    }
+    try{
+        const r=await fetch(`/api/user-tasks/list?user_id=${userId}`);
+        const d=await r.json();
+        console.log('[UserTasks] Response:',d);
+        
+        // Mostrar advertencias de penalización si existen
+        if(d.warnings && d.warnings.length > 0){
+            d.warnings.forEach(w => {
+                showPenaltyWarning(w.channel, w.amount);
+            });
+        }
+        
+        // Mostrar penalizaciones aplicadas en tiempo real
+        if(d.penalties_applied && d.penalties_applied.length > 0){
+            d.penalties_applied.forEach(p => {
+                showPenaltyWarning(p.channel, p.amount);
+            });
+        }
+        
+        const c=document.getElementById('user-tasks-list');
+        if(d.success&&d.tasks&&d.tasks.length>0){
+            c.innerHTML=d.tasks.map(task=>`<div class="user-task-item" style="display:flex;align-items:center;padding:var(--space-3);background:var(--glass-ultra);border-radius:var(--radius-md);border:1px solid rgba(255,215,0,0.15);"><div style="flex-shrink:0;width:40px;height:40px;background:linear-gradient(135deg,${getTaskColor(task.task_type)});border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin-right:var(--space-3);">${getTaskIcon(task.task_type)}</div><div style="flex:1;min-width:0;"><div style="font-weight:600;color:var(--color-text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(task.title)}</div><div style="display:flex;align-items:center;gap:var(--space-2);font-size:0.75rem;"><span style="color:var(--color-neon-cyan);">+${task.reward} S-E</span><span style="color:var(--color-text-muted);">•</span><span style="color:var(--color-text-tertiary);">${task.completions}</span>${task.requires_join?'<span style="color:#FFD700;">🔒</span>':''}</div></div><button class="pts-btn-small" onclick="completeUserTask('${task.task_id}','${escapeHtml(task.url)}',${task.requires_join},'${escapeHtml(task.channel_username||'')}')"><span data-i18n="pts_complete">${t('pts_complete')}</span></button></div>`).join('');
+            if(typeof lucide!=='undefined')lucide.createIcons();
+        }else{
+            c.innerHTML=`<div style="text-align:center;padding:var(--space-6);color:var(--color-text-tertiary);"><i data-lucide="inbox" style="width:40px;height:40px;margin-bottom:var(--space-2);opacity:0.5;"></i><p style="margin:0;font-size:0.85rem;">${t('pts_no_community_tasks')}</p><p style="margin:var(--space-2) 0 0;font-size:0.75rem;color:var(--color-text-muted);">${t('pts_be_first')}</p></div>`;
+            if(typeof lucide!=='undefined')lucide.createIcons();
+        }
+    }catch(e){
+        console.error('[UserTasks] Error:',e);
+        document.getElementById('user-tasks-list').innerHTML='<div style="text-align:center;padding:var(--space-4);color:var(--color-error);"><p style="margin:0;">Error al cargar</p></div>';
+    }
+}
+
+function showPenaltyWarning(channel, amount){
+    // Remover modal anterior si existe
+    const existing = document.getElementById('penalty-warning');
+    if(existing) existing.remove();
+    
+    // Mostrar advertencia de penalización
+    const warningHtml = `
+        <div id="penalty-warning" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;">
+            <div style="background:linear-gradient(135deg,rgba(220,38,38,0.2) 0%,rgba(127,29,29,0.3) 100%);border:2px solid rgba(220,38,38,0.5);border-radius:16px;padding:24px;max-width:340px;text-align:center;">
+                <div style="font-size:48px;margin-bottom:16px;">😡</div>
+                <h3 style="color:#ef4444;font-size:1.2rem;font-weight:700;margin:0 0 12px;">¡PENALIZACIÓN APLICADA!</h3>
+                <p style="color:#fca5a5;font-size:0.9rem;margin:0 0 16px;">
+                    Te saliste del canal <strong style="color:#fff;">@${channel}</strong> antes de cumplir los 3 días requeridos.
+                </p>
+                <div style="background:rgba(220,38,38,0.3);border-radius:8px;padding:12px;margin-bottom:16px;">
+                    <span style="color:#fca5a5;font-size:0.85rem;">Se han deducido</span>
+                    <div style="color:#ef4444;font-size:1.5rem;font-weight:800;">-${amount.toFixed(4)} S-E</div>
+                </div>
+                <p style="color:#9ca3af;font-size:0.75rem;margin:0 0 16px;">
+                    ⚠️ Debes permanecer en los canales al menos 3 días después de completar una tarea.
+                </p>
+                <button onclick="document.getElementById('penalty-warning').remove();" style="background:linear-gradient(135deg,#ef4444 0%,#b91c1c 100%);color:#fff;border:none;border-radius:8px;padding:12px 24px;font-weight:600;cursor:pointer;width:100%;">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', warningHtml);
+    
+    // Vibración de error
+    if(window.Telegram?.WebApp?.HapticFeedback){
+        window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+    }
+}
+
+function getTaskColor(type){switch(type){case 'telegram_channel':case 'telegram_group':return 'rgba(0,136,204,0.2) 0%,rgba(0,100,180,0.2) 100%';case 'website':return 'rgba(232,82,170,0.2) 0%,rgba(112,11,73,0.2) 100%';case 'social':return 'rgba(0, 82, 204,0.2) 0%,rgba(0, 64, 255,0.2) 100%';default:return 'rgba(255,215,0,0.2) 0%,rgba(255,140,0,0.2) 100%'}}
+function getTaskIcon(type){switch(type){case 'telegram_channel':case 'telegram_group':return '<i data-lucide="send" style="width:20px;height:20px;color:#0088cc;"></i>';case 'website':return '<i data-lucide="globe" style="width:20px;height:20px;color:#3B82F6;"></i>';case 'social':return '<i data-lucide="share-2" style="width:20px;height:20px;color:#0052CC;"></i>';default:return '<i data-lucide="external-link" style="width:20px;height:20px;color:#FFD700;"></i>'}}
+function escapeHtml(str){if(!str)return '';const d=document.createElement('div');d.textContent=str;return d.innerHTML}
+
+async function completeUserTask(taskId,taskUrl,requiresJoin,channelUsername){const u=new URLSearchParams(window.location.search);const userId=u.get('user_id');if(!userId){showToast('Error','error');return}const b=event.target.closest('button');const o=b.innerHTML;b.disabled=true;b.innerHTML='<span>Verificando...</span>';try{if(taskUrl){if(taskUrl.includes('t.me')&&window.Telegram?.WebApp){window.Telegram.WebApp.openTelegramLink(taskUrl)}else{window.open(taskUrl,'_blank')}if(requiresJoin){showToast('⏳ Únete al canal y espera...','info');await new Promise(r=>setTimeout(r,6000))}else{await new Promise(r=>setTimeout(r,2000))}}const r=await fetch(`/api/user-tasks/complete?user_id=${userId}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task_id:taskId})});const d=await r.json();if(d.success){showToast(`✓ +${d.reward} S-E`,'success');if(window.Telegram?.WebApp){window.Telegram.WebApp.HapticFeedback.notificationOccurred('success')}setTimeout(()=>loadUserTasks(),1500)}else{showToast(d.message||'Error','error');b.disabled=false;b.innerHTML=o}}catch(e){console.error('[UserTasks] Error:',e);showToast('Error','error');b.disabled=false;b.innerHTML=o}}
+
+// Funciones para el modal de reglas
+function openRulesModal() {
+    const modal = document.getElementById('rules-modal');
+    modal.style.display = 'flex';
+    translateModalElements(modal);
+    if(window.Telegram?.WebApp?.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+}
+
+function closeRulesModal() {
+    const modal = document.getElementById('rules-modal');
+    modal.style.display = 'none';
+    if(window.Telegram?.WebApp?.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+}
+
+function translateModalElements(modal) {
+    if (typeof t !== 'function') return;
+    modal.querySelectorAll('[data-i18n]').forEach(elem => {
+        const key = elem.getAttribute('data-i18n');
+        const translated = t(key);
+        if (translated && translated !== key) {
+            elem.innerHTML = translated;
+        }
+    });
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{PTS.init();if(typeof lucide!=='undefined')lucide.createIcons();loadUserTasks()});
+</script>
+
+<!-- MODAL DE REGLAS -->
+<div id="rules-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.95); z-index: 10000; overflow-y: auto; padding: 20px; align-items: flex-start; justify-content: center;">
+    <div style="background: linear-gradient(135deg, rgba(0, 102, 255, 0.15) 0%, rgba(0, 61, 153, 0.15) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 2px solid rgba(0, 102, 255, 0.3); border-radius: 20px; padding: 24px; max-width: 600px; width: 100%; margin: 20px auto; position: relative;">
+        
+        <!-- Botón cerrar -->
+        <button onclick="closeRulesModal()" style="position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; background: rgba(0, 102, 255, 0.2); border: 1px solid rgba(0, 102, 255, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;">
+            <i data-lucide="x" style="width: 20px; height: 20px; color: #3B82F6;"></i>
+        </button>
+
+        <!-- Encabezado -->
+        <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid rgba(0, 102, 255, 0.2);">
+            <div style="font-size: 48px; margin-bottom: 12px;">📘</div>
+            <h2 style="font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #3B82F6 0%, #003D99 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;" data-i18n="task_rules_title"></h2>
+            <p style="font-size: 0.85rem; color: var(--color-text-tertiary); margin: 8px 0 0;" data-i18n="task_rules_subtitle"></p>
+        </div>
+
+        <!-- Contenido de las reglas -->
+        <div style="color: var(--color-text-primary); line-height: 1.7; font-size: 0.9rem;">
+            <p style="margin: 0 0 16px; color: var(--color-text-secondary);" data-i18n="task_rules_intro"></p>
+            
+            <p style="margin: 0 0 16px; color: var(--color-text-secondary); font-weight: 600;" data-i18n="task_rules_acceptance"></p>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #3B82F6; margin: 24px 0 12px;" data-i18n="task_rules_1_title"></h3>
+            <ul style="margin: 0 0 16px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_1_1"></li>
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_1_2"></li>
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_1_3"></li>
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_1_4"></li>
+            </ul>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #3B82F6; margin: 24px 0 12px;" data-i18n="task_rules_2_title"></h3>
+            <p style="margin: 0 0 12px; color: var(--color-text-secondary);" data-i18n="task_rules_2_intro"></p>
+            
+            <h4 style="font-size: 0.95rem; font-weight: 600; color: #fca5a5; margin: 16px 0 8px;" data-i18n="task_rules_2_1_title"></h4>
+            <p style="margin: 0 0 12px; color: var(--color-text-secondary);" data-i18n="task_rules_2_1_text"></p>
+
+            <h4 style="font-size: 0.95rem; font-weight: 600; color: #fca5a5; margin: 16px 0 8px;" data-i18n="task_rules_2_2_title"></h4>
+            <p style="margin: 0 0 12px; color: var(--color-text-secondary);" data-i18n="task_rules_2_2_text"></p>
+
+            <h4 style="font-size: 0.95rem; font-weight: 600; color: #fca5a5; margin: 16px 0 8px;" data-i18n="task_rules_2_3_title"></h4>
+            <p style="margin: 0 0 12px; color: var(--color-text-secondary);" data-i18n="task_rules_2_3_text"></p>
+
+            <h4 style="font-size: 0.95rem; font-weight: 600; color: #fca5a5; margin: 16px 0 8px;" data-i18n="task_rules_2_4_title"></h4>
+            <p style="margin: 0 0 8px; color: var(--color-text-secondary);" data-i18n="task_rules_2_4_intro"></p>
+            <ul style="margin: 0 0 12px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 6px;" data-i18n="task_rules_2_4_1"></li>
+                <li style="margin-bottom: 6px;" data-i18n="task_rules_2_4_2"></li>
+                <li style="margin-bottom: 6px;" data-i18n="task_rules_2_4_3"></li>
+            </ul>
+
+            <h4 style="font-size: 0.95rem; font-weight: 600; color: #fca5a5; margin: 16px 0 8px;" data-i18n="task_rules_2_5_title"></h4>
+            <p style="margin: 0 0 12px; color: var(--color-text-secondary);" data-i18n="task_rules_2_5_text"></p>
+
+            <h4 style="font-size: 0.95rem; font-weight: 600; color: #fca5a5; margin: 16px 0 8px;" data-i18n="task_rules_2_6_title"></h4>
+            <p style="margin: 0 0 8px; color: var(--color-text-secondary);" data-i18n="task_rules_2_6_intro"></p>
+            <ul style="margin: 0 0 12px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 6px;" data-i18n="task_rules_2_6_1"></li>
+                <li style="margin-bottom: 6px;" data-i18n="task_rules_2_6_2"></li>
+                <li style="margin-bottom: 6px;" data-i18n="task_rules_2_6_3"></li>
+            </ul>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #3B82F6; margin: 24px 0 12px;" data-i18n="task_rules_3_title"></h3>
+            <ul style="margin: 0 0 16px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_3_1"></li>
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_3_2"></li>
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_3_3"></li>
+            </ul>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #3B82F6; margin: 24px 0 12px;" data-i18n="task_rules_4_title"></h3>
+            <ul style="margin: 0 0 16px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_4_1"></li>
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_4_2"></li>
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_4_3"></li>
+            </ul>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #3B82F6; margin: 24px 0 12px;" data-i18n="task_rules_5_title"></h3>
+            <p style="margin: 0 0 8px; color: var(--color-text-secondary); font-weight: 600;" data-i18n="task_rules_5_intro"></p>
+            <ul style="margin: 0 0 12px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 6px;" data-i18n="task_rules_5_1"></li>
+                <li style="margin-bottom: 6px;" data-i18n="task_rules_5_2"></li>
+                <li style="margin-bottom: 6px;" data-i18n="task_rules_5_3"></li>
+                <li style="margin-bottom: 6px;" data-i18n="task_rules_5_4"></li>
+            </ul>
+            <p style="margin: 0 0 16px; color: var(--color-text-secondary);" data-i18n="task_rules_5_conclusion"></p>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #3B82F6; margin: 24px 0 12px;" data-i18n="task_rules_6_title"></h3>
+            <ul style="margin: 0 0 16px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_6_1"></li>
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_6_2"></li>
+                <li style="margin-bottom: 8px;" data-i18n="task_rules_6_3"></li>
+            </ul>
+        </div>
+
+        <!-- Botón cerrar al final -->
+        <button onclick="closeRulesModal()" style="width: 100%; padding: 14px; margin-top: 24px; background: linear-gradient(135deg, #3B82F6 0%, #003D99 100%); border: none; border-radius: 12px; color: white; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 20px rgba(0, 102, 255, 0.3); transition: all 0.3s ease;" data-i18n="task_rules_understood">
+        </button>
+    </div>
+</div>
+
+<style>
+#rules-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 40px rgba(0, 102, 255, 0.4);
+}
+
+#rules-modal::-webkit-scrollbar {
+    width: 8px;
+}
+
+#rules-modal::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+#rules-modal::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #3B82F6 0%, #003D99 100%);
+    border-radius: 4px;
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Tareas - SALLY-E Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-header h1 {
+            color: #003D99;
+            font-size: 24px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: transform 0.2s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .content-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-box .value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-box .label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .stat-box.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .stat-box.warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #0066FF;
+        }
+
+        .task-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .task-card:hover {
+            border-color: #0066FF;
+            box-shadow: 0 5px 15px rgba(0, 102, 255, 0.2);
+        }
+
+        .task-card.inactive {
+            background: #f5f5f5;
+            opacity: 0.7;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .task-type {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #003D99;
+            color: white;
+            margin-right: 8px;
+        }
+
+        .task-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #003D99;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-edit {
+            background: #4488ff;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #0066cc;
+        }
+
+        .btn-toggle {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-toggle:hover {
+            background: #e0a800;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background: #44ff44;
+            color: #006600;
+        }
+
+        .badge-inactive {
+            background: #ff4444;
+            color: white;
+        }
+
+        .badge-channel {
+            background: #17a2b8;
+            color: white;
+            margin-left: 5px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .channel-info {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #e3f2fd;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #1565c0;
+        }
+
+        .channel-info .icon {
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .task-header {
+                flex-direction: column;
+            }
+
+            .task-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>📋 Gestión de Tareas</h1>
+            <div class="header-actions">
+                <a href="{{ url_for('admin_task_create') }}" class="nav-btn success">➕ Nueva Tarea</a>
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">← Volver al Dashboard</a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="content-container">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="value">{{ tasks|length if tasks else 0 }}</div>
+                    <div class="label">Total Tareas</div>
+                </div>
+                <div class="stat-box success">
+                    <div class="value">{{ tasks|selectattr('active')|list|length if tasks else 0 }}</div>
+                    <div class="label">Activas</div>
+                </div>
+                <div class="stat-box warning">
+                    <div class="value">{{ tasks|rejectattr('active')|list|length if tasks else 0 }}</div>
+                    <div class="label">Inactivas</div>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar tareas..." onkeyup="filterTasks()">
+            </div>
+
+            {% if tasks and tasks|length > 0 %}
+                {% for task in tasks %}
+                <div class="task-card {% if not task.active %}inactive{% endif %}" data-search="{{ task.title|lower }} {{ task.description|default('')|lower }}">
+                    <div class="task-header">
+                        <div class="task-info">
+                            <div class="task-title">
+                                {{ task.title or 'Sin título' }}
+                                {% if task.active %}
+                                    <span class="badge badge-active">✅ ACTIVA</span>
+                                {% else %}
+                                    <span class="badge badge-inactive">❌ INACTIVA</span>
+                                {% endif %}
+                                {% if task.requires_channel_join %}
+                                    <span class="badge badge-channel">📢 Verifica Canal</span>
+                                {% endif %}
+                            </div>
+                            <div style="margin-top: 5px;">
+                                <span class="task-type">{{ task.task_type|upper if task.task_type else 'GENERAL' }}</span>
+                                {% if task.url %}
+                                    <a href="{{ task.url }}" target="_blank" style="color: #0088cc; font-size: 12px;">🔗 Ver enlace</a>
+                                {% endif %}
+                            </div>
+                            {% if task.description %}
+                                <p style="margin-top: 10px; color: #666; font-size: 13px;">{{ task.description }}</p>
+                            {% endif %}
+                            
+                            <!-- Mostrar información del canal si requiere verificación -->
+                            {% if task.requires_channel_join and task.channel_username %}
+                            <div class="channel-info">
+                                <span class="icon">📢</span>
+                                <span>Requiere unirse a: <strong>@{{ task.channel_username }}</strong></span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="task-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">💰 Recompensa S-E</div>
+                            <div class="stat-value">{{ "%.4f"|format(task.reward or 0) }}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">✅ Completadas</div>
+                            <div class="stat-value">{{ task.current_completions or 0 }}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">🎯 Máximo</div>
+                            <div class="stat-value">{{ task.max_completions if task.max_completions else '∞' }}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">📅 Creada</div>
+                            <div class="stat-value" style="font-size: 11px;">
+                                {% if task.created_at %}
+                                    {% if task.created_at is string %}
+                                        {{ task.created_at[:10] }}
+                                    {% else %}
+                                        {{ task.created_at.strftime('%Y-%m-%d') if task.created_at.strftime is defined else 'N/A' }}
+                                    {% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="task-actions">
+                        <!-- FIXED: Usar task.task_id en lugar de task.id -->
+                        <a href="{{ url_for('admin_task_edit', task_id=task.task_id) }}" class="btn btn-edit">✏️ Editar</a>
+                        <form method="POST" action="{{ url_for('admin_task_toggle', task_id=task.task_id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-toggle">
+                                {% if task.active %}⏸️ Desactivar{% else %}▶️ Activar{% endif %}
+                            </button>
+                        </form>
+                        <!-- FIXED: Usar task.task_id para eliminar -->
+                        <form method="POST" action="{{ url_for('admin_task_delete', task_id=task.task_id) }}" style="display: inline;" onsubmit="return confirmDelete(this, '{{ task.title }}');">
+                            <button type="submit" class="btn btn-delete">🗑️ Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No hay tareas creadas aún.</p>
+                    <a href="{{ url_for('admin_task_create') }}" class="nav-btn success" style="margin-top: 15px;">➕ Crear Primera Tarea</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function filterTasks() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.task-card');
+            
+            cards.forEach(card => {
+                const searchData = card.dataset.search;
+                if (searchData.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function confirmDelete(form, taskTitle) {
+            return confirm('¿Estás seguro de que deseas eliminar la tarea "' + taskTitle + '"?\n\nEsta acción no se puede deshacer.');
+        }
+    </script>
+</body>
+</html>

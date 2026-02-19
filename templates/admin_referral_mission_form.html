@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Editar' if mission else 'Nueva' }} Misión - SALLY-E Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-header h1 {
+            color: #003D99;
+            font-size: 24px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .content-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group .hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0066FF;
+        }
+
+        .form-control:disabled {
+            background: #f5f5f5;
+            color: #999;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row.three-cols {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #003D99;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        /* Preview Card */
+        .preview-card {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .preview-title {
+            color: white;
+            font-size: 14px;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+
+        .preview-mission {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .preview-mission-title {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .preview-mission-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .preview-reward {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: #1a1a2e;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .preview-progress {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .preview-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            border-radius: 4px;
+        }
+
+        .preview-progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 6px;
+        }
+
+        /* Stats section (solo en edición) */
+        .stats-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #003D99;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-info {
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+            color: #0369a1;
+        }
+
+        @media (max-width: 768px) {
+            .form-row,
+            .form-row.three-cols {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>{{ '✏️ Editar' if mission else '➕ Nueva' }} Misión de Referidos</h1>
+            <a href="{{ url_for('referral_missions.admin_missions') }}" class="nav-btn">← Volver</a>
+        </div>
+
+        <div class="content-container">
+            {% if mission %}
+            <!-- Estadísticas de la misión (solo en modo edición) -->
+            {% if details %}
+            <div class="stats-section">
+                <h3 style="margin-bottom: 15px; color: #333;">📊 Estadísticas de esta Misión</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ details.progress.get('in_progress', 0) }}</div>
+                        <div class="stat-label">En Progreso</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ details.progress.get('completed', 0) }}</div>
+                        <div class="stat-label">Completadas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ details.progress.get('claimed', 0) }}</div>
+                        <div class="stat-label">Reclamadas</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+
+            <form action="{{ url_for('referral_missions.admin_mission_update', mission_id=mission.mission_id) if mission else url_for('referral_missions.admin_mission_create') }}" method="POST">
+                
+                <div class="section-title">📋 Información Básica</div>
+
+                <div class="form-group">
+                    <label for="mission_id">ID de la Misión *</label>
+                    <input type="text" 
+                           id="mission_id" 
+                           name="mission_id" 
+                           class="form-control" 
+                           value="{{ mission.mission_id if mission else '' }}"
+                           placeholder="ej: mission_3_refs"
+                           pattern="[a-z0-9_]+"
+                           required
+                           {{ 'disabled' if mission else '' }}>
+                    <div class="hint">Solo letras minúsculas, números y guiones bajos. No se puede cambiar después.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Título *</label>
+                    <input type="text" 
+                           id="title" 
+                           name="title" 
+                           class="form-control" 
+                           value="{{ mission.title if mission else '' }}"
+                           placeholder="ej: Invitar 3 amigos"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descripción</label>
+                    <textarea id="description" 
+                              name="description" 
+                              class="form-control" 
+                              placeholder="Describe la misión y lo que el usuario debe hacer...">{{ mission.description if mission else '' }}</textarea>
+                </div>
+
+                <div class="section-title">🎯 Requisitos y Recompensa</div>
+
+                <div class="form-row three-cols">
+                    <div class="form-group">
+                        <label for="required_referrals">Referidos Requeridos *</label>
+                        <input type="number" 
+                               id="required_referrals" 
+                               name="required_referrals" 
+                               class="form-control" 
+                               value="{{ mission.required_referrals if mission else 3 }}"
+                               min="1"
+                               max="1000"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reward_amount">Cantidad de Recompensa *</label>
+                        <input type="number" 
+                               id="reward_amount" 
+                               name="reward_amount" 
+                               class="form-control" 
+                               value="{{ mission.reward_amount if mission else 0.5 }}"
+                               min="0.0001"
+                               step="0.0001"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reward_currency">Moneda *</label>
+                        <select id="reward_currency" name="reward_currency" class="form-control" required>
+                            <option value="DOGE" {{ 'selected' if not mission or mission.reward_currency == 'DOGE' else '' }}>DOGE</option>
+                            <option value="SE" {{ 'selected' if mission and mission.reward_currency == 'SE' else '' }}>S-E</option>
+                            <option value="USDT" {{ 'selected' if mission and mission.reward_currency == 'USDT' else '' }}>USDT</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section-title">⚙️ Configuración</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="display_order">Orden de Visualización</label>
+                        <input type="number" 
+                               id="display_order" 
+                               name="display_order" 
+                               class="form-control" 
+                               value="{{ mission.display_order if mission else 0 }}"
+                               min="0">
+                        <div class="hint">Menor número = aparece primero</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" 
+                                   id="active" 
+                                   name="active"
+                                   {{ 'checked' if not mission or mission.active else '' }}>
+                            <label for="active">Misión activa</label>
+                        </div>
+                        <div class="hint" style="margin-left: 30px;">Las misiones inactivas no aparecen para los usuarios</div>
+                    </div>
+                </div>
+
+                {% if not mission %}
+                <div class="alert alert-info">
+                    💡 <strong>Nota:</strong> Una vez creada la misión, el ID no podrá ser modificado. 
+                    Los usuarios que completen esta misión mientras esté activa podrán reclamar la recompensa.
+                </div>
+                {% endif %}
+
+                <button type="submit" class="btn-submit">
+                    {{ '💾 Guardar Cambios' if mission else '✨ Crear Misión' }}
+                </button>
+            </form>
+
+            <!-- Vista previa -->
+            <div class="preview-card">
+                <div class="preview-title">👁️ Vista Previa (cómo verán los usuarios)</div>
+                <div class="preview-mission">
+                    <div class="preview-header">
+                        <div>
+                            <div class="preview-mission-title" id="preview-title">Invitar 3 amigos</div>
+                            <div class="preview-mission-desc" id="preview-desc">Invita a 3 nuevos usuarios</div>
+                        </div>
+                        <div class="preview-reward" id="preview-reward">0.5 DOGE</div>
+                    </div>
+                    <div class="preview-progress">
+                        <div class="preview-progress-fill"></div>
+                    </div>
+                    <div class="preview-progress-text">
+                        <span>0 / <span id="preview-required">3</span> referidos</span>
+                        <span>0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Actualizar vista previa en tiempo real
+        document.getElementById('title').addEventListener('input', function() {
+            document.getElementById('preview-title').textContent = this.value || 'Título de la misión';
+        });
+
+        document.getElementById('description').addEventListener('input', function() {
+            document.getElementById('preview-desc').textContent = this.value || 'Descripción de la misión';
+        });
+
+        document.getElementById('required_referrals').addEventListener('input', function() {
+            document.getElementById('preview-required').textContent = this.value || '3';
+        });
+
+        function updateRewardPreview() {
+            const amount = document.getElementById('reward_amount').value || '0';
+            const currency = document.getElementById('reward_currency').value || 'DOGE';
+            document.getElementById('preview-reward').textContent = amount + ' ' + currency;
+        }
+
+        document.getElementById('reward_amount').addEventListener('input', updateRewardPreview);
+        document.getElementById('reward_currency').addEventListener('change', updateRewardPreview);
+
+        // Inicializar vista previa si hay datos
+        {% if mission %}
+        document.getElementById('preview-title').textContent = '{{ mission.title }}';
+        document.getElementById('preview-desc').textContent = '{{ mission.description or "" }}';
+        document.getElementById('preview-required').textContent = '{{ mission.required_referrals }}';
+        document.getElementById('preview-reward').textContent = '{{ mission.reward_amount }} {{ mission.reward_currency }}';
+        {% endif %}
+    </script>
+</body>
+</html>

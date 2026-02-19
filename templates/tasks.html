@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block title %}SALLY-E | Tasks{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="page-title">
+        <i data-lucide="check-square"></i> <span data-i18n="tasks_title">Tasks</span>
+    </h1>
+
+    <!-- Estadísticas de tareas -->
+    <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: var(--space-6);">
+        <div class="stat-card">
+            <div class="stat-value">{{ completed_tasks|length }}</div>
+            <div class="stat-label" data-i18n="completed">Completed</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ available_tasks|length }}</div>
+            <div class="stat-label" data-i18n="available_tasks">Available</div>
+        </div>
+    </div>
+
+    <!-- Tareas Disponibles -->
+    <div class="card">
+        <h2 class="section-title" data-i18n="available_tasks">Available Tasks</h2>
+
+        {% if available_tasks %}
+            <div class="item-list">
+                {% for task_id, task in available_tasks.items() %}
+                <div class="item">
+                    <!-- Icono según el tipo de tarea -->
+                    <div class="item-icon">
+                        {% if task.task_type == 'telegram' %}
+                            <i data-lucide="send" style="color: #0088cc;"></i>
+                        {% elif task.task_type == 'social' %}
+                            <i data-lucide="share-2" style="color: #3B82F6;"></i>
+                        {% elif task.task_type == 'external' %}
+                            <i data-lucide="external-link" style="color: #0066FF;"></i>
+                        {% else %}
+                            <i data-lucide="check-circle" style="color: #003D99;"></i>
+                        {% endif %}
+                    </div>
+
+                    <!-- Contenido de la tarea -->
+                    <div class="item-content">
+                        <div class="item-title">{{ task.title }}</div>
+                        <div class="item-subtitle">+{{ task.reward }} S-E</div>
+                    </div>
+
+                    <!-- Botón de completar -->
+                    <button class="btn btn-primary btn-sm" onclick="completeTask('{{ task_id }}', '{{ task.url or '' }}', '{{ task.task_type or 'link' }}')">
+                        <span data-i18n="complete">Complete</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Mensaje cuando no hay tareas -->
+            <div style="text-align: center; padding: 40px 20px; color: var(--color-text-tertiary);">
+                <i data-lucide="inbox" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                <p data-i18n="no_tasks">No tasks available</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Tareas Completadas (opcional) -->
+    {% if completed_tasks %}
+    <div class="card" style="margin-top: var(--space-6);">
+        <h2 class="section-title" data-i18n="completed_tasks">Completed Tasks</h2>
+        <div class="item-list">
+            {% for task_id, task in completed_tasks.items() %}
+            <div class="item" style="opacity: 0.6;">
+                <div class="item-icon">
+                    <i data-lucide="check-circle" style="color: #00aa00;"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">{{ task.title }}</div>
+                    <div class="item-subtitle">{{ task.reward }} S-E</div>
+                </div>
+                <div style="color: #00aa00; font-weight: 600; font-size: 0.875rem;">
+                    ✓ <span data-i18n="completed">Completed</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Función para completar una tarea
+async function completeTask(taskId, taskUrl, taskType) {
+    try {
+        // Obtener el user_id de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('user_id');
+
+        if (!userId) {
+            showToast(window.tt ? window.tt('toast_user_not_identified') : 'Error: Usuario no identificado', 'error');
+            return;
+        }
+
+        // Deshabilitar el botón para evitar doble clic
+        const btn = event.target;
+        btn.disabled = true;
+        const verifyingText = window.tt ? window.tt('toast_validating') : 'Verificando...';
+        btn.textContent = verifyingText;
+
+        // Si la tarea es de Telegram con URL, abrir y verificar
+        if (taskUrl && taskUrl !== '' && (taskType === 'telegram' || taskUrl.includes('t.me'))) {
+            // Abrir la URL de la tarea
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.openTelegramLink(taskUrl);
+            } else {
+                window.open(taskUrl, '_blank');
+            }
+
+            showToast(window.tt ? window.tt('toast_join_channel') : 'Únete al canal y espera la verificación...', 'info');
+
+            // Esperar 5 segundos para dar tiempo al usuario de unirse
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            // Verificar primero
+            const verifyResult = await verifyTelegramMembership(taskId, userId);
+
+            if (!verifyResult.verified) {
+                showToast(window.tt ? window.tt('toast_must_join_channel') : 'Debes unirte al canal primero', 'error');
+                btn.disabled = false;
+                btn.textContent = window.t ? window.t('complete') : 'Completar';
+                return;
+            }
+
+            // Si verificó, proceder a completar
+            await submitTaskCompletion(taskId, userId, btn);
+
+        } else if (taskUrl && taskUrl !== '') {
+            // Para otras URLs, abrir y esperar menos
+            window.open(taskUrl, '_blank');
+            showToast(window.tt ? window.tt('toast_completing_task') : 'Completando tarea...', 'info');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            await submitTaskCompletion(taskId, userId, btn);
+        } else {
+            // Si no tiene URL, completar directamente
+            await submitTaskCompletion(taskId, userId, btn);
+        }
+    } catch (error) {
+        console.error('Error al completar tarea:', error);
+        showToast(window.tt ? window.tt('toast_task_error') : 'Error al completar la tarea', 'error');
+        const btn = event.target;
+        btn.disabled = false;
+        btn.textContent = window.t ? window.t('complete') : 'Completar';
+    }
+}
+
+// Función para verificar membresía de Telegram
+async function verifyTelegramMembership(taskId, userId) {
+    try {
+        const response = await fetch(`/api/task/verify?user_id=${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                task_id: taskId,
+                user_id: userId
+            })
+        });
+
+        const data = await response.json();
+        return { verified: data.verified || false, message: data.message };
+    } catch (error) {
+        console.error('Error verificando membresía:', error);
+        return { verified: false, message: window.tt ? window.tt('toast_connection_error') : 'Error de conexión' };
+    }
+}
+
+// Función para enviar la completación de tarea
+async function submitTaskCompletion(taskId, userId, btn) {
+    try {
+        const response = await fetch(`/api/task/complete?user_id=${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                task_id: taskId
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            const taskCompletedText = window.tt ? window.tt('toast_task_completed') : '¡Tarea completada!';
+            showToast(`${taskCompletedText} +${data.reward} S-E`, 'success');
+
+            // Vibración de éxito
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+
+            // Recargar la página después de 1.5 segundos
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            // Mostrar mensaje de error específico
+            if (data.verification_failed) {
+                showToast(window.tt ? window.tt('toast_must_join_channel') : 'Debes unirte al canal y permanecer como miembro', 'error');
+            } else {
+                showToast(data.message || (window.tt ? window.tt('toast_task_error') : 'Error al completar la tarea'), 'error');
+            }
+            btn.disabled = false;
+            btn.textContent = window.t ? window.t('complete') : 'Completar';
+        }
+    } catch (error) {
+        console.error('Error en la completación:', error);
+        showToast(window.tt ? window.tt('toast_task_error') : 'Error al completar la tarea', 'error');
+        btn.disabled = false;
+        btn.textContent = window.t ? window.t('complete') : 'Completar';
+    }
+}
+
+// Inicializar lucide icons cuando cargue la página
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+</script>
+{% endblock %}

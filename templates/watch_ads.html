@@ -1,0 +1,703 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Misión Diaria{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.08) 50%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(59, 130, 246, 0.2); position: relative; overflow: hidden;">
+        <!-- Elementos de fondo -->
+        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(37, 99, 235, 0.12) 0%, transparent 70%); border-radius: 50%; animation: float 10s ease-in-out infinite reverse;"></div>
+
+        <div style="position: relative; z-index: 1; text-align: center; padding: var(--space-4);">
+            <!-- Icono principal -->
+            <div class="floating" style="width: 80px; height: 80px; margin: 0 auto var(--space-4); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.2) 100%); border-radius: 20px; box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);">
+                <i data-lucide="tv" style="width: 40px; height: 40px; color: #3B82F6;"></i>
+            </div>
+
+            <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: var(--space-2); background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;" data-i18n="daily_mission">
+                Misión Diaria
+            </h1>
+            <p style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.6); line-height: 1.6;" data-i18n="complete_mission_earn">
+                Completa la misión para ganar DOGE
+            </p>
+        </div>
+    </div>
+
+    <!-- Progress Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.04) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(59, 130, 246, 0.2); margin-top: var(--space-4); position: relative; overflow: hidden;">
+        <div style="position: relative; z-index: 1;">
+            <!-- Progress Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(59, 130, 246, 0.1); border-radius: 12px;">
+                        <i data-lucide="target" style="width: 22px; height: 22px; color: #3B82F6;"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9375rem; color: white;" data-i18n="progress">Progreso</div>
+                        <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="completed_today">Completado hoy</div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div id="progress-text" style="font-weight: 700; font-size: 1.25rem; color: #3B82F6;">
+                        {{ progress.ads_watched }} / 15
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div style="height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; margin-bottom: var(--space-4);">
+                <div id="progress-bar" style="height: 100%; background: linear-gradient(90deg, #3B82F6 0%, #2563EB 100%); border-radius: 4px; transition: width 0.5s ease; width: {{ (progress.ads_watched / 15 * 100) }}%;"></div>
+            </div>
+
+            <!-- Reward Info -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-3); background: rgba(59, 130, 246, 0.05); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="display: flex; align-items: center; gap: var(--space-2);">
+                    <i data-lucide="coins" style="width: 18px; height: 18px; color: #3B82F6;"></i>
+                    <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7);" data-i18n="earned_today">Ganado hoy</span>
+                </div>
+                <div id="earned-amount" style="font-weight: 700; font-size: 1rem; color: #3B82F6;">
+                    {{ "%.3f"|format(progress.total_earned) }} DOGE
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(18, 18, 18, 0.98) 100%); border: 1px solid rgba(255, 255, 255, 0.1); margin-top: var(--space-4);">
+        <div style="text-align: center;">
+            <!-- Reward per view -->
+            <div style="margin-bottom: var(--space-4);">
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);" data-i18n="reward_per_view">Recompensa por vista</div>
+                <div style="font-weight: 700; font-size: 1.5rem; color: #3B82F6;">+0.005 DOGE</div>
+            </div>
+
+            <!-- Main Action Button -->
+            <button id="watch-ad-btn"
+                    onclick="watchAd()"
+                    {% if progress.completed %}disabled{% endif %}
+                    style="width: 100%; padding: var(--space-4); border-radius: 14px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; {% if progress.completed %}background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.5);{% else %}background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: #fff;{% endif %}">
+                {% if progress.completed %}
+                    <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
+                        <span data-i18n="completed">Completado</span>
+                    </span>
+                {% else %}
+                    <span id="btn-content" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i data-lucide="play" style="width: 20px; height: 20px;"></i>
+                        <span data-i18n="watch_ad">Ver Anuncio</span>
+                    </span>
+                {% endif %}
+            </button>
+
+            <!-- Info text -->
+            <div style="margin-top: var(--space-3); font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">
+                {% if progress.completed %}
+                    <span data-i18n="mission_complete_come_back">¡Misión completada! Vuelve mañana para más recompensas.</span>
+                {% else %}
+                    <span data-i18n="max_15_views">Máximo 15 vistas por día • 40 segundos entre cada vista</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Reward Info -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(59, 130, 246, 0.15); margin-top: var(--space-4);">
+        <div style="display: flex; align-items: center; gap: var(--space-3);">
+            <div style="flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(59, 130, 246, 0.1); border-radius: 12px;">
+                <i data-lucide="gift" style="width: 22px; height: 22px; color: #3B82F6;"></i>
+            </div>
+            <div>
+                <div style="font-weight: 600; font-size: 0.9375rem; color: white; margin-bottom: var(--space-1);">
+                    Recompensa Total
+                </div>
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">
+                    Completa las 15 vistas para ganar <span style="color: #3B82F6; font-weight: 600;">hasta 10 DOGE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Animación flotante */
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(10px, 10px);
+    }
+}
+
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Button states */
+#watch-ad-btn:disabled {
+    cursor: not-allowed;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+
+// State variables
+let isWatching = false;
+let cooldownTimer = null;
+let cooldownSeconds = 0;
+
+// Watch ad function - ONLY triggered by user click
+// IMPORTANTE: Solo da recompensa si el anuncio se muestra correctamente
+function watchAd() {
+    const btn = document.getElementById('watch-ad-btn');
+    const btnContent = document.getElementById('btn-content');
+
+    if (isWatching || btn.disabled) return;
+
+    // Haptic feedback
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+
+    isWatching = true;
+    btn.disabled = true;
+    const loadingText = window.tt ? window.tt('toast_system_loading') : 'Cargando anuncio...';
+    btnContent.innerHTML = `<i data-lucide="loader" style="width: 20px; height: 20px; animation: spin 1s linear infinite;"></i><span>${loadingText}</span>`;
+    lucide.createIcons();
+
+    // ============================================
+    // INTERSTITIAL AD (Unit ID: int-19115)
+    // CRÍTICO: Solo dar recompensa si el anuncio se muestra
+    // ============================================
+    if (window.showInterstitialAd) {
+        window.showInterstitialAd()
+            .then((result) => {
+                // SOLO dar recompensa si el anuncio se mostró correctamente
+                if (result.success && result.shown) {
+                    console.log('✅ [WatchAds] Interstitial ad shown successfully');
+                    registerAdView();
+                } else {
+                    // ❌ El anuncio NO se mostró - NO dar recompensa
+                    console.log('⚠️ [WatchAds] Interstitial not shown:', result.reason);
+                    
+                    // Mostrar mensaje de error
+                    if (result.reason === 'not_ready') {
+                        showToast('❌ Sistema de anuncios no listo. Intenta de nuevo.', 'warning');
+                    } else {
+                        showToast('❌ No hay anuncios disponibles. Intenta más tarde.', 'warning');
+                    }
+                    
+                    // Haptic feedback de error
+                    if (window.Telegram && window.Telegram.WebApp) {
+                        window.Telegram.WebApp.HapticFeedback.notificationOccurred('warning');
+                    }
+                    
+                    // Resetear botón para que pueda intentar de nuevo
+                    resetButton();
+                    isWatching = false;
+                }
+            })
+            .catch((error) => {
+                // ❌ Error - NO dar recompensa
+                console.warn('[WatchAds] Interstitial error:', error);
+                
+                // Verificar tipo de error
+                const errorMsg = error?.description || error?.message || '';
+                if (errorMsg.toLowerCase().includes('user')) {
+                    showToast('Anuncio cancelado', 'info');
+                } else if (errorMsg.toLowerCase().includes('no ads') || errorMsg.toLowerCase().includes('not available')) {
+                    showToast('❌ No hay anuncios disponibles. Intenta más tarde.', 'warning');
+                } else {
+                    showToast('❌ Error al cargar anuncio. Intenta de nuevo.', 'error');
+                }
+                
+                // Haptic feedback de error
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+                }
+                
+                // Resetear botón
+                resetButton();
+                isWatching = false;
+            });
+    } else {
+        // ❌ Sistema de anuncios no disponible - NO dar recompensa
+        console.log('⚠️ [WatchAds] Interstitial ad system not available');
+        showToast('❌ Sistema de anuncios no disponible', 'error');
+        
+        // Haptic feedback de error
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+        }
+        
+        // Resetear botón
+        resetButton();
+        isWatching = false;
+    }
+}
+
+// Register ad view with backend
+function registerAdView() {
+    const userId = window.USER_ID || new URLSearchParams(window.location.search).get('user_id');
+
+    fetch('/api/watch-ads/complete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            user_id: userId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            updateUI(data);
+
+            // Show success toast
+            showToast(`+${data.reward} DOGE`, 'success');
+
+            // Haptic feedback
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+
+            // Start cooldown if not completed
+            if (!data.completed) {
+                startCooldown(data.cooldown || 10);
+            }
+        } else {
+            // Handle cooldown or already completed
+            if (data.cooldown_remaining > 0) {
+                startCooldown(data.cooldown_remaining);
+            } else if (data.completed) {
+                setCompleted();
+            } else {
+                showToast(data.error || (window.t ? window.t('error_occurred') : 'Error'), 'error');
+                resetButton();
+            }
+        }
+
+        isWatching = false;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+        resetButton();
+        isWatching = false;
+    });
+}
+
+// Update UI with new data
+function updateUI(data) {
+    // Update progress text
+    document.getElementById('progress-text').textContent = `${data.ads_watched} / 15`;
+
+    // Update progress bar
+    const progressBar = document.getElementById('progress-bar');
+    progressBar.style.width = `${(data.ads_watched / 15) * 100}%`;
+
+    // Update earned amount
+    document.getElementById('earned-amount').textContent = `${data.total_earned.toFixed(3)} DOGE`;
+
+    // Check if completed
+    if (data.completed) {
+        setCompleted();
+    }
+}
+
+// Start cooldown timer
+function startCooldown(seconds) {
+    const btn = document.getElementById('watch-ad-btn');
+    const btnContent = document.getElementById('btn-content');
+
+    cooldownSeconds = seconds;
+    btn.disabled = true;
+    btn.style.background = 'rgba(255, 255, 255, 0.1)';
+    btn.style.color = 'rgba(255, 255, 255, 0.5)';
+
+    function updateTimer() {
+        if (cooldownSeconds > 0) {
+            btnContent.innerHTML = `<i data-lucide="clock" style="width: 20px; height: 20px;"></i><span>Espera ${cooldownSeconds}s</span>`;
+            lucide.createIcons();
+            cooldownSeconds--;
+            cooldownTimer = setTimeout(updateTimer, 1000);
+        } else {
+            resetButton();
+        }
+    }
+
+    updateTimer();
+}
+
+// Reset button to initial state
+function resetButton() {
+    const btn = document.getElementById('watch-ad-btn');
+    const btnContent = document.getElementById('btn-content');
+
+    btn.disabled = false;
+    btn.style.background = 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)';
+    btn.style.color = '#fff';
+    btnContent.innerHTML = '<i data-lucide="play" style="width: 20px; height: 20px;"></i><span>Ver Anuncio</span>';
+    lucide.createIcons();
+}
+
+// Set completed state
+function setCompleted() {
+    const btn = document.getElementById('watch-ad-btn');
+    const btnContent = document.getElementById('btn-content');
+
+    btn.disabled = true;
+    btn.style.background = 'rgba(255, 255, 255, 0.1)';
+    btn.style.color = 'rgba(255, 255, 255, 0.5)';
+    btnContent.innerHTML = '<i data-lucide="check-circle" style="width: 20px; height: 20px;"></i><span>Completado</span>';
+    lucide.createIcons();
+
+    // Update info text
+    const infoText = btn.nextElementSibling;
+    if (infoText) {
+        infoText.textContent = '¡Misión completada! Vuelve mañana para más recompensas.';
+    }
+}
+
+// Toast notification - Premium profesional
+function showToast(message, type) {
+    // Crear overlay con backdrop premium
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    `;
+
+    // Crear contenedor principal de notificación
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: relative;
+        background: linear-gradient(135deg, rgba(18, 18, 18, 0.98) 0%, rgba(30, 30, 30, 0.98) 100%);
+        padding: 0;
+        border-radius: 32px;
+        text-align: center;
+        box-shadow:
+            0 0 0 1px ${type === 'success' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(239, 68, 68, 0.3)'},
+            0 30px 90px rgba(0, 0, 0, 0.8),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        min-width: 320px;
+        max-width: 90vw;
+        overflow: hidden;
+    `;
+
+    // Efecto de brillo animado en el borde
+    const glowEffect = document.createElement('div');
+    glowEffect.style.cssText = `
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(135deg,
+            ${type === 'success' ? '#3B82F6, #2563EB, #3B82F6' : '#EF4444, #DC2626, #EF4444'});
+        border-radius: 32px;
+        opacity: 0.6;
+        filter: blur(20px);
+        animation: rotateGlow 3s linear infinite;
+        z-index: -1;
+    `;
+
+    // Header con gradiente
+    const header = document.createElement('div');
+    header.style.cssText = `
+        background: linear-gradient(135deg,
+            ${type === 'success' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(239, 68, 68, 0.15)'} 0%,
+            ${type === 'success' ? 'rgba(37, 99, 235, 0.05)' : 'rgba(220, 38, 38, 0.05)'} 100%);
+        padding: 40px 30px 30px;
+        border-bottom: 1px solid ${type === 'success' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(239, 68, 68, 0.2)'};
+        position: relative;
+        overflow: hidden;
+    `;
+
+    // Partículas de fondo
+    const particles = document.createElement('div');
+    particles.innerHTML = `
+        <div style="position: absolute; top: 10%; left: 10%; width: 4px; height: 4px; background: ${type === 'success' ? '#3B82F6' : '#EF4444'}; border-radius: 50%; animation: particle1 2s ease-in-out infinite;"></div>
+        <div style="position: absolute; top: 30%; right: 15%; width: 3px; height: 3px; background: ${type === 'success' ? '#60A5FA' : '#F87171'}; border-radius: 50%; animation: particle2 2.5s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: 20%; left: 20%; width: 5px; height: 5px; background: ${type === 'success' ? '#2563EB' : '#DC2626'}; border-radius: 50%; animation: particle3 3s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: 40%; right: 25%; width: 3px; height: 3px; background: ${type === 'success' ? '#60A5FA' : '#F87171'}; border-radius: 50%; animation: particle1 2.2s ease-in-out infinite;"></div>
+    `;
+    header.appendChild(particles);
+
+    // Contenedor del icono con anillo animado
+    const iconContainer = document.createElement('div');
+    iconContainer.style.cssText = `
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 20px;
+        z-index: 1;
+    `;
+
+    // Anillo exterior giratorio
+    const outerRing = document.createElement('div');
+    outerRing.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100px;
+        height: 100px;
+        border: 2px solid transparent;
+        border-top-color: ${type === 'success' ? '#3B82F6' : '#EF4444'};
+        border-right-color: ${type === 'success' ? '#3B82F6' : '#EF4444'};
+        border-radius: 50%;
+        animation: spin 2s linear infinite;
+        opacity: 0.6;
+    `;
+
+    // Icono central
+    const icon = document.createElement('div');
+    icon.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg,
+            ${type === 'success' ? 'rgba(59, 130, 246, 0.25)' : 'rgba(239, 68, 68, 0.25)'} 0%,
+            ${type === 'success' ? 'rgba(37, 99, 235, 0.15)' : 'rgba(220, 38, 38, 0.15)'} 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow:
+            0 0 30px ${type === 'success' ? 'rgba(59, 130, 246, 0.4)' : 'rgba(239, 68, 68, 0.4)'},
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        animation: iconPulse 1.5s ease-in-out infinite;
+    `;
+    icon.innerHTML = type === 'success'
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+
+    iconContainer.appendChild(outerRing);
+    iconContainer.appendChild(icon);
+    header.appendChild(iconContainer);
+
+    // Título principal
+    const title = document.createElement('div');
+    title.style.cssText = `
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: ${type === 'success' ? '#60A5FA' : '#F87171'};
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+    `;
+    title.textContent = type === 'success' ? '✨ Recompensa' : '⚠️ Error';
+    header.appendChild(title);
+
+    // Body con el mensaje principal
+    const body = document.createElement('div');
+    body.style.cssText = `
+        padding: 30px;
+    `;
+
+    // Mensaje principal con efecto gradiente
+    const messageText = document.createElement('div');
+    messageText.style.cssText = `
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg,
+            ${type === 'success' ? '#3B82F6 0%, #60A5FA 50%, #93C5FD 100%' : '#EF4444 0%, #F87171 50%, #FCA5A5 100%'});
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 12px;
+        text-shadow: 0 0 30px ${type === 'success' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(239, 68, 68, 0.3)'};
+        animation: textGlow 2s ease-in-out infinite;
+        letter-spacing: 1px;
+    `;
+    messageText.textContent = message;
+
+    // Subtítulo
+    const subtitle = document.createElement('div');
+    subtitle.style.cssText = `
+        font-size: 0.9375rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-weight: 500;
+        margin-bottom: 20px;
+    `;
+    subtitle.textContent = type === 'success' ? '¡Se ha añadido a tu balance!' : 'Algo salió mal';
+
+    // Línea decorativa
+    const divider = document.createElement('div');
+    divider.style.cssText = `
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            ${type === 'success' ? '#3B82F6' : '#EF4444'} 50%,
+            transparent 100%);
+        margin: 0 auto;
+        border-radius: 2px;
+        animation: dividerGlow 2s ease-in-out infinite;
+    `;
+
+    body.appendChild(messageText);
+    body.appendChild(subtitle);
+    body.appendChild(divider);
+
+    // Ensamblar notificación
+    notification.appendChild(glowEffect);
+    notification.appendChild(header);
+    notification.appendChild(body);
+    overlay.appendChild(notification);
+    document.body.appendChild(overlay);
+
+    // Cerrar automáticamente después de 3 segundos
+    setTimeout(() => {
+        overlay.style.animation = 'fadeOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        notification.style.animation = 'scaleOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        setTimeout(() => overlay.remove(), 400);
+    }, 3000);
+
+    // Cerrar al hacer clic en el overlay
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.style.animation = 'fadeOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            notification.style.animation = 'scaleOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            setTimeout(() => overlay.remove(), 400);
+        }
+    });
+}
+
+// Add CSS animations premium
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    @keyframes scaleIn {
+        from {
+            transform: scale(0.5) rotateX(-30deg);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1) rotateX(0deg);
+            opacity: 1;
+        }
+    }
+    @keyframes scaleOut {
+        from {
+            transform: scale(1) rotateX(0deg);
+            opacity: 1;
+        }
+        to {
+            transform: scale(0.8) rotateX(30deg);
+            opacity: 0;
+        }
+    }
+    @keyframes iconPulse {
+        0%, 100% {
+            transform: translate(-50%, -50%) scale(1);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.6);
+        }
+    }
+    @keyframes rotateGlow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    @keyframes particle1 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.3;
+        }
+        50% {
+            transform: translate(10px, -10px) scale(1.5);
+            opacity: 0.8;
+        }
+    }
+    @keyframes particle2 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.4;
+        }
+        50% {
+            transform: translate(-15px, 10px) scale(1.3);
+            opacity: 0.9;
+        }
+    }
+    @keyframes particle3 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.3;
+        }
+        50% {
+            transform: translate(8px, 12px) scale(1.4);
+            opacity: 0.7;
+        }
+    }
+    @keyframes textGlow {
+        0%, 100% {
+            filter: brightness(1);
+        }
+        50% {
+            filter: brightness(1.2);
+        }
+    }
+    @keyframes dividerGlow {
+        0%, 100% {
+            opacity: 0.5;
+            transform: scaleX(1);
+        }
+        50% {
+            opacity: 1;
+            transform: scaleX(1.1);
+        }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

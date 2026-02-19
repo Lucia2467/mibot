@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0008">
+    <title>{{ title or 'Incidencia Temporal' }} - SALLY-E</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-void: #050208;
+            --bg-deep: #0a0510;
+            --warning-neon: #ff6b35;
+            --warning-glow: #ff8c42;
+            --warning-soft: #ffa726;
+            --primary-electric: #c800ff;
+            --primary-glow: #e040fb;
+            --accent-cyan: #00d4ff;
+            --accent-red: #ff3d71;
+            --text-pure: #ffffff;
+            --text-soft: rgba(255,255,255,0.85);
+            --text-dim: rgba(255,255,255,0.5);
+            --glass-border: rgba(255,255,255,0.06);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-void);
+            color: var(--text-pure);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Background */
+        .cosmic-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            background: var(--bg-void);
+        }
+
+        .mesh-gradient {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 100% 100% at 0% 0%, rgba(255,107,53,0.12) 0%, transparent 50%),
+                radial-gradient(ellipse 80% 80% at 100% 100%, rgba(200,0,255,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 60% at 50% 0%, rgba(255,61,113,0.1) 0%, transparent 40%);
+            animation: meshMove 15s ease-in-out infinite;
+        }
+
+        @keyframes meshMove {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+        }
+
+        .orb-1 {
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, var(--warning-neon) 0%, transparent 70%);
+            top: -250px; right: -200px;
+            opacity: 0.3;
+            animation: orbPulse1 12s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, var(--primary-electric) 0%, transparent 70%);
+            bottom: -150px; left: -100px;
+            opacity: 0.25;
+            animation: orbPulse2 15s ease-in-out infinite;
+        }
+
+        .orb-3 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, var(--accent-red) 0%, transparent 70%);
+            top: 40%; left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.15;
+            animation: orbPulse3 8s ease-in-out infinite;
+        }
+
+        @keyframes orbPulse1 {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50px, 50px) scale(1.15); opacity: 0.4; }
+        }
+
+        @keyframes orbPulse2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(60px, -40px) scale(1.1); }
+        }
+
+        @keyframes orbPulse3 {
+            0%, 100% { opacity: 0.15; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.25; transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        .warning-pulse {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(255,107,53,0.05) 100%);
+            animation: warningPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,107,53,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,107,53,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 0%, transparent 70%);
+        }
+
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 560px;
+            padding: 25px;
+            transform: scale(0.8);
+            transform-origin: center center;
+        }
+
+        .glass-card {
+            position: relative;
+            background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
+            border: 1px solid var(--glass-border);
+            border-radius: 36px;
+            padding: 55px 45px;
+            text-align: center;
+            overflow: hidden;
+            box-shadow: 
+                0 0 0 1px rgba(255,255,255,0.04) inset,
+                0 40px 80px -20px rgba(0,0,0,0.5),
+                0 0 120px -40px var(--warning-glow);
+            animation: cardAppear 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(40px) scale(0.96);
+        }
+
+        @keyframes cardAppear {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, var(--warning-neon), var(--warning-glow), var(--warning-soft), var(--warning-neon));
+            background-size: 300% 300%;
+            border-radius: 38px;
+            z-index: -2;
+            opacity: 0.5;
+            animation: warningBorder 4s ease-in-out infinite;
+        }
+
+        @keyframes warningBorder {
+            0%, 100% { background-position: 0% 50%; opacity: 0.3; }
+            50% { background-position: 100% 50%; opacity: 0.6; }
+        }
+
+        .glass-card::after {
+            content: '';
+            position: absolute;
+            inset: 1px;
+            background: linear-gradient(135deg, var(--bg-deep) 0%, var(--bg-void) 100%);
+            border-radius: 35px;
+            z-index: -1;
+        }
+
+        /* Icon System */
+        .icon-system {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 40px;
+        }
+
+        .warning-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid var(--warning-glow);
+            opacity: 0.3;
+        }
+
+        .warning-ring-1 { inset: 0; animation: ringPulse 2s ease-out infinite; }
+        .warning-ring-2 { inset: -15px; animation: ringPulse 2s ease-out infinite 0.4s; }
+        .warning-ring-3 { inset: -30px; animation: ringPulse 2s ease-out infinite 0.8s; }
+
+        @keyframes ringPulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+
+        .rotate-ring {
+            position: absolute;
+            inset: 10px;
+            border: 2px dashed var(--warning-soft);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: rotateRing 20s linear infinite;
+        }
+
+        @keyframes rotateRing { to { transform: rotate(360deg); } }
+
+        .central-icon {
+            position: absolute;
+            inset: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: iconShake 0.5s ease-in-out, iconFloat 3s ease-in-out 0.5s infinite;
+        }
+
+        @keyframes iconShake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .icon-glow {
+            position: absolute;
+            inset: -10px;
+            background: radial-gradient(circle, var(--warning-glow) 0%, transparent 70%);
+            filter: blur(25px);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.15); }
+        }
+
+        .error-svg {
+            width: 55px;
+            height: 55px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .error-svg path,
+        .error-svg line {
+            fill: none;
+            stroke: url(#warningGradient);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Typography */
+        .title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            letter-spacing: -0.02em;
+            animation: textReveal 0.8s ease-out 0.2s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .title-gradient {
+            background: linear-gradient(135deg, var(--text-pure) 0%, var(--warning-glow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes textReveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-soft);
+            margin-bottom: 35px;
+            animation: textReveal 0.8s ease-out 0.4s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            animation: textReveal 0.8s ease-out 0.6s forwards;
+            opacity: 0;
+        }
+
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px 36px;
+            background: linear-gradient(135deg, var(--primary-electric) 0%, var(--primary-glow) 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px var(--primary-glow);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -15px var(--primary-glow);
+        }
+
+        .btn-primary:hover::before { opacity: 1; }
+        .btn-primary:active { transform: translateY(-2px); }
+
+        .btn-icon-svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s;
+        }
+
+        .btn-icon-svg path {
+            fill: none;
+            stroke: white;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .btn-primary:hover .btn-icon-svg {
+            animation: iconSpin 0.6s ease-in-out;
+        }
+
+        @keyframes iconSpin { to { transform: rotate(360deg); } }
+
+        .btn-secondary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            color: var(--text-soft);
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--primary-glow);
+            color: var(--text-pure);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary-svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-secondary-svg path {
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Status Indicator */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 28px;
+            padding: 12px 22px;
+            background: rgba(255,107,53,0.1);
+            border: 1px solid rgba(255,107,53,0.2);
+            border-radius: 100px;
+            animation: textReveal 0.8s ease-out 0.8s forwards;
+            opacity: 0;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--warning-glow);
+            border-radius: 50%;
+            animation: statusBlink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes statusBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .status-text {
+            font-size: 12px;
+            color: var(--warning-glow);
+            letter-spacing: 0.5px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid var(--glass-border);
+            animation: textReveal 0.8s ease-out 1s forwards;
+            opacity: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-electric) 0%, var(--primary-glow) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px -8px var(--primary-glow);
+        }
+
+        .brand-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .brand-icon svg path {
+            fill: white;
+        }
+
+        .brand-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-pure) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-text {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* Countdown */
+        .countdown {
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-dim);
+            animation: textReveal 0.8s ease-out 0.9s forwards;
+            opacity: 0;
+        }
+
+        .countdown-value {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .main-container { padding: 20px; }
+            .glass-card { padding: 40px 28px; border-radius: 28px; }
+            .icon-system { width: 120px; height: 120px; margin-bottom: 35px; }
+            .central-icon { inset: 25px; }
+            .error-svg { width: 45px; height: 45px; }
+            .title { font-size: 24px; }
+            .message { font-size: 14px; }
+            .btn-primary { padding: 16px 30px; font-size: 15px; }
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to { transform: scale(4); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- SVG Definitions -->
+    <svg style="position:absolute;width:0;height:0">
+        <defs>
+            <linearGradient id="warningGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffffff"/>
+                <stop offset="50%" style="stop-color:#ff8c42"/>
+                <stop offset="100%" style="stop-color:#ffa726"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <!-- Background -->
+    <div class="cosmic-bg">
+        <div class="mesh-gradient"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="warning-pulse"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="glass-card">
+            <!-- Icon System -->
+            <div class="icon-system">
+                <div class="warning-ring warning-ring-1"></div>
+                <div class="warning-ring warning-ring-2"></div>
+                <div class="warning-ring warning-ring-3"></div>
+                <div class="rotate-ring"></div>
+                <div class="central-icon">
+                    <div class="icon-glow"></div>
+                    <!-- Warning Triangle SVG -->
+                    <svg class="error-svg" viewBox="0 0 24 24">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <h1 class="title">
+                <span class="title-gradient">{{ title or 'Incidencia Temporal' }}</span>
+            </h1>
+
+            <!-- Message -->
+            <p class="message">{{ message or 'Se ha producido una incidencia temporal en el sistema. Nuestro equipo técnico ya se encuentra trabajando para restablecer el servicio a la mayor brevedad posible. Por favor, intenta nuevamente en unos minutos.' }}</p>
+
+            <!-- Actions -->
+            <div class="actions">
+                {% if show_retry %}
+                <button class="btn-primary" onclick="retryWithEffect(event)">
+                    <!-- Refresh SVG Icon -->
+                    <svg class="btn-icon-svg" viewBox="0 0 24 24">
+                        <path d="M23 4v6h-6"/>
+                        <path d="M1 20v-6h6"/>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                    </svg>
+                    <span>Intentar de nuevo</span>
+                </button>
+                {% endif %}
+                
+                {% if show_support and support_link %}
+                <a href="{{ support_link }}" class="btn-secondary" target="_blank">
+                    <!-- Message Circle SVG -->
+                    <svg class="btn-secondary-svg" viewBox="0 0 24 24">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    </svg>
+                    <span>Contactar Soporte</span>
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Status -->
+            <div class="status">
+                <span class="status-dot"></span>
+                <span class="status-text">Nuestro equipo está trabajando en ello</span>
+            </div>
+
+            <!-- Countdown -->
+            <div class="countdown">
+                Reintento automático en <span class="countdown-value" id="countdown">60</span> segundos
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <div class="brand">
+                    <div class="brand-icon">
+                        <!-- Diamond SVG -->
+                        <svg viewBox="0 0 24 24">
+                            <path d="M6 3h12l4 6-10 13L2 9z"/>
+                            <path d="M2 9h20"/>
+                            <path d="M10 3l-2 6 4 13 4-13-2-6"/>
+                        </svg>
+                    </div>
+                    <span class="brand-name">SALLY-E</span>
+                </div>
+                <p class="footer-text">Agradecemos tu paciencia</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function retryWithEffect(event) {
+            const button = event.currentTarget;
+            const ripple = document.createElement('span');
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.add('ripple');
+            
+            button.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+                window.location.reload();
+            }, 500);
+        }
+
+        // Countdown timer
+        let countdown = 60;
+        const countdownEl = document.getElementById('countdown');
+        
+        const timer = setInterval(() => {
+            countdown--;
+            countdownEl.textContent = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(timer);
+                window.location.reload();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,830 @@
+<!-- 
+    referral_missions_modal.html
+    Modal de Misiones de Referidos - SOLO para index.html
+    Este componente se incluye únicamente en la página de inicio
+-->
+
+<!-- Botón Flotante de Misiones de Referidos -->
+<button id="referral-missions-fab" class="referral-missions-fab" onclick="openReferralMissionsModal()" style="display: none;">
+    <div class="fab-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+    </div>
+    <span class="fab-badge" id="missions-badge">!</span>
+</button>
+
+<!-- Modal de Misiones de Referidos -->
+<div id="referral-missions-modal" class="referral-missions-overlay">
+    <div class="referral-missions-container">
+        <!-- Header -->
+        <div class="missions-header">
+            <div class="missions-header-content">
+                <div class="missions-icon-wrapper">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <h2 class="missions-title">Misiones de Referidos</h2>
+                <p class="missions-subtitle">Invita amigos y gana recompensas</p>
+            </div>
+            <button class="missions-close-btn" onclick="closeReferralMissionsModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Body con lista de misiones -->
+        <div class="missions-body" id="missions-body">
+            <!-- Loading state -->
+            <div class="missions-loading" id="missions-loading">
+                <div class="missions-spinner"></div>
+                <span>Cargando misiones...</span>
+            </div>
+
+            <!-- Lista de misiones (se llena dinámicamente) -->
+            <div class="missions-list" id="missions-list" style="display: none;">
+                <!-- Las misiones se insertan aquí via JavaScript -->
+            </div>
+
+            <!-- Estado vacío -->
+            <div class="missions-empty" id="missions-empty" style="display: none;">
+                <div class="empty-icon">📋</div>
+                <p>No hay misiones disponibles en este momento</p>
+            </div>
+        </div>
+
+        <!-- Footer con enlace a referidos -->
+        <div class="missions-footer">
+            <a href="/referidos?user_id={{ user_id }}" class="missions-referral-link" onclick="closeReferralMissionsModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                Ver mi enlace de referidos
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos del módulo de misiones -->
+<style>
+/* ===== BOTÓN FLOTANTE DE MISIONES ===== */
+.referral-missions-fab {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    animation: fab-pulse 2s ease-in-out infinite;
+}
+
+.referral-missions-fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 30px rgba(99, 102, 241, 0.5);
+}
+
+.referral-missions-fab:active {
+    transform: scale(0.95);
+}
+
+.fab-icon {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fab-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 22px;
+    height: 22px;
+    background: #ef4444;
+    border-radius: 50%;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    animation: badge-bounce 1s ease infinite;
+}
+
+@keyframes fab-pulse {
+    0%, 100% {
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 30px rgba(99, 102, 241, 0.6);
+    }
+}
+
+@keyframes badge-bounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* ===== OVERLAY DEL MODAL ===== */
+.referral-missions-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+    animation: overlay-fade-in 0.3s ease;
+}
+
+@keyframes overlay-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ===== CONTENEDOR DEL MODAL ===== */
+.referral-missions-container {
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 24px 24px 0 0;
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    animation: slide-up 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: none;
+}
+
+@keyframes slide-up {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ===== HEADER DEL MODAL ===== */
+.missions-header {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+    padding: 24px 20px;
+    border-radius: 24px 24px 0 0;
+    position: relative;
+    text-align: center;
+}
+
+.missions-header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.missions-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.missions-title {
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.missions-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    margin: 0;
+}
+
+.missions-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.missions-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* ===== BODY DEL MODAL ===== */
+.missions-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    min-height: 200px;
+}
+
+/* Loading */
+.missions-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px 20px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.missions-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #8b5cf6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Lista de misiones */
+.missions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Tarjeta de misión */
+.mission-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+.mission-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+.mission-card.completed {
+    border-color: rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.05);
+}
+
+.mission-card.claimed {
+    border-color: rgba(156, 163, 175, 0.3);
+    background: rgba(156, 163, 175, 0.05);
+    opacity: 0.7;
+}
+
+.mission-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.mission-info {
+    flex: 1;
+}
+
+.mission-title {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+}
+
+.mission-description {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    margin: 0;
+}
+
+.mission-reward {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: #1a1a2e;
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.mission-progress-container {
+    margin-bottom: 12px;
+}
+
+.mission-progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.mission-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.mission-card.completed .mission-progress-fill {
+    background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+}
+
+.mission-progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.mission-progress-text .current {
+    color: #8b5cf6;
+    font-weight: 600;
+}
+
+.mission-card.completed .mission-progress-text .current {
+    color: #22c55e;
+}
+
+.mission-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.mission-claim-btn {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    border: none;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mission-claim-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+}
+
+.mission-claim-btn:disabled {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.4);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.mission-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.mission-status.in-progress {
+    color: #8b5cf6;
+}
+
+.mission-status.claimed {
+    color: #9ca3af;
+}
+
+.mission-status svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Empty state */
+.missions-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.missions-empty .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+/* ===== FOOTER DEL MODAL ===== */
+.missions-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.missions-referral-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #8b5cf6;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.missions-referral-link:hover {
+    color: #a855f7;
+}
+
+/* Toast de notificación */
+.missions-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #1a1a2e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px 24px;
+    color: white;
+    font-size: 14px;
+    z-index: 10001;
+    opacity: 0;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.missions-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.missions-toast.success {
+    border-color: rgba(34, 197, 94, 0.3);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, #1a1a2e 100%);
+}
+
+.missions-toast.error {
+    border-color: rgba(239, 68, 68, 0.3);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, #1a1a2e 100%);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .referral-missions-fab {
+        bottom: 90px;
+        right: 16px;
+        width: 52px;
+        height: 52px;
+    }
+    
+    .referral-missions-container {
+        max-height: 90vh;
+    }
+    
+    .missions-header {
+        padding: 20px 16px;
+    }
+    
+    .missions-body {
+        padding: 16px;
+    }
+}
+</style>
+
+<!-- JavaScript del módulo -->
+<script>
+// Variables globales del módulo de misiones
+let missionsData = [];
+const userId = new URLSearchParams(window.location.search).get('user_id') || 
+               (window.Telegram?.WebApp?.initDataUnsafe?.user?.id);
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    checkAndShowMissionsFab();
+});
+
+// Verificar si hay misiones activas y mostrar el FAB
+async function checkAndShowMissionsFab() {
+    try {
+        const response = await fetch('/api/referral-missions/check-active');
+        const data = await response.json();
+        
+        if (data.success && data.has_active_missions) {
+            const fab = document.getElementById('referral-missions-fab');
+            if (fab) {
+                fab.style.display = 'flex';
+                // Actualizar badge con número de misiones
+                const badge = document.getElementById('missions-badge');
+                if (badge) {
+                    badge.textContent = data.missions_count;
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error verificando misiones:', error);
+    }
+}
+
+// Abrir modal de misiones
+function openReferralMissionsModal() {
+    const modal = document.getElementById('referral-missions-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        loadMissions();
+        
+        // Vibración táctil
+        if (window.Telegram?.WebApp?.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        }
+    }
+}
+
+// Cerrar modal
+function closeReferralMissionsModal() {
+    const modal = document.getElementById('referral-missions-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        
+        if (window.Telegram?.WebApp?.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        }
+    }
+}
+
+// Cargar misiones desde el API
+async function loadMissions() {
+    const loading = document.getElementById('missions-loading');
+    const list = document.getElementById('missions-list');
+    const empty = document.getElementById('missions-empty');
+    
+    // Mostrar loading
+    if (loading) loading.style.display = 'flex';
+    if (list) list.style.display = 'none';
+    if (empty) empty.style.display = 'none';
+    
+    try {
+        const response = await fetch(`/api/referral-missions/list?user_id=${userId}`);
+        const data = await response.json();
+        
+        if (loading) loading.style.display = 'none';
+        
+        if (data.success && data.missions && data.missions.length > 0) {
+            missionsData = data.missions;
+            renderMissions(data.missions);
+            if (list) list.style.display = 'flex';
+        } else {
+            if (empty) empty.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error cargando misiones:', error);
+        if (loading) loading.style.display = 'none';
+        if (empty) {
+            empty.querySelector('p').textContent = 'Error al cargar las misiones';
+            empty.style.display = 'block';
+        }
+    }
+}
+
+// Renderizar lista de misiones
+function renderMissions(missions) {
+    const list = document.getElementById('missions-list');
+    if (!list) return;
+    
+    list.innerHTML = missions.map(mission => `
+        <div class="mission-card ${mission.status}" data-mission-id="${mission.mission_id}">
+            <div class="mission-header">
+                <div class="mission-info">
+                    <h3 class="mission-title">${escapeHtml(mission.title)}</h3>
+                    <p class="mission-description">${escapeHtml(mission.description || '')}</p>
+                </div>
+                <div class="mission-reward">
+                    ${mission.reward_amount} ${mission.reward_currency}
+                </div>
+            </div>
+            
+            <div class="mission-progress-container">
+                <div class="mission-progress-bar">
+                    <div class="mission-progress-fill" style="width: ${mission.progress_percent}%"></div>
+                </div>
+                <div class="mission-progress-text">
+                    <span class="current">${mission.current_referrals} / ${mission.required_referrals} referidos</span>
+                    <span>${mission.progress_percent}%</span>
+                </div>
+            </div>
+            
+            <div class="mission-footer">
+                ${getMissionActionHTML(mission)}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Obtener HTML de la acción según el estado
+function getMissionActionHTML(mission) {
+    if (mission.is_claimed) {
+        return `
+            <div class="mission-status claimed">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Recompensa reclamada
+            </div>
+        `;
+    } else if (mission.can_claim) {
+        return `
+            <button class="mission-claim-btn" onclick="claimMissionReward('${mission.mission_id}')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6L9 17l-5-5"></path>
+                </svg>
+                Reclamar Recompensa
+            </button>
+        `;
+    } else {
+        const remaining = mission.required_referrals - mission.current_referrals;
+        return `
+            <div class="mission-status in-progress">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Faltan ${remaining} referido${remaining !== 1 ? 's' : ''}
+            </div>
+        `;
+    }
+}
+
+// Reclamar recompensa
+async function claimMissionReward(missionId) {
+    const btn = document.querySelector(`.mission-card[data-mission-id="${missionId}"] .mission-claim-btn`);
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="missions-spinner" style="width:16px;height:16px;border-width:2px;"></span> Procesando...';
+    }
+    
+    try {
+        const response = await fetch('/api/referral-missions/claim', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, mission_id: missionId })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showMissionsToast(data.message, 'success');
+            
+            // Vibración de éxito
+            if (window.Telegram?.WebApp?.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+            
+            // Recargar misiones
+            setTimeout(() => {
+                loadMissions();
+            }, 1000);
+            
+            // Recargar la página después para actualizar el balance
+            setTimeout(() => {
+                window.location.reload();
+            }, 2500);
+        } else {
+            showMissionsToast(data.error || 'Error al reclamar', 'error');
+            
+            if (window.Telegram?.WebApp?.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+            }
+            
+            // Restaurar botón
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 6L9 17l-5-5"></path>
+                    </svg>
+                    Reclamar Recompensa
+                `;
+            }
+        }
+    } catch (error) {
+        console.error('Error al reclamar:', error);
+        showMissionsToast('Error de conexión', 'error');
+        
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6L9 17l-5-5"></path>
+                </svg>
+                Reclamar Recompensa
+            `;
+        }
+    }
+}
+
+// Mostrar toast de notificación
+function showMissionsToast(message, type = 'success') {
+    // Remover toast existente
+    const existingToast = document.querySelector('.missions-toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+    
+    // Crear nuevo toast
+    const toast = document.createElement('div');
+    toast.className = `missions-toast ${type}`;
+    toast.innerHTML = `
+        ${type === 'success' ? '🎉' : '⚠️'}
+        <span>${escapeHtml(message)}</span>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Mostrar con animación
+    setTimeout(() => toast.classList.add('show'), 10);
+    
+    // Ocultar después de 3 segundos
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Utilidad para escapar HTML
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Cerrar modal al hacer clic fuera
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('referral-missions-modal');
+    if (e.target === modal) {
+        closeReferralMissionsModal();
+    }
+});
+
+// Cerrar con tecla Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('referral-missions-modal');
+        if (modal && modal.style.display === 'flex') {
+            closeReferralMissionsModal();
+        }
+    }
+});
+</script>

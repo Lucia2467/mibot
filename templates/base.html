@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover">
+    <title>{% block title %}SALLY-E | {% endblock %}</title>
+
+    <!-- VPN Detection System - MUST LOAD FIRST -->
+    <script src="{{ url_for('static', filename='js/vpn_detector.js') }}"></script>
+
+    <!-- CSS Ultra Pro -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <!-- Multi-Language System CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/translations.css') }}">
+    <!-- App Scale Reducer (4% reduction, excludes historial) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app-scale-reducer.css') }}">
+    <!-- 8K Quality Enhancements -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/8k-quality.css') }}">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <!-- Telegram WebApp -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Meta Tags Premium -->
+    <meta name="description" content="SALLY-E - La plataforma más avanzada de minería de criptomonedas">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Preload -->
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://telegram.org">
+
+    {% block extra_head %}{% endblock %}
+
+    <!-- AdsGram SDK (Solo Interstitial) -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
+    <!-- Telega.io SDK (Para Rewarded Ads - PAGA MÁS) -->
+    <script src="https://inapp.telega.io/sdk/v1/sdk.js"></script>
+
+    <script>
+        // ============================================
+        // SISTEMA DE ANUNCIOS
+        // ============================================
+        // INTERSTITIAL: AdsGram int-19115 (mining claim)
+        // REWARDED/INTERSTITIAL: Telega.io (CPM ALTO)
+        // REWARDED/PTS: GigaPub (PTS system) - Reemplaza OnClickA
+        // ============================================
+
+        // ============================================
+        // GIGAPUB - Inicialización global (Simplificado)
+        // ============================================
+        window.gigapubSdkLoaded = false;
+
+        function initGigaPubAds() {
+            if (typeof window.showGiga === 'function') {
+                window.gigapubSdkLoaded = true;
+                console.log('✅ [GigaPub] SDK listo');
+            } else {
+                setTimeout(initGigaPubAds, 500);
+            }
+        }
+
+        // Inicializar GigaPub
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initGigaPubAds);
+        } else {
+            initGigaPubAds();
+        }
+
+        // ============================================
+        // PTS SYSTEM - Función Global para Anuncios GigaPub (OPTIMIZADO)
+        // ============================================
+        window.PTS = window.PTS || {};
+
+        /**
+         * PTS.watchAd() - Muestra anuncio GigaPub y otorga PTS (OPTIMIZADO)
+         * Uso: onclick="PTS.watchAd()"
+         */
+        window.PTS.watchAd = async function() {
+            // Obtener user_id válido
+            const userId = window.USER_ID?.toString() ||
+                          window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString() ||
+                          new URLSearchParams(window.location.search).get('user_id')?.toString();
+
+            if (!userId) {
+                console.error('❌ [PTS] No se pudo obtener user_id');
+                if (typeof showToast === 'function') {
+                    showToast('Error: Usuario no identificado', 'error');
+                }
+                return { success: false, error: 'no_user_id' };
+            }
+
+            // Verificar SDK directamente (sin esperas largas)
+            if (typeof window.showGiga !== 'function') {
+                console.warn('⚠️ [PTS] SDK GigaPub no disponible');
+                if (typeof showToast === 'function') {
+                    showToast('Anuncios no disponibles', 'warning');
+                }
+                return { success: false, error: 'sdk_not_ready' };
+            }
+
+            try {
+                console.log('📺 [PTS] Mostrando anuncio GigaPub...');
+
+                // Mostrar anuncio directamente
+                await window.showGiga("principal");
+
+                console.log('✅ [PTS] Anuncio completado');
+
+                // Vibración de éxito inmediata
+                if (window.Telegram?.WebApp?.HapticFeedback) {
+                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+                }
+
+                // Registrar en backend y esperar respuesta para mostrar PTS correctos
+                const response = await fetch('/gigapub/pts-reward', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Mostrar mensaje con o sin bonus
+                    if (typeof showToast === 'function') {
+                        if (data.bonus && data.pts > 5) {
+                            showToast(`🎉 +${data.pts} PTS (¡Bonus!)`, 'success');
+                        } else {
+                            showToast(`✓ +${data.pts || 5} PTS`, 'success');
+                        }
+                    }
+                    
+                    if (window.PTS && typeof window.PTS.loadStatus === 'function') {
+                        window.PTS.loadStatus();
+                    }
+                    
+                    return { success: true, pts_earned: data.pts || 5, bonus: data.bonus };
+                } else {
+                    if (typeof showToast === 'function') {
+                        showToast(data.error || 'Error', 'error');
+                    }
+                    return { success: false, error: data.error };
+                }
+
+            } catch (error) {
+                console.warn('❌ [PTS] Error o anuncio cancelado:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Anuncio cancelado', 'warning');
+                }
+                return { success: false, error: 'cancelled' };
+            }
+        };
+
+        /**
+         * PTS.isAdReady() - Verifica si los anuncios están disponibles
+         */
+        window.PTS.isAdReady = function() {
+            return typeof window.showGiga === 'function';
+        };
+
+        console.log('✅ [PTS] Sistema PTS.watchAd() con GigaPub inicializado');
+
+        // ============================================
+        // ADSGRAM INTERSTITIAL (Unit ID: int-19115)
+        // ============================================
+
+        window.InterstitialAdController = null;
+        window.InterstitialAdReady = false;
+
+        function initializeInterstitialAd() {
+            try {
+                if (window.Adsgram) {
+                    window.InterstitialAdController = window.Adsgram.init({
+                        blockId: "int-20106"
+                    });
+                    window.InterstitialAdReady = true;
+                    console.log('✅ [AdsGram] Interstitial ready: int-19115');
+                } else {
+                    setTimeout(initializeInterstitialAd, 1000);
+                }
+            } catch (error) {
+                console.error('❌ [AdsGram] Init error:', error);
+            }
+        }
+
+        /**
+         * Show Interstitial Ad (for mining claim)
+         * Interstitials do NOT grant rewards
+         */
+        window.showInterstitialAd = function() {
+            return new Promise((resolve, reject) => {
+                if (!window.InterstitialAdController || !window.InterstitialAdReady) {
+                    resolve({ success: false, shown: false, reason: 'not_ready' });
+                    return;
+                }
+
+                window.InterstitialAdController.show()
+                    .then((result) => {
+                        resolve({ success: true, shown: true, result: result });
+                    })
+                    .catch((result) => {
+                        resolve({ success: false, shown: false, reason: result?.description || 'error' });
+                    });
+            });
+        };
+
+        window.isInterstitialAdReady = function() {
+            return window.InterstitialAdReady && window.InterstitialAdController !== null;
+        };
+
+
+        // ============================================
+        // TELEGA.IO ADS (CPM ALTO)
+        // ============================================
+        // API CORRECTA: window.TelegaIn.AdsController.create_miniapp()
+        // Token: 3351df91-ae1d-4f34-8d4c-4ef70e5dcbbc
+        // ============================================
+
+        window.TelegaAds = null;
+        window.TelegaAdsReady = false;
+
+        /**
+         * Initialize Telega.io SDK - API CORRECTA
+         * También intenta establecer el user_id para los callbacks
+         */
+        function initializeTelegaAds() {
+            try {
+                // Verificar si el SDK de Telega.io está disponible
+                if (window.TelegaIn && window.TelegaIn.AdsController) {
+                    // Obtener user_id del contexto
+                    const userId = window.USER_ID ||
+                                  (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) ||
+                                  new URLSearchParams(window.location.search).get('user_id');
+
+                    // API CORRECTA según el dashboard de Telega.io
+                    window.TelegaAds = window.TelegaIn.AdsController.create_miniapp({
+                        token: "3351df91-ae1d-4f34-8d4c-4ef70e5dcbbc"
+                    });
+                    window.TelegaAdsReady = true;
+                    console.log('✅ [Telega.io] SDK Initialized Successfully!');
+                    console.log('📊 [Telega.io] Token: 3351df91-ae1d-4f34-8d4c-4ef70e5dcbbc');
+                    console.log('👤 [Telega.io] User ID:', userId);
+
+                    // Log available methods para debugging
+                    if (window.TelegaAds) {
+                        console.log('📝 [Telega.io] Available methods:', Object.keys(window.TelegaAds));
+
+                        // Intentar establecer el user si el SDK lo soporta
+                        if (userId) {
+                            if (typeof window.TelegaAds.setUser === 'function') {
+                                window.TelegaAds.setUser(String(userId));
+                                console.log('✅ [Telega.io] User set via setUser()');
+                            } else if (typeof window.TelegaAds.set_user === 'function') {
+                                window.TelegaAds.set_user(String(userId));
+                                console.log('✅ [Telega.io] User set via set_user()');
+                            } else if (typeof window.TelegaAds.init === 'function') {
+                                // Algunos SDKs requieren init con user
+                                try {
+                                    window.TelegaAds.init({ user_id: String(userId) });
+                                    console.log('✅ [Telega.io] User set via init()');
+                                } catch (e) {
+                                    // init ya fue llamado, ignorar
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    console.log('⏳ [Telega.io] SDK not loaded yet, retrying...');
+                    setTimeout(initializeTelegaAds, 500);
+                }
+            } catch (error) {
+                console.error('❌ [Telega.io] Init error:', error);
+                window.TelegaAdsReady = false;
+            }
+        }
+
+        /**
+         * Función para establecer el usuario en Telega.io
+         * Útil cuando el user_id no está disponible durante la inicialización
+         */
+        window.setTelegaUser = function(userId) {
+            if (!window.TelegaAds || !userId) return false;
+
+            try {
+                if (typeof window.TelegaAds.setUser === 'function') {
+                    window.TelegaAds.setUser(String(userId));
+                    console.log('✅ [Telega.io] User updated:', userId);
+                    return true;
+                } else if (typeof window.TelegaAds.set_user === 'function') {
+                    window.TelegaAds.set_user(String(userId));
+                    console.log('✅ [Telega.io] User updated:', userId);
+                    return true;
+                }
+            } catch (e) {
+                console.warn('⚠️ [Telega.io] Could not set user:', e);
+            }
+            return false;
+        };
+
+        /**
+         * Mostrar anuncio Telega.io
+         * NOTA: Necesitas crear un Ad Block en el dashboard de Telega.io
+         * y obtener el adBlockUuid para poder mostrar anuncios.
+         * El Ad Block se crea en: Mini App Details > + Create Ad Block
+         */
+        /**
+         * Mostrar anuncio Telega.io CON USER_ID
+         * CRÍTICO: El user_id debe pasarse para que Telega.io lo incluya en el callback
+         * Sin esto, el callback a /ad_reward no sabrá a quién recompensar
+         */
+        window.showTelegaAd = function(adBlockUuid, userId) {
+            return new Promise((resolve, reject) => {
+                if (!window.TelegaAds || !window.TelegaAdsReady) {
+                    console.warn('⚠️ [Telega.io] SDK not ready');
+                    resolve({ success: false, error: 'SDK not ready' });
+                    return;
+                }
+
+                if (!adBlockUuid) {
+                    console.error('❌ [Telega.io] No adBlockUuid provided!');
+                    console.log('💡 [Telega.io] Crea un Ad Block en el dashboard de Telega.io');
+                    console.log('📍 [Telega.io] Ve a: Mini App Details > + Create Ad Block');
+                    resolve({ success: false, error: 'No adBlockUuid - create Ad Block in Telega.io dashboard' });
+                    return;
+                }
+
+                // Obtener user_id si no se proporcionó
+                if (!userId) {
+                    userId = window.USER_ID ||
+                             (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) ||
+                             new URLSearchParams(window.location.search).get('user_id');
+                }
+
+                console.log('🎬 [Telega.io] Showing ad, Block UUID:', adBlockUuid, 'User:', userId);
+
+                // Construir parámetros del anuncio con user_id
+                const adParams = {
+                    adBlockUuid: adBlockUuid
+                };
+
+                // Añadir user_id en múltiples formatos para máxima compatibilidad
+                if (userId) {
+                    adParams.user = String(userId);
+                    adParams.userId = String(userId);
+                    adParams.user_id = String(userId);
+                }
+
+                try {
+                    // Intentar mostrar el anuncio con diferentes métodos según la API disponible
+                    if (typeof window.TelegaAds.show === 'function') {
+                        // Método show()
+                        window.TelegaAds.show(adParams)
+                            .then((result) => {
+                                console.log('✅ [Telega.io] Ad shown successfully:', result);
+                                resolve({ success: true, result: result });
+                            })
+                            .catch((error) => {
+                                console.warn('⚠️ [Telega.io] Ad show error:', error);
+                                resolve({ success: false, error: error });
+                            });
+                    } else if (typeof window.TelegaAds.ad_show === 'function') {
+                        // Método ad_show()
+                        window.TelegaAds.ad_show(adParams)
+                            .then((result) => {
+                                console.log('✅ [Telega.io] Ad shown successfully:', result);
+                                resolve({ success: true, result: result });
+                            })
+                            .catch((error) => {
+                                console.warn('⚠️ [Telega.io] Ad show error:', error);
+                                resolve({ success: false, error: error });
+                            });
+                    } else if (typeof window.TelegaAds.showAd === 'function') {
+                        // Método showAd()
+                        window.TelegaAds.showAd(adParams)
+                            .then((result) => {
+                                console.log('✅ [Telega.io] Ad shown successfully:', result);
+                                resolve({ success: true, result: result });
+                            })
+                            .catch((error) => {
+                                console.warn('⚠️ [Telega.io] Ad show error:', error);
+                                resolve({ success: false, error: error });
+                            });
+                    } else {
+                        console.error('❌ [Telega.io] No valid show method found');
+                        console.log('📝 [Telega.io] Available methods:', Object.keys(window.TelegaAds || {}));
+                        resolve({ success: false, error: 'No valid show method' });
+                    }
+                } catch (error) {
+                    console.error('❌ [Telega.io] Error showing ad:', error);
+                    resolve({ success: false, error: error.message || error });
+                }
+            });
+        };
+
+        /**
+         * Función para verificar si Telega.io está listo
+         */
+        window.isTelegaReady = function() {
+            return window.TelegaAdsReady && window.TelegaAds !== null;
+        };
+
+        /**
+         * Función pública para mostrar anuncio con recompensa
+         * IMPORTANTE: Debes crear un Ad Block en Telega.io y poner el UUID aquí
+         * Ahora pasa user_id para que el callback sepa a quién recompensar
+         */
+        window.showRewardedVideoAd = function(adBlockUuid, userId) {
+            // Si no se proporciona UUID, usar uno por defecto (debes crearlo en Telega.io)
+            const blockUuid = adBlockUuid || window.TELEGA_AD_BLOCK_UUID || null;
+            // Si no se proporciona userId, obtenerlo del contexto
+            const finalUserId = userId || window.USER_ID ||
+                               (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) ||
+                               new URLSearchParams(window.location.search).get('user_id');
+            return window.showTelegaAd(blockUuid, finalUserId);
+        };
+
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // AdsGram Interstitial (para mining)
+            initializeInterstitialAd();
+
+            // Telega.io Ads
+            initializeTelegaAds();
+
+            console.log('🚀 [Ads] Systems initializing...');
+            console.log('📺 [AdsGram] Interstitial: int-19115');
+            console.log('💰 [Telega.io] Token: 3351df91-ae1d-4f34-8d4c-4ef70e5dcbbc');
+            console.log('⚠️ [Telega.io] IMPORTANTE: Necesitas crear un Ad Block en el dashboard');
+            console.log('📍 [Telega.io] Dashboard > Mini App Details > + Create Ad Block');
+        });
+    </script>
+
+    <style>
+        /* ❄️ BACKGROUND IMAGE - ULTRA PRO */
+        body {
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg,
+                rgba(11, 11, 15, 0.85) 0%,
+                rgba(11, 11, 15, 0.75) 50%,
+                rgba(11, 11, 15, 0.85) 100%
+            );
+            z-index: -1;
+        }
+
+        /* ELIMINAR COMPLETAMENTE EL MENÚ CONTEXTUAL EN NAVEGACIÓN */
+        .nav-item {
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        /* Estilos adicionales para que funcione como enlace */
+        .nav-item:active {
+            opacity: 0.8;
+            transform: scale(0.95);
+        }
+
+        /* 🌐 LANGUAGE TOGGLE BUTTON - ULTRA PREMIUM WITH DROPDOWN */
+        .lang-toggle-wrapper {
+            position: relative;
+        }
+
+        .lang-toggle-btn-premium {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.15) 0%, rgba(0, 61, 153, 0.2) 50%, rgba(0, 163, 255, 0.15) 100%);
+            border: 1px solid rgba(0, 102, 255, 0.4);
+            border-radius: 12px;
+            padding: 8px 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .lang-toggle-btn-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .lang-toggle-btn-premium:hover::before {
+            left: 100%;
+        }
+
+        .lang-toggle-btn-premium:hover {
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.25) 0%, rgba(0, 61, 153, 0.3) 50%, rgba(0, 163, 255, 0.25) 100%);
+            border-color: rgba(0, 102, 255, 0.6);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 102, 255, 0.4), 0 0 40px rgba(0, 163, 255, 0.2);
+        }
+
+        .lang-toggle-btn-premium:active {
+            transform: scale(0.95);
+        }
+
+        /* Dropdown de idiomas */
+        .lang-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 160px;
+            background: linear-gradient(145deg, rgba(18, 18, 22, 0.98) 0%, rgba(28, 28, 35, 0.98) 100%);
+            border: 1px solid rgba(0, 102, 255, 0.3);
+            border-radius: 16px;
+            padding: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 102, 255, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .lang-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .lang-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .lang-dropdown-item:hover {
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.2) 0%, rgba(0, 163, 255, 0.15) 100%);
+            color: #fff;
+            transform: translateX(4px);
+        }
+
+        .lang-dropdown-item.active {
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.3) 0%, rgba(0, 163, 255, 0.2) 100%);
+            color: #fff;
+            border: 1px solid rgba(0, 102, 255, 0.4);
+        }
+
+        .lang-dropdown-item .lang-flag {
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .lang-dropdown-item .lang-name {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .lang-dropdown-item .lang-check {
+            font-size: 14px;
+            color: #00d4aa;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .lang-dropdown-item.active .lang-check {
+            opacity: 1;
+        }
+
+        .lang-dropdown-arrow {
+            margin-left: 4px;
+            transition: transform 0.2s ease;
+        }
+
+        .lang-toggle-wrapper.open .lang-dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .lang-globe-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .lang-icon-svg {
+            width: 18px;
+            height: 18px;
+            color: #3B82F6;
+            filter: drop-shadow(0 0 4px rgba(0, 102, 255, 0.6));
+        }
+
+        .lang-code {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #3B82F6 0%, #00d4aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .lang-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.3) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lang-toggle-btn-premium:hover .lang-glow {
+            opacity: 1;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 2px rgba(0, 102, 255, 0.4));
+            }
+            50% {
+                filter: drop-shadow(0 0 8px rgba(0, 102, 255, 0.8));
+            }
+        }
+
+        /* ❄️ ULTRA PRO SNOW EFFECT */
+        .snow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            color: #fff;
+            font-size: 14px; /* Reducido 30% (de 20px a 14px) */
+            pointer-events: none;
+            animation: snowfall linear infinite;
+            text-shadow:
+                0 0 5px rgba(255, 255, 255, 0.9),
+                0 0 10px rgba(255, 255, 255, 0.7),
+                0 0 20px rgba(255, 255, 255, 0.5);
+            user-select: none;
+            will-change: transform, opacity;
+        }
+
+        @keyframes snowfall {
+            0% {
+                transform: translateY(-10px) translateX(0) rotate(0deg) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(10vh) translateX(var(--drift-start)) rotate(var(--rotation-start)) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) translateX(var(--drift-end)) rotate(var(--rotation-end)) scale(var(--scale-end));
+                opacity: 0;
+            }
+        }
+
+        /* Capas de profundidad para efecto 3D */
+        .snowflake.layer-front {
+            animation-duration: 12s;
+            font-size: 19.6px; /* 28px - 30% = 19.6px */
+            filter: blur(0px);
+            z-index: 3;
+        }
+
+        .snowflake.layer-middle {
+            animation-duration: 18s;
+            font-size: 14px; /* 20px - 30% = 14px */
+            filter: blur(0.3px);
+            z-index: 2;
+        }
+
+        .snowflake.layer-back {
+            animation-duration: 24s;
+            font-size: 9.8px; /* 14px - 30% = 9.8px */
+            filter: blur(0.5px);
+            z-index: 1;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <!-- ❄️ Snow Effect Container -->
+    <div class="snow-container" id="snow-container"></div>
+
+    <div class="app-shell{% if user %} has-top-header{% endif %}">
+        <!-- ========== TOP HEADER - USER PROFILE ========== -->
+        {% if user %}
+        <header class="app-top-header" id="app-top-header">
+            <div class="header-inner">
+                <!-- Avatar del usuario -->
+                <div class="header-avatar-container">
+                    <div class="header-avatar-placeholder header-avatar-loading" id="header-avatar-placeholder">
+                        <span id="avatar-initial">{{ (user.first_name or 'U')[0] | upper }}</span>
+                    </div>
+                    <img
+                        src=""
+                        alt="Avatar"
+                        class="header-avatar"
+                        id="header-avatar"
+                        style="display: none;"
+                        onerror="this.style.display='none'; document.getElementById('header-avatar-placeholder').style.display='flex';"
+                    >
+                    <div class="header-avatar-status"></div>
+                </div>
+
+                <!-- Info del usuario -->
+                <div class="header-user-info">
+                    <div class="header-user-name" id="header-user-name">{{ user.first_name or 'Usuario' }}{% if user.last_name %} {{ user.last_name }}{% endif %}</div>
+                    <div class="header-user-id" id="header-user-id">ID: {{ user_id or user.user_id or '---' }}</div>
+                </div>
+
+                <!-- Botón de Idioma Premium con Dropdown -->
+                <div class="lang-toggle-wrapper" id="lang-wrapper">
+                    <button class="lang-toggle-btn-premium" onclick="toggleLangDropdown()" title="Change Language">
+                        <div class="lang-globe-icon">
+                            <i data-lucide="globe" class="lang-icon-svg"></i>
+                        </div>
+                        <span class="lang-code" id="lang-btn-text">ES</span>
+                        <i data-lucide="chevron-down" class="lang-dropdown-arrow" style="width: 14px; height: 14px; color: #3B82F6;"></i>
+                        <div class="lang-glow"></div>
+                    </button>
+
+                    <!-- Dropdown de idiomas -->
+                    <div class="lang-dropdown" id="lang-dropdown">
+                        <div class="lang-dropdown-item" data-lang="en" onclick="selectLangFromDropdown('en')">
+                            <span class="lang-flag">🇺🇸</span>
+                            <span class="lang-name">English</span>
+                            <span class="lang-check">✓</span>
+                        </div>
+                        <div class="lang-dropdown-item" data-lang="es" onclick="selectLangFromDropdown('es')">
+                            <span class="lang-flag">🇪🇸</span>
+                            <span class="lang-name">Español</span>
+                            <span class="lang-check">✓</span>
+                        </div>
+                        <div class="lang-dropdown-item" data-lang="pt" onclick="selectLangFromDropdown('pt')">
+                            <span class="lang-flag">🇧🇷</span>
+                            <span class="lang-name">Português</span>
+                            <span class="lang-check">✓</span>
+                        </div>
+                        <div class="lang-dropdown-item" data-lang="ru" onclick="selectLangFromDropdown('ru')">
+                            <span class="lang-flag">🇷🇺</span>
+                            <span class="lang-name">Русский</span>
+                            <span class="lang-check">✓</span>
+                        </div>
+                        <div class="lang-dropdown-item" data-lang="ar" onclick="selectLangFromDropdown('ar')">
+                            <span class="lang-flag">🇸🇦</span>
+                            <span class="lang-name">العربية</span>
+                            <span class="lang-check">✓</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        {% endif %}
+
+        <!-- Contenido Principal -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Navegación Ultra Premium - SIN URLS VISIBLES -->
+        <nav class="bottom-nav">
+            <div class="nav-inner">
+                <!-- Inicio -->
+                <div class="nav-item {% if request.endpoint == 'index' %}active{% endif %}" data-nav="inicio" data-href="/?user_id={{ user_id }}">
+                    <span class="nav-icon">
+                        <i data-lucide="home"></i>
+                    </span>
+                    <span class="nav-label" data-i18n="nav_home">Inicio</span>
+                </div>
+
+                <!-- Tareas -->
+                <div class="nav-item {% if request.endpoint == 'tasks' %}active{% endif %}" data-nav="tareas" data-href="/tasks?user_id={{ user_id }}">
+                    <span class="nav-icon">
+                        <i data-lucide="check-square"></i>
+                    </span>
+                    <span class="nav-label" data-i18n="nav_tasks">Tareas</span>
+                </div>
+
+                <!-- Explorar -->
+                <div class="nav-item {% if request.endpoint in ['explore', 'explore_games', 'explore_mines', 'explore_mining', 'explore_upgrades', 'explore_watch_ads'] %}active{% endif %}" data-nav="explorar" data-href="/explore?user_id={{ user_id }}">
+                    <span class="nav-icon">
+                        <i data-lucide="compass"></i>
+                    </span>
+                    <span class="nav-label" data-i18n="nav_explore">Explorar</span>
+                </div>
+
+                <!-- Referidos -->
+                <div class="nav-item {% if request.endpoint == 'referidos' %}active{% endif %}" data-nav="invitar" data-href="/referidos?user_id={{ user_id }}">
+                    <span class="nav-icon">
+                        <i data-lucide="users"></i>
+                    </span>
+                    <span class="nav-label" data-i18n="nav_invite">Invitar</span>
+                </div>
+
+                <!-- Ranking -->
+                <div class="nav-item {% if request.endpoint == 'ranking' %}active{% endif %}" data-nav="top" data-href="/ranking?user_id={{ user_id }}">
+                    <span class="nav-icon">
+                        <i data-lucide="trophy"></i>
+                    </span>
+                    <span class="nav-label" data-i18n="nav_top">Top</span>
+                </div>
+
+                <!-- Wallet -->
+                <div class="nav-item {% if request.endpoint == 'wallet' %}active{% endif %}" data-nav="billetera" data-href="/wallet?user_id={{ user_id }}">
+                    <span class="nav-icon">
+                        <i data-lucide="wallet"></i>
+                    </span>
+                    <span class="nav-label" data-i18n="nav_wallet">Billetera</span>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Language Selector Button -->
+    <button class="language-btn" onclick="openLanguageModal()" title="Change Language">🌐</button>
+
+    <!-- Language Selection Modal -->
+    <div class="language-modal" id="language-modal">
+        <div class="language-modal-content">
+            <div class="language-modal-header">
+                <h3 class="language-modal-title" data-i18n="select_language">Select Language</h3>
+                <button class="language-modal-close" onclick="closeLanguageModal()">✕</button>
+            </div>
+            <div class="language-list">
+                <div class="language-option" onclick="selectLanguage('en')" data-lang="en">
+                    <span class="language-flag">🇺🇸</span>
+                    <span class="language-name">English</span>
+                    <span class="language-check">✓</span>
+                </div>
+                <div class="language-option" onclick="selectLanguage('es')" data-lang="es">
+                    <span class="language-flag">🇪🇸</span>
+                    <span class="language-name">Español</span>
+                    <span class="language-check">✓</span>
+                </div>
+                <div class="language-option" onclick="selectLanguage('pt')" data-lang="pt">
+                    <span class="language-flag">🇧🇷</span>
+                    <span class="language-name">Português</span>
+                    <span class="language-check">✓</span>
+                </div>
+                <div class="language-option" onclick="selectLanguage('ru')" data-lang="ru">
+                    <span class="language-flag">🇷🇺</span>
+                    <span class="language-name">Русский</span>
+                    <span class="language-check">✓</span>
+                </div>
+                <div class="language-option" onclick="selectLanguage('ar')" data-lang="ar">
+                    <span class="language-flag">🇸🇦</span>
+                    <span class="language-name">العربية</span>
+                    <span class="language-check">✓</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Language Modal Script -->
+    <script>
+        // Toggle language dropdown
+        function toggleLangDropdown() {
+            const wrapper = document.getElementById('lang-wrapper');
+            const dropdown = document.getElementById('lang-dropdown');
+            wrapper.classList.toggle('open');
+            dropdown.classList.toggle('show');
+
+            // Update dropdown items to show current language
+            updateDropdownItems();
+
+            // Haptic feedback
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        // Select language from dropdown
+        function selectLangFromDropdown(lang) {
+            if (typeof setLanguage === 'function') {
+                setLanguage(lang);
+            }
+
+            // Close dropdown
+            const wrapper = document.getElementById('lang-wrapper');
+            const dropdown = document.getElementById('lang-dropdown');
+            wrapper.classList.remove('open');
+            dropdown.classList.remove('show');
+
+            // Haptic feedback
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+
+            updateDropdownItems();
+        }
+
+        // Update dropdown items to show current selection
+        function updateDropdownItems() {
+            const currentLang = typeof getCurrentLanguage === 'function' ? getCurrentLanguage() : 'es';
+            document.querySelectorAll('.lang-dropdown-item').forEach(item => {
+                item.classList.toggle('active', item.getAttribute('data-lang') === currentLang);
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('lang-wrapper');
+            const dropdown = document.getElementById('lang-dropdown');
+            if (wrapper && dropdown && !wrapper.contains(e.target)) {
+                wrapper.classList.remove('open');
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Update active language indicator (for modal)
+        function updateLanguageOptions() {
+            const currentLang = typeof getCurrentLanguage === 'function' ? getCurrentLanguage() : 'es';
+            document.querySelectorAll('.language-option').forEach(opt => {
+                opt.classList.toggle('active', opt.getAttribute('data-lang') === currentLang);
+            });
+            updateDropdownItems();
+        }
+
+        // Listen for language changes
+        window.addEventListener('languageChanged', updateLanguageOptions);
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLanguageOptions();
+            updateDropdownItems();
+
+            // Close modal when clicking outside
+            const modal = document.getElementById('language-modal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeLanguageModal();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Sistema de Animaciones de Carga -->
+    {% include 'loading-system.html' %}
+
+    <!-- Variables Globales -->
+    <script>
+        // User Data
+        window.USER_ID = "{{ user_id if user_id else '' }}";
+        window.USER_TELEGRAM_ID = "{{ user.user_id if user else '' }}";
+        window.USER_BALANCE = {{ user.se_balance if user else 0 }};
+        window.USER_UNCLAIMED = {{ unclaimed if unclaimed else 0 }};
+
+        // App Config
+        window.BOT_USERNAME = "{{ bot_username if bot_username else 'SallyEbot' }}";
+        window.APP_NAME = "SALLY-E";
+        window.CURRENCY_NAME = "S-E";
+
+        // Initialize Telegram WebApp
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+            tg.setHeaderColor('#0B0B0F');
+            tg.setBackgroundColor('#0B0B0F');
+
+            // Configurar botón de retroceso
+            if (tg.BackButton) {
+                tg.BackButton.onClick(() => {
+                    window.history.back();
+                });
+            }
+
+            // 🔄 SINCRONIZAR DATOS DE TELEGRAM AUTOMÁTICAMENTE
+            // Obtener datos reales del usuario de Telegram
+            const telegramUser = tg.initDataUnsafe?.user;
+            if (telegramUser && telegramUser.id) {
+                // Actualizar el header con datos de Telegram si están disponibles
+                if (telegramUser.first_name) {
+                    const fullName = telegramUser.first_name + (telegramUser.last_name ? ' ' + telegramUser.last_name : '');
+                    const headerName = document.getElementById('header-user-name');
+                    if (headerName) headerName.textContent = fullName;
+
+                    // Actualizar inicial del avatar
+                    const avatarInitial = document.getElementById('avatar-initial');
+                    if (avatarInitial) avatarInitial.textContent = telegramUser.first_name[0].toUpperCase();
+                }
+
+                // Cargar foto de perfil del usuario
+                loadUserProfilePhoto(telegramUser.id);
+
+                // Enviar datos al backend para actualizar
+                fetch('/api/sync-telegram-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_id: telegramUser.id.toString(),
+                        first_name: telegramUser.first_name || null,
+                        last_name: telegramUser.last_name || null,
+                        username: telegramUser.username || null
+                    })
+                }).then(response => response.json())
+                .then(data => {
+                    console.log('✅ Datos de Telegram sincronizados:', data);
+                })
+                .catch(error => {
+                    console.log('⚠️ Error sincronizando datos:', error);
+                });
+            }
+        }
+
+        // 📷 FUNCIÓN PARA CARGAR FOTO DE PERFIL DEL USUARIO
+        async function loadUserProfilePhoto(userId) {
+            const avatar = document.getElementById('header-avatar');
+            const placeholder = document.getElementById('header-avatar-placeholder');
+
+            if (!avatar || !placeholder) return;
+
+            try {
+                const response = await fetch(`/api/user-photo/${userId}`);
+                const data = await response.json();
+
+                if (data.success && data.photo_url) {
+                    // Precargar la imagen antes de mostrarla
+                    const img = new Image();
+                    img.onload = function() {
+                        avatar.src = data.photo_url;
+                        avatar.style.display = 'block';
+                        placeholder.style.display = 'none';
+                        placeholder.classList.remove('header-avatar-loading');
+                        console.log('✅ Foto de perfil cargada');
+                    };
+                    img.onerror = function() {
+                        placeholder.classList.remove('header-avatar-loading');
+                        console.log('⚠️ Error cargando imagen de perfil');
+                    };
+                    img.src = data.photo_url;
+                } else {
+                    // No hay foto, mostrar placeholder
+                    placeholder.classList.remove('header-avatar-loading');
+                    console.log('ℹ️ Usuario sin foto de perfil');
+                }
+            } catch (error) {
+                placeholder.classList.remove('header-avatar-loading');
+                console.log('⚠️ Error obteniendo foto:', error);
+            }
+        }
+
+        // Cargar foto si tenemos user_id pero no Telegram WebApp
+        if (!window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
+            const userIdFromUrl = new URLSearchParams(window.location.search).get('user_id');
+            if (userIdFromUrl) {
+                loadUserProfilePhoto(userIdFromUrl);
+            }
+        }
+
+        // ========================================
+        // NAVEGACIÓN CON DIVS - SIN URLS VISIBLES
+        // ========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+
+            navItems.forEach(item => {
+                // Manejar click para navegar
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const href = this.getAttribute('data-href');
+                    if (href) {
+                        window.location.href = href;
+                    }
+                });
+
+                // Prevenir menú contextual (desktop)
+                item.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                });
+
+                // Prevenir long press (mobile)
+                let pressTimer;
+
+                item.addEventListener('touchstart', function(e) {
+                    // Iniciar timer para detectar long press
+                    pressTimer = setTimeout(() => {
+                        // Si llegó aquí, es long press - prevenirlo
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, 500); // 500ms para considerar long press
+                });
+
+                item.addEventListener('touchend', function() {
+                    // Cancelar el timer si el usuario suelta antes
+                    clearTimeout(pressTimer);
+                });
+
+                item.addEventListener('touchmove', function() {
+                    // Cancelar el timer si el usuario mueve el dedo
+                    clearTimeout(pressTimer);
+                });
+
+                // Prevenir selección de texto
+                item.addEventListener('selectstart', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+            });
+        });
+    </script>
+
+    <!-- Multi-Language Translation System (MUST LOAD BEFORE main.js) -->
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+
+    <!-- Efectos Especiales Ultra Pro -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- 🔄 DB Connection Loader -->
+    <script src="{{ url_for('static', filename='js/db_loader.js') }}"></script>
+
+    <!-- ❄️ Ultra Pro Snow Effect Script -->
+    <script>
+        function createUltraProSnowEffect() {
+            const snowContainer = document.getElementById('snow-container');
+            if (!snowContainer) return;
+
+            // Múltiples variaciones de copos de nieve Unicode
+            const snowflakeVariants = [
+
+            ];
+
+            const numberOfSnowflakes = 70; // Reducido 30% (de 100 a 70)
+            const layers = ['layer-front', 'layer-middle', 'layer-back'];
+
+            for (let i = 0; i < numberOfSnowflakes; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+
+                // Seleccionar variante de copo aleatoria
+                const variant = snowflakeVariants[Math.floor(Math.random() * snowflakeVariants.length)];
+                snowflake.textContent = variant;
+
+                // Asignar capa aleatoria para profundidad 3D
+                const layer = layers[Math.floor(Math.random() * layers.length)];
+                snowflake.classList.add(layer);
+
+                // Posición horizontal inicial aleatoria
+                const startX = Math.random() * 100;
+                snowflake.style.left = startX + '%';
+
+                // Movimiento horizontal más complejo (zig-zag)
+                const driftStart = (Math.random() - 0.5) * 30; // -15 a +15 vw
+                const driftEnd = (Math.random() - 0.5) * 60; // -30 a +30 vw
+                snowflake.style.setProperty('--drift-start', driftStart + 'vw');
+                snowflake.style.setProperty('--drift-end', driftEnd + 'vw');
+
+                // Rotación compleja
+                const rotationStart = Math.random() * 180;
+                const rotationEnd = rotationStart + (Math.random() * 720 + 360); // 360-1080 grados
+                snowflake.style.setProperty('--rotation-start', rotationStart + 'deg');
+                snowflake.style.setProperty('--rotation-end', rotationEnd + 'deg');
+
+                // Escala final para efecto de profundidad
+                const scaleEnd = 0.5 + Math.random() * 0.8; // 0.5 a 1.3
+                snowflake.style.setProperty('--scale-end', scaleEnd);
+
+                // Delay negativo aleatorio (nieve ya cayendo)
+                const delay = -(Math.random() * 20);
+                snowflake.style.animationDelay = delay + 's';
+
+                // Opacidad variable según la capa
+                let baseOpacity;
+                if (layer === 'layer-front') {
+                    baseOpacity = 0.8 + Math.random() * 0.2; // 0.8-1.0
+                } else if (layer === 'layer-middle') {
+                    baseOpacity = 0.6 + Math.random() * 0.2; // 0.6-0.8
+                } else {
+                    baseOpacity = 0.4 + Math.random() * 0.2; // 0.4-0.6
+                }
+                snowflake.style.opacity = baseOpacity;
+
+                snowContainer.appendChild(snowflake);
+            }
+
+            console.log('❄️ Ultra Pro Snow Effect: 100 snowflakes initialized across 3 layers');
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', createUltraProSnowEffect);
+        } else {
+            createUltraProSnowEffect();
+        }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+
+    <!-- 8K Quality Enhancements for FAB Button -->
+    <script src="{{ url_for('static', filename='js/8k-fab-enhancements.js') }}"></script>
+
+    <!-- Device Fingerprinting for Anti-Fraud -->
+    <script src="{{ url_for('static', filename='js/device_fingerprint.js') }}"></script>
+
+    <!-- GigaPub SDK (Reward-based Ads) -->
+
+<script src="https://ad.gigapub.tech/script?id=5226"></script>
+</body>
+</html>

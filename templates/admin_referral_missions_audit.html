@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoría - Misiones de Referidos - SALLY-E Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-header h1 {
+            color: #003D99;
+            font-size: 24px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .content-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Filters */
+        .filters-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #0066FF;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Audit Table */
+        .audit-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .audit-table th,
+        .audit-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+        }
+
+        .audit-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        .audit-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .action-badge.referral_added { background: #dcfce7; color: #16a34a; }
+        .action-badge.referral_rejected { background: #fee2e2; color: #dc2626; }
+        .action-badge.reward_claimed { background: #fef3c7; color: #d97706; }
+        .action-badge.mission_created { background: #e0f2fe; color: #0284c7; }
+        .action-badge.mission_updated { background: #f3e8ff; color: #9333ea; }
+        .action-badge.mission_toggled { background: #fce7f3; color: #db2777; }
+        .action-badge.mission_deleted { background: #fee2e2; color: #dc2626; }
+
+        .user-id {
+            font-family: monospace;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .timestamp {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .details-text {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .details-text:hover {
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #666;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* Pagination info */
+        .pagination-info {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .filters-bar {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .audit-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>📋 Auditoría de Misiones</h1>
+            <a href="{{ url_for('referral_missions.admin_missions') }}" class="nav-btn">← Volver a Misiones</a>
+        </div>
+
+        <div class="content-container">
+            <!-- Filtros -->
+            <form class="filters-bar" method="GET">
+                <div class="filter-group">
+                    <label>Usuario ID</label>
+                    <input type="text" name="user_id" value="{{ request.args.get('user_id', '') }}" placeholder="Filtrar por User ID...">
+                </div>
+                <div class="filter-group">
+                    <label>Misión</label>
+                    <select name="mission_id">
+                        <option value="">Todas las misiones</option>
+                        {% for mission in missions %}
+                        <option value="{{ mission.mission_id }}" {{ 'selected' if request.args.get('mission_id') == mission.mission_id else '' }}>
+                            {{ mission.title }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="filter-btn">🔍 Filtrar</button>
+            </form>
+
+            <!-- Leyenda -->
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="action-badge referral_added">referral_added</span>
+                    <span>Referido agregado</span>
+                </div>
+                <div class="legend-item">
+                    <span class="action-badge referral_rejected">referral_rejected</span>
+                    <span>Referido rechazado</span>
+                </div>
+                <div class="legend-item">
+                    <span class="action-badge reward_claimed">reward_claimed</span>
+                    <span>Recompensa reclamada</span>
+                </div>
+                <div class="legend-item">
+                    <span class="action-badge mission_created">mission_created</span>
+                    <span>Misión creada</span>
+                </div>
+                <div class="legend-item">
+                    <span class="action-badge mission_updated">mission_updated</span>
+                    <span>Misión actualizada</span>
+                </div>
+            </div>
+
+            <!-- Tabla de logs -->
+            {% if logs and logs|length > 0 %}
+            <table class="audit-table">
+                <thead>
+                    <tr>
+                        <th>Fecha/Hora</th>
+                        <th>Usuario</th>
+                        <th>Acción</th>
+                        <th>Misión</th>
+                        <th>Referido</th>
+                        <th>Detalles</th>
+                        <th>IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td class="timestamp">
+                            {{ log.created_at.strftime('%d/%m/%Y %H:%M:%S') if log.created_at else 'N/A' }}
+                        </td>
+                        <td>
+                            {% if log.user_id %}
+                            <span class="user-id">{{ log.user_id }}</span>
+                            {% else %}
+                            <span style="color: #999;">Sistema</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="action-badge {{ log.action }}">{{ log.action }}</span>
+                        </td>
+                        <td>
+                            {% if log.mission_id %}
+                            <span class="user-id">{{ log.mission_id }}</span>
+                            {% else %}
+                            <span style="color: #999;">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if log.referred_id %}
+                            <span class="user-id">{{ log.referred_id }}</span>
+                            {% else %}
+                            <span style="color: #999;">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="details-text" title="{{ log.details or '' }}">
+                                {{ log.details or '-' }}
+                            </div>
+                        </td>
+                        <td>
+                            <span style="font-size: 11px; color: #666;">{{ log.ip_address or '-' }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pagination-info">
+                Mostrando {{ logs|length }} registros más recientes
+            </div>
+
+            {% else %}
+            <div class="empty-state">
+                <div class="icon">📋</div>
+                <p>No hay registros de auditoría</p>
+                <p style="font-size: 13px; margin-top: 10px;">Los eventos aparecerán aquí cuando los usuarios interactúen con las misiones</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

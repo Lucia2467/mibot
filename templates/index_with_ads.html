@@ -3,851 +3,163 @@
 {% block title %}SALLY-E | Dashboard{% endblock %}
 
 {% block content %}
-<!-- Splash Screen Premium -->
+<!-- Splash Screen Simplificado -->
 <div id="splash-screen" class="splash-screen">
     <div class="splash-content">
-        <div class="premium-loader">
-            <div class="loader-ring"></div>
-            <div class="loader-ring"></div>
-            <div class="loader-ring"></div>
-            <div class="loader-core"></div>
+        <div class="splash-status">
+            <span class="status-text">Cargando datos...</span>
         </div>
     </div>
 </div>
 
-<style>
-/* Premium Loader Animation */
-.premium-loader {
-    position: relative;
-    width: 80px;
-    height: 80px;
-}
-
-.loader-ring {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 3px solid transparent;
-}
-
-.loader-ring:nth-child(1) {
-    border-top-color: #0066FF;
-    animation: spin-1 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-}
-
-.loader-ring:nth-child(2) {
-    width: 70%;
-    height: 70%;
-    top: 15%;
-    left: 15%;
-    border-right-color: #00A3FF;
-    animation: spin-2 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
-}
-
-.loader-ring:nth-child(3) {
-    width: 40%;
-    height: 40%;
-    top: 30%;
-    left: 30%;
-    border-bottom-color: #00D4FF;
-    animation: spin-1 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-}
-
-.loader-core {
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%);
-    border-radius: 50%;
-    box-shadow: 0 0 20px rgba(0, 102, 255, 0.6), 0 0 40px rgba(0, 212, 255, 0.4);
-    animation: pulse-core 1.5s ease-in-out infinite;
-}
-
-@keyframes spin-1 {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes spin-2 {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes pulse-core {
-    0%, 100% { 
-        transform: translate(-50%, -50%) scale(1);
-        box-shadow: 0 0 20px rgba(0, 102, 255, 0.6), 0 0 40px rgba(0, 212, 255, 0.4);
-    }
-    50% { 
-        transform: translate(-50%, -50%) scale(1.2);
-        box-shadow: 0 0 30px rgba(0, 102, 255, 0.8), 0 0 60px rgba(0, 212, 255, 0.6);
-    }
-}
-
-.splash-screen {
-    position: fixed;
-    inset: 0;
-    background: #000000;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
-}
-
-.splash-screen.fade-out {
-    opacity: 0;
-    visibility: hidden;
-}
-</style>
-
-<!-- ==================== RULETA PTS - BOTÓN FLOTANTE PREMIUM ==================== -->
-<a href="/roulette-pts?user_id={{ user_id }}" class="roulette-fab" id="roulette-fab">
-    <div class="roulette-fab-glow"></div>
-    <div class="roulette-fab-inner">
-        <svg class="roulette-fab-wheel" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
-            <path d="M12 2 L12 12 L19 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
-            <circle cx="12" cy="5" r="1.5" fill="currentColor" opacity="0.8"/>
-            <circle cx="18.5" cy="9" r="1.5" fill="currentColor" opacity="0.6"/>
-            <circle cx="17" cy="17" r="1.5" fill="currentColor" opacity="0.7"/>
-            <circle cx="7" cy="17" r="1.5" fill="currentColor" opacity="0.6"/>
-            <circle cx="5.5" cy="9" r="1.5" fill="currentColor" opacity="0.8"/>
-        </svg>
-    </div>
-    <div class="roulette-fab-badge" id="roulette-badge">
-        <span class="badge-text">PTS</span>
-    </div>
-</a>
-
-<style>
-/* ==================== RULETA FAB - PREMIUM COMPACT ==================== */
-.roulette-fab {
-    position: fixed;
-    top: 90px;
-    right: 12px;
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: visible;
-}
-
-.roulette-fab-glow {
-    position: absolute;
-    inset: -2px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #0066FF, #0052CC, #0040FF, #0066FF);
-    background-size: 300% 300%;
-    animation: gradient-shift 3s ease infinite;
-    opacity: 0.8;
-    filter: blur(1px);
-}
-
-.roulette-fab-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: 11px;
-    background: linear-gradient(135deg, #08081A 0%, #0D0D20 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(0, 102, 255, 0.2);
-    box-shadow: inset 0 1px 2px rgba(0, 102, 255, 0.1);
-}
-
-.roulette-fab-wheel {
-    width: 22px;
-    height: 22px;
-    color: white;
-    animation: spin-wheel 10s linear infinite;
-}
-
-.roulette-fab-badge {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    min-width: 20px;
-    height: 16px;
-    background: linear-gradient(135deg, #00FF88 0%, #00CC6A 100%);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 4px;
-    box-shadow: 0 2px 6px rgba(0, 255, 136, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.roulette-fab-badge .badge-text {
-    font-size: 0.5rem;
-    font-weight: 800;
-    color: #000;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-}
-
-/* Hover Effect */
-.roulette-fab:hover {
-    transform: scale(1.08);
-}
-
-.roulette-fab:hover .roulette-fab-glow {
-    opacity: 1;
-    filter: blur(2px);
-}
-
-.roulette-fab:active {
-    transform: scale(0.95);
-}
-
-/* Animations */
-@keyframes gradient-shift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-}
-
-@keyframes spin-wheel {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* States */
-.roulette-fab.can-spin .roulette-fab-badge {
-    background: linear-gradient(135deg, #00FF88 0%, #00CC6A 100%);
-    animation: badge-glow 1.5s ease-in-out infinite;
-}
-
-.roulette-fab.can-spin .roulette-fab-glow {
-    animation: gradient-shift 2s ease infinite, pulse-glow 1.5s ease-in-out infinite;
-}
-
-.roulette-fab.waiting .roulette-fab-badge {
-    background: linear-gradient(135deg, #FFB800 0%, #FF9500 100%);
-}
-
-.roulette-fab.waiting .roulette-fab-glow {
-    opacity: 0.4;
-    animation: gradient-shift 4s ease infinite;
-}
-
-.roulette-fab.waiting .roulette-fab-wheel {
-    animation: spin-wheel 15s linear infinite;
-}
-
-@keyframes badge-glow {
-    0%, 100% { box-shadow: 0 2px 6px rgba(0, 255, 136, 0.4); }
-    50% { box-shadow: 0 2px 12px rgba(0, 255, 136, 0.7); }
-}
-
-@keyframes pulse-glow {
-    0%, 100% { opacity: 0.8; }
-    50% { opacity: 1; }
-}
-
-/* ==================== BOOST BUTTON - PREMIUM AZUL ==================== */
-.boost-trigger-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 14px 24px;
-    background: linear-gradient(135deg, rgba(0, 102, 255, 0.15) 0%, rgba(0, 61, 153, 0.15) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.4);
-    border-radius: var(--radius-lg);
-    color: #00A3FF;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 20px rgba(0, 102, 255, 0.2);
-}
-
-.boost-trigger-btn:hover {
-    background: linear-gradient(135deg, rgba(0, 102, 255, 0.25) 0%, rgba(0, 61, 153, 0.25) 100%);
-    border-color: rgba(0, 102, 255, 0.6);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 102, 255, 0.35);
-}
-
-.boost-trigger-btn:active {
-    transform: translateY(0);
-}
-
-.boost-trigger-btn svg {
-    color: #00D4FF;
-    filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.6));
-}
-
-/* ==================== PREMIUM CARD STYLES ==================== */
-.premium-card {
-    background: linear-gradient(145deg, rgba(8, 8, 20, 0.9) 0%, rgba(5, 5, 15, 0.95) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.15);
-    border-radius: 20px;
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.premium-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #0066FF, #00D4FF, #0066FF, transparent);
-    opacity: 0.6;
-}
-
-.premium-card:hover {
-    border-color: rgba(0, 102, 255, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 102, 255, 0.15);
-}
-
-/* MINING STATUS INDICATOR */
-.mining-status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 200, 100, 0.05) 100%);
-    border: 1px solid rgba(0, 255, 136, 0.3);
-    border-radius: 12px;
-    margin-bottom: 20px;
-}
-
-.mining-status-dot {
-    width: 10px;
-    height: 10px;
-    background: #00FF88;
-    border-radius: 50%;
-    animation: mining-pulse 1.5s ease-in-out infinite;
-    box-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
-}
-
-@keyframes mining-pulse {
-    0%, 100% { 
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% { 
-        transform: scale(1.3);
-        opacity: 0.7;
-    }
-}
-
-.mining-status-text {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #00FF88;
-    text-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
-}
-
-.mining-status-rate {
-    font-size: 0.8rem;
-    color: var(--color-text-tertiary);
-    margin-left: 8px;
-    padding-left: 8px;
-    border-left: 1px solid rgba(0, 255, 136, 0.3);
-}
-
-/* PREMIUM STATS GRID */
-.premium-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.premium-stat {
-    background: linear-gradient(145deg, rgba(0, 102, 255, 0.08) 0%, rgba(0, 61, 153, 0.05) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.15);
-    border-radius: 16px;
-    padding: 18px 12px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.premium-stat::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #0066FF, transparent);
-    opacity: 0.5;
-}
-
-.premium-stat:hover {
-    background: linear-gradient(145deg, rgba(0, 102, 255, 0.12) 0%, rgba(0, 61, 153, 0.08) 100%);
-    border-color: rgba(0, 102, 255, 0.3);
-    transform: translateY(-2px);
-}
-
-.premium-stat-value {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: #FFFFFF;
-    text-shadow: 0 0 20px rgba(0, 102, 255, 0.4);
-    margin-bottom: 4px;
-}
-
-.premium-stat-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--color-text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* PREMIUM BALANCE CARD */
-.premium-balance {
-    background: linear-gradient(145deg, rgba(8, 8, 20, 0.95) 0%, rgba(3, 3, 10, 0.98) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.2);
-    border-radius: 24px;
-    padding: 28px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-.premium-balance::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #003D99, #0066FF, #00D4FF, #0066FF, #003D99);
-}
-
-.premium-balance::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(0, 102, 255, 0.08) 0%, transparent 50%);
-    pointer-events: none;
-}
-
-.premium-balance-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--color-text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-}
-
-.premium-balance-amount {
-    font-size: 2.8rem;
-    font-weight: 900;
-    color: #FFFFFF;
-    text-shadow: 0 0 40px rgba(0, 102, 255, 0.5);
-    letter-spacing: -0.02em;
-    margin-bottom: 4px;
-    position: relative;
-    z-index: 1;
-}
-
-.premium-balance-currency {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #00D4FF;
-    text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-}
-
-/* MINING CARD PREMIUM */
-.mining-card-premium {
-    background: linear-gradient(145deg, rgba(8, 8, 20, 0.9) 0%, rgba(5, 5, 15, 0.95) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.15);
-    border-radius: 24px;
-    padding: 24px;
-    margin-bottom: 20px;
-    position: relative;
-    overflow: hidden;
-}
-
-.mining-card-premium::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #00FF88, #0066FF, #00D4FF);
-}
-
-.mining-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-}
-
-.mining-title-section h2 {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--color-text-primary);
-    margin: 0 0 4px 0;
-}
-
-.mining-title-section p {
-    font-size: 0.8rem;
-    color: var(--color-text-tertiary);
-    margin: 0;
-}
-
-.mining-icon-box {
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, rgba(0, 255, 136, 0.15) 0%, rgba(0, 102, 255, 0.15) 100%);
-    border: 1px solid rgba(0, 255, 136, 0.3);
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.mining-icon-box i {
-    width: 26px;
-    height: 26px;
-    color: #00FF88;
-    animation: icon-glow 2s ease-in-out infinite;
-}
-
-@keyframes icon-glow {
-    0%, 100% { filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.5)); }
-    50% { filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.8)); }
-}
-
-.mining-amount-display {
-    text-align: center;
-    padding: 20px 0;
-}
-
-.mining-amount-value {
-    font-size: 3rem;
-    font-weight: 900;
-    color: #FFFFFF;
-    text-shadow: 0 0 30px rgba(0, 102, 255, 0.4);
-    letter-spacing: -0.03em;
-}
-
-.mining-amount-label {
-    font-size: 0.85rem;
-    color: var(--color-text-tertiary);
-    margin-top: 4px;
-}
-
-/* PROGRESS BAR PREMIUM */
-.mining-progress-premium {
-    height: 8px;
-    background: rgba(0, 102, 255, 0.1);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    position: relative;
-}
-
-.mining-progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #003D99, #0066FF, #00D4FF);
-    border-radius: 10px;
-    transition: width 0.5s ease;
-    position: relative;
-}
-
-.mining-progress-bar::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: progress-shine 2s ease-in-out infinite;
-}
-
-@keyframes progress-shine {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-/* QUICK ACTIONS PREMIUM */
-.quick-actions-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.quick-action-item {
-    background: linear-gradient(145deg, rgba(0, 102, 255, 0.06) 0%, rgba(0, 61, 153, 0.03) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.12);
-    border-radius: 16px;
-    padding: 20px 16px;
-    text-align: center;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.quick-action-item:hover {
-    background: linear-gradient(145deg, rgba(0, 102, 255, 0.12) 0%, rgba(0, 61, 153, 0.08) 100%);
-    border-color: rgba(0, 102, 255, 0.3);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 102, 255, 0.15);
-}
-
-.quick-action-icon {
-    width: 52px;
-    height: 52px;
-    background: linear-gradient(135deg, rgba(0, 102, 255, 0.15) 0%, rgba(0, 163, 255, 0.1) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.2);
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
-}
-
-.quick-action-icon i {
-    width: 26px;
-    height: 26px;
-    color: #00A3FF;
-}
-
-.quick-action-label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--color-text-primary);
-}
-</style>
-
-<script>
-// Verificar estado de la ruleta al cargar
-document.addEventListener('DOMContentLoaded', async function() {
-    const fab = document.getElementById('roulette-fab');
-    const badge = document.getElementById('roulette-badge');
-    const badgeText = badge?.querySelector('.badge-text');
-    
-    try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get('user_id') || window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        
-        if (userId) {
-            const response = await fetch(`/api/roulette-pts/status?user_id=${userId}`);
-            const data = await response.json();
-            
-            if (data.success) {
-                if (data.can_spin) {
-                    fab.classList.add('can-spin');
-                    fab.classList.remove('waiting');
-                    if (badgeText) badgeText.textContent = 'GO';
-                } else {
-                    fab.classList.add('waiting');
-                    fab.classList.remove('can-spin');
-                    const mins = Math.floor(data.remaining_seconds / 60);
-                    if (badgeText) badgeText.textContent = `${mins}m`;
-                }
-            }
-        }
-    } catch (e) {
-        console.log('Error checking roulette status:', e);
-    }
-});
-</script>
-
 <div class="container">
-    <!-- Hero Balance Card - PREMIUM -->
-    <div class="premium-balance">
-        <div class="premium-balance-label" data-i18n="total_balance">Balance Total</div>
-        <div class="premium-balance-amount" id="total-balance" style="{% if user.se_balance < 0 %}color: #ef4444 !important; text-shadow: 0 0 30px rgba(239, 68, 68, 0.5) !important;{% endif %}">{{ "%.4f"|format(user.se_balance or 0) }}</div>
-        <div class="premium-balance-currency">PXC</div>
-        {% if user.se_balance < 0 %}
-        <div style="margin-top: 12px; padding: 10px 16px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; font-size: 0.8rem; color: #ef4444; display: inline-flex; align-items: center; gap: 6px;">
-            <i data-lucide="alert-triangle" style="width: 14px; height: 14px;"></i>
-            <span data-i18n="debt_alert">Deuda pendiente</span>
-        </div>
-        {% endif %}
+    <!-- Hero Balance Card -->
+    <div class="card balance-card card-highlight">
+        <div class="balance-label">Balance Total</div>
+        <div class="balance-amount" id="total-balance">{{ "%.4f"|format(user.se_balance or 0) }}</div>
+        <div class="balance-currency">S-E</div>
     </div>
 
-    <!-- Stats Grid - PREMIUM -->
-    <div class="premium-stats">
-        <div class="premium-stat">
-            <div class="premium-stat-value" id="mining-level">{{ user.mining_level or 1 }}</div>
-            <div class="premium-stat-label" data-i18n="level">Nivel</div>
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value" id="mining-level">{{ user.mining_level or 1 }}</div>
+            <div class="stat-label">Nivel</div>
         </div>
-        <div class="premium-stat">
-            <div class="premium-stat-value" id="referral-count">{{ user.referral_count or 0 }}</div>
-            <div class="premium-stat-label" data-i18n="referrals">Referidos</div>
+        <div class="stat-card">
+            <div class="stat-value" id="referral-count">{{ user.referral_count or 0 }}</div>
+            <div class="stat-label">Referidos</div>
         </div>
-        <div class="premium-stat">
-            <div class="premium-stat-value">{{ mining_rate or user.mining_power or 0.02 }}</div>
-            <div class="premium-stat-label" data-i18n="se_per_hour">PXC/Hora</div>
+        <div class="stat-card">
+            <div class="stat-value">{{ mining_rate or user.mining_power or 0.02 }}</div>
+            <div class="stat-label">S-E/Hora</div>
         </div>
     </div>
 
-    <!-- Mining Card - PREMIUM -->
-    <div class="mining-card-premium">
-        <div class="mining-header">
-            <div class="mining-title-section">
-                <h2 data-i18n="mining_station">Mining Station ⚡</h2>
-                <p data-i18n="unclaimed_earnings">Ganancias sin reclamar</p>
+    <!-- Mining Card -->
+    <div class="card">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="section-title" style="margin-bottom: var(--space-1);">Mining Station</h2>
+                <p class="text-muted">Ganancias sin reclamar</p>
             </div>
-            <div class="mining-icon-box">
-                <i data-lucide="cpu"></i>
+            <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: var(--gradient-subtle); border-radius: var(--radius-md); border: var(--glass-border);">
+                <i data-lucide="zap" style="width: 24px; height: 24px; color: var(--color-neon-pink);"></i>
             </div>
         </div>
 
-        <!-- INDICADOR DE MINERÍA ACTIVA -->
-        <div class="mining-status">
-            <div class="mining-status-dot"></div>
-            <span class="mining-status-text" data-i18n="mining_active">Minando activamente</span>
-            <span class="mining-status-rate">+{{ mining_rate or user.mining_power or 0.02 }} PXC/h</span>
+        <div style="text-align: center; margin-bottom: var(--space-6);">
+            <div style="font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: var(--space-2);" id="unclaimed-balance">
+                {{ "%.4f"|format(unclaimed or 0) }}
+            </div>
+            <div style="font-size: 0.875rem; color: var(--color-text-tertiary);">S-E pendientes</div>
         </div>
 
-        <!-- Indicador de Boost Activo -->
-        <div id="boost-active-indicator" style="display: none; text-align: center; margin-bottom: var(--space-4);"></div>
-
-        <div class="mining-amount-display">
-            <div class="mining-amount-value" id="unclaimed-balance">{{ "%.4f"|format(unclaimed or 0) }}</div>
-            <div class="mining-amount-label" data-i18n="pending_se">PXC pendientes</div>
+        <div class="progress mb-4">
+            <div class="progress-bar" id="mining-progress" style="width: 0%"></div>
         </div>
 
-        <div class="mining-progress-premium">
-            <div class="mining-progress-bar" id="mining-progress" style="width: 0%"></div>
-        </div>
-
-        <button class="btn btn-primary btn-lg btn-block" onclick="claimReward()" style="background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #00A3FF 100%); box-shadow: 0 4px 20px rgba(0, 102, 255, 0.4);">
+        <button class="btn btn-primary btn-lg btn-block" onclick="claimReward()">
             <i data-lucide="arrow-down-to-line" style="width: 20px; height: 20px;"></i>
-             <span data-i18n="claim">Reclamar</span>
-        </button>
-        
-        <!-- Botón de Boost x2 -->
-        <button id="boost-trigger-button" class="boost-trigger-btn" onclick="openBoostModal()" style="margin-top: var(--space-4); width: 100%;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-            </svg>
-            <span>Activar Boost x2</span>
+             Reclamar
         </button>
     </div>
 
-    <!-- Quick Actions - PREMIUM -->
-    <div class="premium-card" style="margin-bottom: 20px;">
-        <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); margin: 0 0 20px 0;" data-i18n="quick_actions">Acciones Rápidas</h2>
+    <!-- Quick Actions -->
+    <div class="card">
+        <h2 class="section-title">Acciones Rápidas</h2>
 
-        <div class="quick-actions-grid">
-            <a href="/tasks?user_id={{ user_id }}" class="quick-action-item">
-                <div class="quick-action-icon">
-                    <i data-lucide="check-square"></i>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3);">
+            <a href="/tasks?user_id={{ user_id }}" style="text-decoration: none;">
+                <div class="item" style="flex-direction: column; text-align: center; padding: var(--space-5); cursor: pointer;">
+                    <div class="item-icon" style="width: 56px; height: 56px; margin-bottom: var(--space-3);">
+                        <i data-lucide="check-square" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <div class="item-title" style="margin-bottom: 0;">Tareas</div>
                 </div>
-                <div class="quick-action-label" data-i18n="tasks">Tareas</div>
             </a>
 
-            <a href="/explore?user_id={{ user_id }}" class="quick-action-item">
-                <div class="quick-action-icon">
-                    <i data-lucide="compass"></i>
+            <a href="/explore?user_id={{ user_id }}" style="text-decoration: none;">
+                <div class="item" style="flex-direction: column; text-align: center; padding: var(--space-5); cursor: pointer;">
+                    <div class="item-icon" style="width: 56px; height: 56px; margin-bottom: var(--space-3);">
+                        <i data-lucide="compass" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <div class="item-title" style="margin-bottom: 0;">Explorar</div>
                 </div>
-                <div class="quick-action-label" data-i18n="explore">Explorar</div>
             </a>
 
-            <a href="/referidos?user_id={{ user_id }}" class="quick-action-item">
-                <div class="quick-action-icon">
-                    <i data-lucide="users"></i>
+            <a href="/referidos?user_id={{ user_id }}" style="text-decoration: none;">
+                <div class="item" style="flex-direction: column; text-align: center; padding: var(--space-5); cursor: pointer;">
+                    <div class="item-icon" style="width: 56px; height: 56px; margin-bottom: var(--space-3);">
+                        <i data-lucide="users" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <div class="item-title" style="margin-bottom: 0;">Invitar</div>
                 </div>
-                <div class="quick-action-label" data-i18n="invite">Invitar</div>
             </a>
 
-            <a href="/wallet?user_id={{ user_id }}" class="quick-action-item">
-                <div class="quick-action-icon">
-                    <i data-lucide="wallet"></i>
+            <a href="/wallet?user_id={{ user_id }}" style="text-decoration: none;">
+                <div class="item" style="flex-direction: column; text-align: center; padding: var(--space-5); cursor: pointer;">
+                    <div class="item-icon" style="width: 56px; height: 56px; margin-bottom: var(--space-3);">
+                        <i data-lucide="wallet" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <div class="item-title" style="margin-bottom: 0;"> Billetera</div>
                 </div>
-                <div class="quick-action-label" data-i18n="wallet">Billetera</div>
             </a>
         </div>
     </div>
 
-    <!-- Activity Info - PREMIUM -->
-    <div class="premium-card" style="margin-bottom: 20px;">
-        <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); margin: 0 0 20px 0;" data-i18n="your_activity">Tu Actividad</h2>
+    <!-- Activity Info -->
+    <div class="card">
+        <h2 class="section-title">Tu Actividad</h2>
 
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-            <!-- Mining Rate -->
-            <div style="display: flex; align-items: center; padding: 14px 16px; background: linear-gradient(135deg, rgba(0, 255, 136, 0.08) 0%, rgba(0, 200, 100, 0.04) 100%); border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 14px;">
-                <div style="width: 44px; height: 44px; background: linear-gradient(135deg, rgba(0, 255, 136, 0.15) 0%, rgba(0, 200, 100, 0.1) 100%); border: 1px solid rgba(0, 255, 136, 0.25); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 14px;">
-                    <i data-lucide="activity" style="width: 22px; height: 22px; color: #00FF88;"></i>
+        <div class="item-list">
+            <div class="item">
+                <div class="item-icon">
+                    <i data-lucide="activity"></i>
                 </div>
-                <div style="flex: 1;">
-                    <div style="font-size: 0.95rem; font-weight: 600; color: var(--color-text-primary);" data-i18n="mining_rate">Tasa de Minería</div>
-                    <div style="font-size: 0.8rem; color: var(--color-text-tertiary);">{{ mining_rate or user.mining_power or 1.0 }} <span data-i18n="se_per_hour_text">PXC por hora</span></div>
+                <div class="item-content">
+                    <div class="item-title">Tasa de Minería</div>
+                    <div class="item-subtitle">{{ mining_rate or user.mining_power or 1.0 }} S-E por hora</div>
                 </div>
-                <div style="padding: 6px 12px; background: rgba(0, 255, 136, 0.15); border: 1px solid rgba(0, 255, 136, 0.3); border-radius: 8px; font-size: 0.75rem; font-weight: 700; color: #00FF88;">
-                    <span data-i18n="active">Activo</span>
+                <div class="item-action">
+                    <div class="badge badge-success">Activo</div>
                 </div>
             </div>
 
-            <!-- Last Claim -->
-            <div style="display: flex; align-items: center; padding: 14px 16px; background: rgba(0, 102, 255, 0.05); border: 1px solid rgba(0, 102, 255, 0.12); border-radius: 14px;">
-                <div style="width: 44px; height: 44px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.12) 0%, rgba(0, 61, 153, 0.08) 100%); border: 1px solid rgba(0, 102, 255, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 14px;">
-                    <i data-lucide="clock" style="width: 22px; height: 22px; color: #00A3FF;"></i>
+            <div class="item">
+                <div class="item-icon">
+                    <i data-lucide="clock"></i>
                 </div>
-                <div style="flex: 1;">
-                    <div style="font-size: 0.95rem; font-weight: 600; color: var(--color-text-primary);" data-i18n="last_claim">Última Reclamación</div>
-                    <div style="font-size: 0.8rem; color: var(--color-text-tertiary);" data-i18n="hours_ago">Hace 2 horas</div>
+                <div class="item-content">
+                    <div class="item-title">Última Reclamación</div>
+                    <div class="item-subtitle">Hace 2 horas</div>
                 </div>
             </div>
 
-            <!-- Current Level -->
-            <div style="display: flex; align-items: center; padding: 14px 16px; background: rgba(0, 102, 255, 0.05); border: 1px solid rgba(0, 102, 255, 0.12); border-radius: 14px;">
-                <div style="width: 44px; height: 44px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.12) 0%, rgba(0, 163, 255, 0.08) 100%); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 14px;">
-                    <i data-lucide="trending-up" style="width: 22px; height: 22px; color: #00D4FF;"></i>
+            <div class="item">
+                <div class="item-icon">
+                    <i data-lucide="trending-up"></i>
                 </div>
-                <div style="flex: 1;">
-                    <div style="font-size: 0.95rem; font-weight: 600; color: var(--color-text-primary);" data-i18n="current_level">Nivel Actual</div>
-                    <div style="font-size: 0.8rem; color: var(--color-text-tertiary);"><span data-i18n="level">Nivel</span> {{ user.mining_level or 1 }}</div>
+                <div class="item-content">
+                    <div class="item-title">Nivel Actual</div>
+                    <div class="item-subtitle">Nivel {{ user.mining_level or 1 }}</div>
                 </div>
-                <a href="/upgrade?user_id={{ user_id }}" style="padding: 8px 16px; background: linear-gradient(135deg, #003D99 0%, #0066FF 100%); border-radius: 10px; color: white; font-size: 0.8rem; font-weight: 600; text-decoration: none; box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);" data-i18n="upgrade">
+                <a href="/upgrade?user_id={{ user_id }}" class="btn btn-secondary btn-sm">
                     Mejorar
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Tips - PREMIUM -->
-    <div class="premium-card" style="margin-bottom: 20px; background: linear-gradient(145deg, rgba(0, 102, 255, 0.06) 0%, rgba(0, 61, 153, 0.03) 100%);">
-        <div style="display: flex; align-items: flex-start; gap: 16px;">
-            <div style="flex-shrink: 0; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 102, 255, 0.1) 100%); border: 1px solid rgba(0, 212, 255, 0.25); border-radius: 14px;">
-                <i data-lucide="lightbulb" style="width: 22px; height: 22px; color: #00D4FF;"></i>
+    <!-- Tips -->
+    <div class="card" style="background: rgba(0, 102, 255, 0.05); border-color: rgba(0, 102, 255, 0.1);">
+        <div style="display: flex; align-items: flex-start; gap: var(--space-4);">
+            <div style="flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0, 102, 255, 0.1); border-radius: var(--radius-md);">
+                <i data-lucide="lightbulb" style="width: 20px; height: 20px; color: var(--color-neon-pink);"></i>
             </div>
             <div style="flex: 1;">
-                <div style="font-weight: 700; color: var(--color-text-primary); margin-bottom: 6px; font-size: 0.95rem;" data-i18n="pro_tip">💡 Consejo Pro</div>
-                <div style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.6;" data-i18n="pro_tip_text">
+                <div style="font-weight: 600; margin-bottom: var(--space-2);"><img src="/static/icons/lightbulb.svg" style="width:20px; height:20px; vertical-align:middle; margin-right:8px;">Consejo Pro</div>
+                <div style="font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.6;">
                     Reclama tus recompensas regularmente y mejora tu nivel de minería para maximizar tus ganancias diarias.
                 </div>
             </div>
@@ -1545,7 +857,7 @@ async function claimReward() {
     const userId = urlParams.get('user_id');
 
     if (!userId) {
-        showToast(window.tt ? window.tt('toast_user_not_identified') : 'Error: Usuario no identificado', 'error');
+        showToast('Error: Usuario no identificado', 'error');
         return;
     }
 
@@ -1553,7 +865,7 @@ async function claimReward() {
     const unclaimedAmount = parseFloat(document.getElementById('unclaimed-balance').textContent);
     
     if (unclaimedAmount <= 0) {
-        showToast(window.tt ? window.tt('toast_no_earnings_claim') : 'No hay ganancias para reclamar', 'warning');
+        showToast('No hay ganancias para reclamar', 'warning');
         return;
     }
 
@@ -1618,7 +930,6 @@ function showAdOverlay() {
                     }
                 })
                 .catch((error) => {
-                    // Interstitial errors don't block the claim
                     console.warn('⚠️ [Mining Claim] Interstitial error:', error);
                 });
             
@@ -1686,11 +997,9 @@ async function processClaimReward(userId, unclaimedAmount) {
     try {
         // Show ultra professional processing notification
         if (window.showProcessingToast) {
-            const processingText = window.tt ? window.tt('toast_processing') : 'Procesando...';
-            const claimedText = window.tt ? window.tt('toast_claimed_successfully') : '¡Reclamado!';
             window.showProcessingToast(
-                processingText,
-                `${claimedText} +${unclaimedAmount.toFixed(4)} PXC`,
+                'Procesando...',
+                `¡Reclamado! +${unclaimedAmount.toFixed(4)} S-E`,
                 null,
                 1800
             );
@@ -1721,11 +1030,11 @@ async function processClaimReward(userId, unclaimedAmount) {
                 window.location.reload();
             }, 3500);
         } else {
-            showToast(data.message || (window.tt ? window.tt('toast_claim_error') : 'Error al reclamar'), 'error');
+            showToast(data.message || 'Error al reclamar', 'error');
         }
     } catch (error) {
         console.error('Error:', error);
-        showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+        showToast('Error de conexión', 'error');
     }
 }
 
@@ -1777,7 +1086,7 @@ async function submitPromoCode() {
 
     if (!code) {
         if (window.showToast) {
-            window.showToast(window.tt ? window.tt('toast_code_required') : 'Por favor ingresa un código', 'warning');
+            window.showToast('Por favor ingresa un código', 'warning');
         }
         input.focus();
         return;
@@ -1787,8 +1096,7 @@ async function submitPromoCode() {
     btn.disabled = true;
     btn.classList.add('loading');
     const originalContent = btn.innerHTML;
-    const verifyingText = window.tt ? window.tt('toast_validating') : 'Verificando...';
-    btn.innerHTML = `<span>${verifyingText}</span>`;
+    btn.innerHTML = '<span>Verificando...</span>';
 
     try {
         const urlParams = new URLSearchParams(window.location.search);
@@ -1813,8 +1121,7 @@ async function submitPromoCode() {
             container.classList.add('success');
             
             if (window.showToast) {
-                const defaultMsg = window.tt ? window.tt('toast_code_redeemed') : '¡Código canjeado!';
-                window.showToast(`🎉 ${data.message || defaultMsg}`, 'success');
+                window.showToast(`🎉 ${data.message || '¡Código canjeado!'}`, 'success');
             }
             
             // Vibración de éxito
@@ -1833,8 +1140,7 @@ async function submitPromoCode() {
             }, 1500);
         } else {
             if (window.showToast) {
-                const defaultMsg = window.tt ? window.tt('toast_invalid_code') : 'Código inválido';
-                window.showToast(data.error || data.message || defaultMsg, 'error');
+                window.showToast(data.error || data.message || 'Código inválido', 'error');
             }
 
             // Vibración de error
@@ -1856,7 +1162,7 @@ async function submitPromoCode() {
     } catch (error) {
         console.error('Error:', error);
         if (window.showToast) {
-            window.showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+            window.showToast('Error de conexión', 'error');
         }
     } finally {
         btn.disabled = false;
@@ -1924,7 +1230,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1500);
 });
 </script>
-
-<!-- AdsGram Boost System -->
-<script src="/static/js/adsgram_boost.js"></script>
 {% endblock %}

@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Seguridad - Admin</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(25, 25, 35, 0.95);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --accent-primary: #6366f1;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1 svg {
+            width: 32px;
+            height: 32px;
+            color: var(--accent-primary);
+        }
+
+        .back-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .stat-card.warning .value { color: var(--accent-warning); }
+        .stat-card.danger .value { color: var(--accent-danger); }
+        .stat-card.info .value { color: var(--accent-primary); }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Search */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-box button {
+            background: var(--accent-primary);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-suspended {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-warning);
+        }
+
+        .badge-banned {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-danger);
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-success);
+        }
+
+        .badge-high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-danger);
+        }
+
+        .badge-medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-warning);
+        }
+
+        .badge-low {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--accent-primary);
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 5px;
+            transition: all 0.2s;
+        }
+
+        .action-btn.view {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--accent-primary);
+        }
+
+        .action-btn.restore {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-success);
+        }
+
+        .action-btn.suspend {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-warning);
+        }
+
+        .action-btn.ban {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-danger);
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-section {
+            margin-bottom: 24px;
+        }
+
+        .modal-section h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .detail-item {
+            background: var(--bg-secondary);
+            padding: 12px 16px;
+            border-radius: 10px;
+        }
+
+        .detail-item .label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .detail-item .value {
+            font-size: 14px;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .modal-table {
+            width: 100%;
+            font-size: 13px;
+        }
+
+        .modal-table th {
+            padding: 10px;
+            font-size: 11px;
+        }
+
+        .modal-table td {
+            padding: 10px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* User Avatar */
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .user-id {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 600px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                Centro de Seguridad
+            </h1>
+            <a href="/admin/dashboard" class="back-btn">
+                ← Dashboard
+            </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card warning">
+                <div class="value" id="stat-suspended">-</div>
+                <div class="label">Cuentas Suspendidas</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="value" id="stat-banned">-</div>
+                <div class="label">Cuentas Baneadas</div>
+            </div>
+            <div class="stat-card info">
+                <div class="value" id="stat-fraud-logs">-</div>
+                <div class="label">Registros de Fraude</div>
+            </div>
+            <div class="stat-card info">
+                <div class="value" id="stat-24h">-</div>
+                <div class="label">Fraudes (24h)</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="suspended">Suspendidos</button>
+            <button class="tab-btn" data-tab="banned">Baneados</button>
+            <button class="tab-btn" data-tab="fraud-logs">Registros de Fraude</button>
+            <button class="tab-btn" data-tab="search">Buscar Usuario</button>
+        </div>
+
+        <!-- Suspended Tab -->
+        <div class="tab-content active" id="tab-suspended">
+            <div class="table-container">
+                <div id="suspended-loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando...</p>
+                </div>
+                <table id="suspended-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Estado</th>
+                            <th>Razón</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="suspended-tbody"></tbody>
+                </table>
+                <div id="suspended-empty" class="empty-state" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M16 16s-1.5-2-4-2-4 2-4 2"/>
+                        <line x1="9" y1="9" x2="9.01" y2="9"/>
+                        <line x1="15" y1="9" x2="15.01" y2="9"/>
+                    </svg>
+                    <p>No hay cuentas suspendidas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Banned Tab -->
+        <div class="tab-content" id="tab-banned">
+            <div class="table-container">
+                <div id="banned-loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando...</p>
+                </div>
+                <table id="banned-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Estado</th>
+                            <th>Razón</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="banned-tbody"></tbody>
+                </table>
+                <div id="banned-empty" class="empty-state" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M16 16s-1.5-2-4-2-4 2-4 2"/>
+                        <line x1="9" y1="9" x2="9.01" y2="9"/>
+                        <line x1="15" y1="9" x2="15.01" y2="9"/>
+                    </svg>
+                    <p>No hay cuentas baneadas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fraud Logs Tab -->
+        <div class="tab-content" id="tab-fraud-logs">
+            <div class="table-container">
+                <div id="fraud-loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando...</p>
+                </div>
+                <table id="fraud-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Tipo de Fraude</th>
+                            <th>Severidad</th>
+                            <th>Detección</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fraud-tbody"></tbody>
+                </table>
+                <div id="fraud-empty" class="empty-state" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <polyline points="9,12 12,15 22,5"/>
+                    </svg>
+                    <p>No hay registros de fraude</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Tab -->
+        <div class="tab-content" id="tab-search">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Buscar por ID de usuario o nombre...">
+                <button onclick="searchUser()">Buscar</button>
+            </div>
+            <div class="table-container">
+                <div id="search-loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Buscando...</p>
+                </div>
+                <table id="search-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Estado</th>
+                            <th>Balance</th>
+                            <th>Registro</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="search-tbody"></tbody>
+                </table>
+                <div id="search-empty" class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <p>Ingresa un ID o nombre para buscar</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div class="modal-overlay" id="user-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Detalles del Usuario</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-content">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando detalles...</p>
+                </div>
+            </div>
+            <div class="modal-actions" id="modal-actions"></div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadSuspended();
+            loadBanned();
+            loadFraudLogs();
+        });
+
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/admin/security/stats');
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('stat-suspended').textContent = data.stats.suspended_count || 0;
+                    document.getElementById('stat-banned').textContent = data.stats.banned_count || 0;
+                    document.getElementById('stat-fraud-logs').textContent = data.stats.fraud_log_count || 0;
+                    document.getElementById('stat-24h').textContent = data.stats.fraud_24h || 0;
+                }
+            } catch (e) {
+                console.error('Error loading stats:', e);
+            }
+        }
+
+        async function loadSuspended() {
+            try {
+                const res = await fetch('/api/admin/security/suspended');
+                const data = await res.json();
+                
+                document.getElementById('suspended-loading').style.display = 'none';
+                
+                if (data.success && data.users && data.users.length > 0) {
+                    document.getElementById('suspended-table').style.display = 'table';
+                    renderUsers('suspended-tbody', data.users, 'SUSPENDED');
+                } else {
+                    document.getElementById('suspended-empty').style.display = 'block';
+                }
+            } catch (e) {
+                console.error('Error loading suspended:', e);
+                document.getElementById('suspended-loading').innerHTML = '<p>Error al cargar</p>';
+            }
+        }
+
+        async function loadBanned() {
+            try {
+                const res = await fetch('/api/admin/security/banned');
+                const data = await res.json();
+                
+                document.getElementById('banned-loading').style.display = 'none';
+                
+                if (data.success && data.users && data.users.length > 0) {
+                    document.getElementById('banned-table').style.display = 'table';
+                    renderUsers('banned-tbody', data.users, 'BANNED');
+                } else {
+                    document.getElementById('banned-empty').style.display = 'block';
+                }
+            } catch (e) {
+                console.error('Error loading banned:', e);
+                document.getElementById('banned-loading').innerHTML = '<p>Error al cargar</p>';
+            }
+        }
+
+        async function loadFraudLogs() {
+            try {
+                const res = await fetch('/api/admin/security/fraud-logs');
+                const data = await res.json();
+                
+                document.getElementById('fraud-loading').style.display = 'none';
+                
+                if (data.success && data.logs && data.logs.length > 0) {
+                    document.getElementById('fraud-table').style.display = 'table';
+                    renderFraudLogs('fraud-tbody', data.logs);
+                } else {
+                    document.getElementById('fraud-empty').style.display = 'block';
+                }
+            } catch (e) {
+                console.error('Error loading fraud logs:', e);
+                document.getElementById('fraud-loading').innerHTML = '<p>Error al cargar</p>';
+            }
+        }
+
+        function renderUsers(tbodyId, users, state) {
+            const tbody = document.getElementById(tbodyId);
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">${(user.first_name || user.username || 'U')[0].toUpperCase()}</div>
+                            <div>
+                                <div class="user-name">${user.first_name || ''} ${user.last_name || ''}</div>
+                                <div class="user-id">ID: ${user.user_id || user.id}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-${state.toLowerCase()}">${state}</span></td>
+                    <td>${user.suspension_reason || '-'}</td>
+                    <td>${formatDate(user.suspension_date)}</td>
+                    <td>
+                        <button class="action-btn view" onclick="viewUser('${user.user_id || user.id}')">Ver</button>
+                        <button class="action-btn restore" onclick="${state === 'SUSPENDED' ? 'unsuspendUser' : 'unbanUser'}('${user.user_id || user.id}')">Restaurar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderFraudLogs(tbodyId, logs) {
+            const tbody = document.getElementById(tbodyId);
+            tbody.innerHTML = logs.map(log => `
+                <tr>
+                    <td>ID: ${log.user_id}</td>
+                    <td>${log.fraud_type || '-'}</td>
+                    <td><span class="badge badge-${(log.severity || 'medium').toLowerCase()}">${log.severity || 'MEDIUM'}</span></td>
+                    <td>${log.detected_by || 'AUTO'}</td>
+                    <td>${formatDate(log.created_at)}</td>
+                    <td>
+                        <button class="action-btn view" onclick="viewUser('${log.user_id}')">Ver Usuario</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function searchUser() {
+            const query = document.getElementById('search-input').value.trim();
+            if (!query) return;
+            
+            document.getElementById('search-loading').style.display = 'block';
+            document.getElementById('search-table').style.display = 'none';
+            document.getElementById('search-empty').style.display = 'none';
+            
+            try {
+                const res = await fetch('/api/admin/security/search?q=' + encodeURIComponent(query));
+                const data = await res.json();
+                
+                document.getElementById('search-loading').style.display = 'none';
+                
+                if (data.success && data.users && data.users.length > 0) {
+                    document.getElementById('search-table').style.display = 'table';
+                    renderSearchResults(data.users);
+                } else {
+                    document.getElementById('search-empty').style.display = 'block';
+                    document.getElementById('search-empty').querySelector('p').textContent = 'No se encontraron resultados';
+                }
+            } catch (e) {
+                console.error('Error searching:', e);
+                document.getElementById('search-loading').style.display = 'none';
+                document.getElementById('search-empty').style.display = 'block';
+                document.getElementById('search-empty').querySelector('p').textContent = 'Error en la búsqueda';
+            }
+        }
+
+        function renderSearchResults(users) {
+            const tbody = document.getElementById('search-tbody');
+            tbody.innerHTML = users.map(user => {
+                const state = user.account_state || (user.banned == 1 ? 'BANNED' : 'ACTIVE');
+                const balance = user.se_balance || user.balance || 0;
+                return `
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">${(user.first_name || user.username || 'U')[0].toUpperCase()}</div>
+                                <div>
+                                    <div class="user-name">${user.first_name || ''} ${user.last_name || ''}</div>
+                                    <div class="user-id">ID: ${user.user_id || user.id}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-${state.toLowerCase()}">${state}</span></td>
+                        <td>${parseFloat(balance).toFixed(2)}</td>
+                        <td>${formatDate(user.created_at)}</td>
+                        <td>
+                            <button class="action-btn view" onclick="viewUser('${user.user_id || user.id}')">Ver</button>
+                            ${state === 'ACTIVE' ? `<button class="action-btn suspend" onclick="suspendUser('${user.user_id || user.id}')">Suspender</button>` : ''}
+                            ${state === 'SUSPENDED' ? `<button class="action-btn restore" onclick="unsuspendUser('${user.user_id || user.id}')">Restaurar</button>` : ''}
+                            ${state === 'BANNED' ? `<button class="action-btn restore" onclick="unbanUser('${user.user_id || user.id}')">Restaurar</button>` : ''}
+                            ${state !== 'BANNED' ? `<button class="action-btn ban" onclick="banUser('${user.user_id || user.id}')">Banear</button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function viewUser(userId) {
+            document.getElementById('user-modal').classList.add('active');
+            document.getElementById('modal-content').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando detalles...</p>
+                </div>
+            `;
+            document.getElementById('modal-actions').innerHTML = '';
+            
+            try {
+                const res = await fetch('/api/admin/security/user/' + userId);
+                const data = await res.json();
+                
+                if (data.success && data.details) {
+                    renderUserDetails(data.details);
+                } else {
+                    document.getElementById('modal-content').innerHTML = '<p>Error al cargar usuario</p>';
+                }
+            } catch (e) {
+                console.error('Error loading user:', e);
+                document.getElementById('modal-content').innerHTML = '<p>Error al cargar usuario</p>';
+            }
+        }
+
+        function renderUserDetails(details) {
+            const user = details.user || {};
+            const state = user.account_state || (user.banned == 1 ? 'BANNED' : 'ACTIVE');
+            const balance = user.se_balance || user.balance || 0;
+            
+            let html = `
+                <div class="modal-section">
+                    <h3>Información General</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="label">User ID</div>
+                            <div class="value">${user.user_id || user.id || '-'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">Nombre</div>
+                            <div class="value">${user.first_name || ''} ${user.last_name || ''}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">Username</div>
+                            <div class="value">@${user.username || '-'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">Estado</div>
+                            <div class="value"><span class="badge badge-${state.toLowerCase()}">${state}</span></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">Balance SE</div>
+                            <div class="value">${parseFloat(balance).toFixed(4)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">Registro</div>
+                            <div class="value">${formatDate(user.created_at)}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            if (user.suspension_reason) {
+                html += `
+                    <div class="modal-section">
+                        <h3>Suspensión/Ban</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <div class="label">Razón</div>
+                                <div class="value">${user.suspension_reason}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="label">Fecha</div>
+                                <div class="value">${formatDate(user.suspension_date)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="label">Reofensas</div>
+                                <div class="value">${user.reoffense_count || 0}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // IP History
+            if (details.ip_history && details.ip_history.length > 0) {
+                html += `
+                    <div class="modal-section">
+                        <h3>Historial de IPs (últimas 10)</h3>
+                        <div class="table-container" style="margin-top: 10px;">
+                            <table class="modal-table">
+                                <thead>
+                                    <tr><th>IP</th><th>País</th><th>VPN</th><th>Fecha</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${details.ip_history.slice(0, 10).map(ip => `
+                                        <tr>
+                                            <td>${ip.ip_address}</td>
+                                            <td>${ip.country || '-'}</td>
+                                            <td>${ip.is_vpn ? 'Sí' : 'No'}</td>
+                                            <td>${formatDate(ip.created_at)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Device Fingerprints
+            if (details.device_fingerprints && details.device_fingerprints.length > 0) {
+                html += `
+                    <div class="modal-section">
+                        <h3>Dispositivos</h3>
+                        <div class="table-container" style="margin-top: 10px;">
+                            <table class="modal-table">
+                                <thead>
+                                    <tr><th>Hash</th><th>Plataforma</th><th>Navegador</th><th>Fecha</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${details.device_fingerprints.map(d => `
+                                        <tr>
+                                            <td>${(d.device_hash || '').substring(0, 16)}...</td>
+                                            <td>${d.platform || '-'}</td>
+                                            <td>${d.browser || '-'}</td>
+                                            <td>${formatDate(d.created_at)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Fraud Logs
+            if (details.fraud_logs && details.fraud_logs.length > 0) {
+                html += `
+                    <div class="modal-section">
+                        <h3>Registros de Fraude</h3>
+                        <div class="table-container" style="margin-top: 10px;">
+                            <table class="modal-table">
+                                <thead>
+                                    <tr><th>Tipo</th><th>Severidad</th><th>Acción</th><th>Fecha</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${details.fraud_logs.map(f => `
+                                        <tr>
+                                            <td>${f.fraud_type || '-'}</td>
+                                            <td><span class="badge badge-${(f.severity || 'medium').toLowerCase()}">${f.severity || 'MEDIUM'}</span></td>
+                                            <td>${f.action_taken || '-'}</td>
+                                            <td>${formatDate(f.created_at)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Wallet Addresses
+            if (details.wallet_addresses && details.wallet_addresses.length > 0) {
+                html += `
+                    <div class="modal-section">
+                        <h3>Direcciones de Wallet</h3>
+                        <div class="table-container" style="margin-top: 10px;">
+                            <table class="modal-table">
+                                <thead>
+                                    <tr><th>Dirección</th><th>Moneda</th><th>Fecha</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${details.wallet_addresses.map(w => `
+                                        <tr>
+                                            <td style="font-family: monospace; font-size: 11px;">${w.wallet_address}</td>
+                                            <td>${w.currency || 'USDT'}</td>
+                                            <td>${formatDate(w.created_at)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('modal-content').innerHTML = html;
+            
+            // Modal actions
+            const userId = user.user_id || user.id;
+            let actionsHtml = '';
+            
+            if (state === 'ACTIVE') {
+                actionsHtml = `
+                    <button class="action-btn suspend" style="padding: 12px 24px; font-size: 14px;" onclick="suspendUser('${userId}'); closeModal();">Suspender</button>
+                    <button class="action-btn ban" style="padding: 12px 24px; font-size: 14px;" onclick="banUser('${userId}'); closeModal();">Banear</button>
+                `;
+            } else if (state === 'SUSPENDED') {
+                actionsHtml = `
+                    <button class="action-btn restore" style="padding: 12px 24px; font-size: 14px;" onclick="unsuspendUser('${userId}'); closeModal();">Restaurar</button>
+                    <button class="action-btn ban" style="padding: 12px 24px; font-size: 14px;" onclick="banUser('${userId}'); closeModal();">Banear</button>
+                `;
+            } else if (state === 'BANNED') {
+                actionsHtml = `
+                    <button class="action-btn restore" style="padding: 12px 24px; font-size: 14px;" onclick="unbanUser('${userId}'); closeModal();">Restaurar</button>
+                `;
+            }
+            
+            document.getElementById('modal-actions').innerHTML = actionsHtml;
+        }
+
+        function closeModal() {
+            document.getElementById('user-modal').classList.remove('active');
+        }
+
+        async function suspendUser(userId) {
+            const reason = prompt('Razón de la suspensión:');
+            if (!reason) return;
+            
+            try {
+                const res = await fetch('/api/admin/security/suspend', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, reason })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    alert('Usuario suspendido');
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown'));
+                }
+            } catch (e) {
+                alert('Error al suspender');
+            }
+        }
+
+        async function banUser(userId) {
+            const reason = prompt('Razón del ban permanente:');
+            if (!reason) return;
+            
+            if (!confirm('¿Estás seguro de banear permanentemente este usuario?')) return;
+            
+            try {
+                const res = await fetch('/api/admin/security/ban', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, reason })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    alert('Usuario baneado permanentemente');
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown'));
+                }
+            } catch (e) {
+                alert('Error al banear');
+            }
+        }
+
+        async function unsuspendUser(userId) {
+            const reason = prompt('Razón de la restauración:');
+            if (!reason) return;
+            
+            try {
+                const res = await fetch('/api/admin/security/unsuspend', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, reason })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    alert('Usuario restaurado. ' + (data.message || ''));
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown'));
+                }
+            } catch (e) {
+                alert('Error al restaurar');
+            }
+        }
+
+        async function unbanUser(userId) {
+            const reason = prompt('Razón de la restauración del ban:');
+            if (!reason) return;
+            
+            if (!confirm('¿Estás seguro de remover el ban permanente?')) return;
+            
+            try {
+                const res = await fetch('/api/admin/security/unban', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, reason })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    alert('Ban removido. ' + (data.message || ''));
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown'));
+                }
+            } catch (e) {
+                alert('Error al remover ban');
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            try {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return dateStr;
+            }
+        }
+
+        // Search on Enter
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchUser();
+        });
+
+        // Close modal on overlay click
+        document.getElementById('user-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'user-modal') closeModal();
+        });
+    </script>
+</body>
+</html>

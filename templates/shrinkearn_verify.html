@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% if success %}Mission Complete{% else %}Task Status{% endif %} | SALLY-E</title>
+    
+    <!-- Telegram WebApp -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(18, 18, 26, 0.9);
+            --neon-cyan: #00d4ff;
+            --neon-pink: #ff00e5;
+            --neon-purple: #a855f7;
+            --neon-green: #00ff88;
+            --neon-yellow: #ffcc00;
+            --neon-red: #ff3366;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Animated Background */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridPulse 4s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            animation: float 15s infinite;
+            opacity: 0.5;
+            filter: blur(1px);
+        }
+        
+        .particle:nth-child(2) { left: 20%; animation-delay: -2s; background: var(--neon-pink); }
+        .particle:nth-child(3) { left: 40%; animation-delay: -4s; background: var(--neon-purple); }
+        .particle:nth-child(4) { left: 60%; animation-delay: -6s; background: var(--neon-green); }
+        .particle:nth-child(5) { left: 80%; animation-delay: -8s; background: var(--neon-cyan); }
+        .particle:nth-child(6) { left: 10%; animation-delay: -10s; background: var(--neon-pink); }
+        .particle:nth-child(7) { left: 70%; animation-delay: -12s; background: var(--neon-purple); }
+        .particle:nth-child(8) { left: 30%; animation-delay: -14s; background: var(--neon-green); }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+        }
+        
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 420px;
+            width: 100%;
+        }
+        
+        /* Result Card */
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                var(--neon-cyan), 
+                var(--neon-pink), 
+                var(--neon-purple), 
+                var(--neon-cyan));
+            background-size: 200% 100%;
+            animation: gradientShift 3s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Success State */
+        .result-card.success::before {
+            background: linear-gradient(90deg, 
+                var(--neon-green), 
+                var(--neon-cyan), 
+                var(--neon-green));
+        }
+        
+        /* Error State */
+        .result-card.error::before {
+            background: linear-gradient(90deg, 
+                var(--neon-red), 
+                var(--neon-pink), 
+                var(--neon-red));
+        }
+        
+        /* Icon Container */
+        .icon-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .icon-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            animation: ringPulse 2s ease-in-out infinite;
+        }
+        
+        .success .icon-ring {
+            border-color: var(--neon-green);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 136, 0.3),
+                inset 0 0 20px rgba(0, 255, 136, 0.1);
+        }
+        
+        .error .icon-ring {
+            border-color: var(--neon-red);
+            box-shadow: 
+                0 0 20px rgba(255, 51, 102, 0.3),
+                inset 0 0 20px rgba(255, 51, 102, 0.1);
+        }
+        
+        @keyframes ringPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        .icon-bg {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+        
+        .success .icon-bg {
+            background: linear-gradient(135deg, 
+                rgba(0, 255, 136, 0.2), 
+                rgba(0, 245, 255, 0.1));
+        }
+        
+        .error .icon-bg {
+            background: linear-gradient(135deg, 
+                rgba(255, 51, 102, 0.2), 
+                rgba(255, 0, 229, 0.1));
+        }
+        
+        /* Status Text */
+        .status-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+        
+        .success .status-title {
+            color: var(--neon-green);
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+        
+        .error .status-title {
+            color: var(--neon-red);
+            text-shadow: 0 0 30px rgba(255, 51, 102, 0.5);
+        }
+        
+        .status-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+        
+        /* Reward Display */
+        .reward-display {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+        
+        .reward-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        
+        .reward-amount {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--neon-yellow);
+            text-shadow: 0 0 30px rgba(255, 204, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .reward-currency {
+            font-size: 18px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .reward-pts {
+            font-size: 18px;
+            color: var(--neon-cyan);
+            margin-top: 8px;
+        }
+        
+        /* Action Button */
+        .action-btn {
+            width: 100%;
+            padding: 16px 32px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
+        }
+        
+        .action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 245, 255, 0.4);
+        }
+        
+        .action-btn.primary:active {
+            transform: translateY(0);
+        }
+        
+        .action-btn.secondary {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            margin-top: 12px;
+        }
+        
+        .action-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--neon-cyan);
+        }
+        
+        /* Success Animation */
+        @keyframes successPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .success .icon-container {
+            animation: successPop 0.5s ease-out;
+        }
+        
+        /* Confetti */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confettiFall 3s ease-out forwards;
+        }
+        
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 400px) {
+            .result-card {
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+            
+            .status-title {
+                font-size: 24px;
+            }
+            
+            .reward-amount {
+                font-size: 32px;
+            }
+        }
+        
+        /* Loading State */
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--glass-border);
+            border-top-color: var(--neon-cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-grid"></div>
+    <div class="particles">
+        <div class="particle" style="left: 5%;"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    {% if success %}
+    <div class="confetti-container" id="confetti"></div>
+    {% endif %}
+    
+    <div class="container">
+        <div class="result-card {% if success %}success{% else %}error{% endif %}">
+            <!-- Icon -->
+            <div class="icon-container">
+                <div class="icon-ring"></div>
+                <div class="icon-bg">
+                    {% if success %}
+                        {{ mission_icon|default('🎯') }}
+                    {% else %}
+                        ❌
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Status Title -->
+            <h1 class="status-title">
+                {% if success %}
+                    MISSION COMPLETE!
+                {% elif already_completed %}
+                    ALREADY CLAIMED
+                {% elif too_fast %}
+                    TOO FAST
+                {% elif expired %}
+                    EXPIRED
+                {% else %}
+                    ERROR
+                {% endif %}
+            </h1>
+            
+            <!-- Status Subtitle -->
+            <p class="status-subtitle">
+                {% if success %}
+                    {{ mission_name_es|default('Tarea') }} completada exitosamente.<br>
+                    Tu recompensa ha sido acreditada.
+                {% elif already_completed %}
+                    {{ error_es|default('Esta misión ya fue completada anteriormente.') }}
+                {% elif too_fast %}
+                    {{ error_es|default('Completaste la tarea muy rápido. Asegúrate de ver todos los anuncios.') }}
+                {% elif expired %}
+                    {{ error_es|default('Esta misión ha expirado. Inicia una nueva.') }}
+                {% else %}
+                    {{ error_es|default(error)|default('Ocurrió un error inesperado.') }}
+                {% endif %}
+            </p>
+            
+            {% if success %}
+            <!-- Reward Display -->
+            <div class="reward-display">
+                <div class="reward-label">Recompensa Recibida</div>
+                <div class="reward-amount">
+                    +{{ "%.4f"|format(reward_doge) }}
+                    <span class="reward-currency">DOGE</span>
+                </div>
+                {% if reward_pts > 0 %}
+                <div class="reward-pts">+ {{ reward_pts }} PTS</div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <!-- Action Buttons -->
+            <button class="action-btn primary" onclick="goBack()">
+                {% if success %}
+                    🚀 Continuar
+                {% else %}
+                    ← Volver a la App
+                {% endif %}
+            </button>
+            
+            {% if not success and not already_completed %}
+            <button class="action-btn secondary" onclick="tryAgain()">
+                🔄 Intentar de Nuevo
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Telegram WebApp
+        const tg = window.Telegram?.WebApp;
+        
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            
+            // Set header color
+            try {
+                tg.setHeaderColor('#0a0a0f');
+                tg.setBackgroundColor('#0a0a0f');
+            } catch(e) {}
+        }
+        
+        // Success confetti animation
+        {% if success %}
+        function createConfetti() {
+            const container = document.getElementById('confetti');
+            const colors = ['#00d4ff', '#ff00e5', '#a855f7', '#00ff88', '#ffcc00'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                    container.appendChild(confetti);
+                    
+                    // Remove after animation
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 30);
+            }
+        }
+        
+        // Trigger confetti on load
+        setTimeout(createConfetti, 300);
+        
+        // Haptic feedback
+        if (tg?.HapticFeedback) {
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+        {% endif %}
+        
+        // Navigation functions
+        function goBack() {
+            // Try to close Telegram WebApp or redirect
+            if (tg) {
+                try {
+                    // Try to close the webapp
+                    tg.close();
+                } catch(e) {
+                    // If can't close, redirect to main app
+                    window.location.href = '/?user_id={{ user_id }}';
+                }
+            } else {
+                window.location.href = '/';
+            }
+        }
+        
+        function tryAgain() {
+            // Go to tasks page
+            if (tg) {
+                window.location.href = '/tasks?user_id={{ user_id }}';
+            } else {
+                window.location.href = '/tasks';
+            }
+        }
+        
+        // Auto-redirect after 5 seconds on success
+        {% if success %}
+        setTimeout(() => {
+            goBack();
+        }, 5000);
+        {% endif %}
+    </script>
+</body>
+</html>

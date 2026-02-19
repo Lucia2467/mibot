@@ -1,0 +1,275 @@
+/**
+ * 🎨 EMOJI TO IMAGE SYSTEM
+ * Sistema para reemplazar emojis con imágenes personalizadas
+ * Uso: defineEmojiImage('💰', '/path/to/image.png')
+ */
+
+<style>
+    /* Clase para imágenes que reemplazan emojis */
+    .emoji-img {
+        display: inline-block;
+        width: 1.2em;
+        height: 1.2em;
+        vertical-align: middle;
+        object-fit: contain;
+        margin: -0.1em 0.1em;
+    }
+
+    .emoji-img.large {
+        width: 2em;
+        height: 2em;
+    }
+
+    .emoji-img.medium {
+        width: 1.5em;
+        height: 1.5em;
+    }
+
+    .emoji-img.small {
+        width: 1em;
+        height: 1em;
+    }
+</style>
+
+<script>
+/**
+ * Configuración de emojis a imágenes
+ * Mapea emojis Unicode a URLs de imágenes
+ */
+const EMOJI_IMAGE_MAP = {
+    // Monedas y dinero
+    '💰': null,  // Configurar con: setEmojiImage('💰', '/static/images/money-bag.png')
+    '💵': null,
+    '💴': null,
+    '💶': null,
+    '💷': null,
+    '🪙': null,
+
+    // Verificación y estado
+    ': null,
+    ': null,
+    '✓': null,
+    '✔': null,
+    '⚠️': null,
+    '⏳': null,
+
+    // Celebración y éxito
+    '🎉': null,
+    '🎊': null,
+    '🥳': null,
+    '🏆': null,
+    '🌟': null,
+    '⭐': null,
+    '💎': null,
+    '👑': null,
+
+    // Tecnología
+    '📱': null,
+    '💻': null,
+    '🔗': null,
+    '⚡': null,
+    '🔋': null,
+
+    // Información
+    '📊': null,
+    '📈': null,
+    '📉': null,
+    '📋': null,
+    '📄': null,
+    '📜': null,
+    'ℹ️': null,
+    '💡': null,
+
+    // Otros comunes
+    '🎁': null,
+    '🎯': null,
+    '🚀': null,
+    '⚙️': null,
+    '🔒': null,
+    '🔓': null
+};
+
+/**
+ * Define una imagen para un emoji específico
+ * @param {string} emoji - El emoji a reemplazar
+ * @param {string} imageUrl - URL de la imagen
+ */
+function setEmojiImage(emoji, imageUrl) {
+    EMOJI_IMAGE_MAP[emoji] = imageUrl;
+}
+
+/**
+ * Define múltiples emojis a la vez
+ * @param {Object} mapping - Objeto con emoji: url
+ */
+function setEmojiImages(mapping) {
+    Object.assign(EMOJI_IMAGE_MAP, mapping);
+}
+
+/**
+ * Reemplaza emojis por imágenes en un elemento
+ * @param {HTMLElement|string} element - Elemento o selector
+ * @param {string} size - Tamaño: 'small', 'medium', 'large', null (default)
+ */
+function replaceEmojisInElement(element, size = null) {
+    const el = typeof element === 'string' ? document.querySelector(element) : element;
+    if (!el) return;
+
+    // Procesar nodos de texto
+    const walker = document.createTreeWalker(
+        el,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+    );
+
+    const nodesToReplace = [];
+    let node;
+
+    while (node = walker.nextNode()) {
+        if (node.textContent.trim()) {
+            nodesToReplace.push(node);
+        }
+    }
+
+    nodesToReplace.forEach(textNode => {
+        let html = textNode.textContent;
+        let hasEmoji = false;
+
+        // Reemplazar cada emoji configurado
+        for (const [emoji, imageUrl] of Object.entries(EMOJI_IMAGE_MAP)) {
+            if (imageUrl && html.includes(emoji)) {
+                const sizeClass = size ? ` ${size}` : '';
+                html = html.replace(
+                    new RegExp(escapeRegExp(emoji), 'g'),
+                    `<img src="${imageUrl}" alt="${emoji}" class="emoji-img${sizeClass}" />`
+                );
+                hasEmoji = true;
+            }
+        }
+
+        if (hasEmoji) {
+            const span = document.createElement('span');
+            span.innerHTML = html;
+            textNode.parentNode.replaceChild(span, textNode);
+        }
+    });
+}
+
+/**
+ * Reemplaza emojis en todo el documento
+ * @param {string} size - Tamaño de las imágenes
+ */
+function replaceAllEmojis(size = null) {
+    replaceEmojisInElement(document.body, size);
+}
+
+/**
+ * Observa cambios en el DOM y reemplaza emojis automáticamente
+ * @param {string} size - Tamaño de las imágenes
+ */
+function autoReplaceEmojis(size = null) {
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1) { // Element node
+                    replaceEmojisInElement(node, size);
+                }
+            });
+        });
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+}
+
+/**
+ * Crea un elemento con texto que tiene emojis reemplazados
+ * @param {string} text - Texto con emojis
+ * @param {string} tag - Tag HTML (default: 'span')
+ * @param {string} size - Tamaño de emojis
+ * @returns {HTMLElement}
+ */
+function createElementWithEmojis(text, tag = 'span', size = null) {
+    const element = document.createElement(tag);
+    element.textContent = text;
+    replaceEmojisInElement(element, size);
+    return element;
+}
+
+/**
+ * Convierte texto con emojis a HTML con imágenes
+ * @param {string} text - Texto con emojis
+ * @param {string} size - Tamaño de emojis
+ * @returns {string} HTML
+ */
+function emojiTextToHtml(text, size = null) {
+    let html = text;
+    const sizeClass = size ? ` ${size}` : '';
+
+    for (const [emoji, imageUrl] of Object.entries(EMOJI_IMAGE_MAP)) {
+        if (imageUrl && html.includes(emoji)) {
+            html = html.replace(
+                new RegExp(escapeRegExp(emoji), 'g'),
+                `<img src="${imageUrl}" alt="${emoji}" class="emoji-img${sizeClass}" />`
+            );
+        }
+    }
+
+    return html;
+}
+
+/**
+ * Escapa caracteres especiales para RegExp
+ * @param {string} string - String a escapar
+ * @returns {string}
+ */
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Exponer funciones globalmente
+window.setEmojiImage = setEmojiImage;
+window.setEmojiImages = setEmojiImages;
+window.replaceEmojisInElement = replaceEmojisInElement;
+window.replaceAllEmojis = replaceAllEmojis;
+window.autoReplaceEmojis = autoReplaceEmojis;
+window.createElementWithEmojis = createElementWithEmojis;
+window.emojiTextToHtml = emojiTextToHtml;
+
+// Auto-inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    // Puedes activar el auto-reemplazo descomentan esta línea:
+    // autoReplaceEmojis();
+});
+
+/**
+ * EJEMPLO DE USO:
+ *
+ * 1. Configurar imágenes para emojis:
+ *    setEmojiImage('💰', '/static/images/money-bag.png');
+ *    setEmojiImage('✅', '/static/images/checkmark.png');
+ *
+ * 2. O configurar múltiples a la vez:
+ *    setEmojiImages({
+ *        '💰': '/static/images/money-bag.png',
+ *        ': '/static/images/checkmark.png',
+ *        ': '/static/images/cross.png'
+ *    });
+ *
+ * 3. Reemplazar emojis en un elemento específico:
+ *    replaceEmojisInElement('#mi-elemento');
+ *    replaceEmojisInElement(document.querySelector('.clase'), 'large');
+ *
+ * 4. Reemplazar en todo el documento:
+ *    replaceAllEmojis();
+ *
+ * 5. Activar reemplazo automático:
+ *    autoReplaceEmojis('medium');
+ *
+ * 6. Convertir texto a HTML:
+ *    const html = emojiTextToHtml('¡Wallet vinculada ✅!');
+ */
+</script>

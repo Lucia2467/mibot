@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Upgrade{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Coming Soon Hero -->
+    <div class="card hero-card" style="background: linear-gradient(135deg, rgba(0, 102, 255, 0.08) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(0, 102, 255, 0.3); min-height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden;">
+
+        <!-- Elementos de fondo con animación -->
+        <div class="bg-orb" style="position: absolute; top: -100px; left: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(0, 102, 255, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite;"></div>
+        <div class="bg-orb" style="position: absolute; bottom: -80px; right: -80px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(0, 102, 255, 0.12) 0%, transparent 70%); border-radius: 50%; animation: float 10s ease-in-out infinite reverse;"></div>
+        <div class="bg-orb" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; height: 400px; background: radial-gradient(circle, rgba(0, 82, 204, 0.08) 0%, transparent 70%); border-radius: 50%; animation: pulse 6s ease-in-out infinite;"></div>
+
+        <!-- Contenido principal -->
+        <div style="position: relative; z-index: 1; max-width: 600px; padding: var(--space-6);">
+
+            <!-- Icono principal con gradiente rosa/morado animado -->
+            <div class="floating gradient-icon" style="width: 100px; height: 100px; margin: 0 auto var(--space-6); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0066FF 0%, #0052CC 25%, #0066FF 50%, #0040FF 75%, #0066FF 100%); background-size: 200% 200%; border-radius: 24px; box-shadow: 0 10px 40px rgba(0, 102, 255, 0.5), 0 0 60px rgba(0, 82, 204, 0.3); animation: gradientShift 3s ease infinite;">
+                <i data-lucide="zap" style="width: 50px; height: 50px; color: white;"></i>
+            </div>
+
+            <!-- Título -->
+            <h1 class="gradient-text" style="font-size: 2.5rem; font-weight: 800; margin-bottom: var(--space-4); letter-spacing: -0.02em;">
+                Upgrade
+            </h1>
+
+            <!-- Badge Coming Soon con gradiente rosa/morado animado -->
+            <div class="gradient-badge" style="display: inline-block; background: linear-gradient(135deg, #0066FF 0%, #0052CC 25%, #0066FF 50%, #0040FF 75%, #0066FF 100%); background-size: 200% 200%; border-radius: 50px; padding: 12px 32px; margin-bottom: var(--space-6); box-shadow: 0 4px 20px rgba(0, 102, 255, 0.4), 0 0 40px rgba(0, 82, 204, 0.2); animation: gradientShift 3s ease infinite;">
+                <span style="font-size: 1.125rem; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 0.1em;">
+                    Próximamente
+                </span>
+            </div>
+
+            <!-- Descripción -->
+            <p style="font-size: 1rem; color: rgba(255, 255, 255, 0.7); line-height: 1.8; margin-bottom: var(--space-8);">
+                Estamos desarrollando un sistema de mejoras para tu experiencia de minería. Pronto podrás desbloquear nuevas capacidades y aumentar tus ganancias.
+            </p>
+
+            <!-- Cards de características -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-4); margin-top: var(--space-6);">
+
+                <!-- Velocidad -->
+                <div class="feature-card" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: var(--space-5); text-align: center; position: relative; overflow: hidden;">
+                    <div class="card-glow"></div>
+                    <div style="width: 48px; height: 48px; margin: 0 auto var(--space-3); background: linear-gradient(135deg, rgba(0, 255, 136, 0.2) 0%, rgba(0, 255, 136, 0.05) 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 1;">
+                        <i data-lucide="trending-up" style="width: 24px; height: 24px; color: #00FF88;"></i>
+                    </div>
+                    <div style="font-weight: 700; font-size: 0.9375rem; color: white; margin-bottom: var(--space-2); position: relative; z-index: 1;">
+                        Mayor Velocidad
+                    </div>
+                    <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); position: relative; z-index: 1;">
+                        Aumenta tu tasa de minería
+                    </div>
+                </div>
+
+                <!-- Bonos -->
+                <div class="feature-card" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: var(--space-5); text-align: center; position: relative; overflow: hidden;">
+                    <div class="card-glow"></div>
+                    <div style="width: 48px; height: 48px; margin: 0 auto var(--space-3); background: linear-gradient(135deg, rgba(0, 102, 255, 0.2) 0%, rgba(0, 82, 204, 0.05) 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 1;">
+                        <i data-lucide="gift" style="width: 24px; height: 24px; color: #0066FF;"></i>
+                    </div>
+                    <div style="font-weight: 700; font-size: 0.9375rem; color: white; margin-bottom: var(--space-2); position: relative; z-index: 1;">
+                        Bonos Exclusivos
+                    </div>
+                    <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); position: relative; z-index: 1;">
+                        Recompensas premium
+                    </div>
+                </div>
+
+                <!-- VIP -->
+                <div class="feature-card" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: var(--space-5); text-align: center; position: relative; overflow: hidden;">
+                    <div class="card-glow"></div>
+                    <div style="width: 48px; height: 48px; margin: 0 auto var(--space-3); background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.05) 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 1;">
+                        <i data-lucide="star" style="width: 24px; height: 24px; color: #FFD700;"></i>
+                    </div>
+                    <div style="font-weight: 700; font-size: 0.9375rem; color: white; margin-bottom: var(--space-2); position: relative; z-index: 1;">
+                        Acceso VIP
+                    </div>
+                    <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); position: relative; z-index: 1;">
+                        Funciones especiales
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Card -->
+    <div class="card info-card" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.06) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(0, 245, 255, 0.2); position: relative; overflow: hidden;">
+        <div class="card-glow-cyan"></div>
+        <div style="display: flex; align-items: center; gap: var(--space-4); position: relative; z-index: 1;">
+            <div class="floating" style="flex-shrink: 0; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 245, 255, 0.2) 0%, rgba(0, 82, 204, 0.2) 100%); border-radius: 14px;">
+                <i data-lucide="info" style="width: 28px; height: 28px; color: #00D4FF;"></i>
+            </div>
+            <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 1.0625rem; margin-bottom: var(--space-2); color: white;">
+                    En Desarrollo
+                </div>
+                <div style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.65); line-height: 1.6;">
+                    Nuestro equipo está trabajando para traerte el mejor sistema de upgrades. Esta función estará disponible muy pronto.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Animación de gradiente potente */
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Animación flotante */
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(15px, 15px);
+    }
+}
+
+/* Animación de pulso */
+@keyframes pulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+/* Animación de brillo en las tarjetas */
+@keyframes cardGlow {
+    0%, 100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Texto con gradiente animado */
+.gradient-text {
+    background: linear-gradient(135deg,
+        #0066FF 0%,
+        #0052CC 25%,
+        #0066FF 50%,
+        #0040FF 75%,
+        #0066FF 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 3s ease infinite;
+}
+
+/* Icono con gradiente animado */
+.gradient-icon {
+    position: relative;
+}
+
+.gradient-icon::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg,
+        #0066FF 0%,
+        #0052CC 25%,
+        #0066FF 50%,
+        #0040FF 75%,
+        #0066FF 100%);
+    background-size: 200% 200%;
+    border-radius: 24px;
+    z-index: -1;
+    animation: gradientShift 3s ease infinite;
+    filter: blur(10px);
+    opacity: 0.7;
+}
+
+/* Badge con gradiente animado */
+.gradient-badge {
+    position: relative;
+}
+
+.gradient-badge::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg,
+        #0066FF 0%,
+        #0052CC 25%,
+        #0066FF 50%,
+        #0040FF 75%,
+        #0066FF 100%);
+    background-size: 200% 200%;
+    border-radius: 50px;
+    z-index: -1;
+    animation: gradientShift 3s ease infinite;
+    filter: blur(8px);
+    opacity: 0.6;
+}
+
+/* Feature cards con efecto hover */
+.feature-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 102, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 102, 255, 0.2),
+                0 0 40px rgba(0, 82, 204, 0.15);
+}
+
+/* Efecto de brillo en cards */
+.card-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(0, 102, 255, 0.2) 50%,
+        transparent 100%);
+    animation: slideGlow 3s ease infinite;
+}
+
+.card-glow-cyan {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(0, 245, 255, 0.15) 50%,
+        transparent 100%);
+    animation: slideGlow 3s ease infinite;
+}
+
+@keyframes slideGlow {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 200%;
+    }
+}
+
+/* Hero card con animación de borde */
+.hero-card {
+    position: relative;
+}
+
+.hero-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg,
+        #0066FF 0%,
+        #0052CC 25%,
+        #0066FF 50%,
+        #0040FF 75%,
+        #0066FF 100%);
+    background-size: 200% 200%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: gradientShift 3s ease infinite;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* Info card con animación de borde */
+.info-card {
+    position: relative;
+}
+
+.info-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg,
+        #00D4FF 0%,
+        #0052CC 50%,
+        #00D4FF 100%);
+    background-size: 200% 200%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: gradientShift 3s ease infinite;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* Animación floating mejorada */
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Background orbs con blur */
+.bg-orb {
+    filter: blur(40px);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Añadir vibración al hacer hover en feature cards
+    const featureCards = document.querySelectorAll('.feature-card');
+    featureCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            if (window.vibrateDevice) {
+                window.vibrateDevice([5]);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

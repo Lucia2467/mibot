@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Editar' if promo else 'Crear' }} Código Promocional - SALLY-E Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .admin-container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+        
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .admin-header h1 { 
+            color: #003D99; 
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .nav-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(0, 102, 255, 0.4);
+        }
+        
+        .content-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #003D99;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #fce4ec;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-group { 
+            margin-bottom: 20px; 
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0066FF;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.1);
+        }
+        
+        .form-group input::placeholder {
+            color: #aaa;
+        }
+        
+        .form-group input.code-input {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            color: #003D99;
+        }
+        
+        .form-group small { 
+            color: #888; 
+            font-size: 12px; 
+            margin-top: 6px; 
+            display: block;
+            line-height: 1.4;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        
+        .checkbox-group:hover {
+            border-color: #0066FF;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            accent-color: #0066FF;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-submit:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 102, 255, 0.4);
+        }
+        
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-error { 
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); 
+            border: 1px solid #f5c6cb; 
+            color: #721c24; 
+        }
+        
+        .alert-info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        
+        /* Preview box */
+        .preview-box {
+            background: linear-gradient(135deg, #f8f0f5 0%, #fce4ec 100%);
+            border: 2px dashed #e8b4d4;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .preview-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .preview-code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 28px;
+            font-weight: bold;
+            color: #003D99;
+            letter-spacing: 3px;
+        }
+        
+        .preview-reward {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        /* Promo stats for edit mode */
+        .promo-current-stats {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+        
+        .current-stat {
+            text-align: center;
+        }
+        
+        .current-stat .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #003D99;
+        }
+        
+        .current-stat .label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+        }
+        
+        /* Redemption history */
+        .redemption-history {
+            margin-top: 30px;
+            border-top: 2px solid #eee;
+            padding-top: 25px;
+        }
+        
+        .redemption-history h3 {
+            font-size: 16px;
+            color: #003D99;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .redemption-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .redemption-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .redemption-user {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .redemption-date {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-header { 
+                flex-direction: column; 
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>{{ '✏️ Editar' if promo else '➕ Crear' }} Código Promocional</h1>
+            <a href="{{ url_for('admin_promo') }}" class="nav-btn">← Volver</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {% if category == 'error' %}❌{% else %}ℹ️{% endif %}
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="content-container">
+            {% if promo %}
+            <!-- Current stats for editing -->
+            <div class="promo-current-stats">
+                <div class="current-stat">
+                    <div class="value">{{ promo.current_uses|default(0) }}</div>
+                    <div class="label">Veces Canjeado</div>
+                </div>
+                <div class="current-stat">
+                    <div class="value">{{ promo.max_uses if promo.max_uses else '∞' }}</div>
+                    <div class="label">Límite Máximo</div>
+                </div>
+                <div class="current-stat">
+                    <div class="value">
+                        {% if promo.created_at %}
+                            {% if promo.created_at is string %}
+                                {{ promo.created_at[:10] }}
+                            {% else %}
+                                {{ promo.created_at.strftime('%d/%m/%y') }}
+                            {% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </div>
+                    <div class="label">Fecha Creación</div>
+                </div>
+                <div class="current-stat">
+                    <div class="value" style="color: {{ '#28a745' if promo.active else '#dc3545' }}">
+                        {{ '✅' if promo.active else '❌' }}
+                    </div>
+                    <div class="label">Estado</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('admin_edit_promo', code=promo.code) if promo else url_for('admin_promo_create') }}" id="promo-form">
+                
+                <div class="form-section">
+                    <div class="form-section-title">📝 Información del Código</div>
+                    
+                    <div class="form-group">
+                        <label for="code">Código Promocional</label>
+                        <input type="text" 
+                               name="code" 
+                               id="code"
+                               class="code-input"
+                               value="{{ promo.code if promo else '' }}" 
+                               {% if promo %}readonly{% endif %}
+                               required 
+                               placeholder="EJEMPLO2024"
+                               pattern="[A-Za-z0-9_-]+"
+                               maxlength="30"
+                               oninput="this.value = this.value.toUpperCase(); updatePreview();">
+                        <small>
+                            {% if promo %}
+                                El código no puede ser modificado después de crearse
+                            {% else %}
+                                Solo letras, números, guiones y guiones bajos. Se convertirá a mayúsculas.
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">💰 Configuración de Recompensa</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reward">Cantidad de Recompensa</label>
+                            <input type="number" 
+                                   name="reward" 
+                                   id="reward"
+                                   step="0.0001" 
+                                   min="0.0001" 
+                                   value="{{ promo.reward if promo else '1.0' }}" 
+                                   required
+                                   oninput="updatePreview();">
+                            <small>Cantidad de tokens que recibirá el usuario</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="currency">Moneda</label>
+                            <select name="currency" id="currency" onchange="updatePreview();">
+                                <option value="SE" {% if not promo or promo.currency == 'SE' %}selected{% endif %}>S-E</option>
+                                <option value="USDT" {% if promo and promo.currency == 'USDT' %}selected{% endif %}>USDT</option>
+                                <option value="DOGE" {% if promo and promo.currency == 'DOGE' %}selected{% endif %}>DOGE</option>
+                            </select>
+                            <small>Tipo de token a entregar</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">⚙️ Límites y Expiración</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="max_uses">Límite de Usos</label>
+                            <input type="number" 
+                                   name="max_uses" 
+                                   id="max_uses"
+                                   min="0" 
+                                   value="{{ promo.max_uses if promo and promo.max_uses else '' }}" 
+                                   placeholder="Sin límite">
+                            <small>Dejar vacío o 0 para uso ilimitado</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expires_at">Fecha de Expiración</label>
+                            <input type="date" 
+                                   name="expires_at" 
+                                   id="expires_at"
+                                   value="{% if promo and promo.expires_at %}{{ promo.expires_at.strftime('%Y-%m-%d') if promo.expires_at is not string else promo.expires_at[:10] }}{% endif %}">
+                            <small>Dejar vacío para que no expire</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" 
+                                   name="active" 
+                                   id="active" 
+                                   value="true" 
+                                   {% if not promo or promo.active %}checked{% endif %}>
+                            <label for="active">
+                                <strong>Código Activo</strong>
+                                <br>
+                                <small style="font-weight: normal; color: #888;">
+                                    Solo los códigos activos pueden ser canjeados por los usuarios
+                                </small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview -->
+                <div class="preview-box" id="preview-box">
+                    <div class="preview-label">Vista Previa</div>
+                    <div class="preview-code" id="preview-code">{{ promo.code if promo else 'CODIGO' }}</div>
+                    <div class="preview-reward" id="preview-reward">
+                        +{{ "%.4f"|format(promo.reward|float if promo else 1.0) }} {{ promo.currency if promo else 'S-E' }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    {% if promo %}
+                        💾 Guardar Cambios
+                    {% else %}
+                        ➕ Crear Código Promocional
+                    {% endif %}
+                </button>
+            </form>
+
+            {% if promo and redemptions %}
+            <!-- Redemption History -->
+            <div class="redemption-history">
+                <h3>📋 Historial de Canjes ({{ redemptions|length }})</h3>
+                <div class="redemption-list">
+                    {% for redemption in redemptions %}
+                    <div class="redemption-item">
+                        <div>
+                            <div class="redemption-user">
+                                {{ redemption.first_name|default('Usuario') }} 
+                                {% if redemption.username %}(@{{ redemption.username }}){% endif %}
+                            </div>
+                            <div style="font-size: 11px; color: #999;">ID: {{ redemption.user_id }}</div>
+                        </div>
+                        <div class="redemption-date">
+                            {% if redemption.redeemed_at %}
+                                {% if redemption.redeemed_at is string %}
+                                    {{ redemption.redeemed_at }}
+                                {% else %}
+                                    {{ redemption.redeemed_at.strftime('%d/%m/%Y %H:%M') }}
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function updatePreview() {
+            const code = document.getElementById('code').value || 'CODIGO';
+            const reward = parseFloat(document.getElementById('reward').value) || 0;
+            const currency = document.getElementById('currency').value || 'S-E';
+            
+            document.getElementById('preview-code').textContent = code.toUpperCase();
+            document.getElementById('preview-reward').textContent = '+' + reward.toFixed(4) + ' ' + currency;
+        }
+        
+        // Form validation
+        document.getElementById('promo-form').addEventListener('submit', function(e) {
+            const code = document.getElementById('code').value.trim();
+            const reward = parseFloat(document.getElementById('reward').value);
+            
+            if (!code) {
+                e.preventDefault();
+                alert('El código es requerido');
+                return false;
+            }
+            
+            if (!/^[A-Za-z0-9_-]+$/.test(code)) {
+                e.preventDefault();
+                alert('El código solo puede contener letras, números, guiones y guiones bajos');
+                return false;
+            }
+            
+            if (isNaN(reward) || reward <= 0) {
+                e.preventDefault();
+                alert('La recompensa debe ser mayor a 0');
+                return false;
+            }
+            
+            return true;
+        });
+        
+        // Initialize preview on load
+        document.addEventListener('DOMContentLoaded', updatePreview);
+    </script>
+</body>
+</html>

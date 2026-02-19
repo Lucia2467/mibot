@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Código Promocional{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 20px;">
+    <!-- Header Card -->
+    <div class="card" style="text-align: center; padding: 30px 20px;">
+        <div class="promo-header-icon">
+            <i data-lucide="gift" style="width: 50px; height: 50px; color: var(--color-neon-pink);"></i>
+        </div>
+        <h1 style="font-size: 1.75rem; font-weight: 700; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 15px 0 10px;" data-i18n="promo_code_title">
+            Código Promocional
+        </h1>
+        <p style="color: var(--color-text-secondary); font-size: 0.9rem;" data-i18n="promo_code_subtitle">
+            Ingresa tu código para recibir recompensas especiales
+        </p>
+    </div>
+
+    <!-- Promo Code Input Card -->
+    <div class="card" style="margin-top: 20px;">
+        <div class="promo-input-section">
+            <label class="input-label" data-i18n="your_promo_code">Tu código promocional</label>
+            <input
+                type="text"
+                id="promo-code-input"
+                class="promo-code-input"
+                placeholder="EJEMPLO2024"
+                maxlength="30"
+                autocomplete="off"
+                autocapitalize="characters">
+            <p class="input-hint" data-i18n="codes_not_case_sensitive">Los códigos no distinguen mayúsculas/minúsculas</p>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="redeemPromoCode()" id="redeem-btn">
+            <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
+            <span data-i18n="redeem_code">Canjear Código</span>
+        </button>
+    </div>
+
+    <!-- Info Card -->
+    <div class="card info-card" style="margin-top: 20px;">
+        <div class="info-item">
+            <i data-lucide="info" style="width: 20px; height: 20px; color: var(--color-neon-cyan);"></i>
+            <span data-i18n="promo_info_1">Los códigos son de uso único por usuario</span>
+        </div>
+        <div class="info-item">
+            <i data-lucide="clock" style="width: 20px; height: 20px; color: var(--color-neon-cyan);"></i>
+            <span data-i18n="promo_info_2">Algunos códigos pueden tener fecha de expiración</span>
+        </div>
+        <div class="info-item">
+            <i data-lucide="users" style="width: 20px; height: 20px; color: var(--color-neon-cyan);"></i>
+            <span data-i18n="promo_info_3">Algunos códigos tienen límite de usos totales</span>
+        </div>
+    </div>
+
+    <!-- Current Balance Card -->
+    <div class="card" style="margin-top: 20px; text-align: center;">
+        <p style="color: var(--color-text-secondary); font-size: 0.8rem; margin-bottom: 5px;" data-i18n="your_current_balance">Tu balance actual</p>
+        <p style="font-size: 1.5rem; font-weight: 700; color: var(--color-neon-cyan);">
+            {{ "%.4f"|format(user.se_balance or 0) }} S-E
+        </p>
+    </div>
+</div>
+
+<style>
+.promo-header-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.2) 0%, rgba(0, 61, 153, 0.2) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(0, 102, 255, 0.3);
+}
+
+.promo-input-section {
+    margin-bottom: 20px;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.promo-code-input {
+    width: 100%;
+    padding: 18px 20px;
+    background: var(--glass-ultra);
+    border: 2px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-primary);
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transition: all 0.3s ease;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.promo-code-input::placeholder {
+    color: var(--color-text-muted);
+    font-weight: 400;
+    letter-spacing: 2px;
+}
+
+.promo-code-input:focus {
+    outline: none;
+    border-color: var(--color-neon-pink);
+    background: rgba(0, 102, 255, 0.1);
+    box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.2);
+}
+
+.input-hint {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-top: 8px;
+    text-align: center;
+}
+
+.info-card {
+    background: linear-gradient(135deg, rgba(0, 245, 255, 0.05) 0%, rgba(0, 102, 255, 0.05) 100%);
+    border: 1px solid rgba(0, 245, 255, 0.2);
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.btn-block {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Loading state */
+.btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Shake animation for errors */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.5s ease;
+}
+</style>
+
+<script>
+async function redeemPromoCode() {
+    const input = document.getElementById('promo-code-input');
+    const btn = document.getElementById('redeem-btn');
+    const code = input.value.trim().toUpperCase();
+
+    if (!code) {
+        if (window.showToast) {
+            window.showToast(window.tt ? window.tt('toast_code_required') : 'Por favor ingresa un código', 'warning');
+        }
+        input.focus();
+        return;
+    }
+
+    // Disable button
+    btn.disabled = true;
+    btn.classList.add('loading');
+    const originalText = btn.querySelector('span').textContent;
+    const verifyingText = window.tt ? window.tt('toast_validating') : 'Verificando...';
+    btn.querySelector('span').textContent = verifyingText;
+
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('user_id') || '{{ user_id }}';
+
+        const response = await fetch('/api/promo/redeem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                code: code
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            if (window.showToast) {
+                const defaultMsg = window.tt ? window.tt('toast_code_redeemed') : '¡Código canjeado!';
+                window.showToast(`🎉 ${data.message || defaultMsg}`, 'success');
+            }
+
+            // Telegram haptic feedback
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+
+            // Clear input
+            input.value = '';
+
+            // Reload after delay to show new balance
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        } else {
+            if (window.showToast) {
+                const defaultMsg = window.tt ? window.tt('toast_invalid_code') : 'Código inválido';
+                window.showToast(data.error || data.message || defaultMsg, 'error');
+            }
+
+            // Telegram haptic feedback
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+            }
+
+            // Shake input on error
+            input.classList.add('shake');
+            setTimeout(() => {
+                input.classList.remove('shake');
+                input.select();
+            }, 500);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        if (window.showToast) {
+            window.showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+        }
+    } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.querySelector('span').textContent = originalText;
+    }
+}
+
+// Allow Enter key to submit
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('promo-code-input');
+    if (input) {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                redeemPromoCode();
+            }
+        });
+
+        // Auto-focus on load
+        input.focus();
+    }
+
+    // Initialize Lucide icons
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+});
+</script>
+{% endblock %}

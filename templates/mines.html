@@ -1,0 +1,850 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Mines{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header con botón de regreso y historial -->
+    <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4);">
+        <a href="/explore/games?user_id={{ user_id }}" style="text-decoration: none;">
+            <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: all 0.3s ease;">
+                <i data-lucide="arrow-left" style="width: 22px; height: 22px; color: rgba(255, 255, 255, 0.7);"></i>
+            </div>
+        </a>
+        <div style="flex: 1;">
+            <h1 style="font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: var(--space-1);">Mines</h1>
+            <p style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Descubre gemas, evita minas</p>
+        </div>
+        <!-- Botón de historial -->
+        <div onclick="toggleHistory()" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(0, 102, 255, 0.1); border-radius: 12px; border: 1px solid rgba(0, 102, 255, 0.3); cursor: pointer; transition: all 0.3s ease;">
+            <i data-lucide="history" style="width: 22px; height: 22px; color: #0066FF;"></i>
+        </div>
+    </div>
+
+    <!-- Sección de Historial (oculto inicialmente) -->
+    <div class="card" id="game-history-section" style="display: none; background: linear-gradient(135deg, rgba(0, 102, 255, 0.05) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(0, 102, 255, 0.2); margin-bottom: var(--space-4);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+            <h3 style="font-size: 1rem; font-weight: 700; color: white;">Historial de Juegos</h3>
+            <button onclick="toggleHistory()" style="background: rgba(255, 255, 255, 0.1); border: none; border-radius: 8px; padding: 6px 12px; color: white; cursor: pointer; font-size: 0.75rem;">
+                Cerrar
+            </button>
+        </div>
+        <div id="history-list" style="max-height: 300px; overflow-y: auto;">
+            <div style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.5);">
+                <i data-lucide="loader" style="width: 24px; height: 24px; animation: spin 1s linear infinite;"></i>
+                <p style="margin-top: 8px; font-size: 0.8125rem;">Cargando historial...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Balance y Apuesta -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.06) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(0, 245, 255, 0.2); margin-bottom: var(--space-4);">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+            <div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);">Tu Balance</div>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #00D4FF;" id="user-balance">{{ "%.4f"|format(user.se_balance) }} S-E</div>
+            </div>
+            <div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);">Ganancia Potencial</div>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #00FF88;" id="potential-win">0.0000 S-E</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuración del Juego -->
+    <div class="card" id="game-config" style="background: linear-gradient(135deg, rgba(0, 102, 255, 0.05) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(0, 102, 255, 0.2); margin-bottom: var(--space-4);">
+        <h3 style="font-size: 1rem; font-weight: 700; color: white; margin-bottom: var(--space-4);">Configurar Juego</h3>
+
+        <!-- Apuesta -->
+        <div style="margin-bottom: var(--space-6);">
+            <label style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-2); display: block;">Cantidad a apostar (S-E)</label>
+            <div style="display: flex; gap: var(--space-2);">
+                <input type="number" id="bet-amount" step="0.0001" min="0.0001" max="{{ user.se_balance }}" value="0.01"
+                    style="flex: 1; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 12px 16px; color: white; font-size: 1rem; font-weight: 600; outline: none;">
+                <button onclick="setHalfBet()" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 12px 16px; color: white; font-weight: 600; cursor: pointer;">½</button>
+                <button onclick="setMaxBet()" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 12px 16px; color: white; font-weight: 600; cursor: pointer;">Max</button>
+            </div>
+        </div>
+
+        <!-- Número de Minas -->
+        <div style="margin-bottom: var(--space-4);">
+            <label style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-2); display: block;">Número de minas (1-24)</label>
+            <div style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
+                <button class="mine-btn active" data-mines="6" style="flex: 1; min-width: 60px; background: rgba(0, 102, 255, 0.2); border: 1px solid rgba(0, 102, 255, 0.4); border-radius: 10px; padding: 10px; color: white; font-weight: 600; cursor: pointer;">6</button>
+                <button class="mine-btn" data-mines="10" style="flex: 1; min-width: 60px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; padding: 10px; color: white; font-weight: 600; cursor: pointer;">10</button>
+                <button class="mine-btn" data-mines="15" style="flex: 1; min-width: 60px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; padding: 10px; color: white; font-weight: 600; cursor: pointer;">15</button>
+                <button class="mine-btn" data-mines="17" style="flex: 1; min-width: 60px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; padding: 10px; color: white; font-weight: 600; cursor: pointer;">17</button>
+                <button class="mine-btn" data-mines="20" style="flex: 1; min-width: 60px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; padding: 10px; color: white; font-weight: 600; cursor: pointer;">20</button>
+            </div>
+        </div>
+
+        <!-- Multiplicador Info -->
+        <div style="background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: var(--space-3); margin-bottom: var(--space-4);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Multiplicador por gema:</span>
+                <span style="font-size: 1rem; font-weight: 700; color: #FFD700;" id="multiplier-display">0.5x</span>
+            </div>
+        </div>
+
+        <!-- Botón de inicio -->
+        <button id="start-btn" onclick="startGame()" style="width: 100%; background: linear-gradient(135deg, #0066FF 0%, #0052CC 100%); border: none; border-radius: 14px; padding: 16px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0, 102, 255, 0.4);">
+            <i data-lucide="play" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>
+            Iniciar Juego
+        </button>
+    </div>
+
+    <!-- Tablero de Juego (oculto inicialmente) -->
+    <div class="card" id="game-board-container" style="display: none; background: linear-gradient(135deg, rgba(0, 245, 255, 0.05) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(0, 245, 255, 0.2); margin-bottom: var(--space-4);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+            <div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Multiplicador Actual</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #00FF88;" id="current-multiplier">0.50x</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Gemas Encontradas</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #00D4FF;" id="gems-found">0</div>
+            </div>
+        </div>
+
+        <!-- Grid de 5x5 -->
+        <div id="game-board" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: var(--space-4);">
+            <!-- Las celdas se generan dinámicamente -->
+        </div>
+
+        <!-- Botón de cobrar - Contenedor para evitar recortes -->
+        <div style="width: 100%; position: relative; overflow: visible;">
+            <button id="cashout-btn" onclick="cashout()" disabled class="cashout-disabled">
+                <span class="cashout-content">
+                    <i data-lucide="banknote" class="cashout-icon"></i>
+                    <span>Cobrar </span>
+                    <span id="cashout-amount">0.0000</span>
+                    <span> S-E</span>
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Resultado del Juego (oculto inicialmente) -->
+    <div class="card" id="game-result" style="display: none; text-align: center; margin-bottom: var(--space-4);">
+        <div id="result-icon" style="width: 80px; height: 80px; margin: 0 auto var(--space-4); display: flex; align-items: center; justify-content: center; border-radius: 50%;"></div>
+        <h2 id="result-title" style="font-size: 1.5rem; font-weight: 800; margin-bottom: var(--space-2);"></h2>
+        <p id="result-message" style="font-size: 1rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-4);"></p>
+        <button onclick="resetGame()" style="width: 100%; background: linear-gradient(135deg, #0066FF 0%, #0052CC 100%); border: none; border-radius: 14px; padding: 16px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer;">
+            Jugar de Nuevo
+        </button>
+    </div>
+</div>
+
+<style>
+/* Estilos de las celdas del tablero */
+.mine-cell {
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.mine-cell:hover:not(.revealed) {
+    transform: scale(1.05);
+    border-color: rgba(0, 245, 255, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 245, 255, 0.2);
+}
+
+.mine-cell:active:not(.revealed) {
+    transform: scale(0.95);
+}
+
+.mine-cell.revealed {
+    cursor: default;
+}
+
+.mine-cell.gem {
+    background: linear-gradient(135deg, rgba(0, 245, 255, 0.3) 0%, rgba(0, 200, 255, 0.15) 100%);
+    border-color: rgba(0, 245, 255, 0.5);
+    box-shadow: 0 4px 20px rgba(0, 245, 255, 0.3);
+}
+
+.mine-cell.mine {
+    background: linear-gradient(135deg, rgba(255, 51, 102, 0.4) 0%, rgba(255, 0, 60, 0.2) 100%);
+    border-color: rgba(255, 51, 102, 0.6);
+    box-shadow: 0 4px 20px rgba(255, 51, 102, 0.3);
+    animation: shake 0.5s ease;
+}
+
+.mine-cell.mine-revealed {
+    background: linear-gradient(135deg, rgba(255, 51, 102, 0.2) 0%, rgba(255, 0, 60, 0.1) 100%);
+    border-color: rgba(255, 51, 102, 0.3);
+    opacity: 0.7;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
+
+.mine-btn.active {
+    background: rgba(0, 102, 255, 0.2) !important;
+    border-color: rgba(0, 102, 255, 0.4) !important;
+}
+
+/* Input focus */
+input:focus {
+    border-color: rgba(0, 245, 255, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
+}
+
+/* ========== BOTÓN COBRAR - ESTILOS ROBUSTOS ========== */
+#cashout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #00FF88 0%, #00CC66 100%);
+    border: none;
+    border-radius: 14px;
+    padding: 16px 20px;
+    color: #0B0B0F;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: visible;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.cashout-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.cashout-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-right: 4px;
+}
+
+/* Botón cashout habilitado (cuando tiene gemas) - SIN ANIMACIÓN */
+#cashout-btn:not(:disabled) {
+    opacity: 1;
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
+}
+
+/* Botón cashout deshabilitado - estado inicial */
+#cashout-btn:disabled,
+#cashout-btn.cashout-disabled {
+    opacity: 0.4 !important;
+    cursor: not-allowed;
+    box-shadow: none !important;
+    background: linear-gradient(135deg, rgba(100, 100, 100, 0.5) 0%, rgba(60, 60, 60, 0.5) 100%) !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Botón cashout en juego activo - verde pero SIN animación */
+#cashout-btn.cashout-game-active {
+    opacity: 1 !important;
+    cursor: not-allowed !important;
+    background: linear-gradient(135deg, #00FF88 0%, #00CC66 100%) !important;
+    color: #0B0B0F !important;
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.3) !important;
+}
+
+/* Botón cashout activo (habilitado y con gemas) - interactivo */
+#cashout-btn.cashout-active {
+    opacity: 1 !important;
+    cursor: pointer !important;
+    background: linear-gradient(135deg, #00FF88 0%, #00CC66 100%) !important;
+    color: #0B0B0F !important;
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4) !important;
+}
+
+#cashout-btn.cashout-active:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 255, 136, 0.5) !important;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4); }
+    50% { box-shadow: 0 4px 30px rgba(0, 255, 136, 0.6); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Scrollbar para historial */
+#history-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#history-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+#history-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 102, 255, 0.3);
+    border-radius: 3px;
+}
+
+#history-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 102, 255, 0.5);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Variables del juego
+let gameActive = false;
+let betAmount = 0.01;
+let mineCount = 6;
+let currentMultiplier = 1;
+let gemsFound = 0;
+let minePositions = [];
+let revealedCells = [];
+let userBalance = {{ user.se_balance }};
+const USER_ID = "{{ user_id }}";
+
+// Multiplicadores base por número de minas
+const multipliers = {
+    6: 1.05,
+    10: 1.24,
+    15: 1.56,
+    17: 2.15,
+    20: 4.00
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Event listeners para botones de minas
+    document.querySelectorAll('.mine-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.mine-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'rgba(255, 255, 255, 0.05)';
+                b.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            });
+            this.classList.add('active');
+            this.style.background = 'rgba(0, 102, 255, 0.2)';
+            this.style.borderColor = 'rgba(0, 102, 255, 0.4)';
+            mineCount = parseInt(this.dataset.mines);
+            updateMultiplierDisplay();
+        });
+    });
+
+    // Event listener para cantidad de apuesta
+    document.getElementById('bet-amount').addEventListener('input', function() {
+        betAmount = parseFloat(this.value) || 0;
+        updatePotentialWin();
+    });
+
+    updateMultiplierDisplay();
+    updatePotentialWin();
+});
+
+function updateMultiplierDisplay() {
+    document.getElementById('multiplier-display').textContent = multipliers[mineCount].toFixed(2) + 'x';
+    updatePotentialWin();
+}
+
+function updatePotentialWin() {
+    const potential = betAmount * multipliers[mineCount];
+    document.getElementById('potential-win').textContent = potential.toFixed(4) + ' S-E';
+}
+
+function setHalfBet() {
+    const input = document.getElementById('bet-amount');
+    input.value = (userBalance / 2).toFixed(4);
+    betAmount = parseFloat(input.value);
+    updatePotentialWin();
+}
+
+function setMaxBet() {
+    const input = document.getElementById('bet-amount');
+    input.value = userBalance.toFixed(4);
+    betAmount = parseFloat(input.value);
+    updatePotentialWin();
+}
+
+function startGame() {
+    betAmount = parseFloat(document.getElementById('bet-amount').value) || 0;
+
+    if (betAmount <= 0) {
+        showToast('Ingresa una cantidad válida', 'error');
+        return;
+    }
+
+    if (betAmount > userBalance) {
+        showToast('Balance insuficiente', 'error');
+        return;
+    }
+
+    // Enviar apuesta al servidor
+    fetch('/api/mines/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            user_id: USER_ID,
+            bet_amount: betAmount,
+            mine_count: mineCount
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            gameActive = true;
+            currentMultiplier = data.current_multiplier || 1;
+            gemsFound = data.gems_found || 0;
+            minePositions = data.mine_positions;
+            revealedCells = data.revealed_cells || [];
+            userBalance = data.new_balance;
+
+            // Store session_id for API calls
+            window.currentSessionId = data.session_id;
+
+            document.getElementById('user-balance').textContent = userBalance.toFixed(4) + ' S-E';
+            document.getElementById('game-config').style.display = 'none';
+            document.getElementById('game-board-container').style.display = 'block';
+            document.getElementById('game-result').style.display = 'none';
+
+            // Botón cobrar: verde pero NO interactivo al inicio
+            const cashoutBtn = document.getElementById('cashout-btn');
+            cashoutBtn.disabled = true;
+            cashoutBtn.classList.remove('cashout-disabled');
+            cashoutBtn.classList.remove('cashout-active');
+            cashoutBtn.classList.add('cashout-game-active'); // Verde pero no interactivo
+            document.getElementById('cashout-amount').textContent = '0.0000';
+
+            generateBoard();
+
+            // If resuming a game, restore revealed cells
+            if (data.resumed && revealedCells.length > 0) {
+                currentMultiplier = data.current_multiplier || 1;
+                gemsFound = revealedCells.length;
+                restoreRevealedCells();
+            }
+
+            updateGameDisplay();
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+            }
+        } else {
+            showToast(data.error || 'Error al iniciar el juego', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+    });
+}
+
+function restoreRevealedCells() {
+    // Restore previously revealed cells when resuming a game
+    for (const index of revealedCells) {
+        const cell = document.querySelector(`[data-index="${index}"]`);
+        if (cell && !minePositions.includes(index)) {
+            cell.classList.add('revealed', 'gem');
+            cell.innerHTML = '<i data-lucide="gem" style="width: 28px; height: 28px; color: #00D4FF;"></i>';
+        }
+    }
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+function generateBoard() {
+    const board = document.getElementById('game-board');
+    board.innerHTML = '';
+
+    for (let i = 0; i < 25; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'mine-cell';
+        cell.dataset.index = i;
+        cell.innerHTML = '<i data-lucide="help-circle" style="width: 24px; height: 24px; color: rgba(255, 255, 255, 0.3);"></i>';
+        cell.addEventListener('click', () => revealCell(i));
+        board.appendChild(cell);
+    }
+
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+function revealCell(index) {
+    if (!gameActive || revealedCells.includes(index)) return;
+
+    const cell = document.querySelector(`[data-index="${index}"]`);
+
+    // Call API to reveal cell
+    fetch('/api/mines/reveal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            user_id: USER_ID,
+            session_id: window.currentSessionId,
+            cell_index: index
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            showToast(data.error || 'Error', 'error');
+            return;
+        }
+
+        if (data.is_mine) {
+            // ¡MINA! Juego terminado
+            gameActive = false;
+            cell.classList.add('revealed', 'mine');
+            cell.innerHTML = '<i data-lucide="bomb" style="width: 28px; height: 28px; color: #FF3366;"></i>';
+
+            // Revelar todas las minas
+            const positions = data.mine_positions || minePositions;
+            positions.forEach(pos => {
+                if (pos !== index) {
+                    const mineCell = document.querySelector(`[data-index="${pos}"]`);
+                    if (mineCell) {
+                        mineCell.classList.add('revealed', 'mine-revealed');
+                        mineCell.innerHTML = '<i data-lucide="bomb" style="width: 24px; height: 24px; color: rgba(255, 51, 102, 0.6);"></i>';
+                    }
+                }
+            });
+
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+            }
+
+            // Mostrar resultado de derrota
+            setTimeout(() => {
+                showResult(false, 0);
+            }, 1000);
+
+        } else {
+            // ¡GEMA!
+            revealedCells.push(index);
+            gemsFound = data.gems_found;
+            currentMultiplier = data.multiplier;
+
+            cell.classList.add('revealed', 'gem');
+            cell.innerHTML = '<i data-lucide="gem" style="width: 28px; height: 28px; color: #00D4FF;"></i>';
+
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            }
+
+            updateGameDisplay();
+
+            // Verificar si encontró todas las gemas
+            if (gemsFound >= (25 - mineCount)) {
+                cashout();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+    });
+}
+
+function updateGameDisplay() {
+    document.getElementById('current-multiplier').textContent = currentMultiplier.toFixed(2) + 'x';
+    document.getElementById('gems-found').textContent = gemsFound;
+
+    const cashoutBtn = document.getElementById('cashout-btn');
+    const cashoutAmount = betAmount * currentMultiplier;
+    document.getElementById('cashout-amount').textContent = cashoutAmount.toFixed(4);
+
+    if (gemsFound > 0) {
+        // Activar botón - interactivo
+        cashoutBtn.disabled = false;
+        cashoutBtn.classList.remove('cashout-disabled');
+        cashoutBtn.classList.remove('cashout-game-active');
+        cashoutBtn.classList.add('cashout-active');
+    } else {
+        // Botón verde pero NO interactivo (juego activo sin gemas)
+        cashoutBtn.disabled = true;
+        cashoutBtn.classList.remove('cashout-disabled');
+        cashoutBtn.classList.remove('cashout-active');
+        cashoutBtn.classList.add('cashout-game-active');
+    }
+}
+
+function cashout() {
+    if (!gameActive || gemsFound === 0) return;
+
+    gameActive = false;
+
+    fetch('/api/mines/cashout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            user_id: USER_ID,
+            session_id: window.currentSessionId,
+            bet_amount: betAmount,
+            multiplier: currentMultiplier
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            userBalance = data.new_balance;
+            document.getElementById('user-balance').textContent = userBalance.toFixed(4) + ' S-E';
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+
+            showResult(true, data.winnings);
+        } else {
+            showToast(data.error || 'Error al cobrar', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+    });
+}
+
+function showResult(won, amount) {
+    document.getElementById('game-board-container').style.display = 'none';
+    const resultDiv = document.getElementById('game-result');
+    resultDiv.style.display = 'block';
+
+    const iconDiv = document.getElementById('result-icon');
+    const titleEl = document.getElementById('result-title');
+    const messageEl = document.getElementById('result-message');
+
+    if (won) {
+        resultDiv.style.background = 'linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(18, 18, 18, 0.95) 100%)';
+        resultDiv.style.borderColor = 'rgba(0, 255, 136, 0.3)';
+        iconDiv.style.background = 'linear-gradient(135deg, rgba(0, 255, 136, 0.3) 0%, rgba(0, 200, 100, 0.2) 100%)';
+        iconDiv.innerHTML = '<i data-lucide="trophy" style="width: 40px; height: 40px; color: #00FF88;"></i>';
+        titleEl.style.color = '#00FF88';
+        titleEl.textContent = '¡Ganaste!';
+        messageEl.textContent = `Has ganado ${amount.toFixed(4)} S-E con un multiplicador de ${currentMultiplier.toFixed(2)}x`;
+    } else {
+        resultDiv.style.background = 'linear-gradient(135deg, rgba(255, 51, 102, 0.1) 0%, rgba(18, 18, 18, 0.95) 100%)';
+        resultDiv.style.borderColor = 'rgba(255, 51, 102, 0.3)';
+        iconDiv.style.background = 'linear-gradient(135deg, rgba(255, 51, 102, 0.3) 0%, rgba(255, 0, 60, 0.2) 100%)';
+        iconDiv.innerHTML = '<i data-lucide="bomb" style="width: 40px; height: 40px; color: #FF3366;"></i>';
+        titleEl.style.color = '#FF3366';
+        titleEl.textContent = '¡Boom!';
+        messageEl.textContent = `Encontraste una mina. Perdiste ${betAmount.toFixed(4)} S-E`;
+    }
+
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+function resetGame() {
+    // Clear session
+    window.currentSessionId = null;
+
+    document.getElementById('game-config').style.display = 'block';
+    document.getElementById('game-board-container').style.display = 'none';
+    document.getElementById('game-result').style.display = 'none';
+
+    const cashoutBtn = document.getElementById('cashout-btn');
+    cashoutBtn.disabled = true;
+    cashoutBtn.classList.add('cashout-disabled');
+    cashoutBtn.classList.remove('cashout-active');
+    cashoutBtn.classList.remove('cashout-game-active');
+
+    // Actualizar el input de apuesta con el balance actual
+    const betInput = document.getElementById('bet-amount');
+    betInput.max = userBalance;
+
+    updateMultiplierDisplay();
+    updatePotentialWin();
+}
+
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    toast.style.cssText = `
+        background: ${type === 'error' ? 'rgba(255, 51, 102, 0.9)' : type === 'success' ? 'rgba(0, 255, 136, 0.9)' : 'rgba(0, 245, 255, 0.9)'};
+        color: ${type === 'success' || type === 'info' ? '#0B0B0F' : 'white'};
+        padding: 12px 20px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        font-weight: 600;
+        animation: slideIn 0.3s ease;
+    `;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// ========== FUNCIONES DE HISTORIAL ==========
+let historyVisible = false;
+
+function toggleHistory() {
+    const section = document.getElementById('game-history-section');
+    historyVisible = !historyVisible;
+
+    if (historyVisible) {
+        section.style.display = 'block';
+        loadGameHistory();
+    } else {
+        section.style.display = 'none';
+    }
+}
+
+function loadGameHistory() {
+    const historyList = document.getElementById('history-list');
+    historyList.innerHTML = `
+        <div style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.5);">
+            <i data-lucide="loader" style="width: 24px; height: 24px; animation: spin 1s linear infinite;"></i>
+            <p style="margin-top: 8px; font-size: 0.8125rem;">Cargando historial...</p>
+        </div>
+    `;
+
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    fetch(`/api/mines/history?user_id=${USER_ID}&limit=20&type=mines`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.history && data.history.length > 0) {
+                let html = '';
+
+                data.history.forEach(game => {
+                    const isWin = game.result === 'win';
+                    const date = new Date(game.played_at);
+                    const dateStr = date.toLocaleDateString('es-ES', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(${isWin ? '0, 255, 136' : '255, 51, 102'}, 0.08); border-radius: 10px; margin-bottom: 8px; border: 1px solid rgba(${isWin ? '0, 255, 136' : '255, 51, 102'}, 0.15);">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                    <i data-lucide="${isWin ? 'trophy' : 'bomb'}" style="width: 16px; height: 16px; color: ${isWin ? '#00FF88' : '#FF3366'};"></i>
+                                    <span style="font-size: 0.875rem; font-weight: 600; color: ${isWin ? '#00FF88' : '#FF3366'};">${isWin ? 'Victoria' : 'Derrota'}</span>
+                                </div>
+                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">${dateStr}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Apuesta: ${parseFloat(game.bet_amount).toFixed(4)}</div>
+                                <div style="font-size: 0.875rem; font-weight: 700; color: ${isWin ? '#00FF88' : '#FF3366'};">
+                                    ${isWin ? '+' : ''}${parseFloat(game.profit).toFixed(4)} S-E
+                                </div>
+                                ${game.multiplier > 1 ? `<div style="font-size: 0.75rem; color: #FFD700;">${parseFloat(game.multiplier).toFixed(2)}x</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                historyList.innerHTML = html;
+
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            } else {
+                historyList.innerHTML = `
+                    <div style="text-align: center; padding: 30px; color: rgba(255, 255, 255, 0.5);">
+                        <i data-lucide="inbox" style="width: 40px; height: 40px; margin-bottom: 12px;"></i>
+                        <p style="font-size: 0.875rem;">No hay historial de juegos aún</p>
+                        <p style="font-size: 0.75rem; margin-top: 4px;">¡Juega tu primera partida!</p>
+                    </div>
+                `;
+
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error loading history:', error);
+            historyList.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: rgba(255, 51, 102, 0.7);">
+                    <i data-lucide="alert-circle" style="width: 24px; height: 24px;"></i>
+                    <p style="margin-top: 8px; font-size: 0.8125rem;">Error al cargar historial</p>
+                </div>
+            `;
+
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+}
+
+// Check for active game on page load
+document.addEventListener('DOMContentLoaded', function() {
+    fetch(`/api/mines/active?user_id=${USER_ID}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.has_active_game && data.game) {
+                // Resume active game
+                showToast('Recuperando partida activa...', 'info');
+
+                gameActive = true;
+                window.currentSessionId = data.game.session_id;
+                betAmount = data.game.bet_amount;
+                mineCount = data.game.mine_count;
+                minePositions = data.game.mine_positions;
+                revealedCells = data.game.revealed_cells || [];
+                gemsFound = data.game.gems_found || revealedCells.length;
+                currentMultiplier = data.game.current_multiplier || 1;
+
+                document.getElementById('game-config').style.display = 'none';
+                document.getElementById('game-board-container').style.display = 'block';
+                document.getElementById('game-result').style.display = 'none';
+
+                generateBoard();
+
+                // Restore revealed cells
+                if (revealedCells.length > 0) {
+                    restoreRevealedCells();
+                }
+
+                updateGameDisplay();
+            }
+        })
+        .catch(error => {
+            console.error('Error checking active game:', error);
+        });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,416 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Referrals{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div style="margin-bottom: var(--space-8);">
+        <h1 class="page-title">👥 <span data-i18n="referidos_title">Programa de Referidos</span></h1>
+        <p class="text-muted" data-i18n="referidos_invite_friends">Invita Amigos</p>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="stat-card glow-hover">
+            <div style="margin-bottom: var(--space-3);">
+                <i data-lucide="user-check" style="width: 32px; height: 32px; color: var(--color-success);"></i>
+            </div>
+            <div class="stat-value" id="validated-count-display">{{ validated_count|default(0) }}</div>
+            <div class="stat-label" data-i18n="referidos_validated">Referidos Validados</div>
+        </div>
+
+        <div class="stat-card glow-hover">
+            <div style="margin-bottom: var(--space-3);">
+                <i data-lucide="clock" style="width: 32px; height: 32px; color: var(--color-warning);"></i>
+            </div>
+            <div class="stat-value" id="pending-count-display">{{ pending_count|default(0) }}</div>
+            <div class="stat-label" data-i18n="referidos_pending">Pendientes</div>
+        </div>
+    </div>
+
+    <!-- Total Earnings -->
+    <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr); margin-top: var(--space-4);">
+        <div class="stat-card glow-hover">
+            <div style="margin-bottom: var(--space-3);">
+                <i data-lucide="users" style="width: 32px; height: 32px; color: var(--color-neon-purple);"></i>
+            </div>
+            <div class="stat-value" id="referral-count-display">{{ (validated_count|default(0)) + (pending_count|default(0)) }}</div>
+            <div class="stat-label" data-i18n="referidos_total">Referidos</div>
+        </div>
+
+        <div class="stat-card glow-hover">
+            <div style="margin-bottom: var(--space-3);">
+                <i data-lucide="gift" style="width: 32px; height: 32px; color: var(--color-neon-pink);"></i>
+            </div>
+            <div class="stat-value" id="se-earned-display">{{ total_se_earned|round }}</div>
+            <div class="stat-label" data-i18n="referidos_bonus_earned">Bonus Ganado</div>
+        </div>
+    </div>
+
+    <!-- Referral Link Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(0, 102, 255, 0.1) 0%, rgba(0, 82, 204, 0.1) 100%); border-color: rgba(0, 102, 255, 0.2); transform: scale(0.88); margin-top: var(--space-4);">
+        <div style="text-align: center; margin-bottom: var(--space-5);">
+            <div class="floating" style="width: 70px; height: 70px; margin: 0 auto var(--space-4); display: flex; align-items: center; justify-content: center; background: var(--gradient-primary); border-radius: var(--radius-xl); box-shadow: var(--shadow-glow-pink);">
+                <i data-lucide="link" style="width: 35px; height: 35px; color: white;"></i>
+            </div>
+            <h2 style="font-size: 1.32rem; font-weight: 700; margin-bottom: var(--space-2);" data-i18n="referidos_your_link">Tu Link de Referido</h2>
+            <p style="color: var(--color-text-tertiary); font-size: 0.825rem;" data-i18n="referidos_share_earn">¡Comparte tu link y gana recompensas!</p>
+        </div>
+
+        <!-- Referral Link Input -->
+        <div style="background: var(--glass-ultra); border: var(--glass-border); border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-4);">
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <input
+                    type="text"
+                    id="referral-link"
+                    value="https://t.me/{{ bot_username.replace('@', '') if bot_username else 'SallyeeBot' }}?start=ref_{{ user_id }}"
+                    readonly
+                    style="flex: 1; background: transparent; border: none; color: var(--color-text-primary); font-size: 0.825rem; outline: none; padding: 0;"
+                >
+                <button
+                    onclick="copyReferralLink()"
+                    class="btn btn-primary btn-sm"
+                    style="flex-shrink: 0; transform: scale(0.88);">
+                    <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Share Button -->
+        <button class="btn btn-primary btn-lg btn-block" onclick="shareReferralLink()" style="transform: scale(0.88);">
+            <i data-lucide="share-2" style="width: 21px; height: 21px;"></i>
+            <span data-i18n="referidos_share_btn">Compartir Link</span>
+        </button>
+    </div>
+
+    <!-- Referral Rewards -->
+    <div class="card">
+        <h2 class="section-title"><img src="/static/icons/gift.svg" style="width:30px; height:40px; vertical-align:middle; margin-right:8px;"><span data-i18n="referidos_rewards_title">Recompensas por Referir</span></h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-4);">
+            <!-- Recompensa 1 -->
+            <div style="background: linear-gradient(135deg, rgba(0, 102, 255, 0.1) 0%, rgba(0, 102, 255, 0.05) 100%); border: 1px solid rgba(0, 102, 255, 0.2); border-radius: var(--radius-lg); padding: var(--space-4); text-align: center; transform: scale(0.88);">
+                <div style="width: 56px; height: 56px; margin: 0 auto var(--space-3); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 102, 255, 0.3) 0%, rgba(0, 102, 255, 0.1) 100%); border-radius: var(--radius-xl); box-shadow: 0 0 20px rgba(0, 102, 255, 0.3);">
+                    <i data-lucide="user-plus" style="width: 28px; height: 28px; color: var(--color-neon-pink);"></i>
+                </div>
+                <div style="margin-bottom: var(--space-3);">
+                    <div style="font-weight: 700; font-size: 0.99rem; color: var(--color-text-primary); margin-bottom: var(--space-2);" data-i18n="referidos_per_friend">Por cada amigo</div>
+                    <div style="font-size: 0.77rem; color: var(--color-text-secondary);" data-i18n="referidos_when_complete_task">Cuando completen su primera tarea</div>
+                </div>
+                <div style="display: flex; gap: var(--space-2); justify-content: center; flex-wrap: wrap;">
+                    <div class="badge badge-primary" style="font-size: 0.99rem; padding: var(--space-2) var(--space-4); display: inline-block;">
+                        +{{ config.referral_bonus|default(50)|int }} S-E
+                    </div>
+                    <div class="badge" style="font-size: 0.99rem; padding: var(--space-2) var(--space-4); display: inline-block; background: linear-gradient(135deg, #00d4ff 0%, #0052cc 100%); color: white;">
+                        +50 PTS
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recompensa 2 -->
+            <div style="background: linear-gradient(135deg, rgba(0, 82, 204, 0.1) 0%, rgba(0, 82, 204, 0.05) 100%); border: 1px solid rgba(0, 82, 204, 0.2); border-radius: var(--radius-lg); padding: var(--space-4); text-align: center; transform: scale(0.88);">
+                <div style="width: 56px; height: 56px; margin: 0 auto var(--space-3); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 82, 204, 0.3) 0%, rgba(0, 82, 204, 0.1) 100%); border-radius: var(--radius-xl); box-shadow: 0 0 20px rgba(0, 82, 204, 0.3);">
+                    <i data-lucide="zap" style="width: 28px; height: 28px; color: var(--color-neon-purple);"></i>
+                </div>
+                <div style="margin-bottom: var(--space-3);">
+                    <div style="font-weight: 700; font-size: 0.99rem; color: var(--color-text-primary); margin-bottom: var(--space-2);" data-i18n="referidos_activity_bonus">Bonus por actividad</div>
+                    <div style="font-size: 0.77rem; color: var(--color-text-secondary);">{{ ((config.referral_commission|default(0.05)) * 100)|int }}% <span data-i18n="referidos_of_earnings">de lo que ganan tus referidos</span></div>
+                </div>
+                <div style="background: rgba(0, 82, 204, 0.2); color: var(--color-neon-purple); border: 1px solid rgba(0, 82, 204, 0.4); border-radius: var(--radius-md); font-size: 0.99rem; font-weight: 700; padding: var(--space-2) var(--space-4); display: inline-block;">
+                    {{ ((config.referral_commission|default(0.05)) * 100)|int }}%
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Referrals List -->
+    <div class="card">
+        <h2 class="section-title"><img src="/static/icons/clipboard.svg" style="width:20px; height:20px; vertical-align:middle; margin-right:8px;"><span data-i18n="referidos_your_referrals">Tus Referidos</span></h2>
+
+        <div class="item-list" id="referral-list">
+            <div style="text-align: center; padding: var(--space-8); color: var(--color-text-tertiary);">
+                <div class="rotating" style="width: 40px; height: 40px; margin: 0 auto var(--space-3); border: 3px solid var(--color-text-tertiary); border-top-color: transparent; border-radius: 50%;"></div>
+                <p data-i18n="referidos_loading">Cargando referidos...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- How it Works -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.08) 0%, rgba(0, 82, 204, 0.08) 100%); border-color: rgba(0, 245, 255, 0.15);">
+        <div style="display: flex; align-items: flex-start; gap: var(--space-4);">
+            <div style="flex-shrink: 0; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 245, 255, 0.2) 0%, rgba(0, 82, 204, 0.2) 100%); border-radius: var(--radius-lg); box-shadow: 0 0 30px rgba(0, 245, 255, 0.3);">
+                <i data-lucide="help-circle" style="width: 28px; height: 28px; color: var(--color-neon-cyan);"></i>
+            </div>
+            <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--space-3); color: var(--color-text-primary);" data-i18n="referidos_how_works">¿Cómo funciona?</div>
+                <ol style="margin: 0; padding-left: var(--space-5); color: var(--color-text-secondary); font-size: 0.9375rem; line-height: 1.8;">
+                    <li data-i18n="referidos_step_1">Comparte tu link de referido único</li>
+                    <li data-i18n="referidos_step_2">Tus amigos se registran usando tu link</li>
+                    <li><strong style="color: var(--color-warning);">⏳ <span data-i18n="referidos_step_3">El referido queda pendiente</span></strong></li>
+                    <li><strong style="color: var(--color-success);">✓ <span data-i18n="referidos_step_4">Se valida cuando completan su primera tarea</span></strong></li>
+                    <li><span data-i18n="referidos_step_5">Ganas</span> {{ config.referral_bonus|default(1)|int }} S-E <span data-i18n="referidos_step_5">por cada referido validado</span></li>
+                    <li><span data-i18n="referidos_step_6">Recibes</span> {{ ((config.referral_commission|default(0.05)) * 100)|int }}% <span data-i18n="referidos_step_6">bonus por su actividad</span></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Config values from server
+const REFERRAL_BONUS = {{ config.referral_bonus|default(50) }};
+const REFERRAL_COMMISSION = {{ ((config.referral_commission|default(0.05)) * 100)|int }};
+
+// Copy referral link
+function copyReferralLink() {
+    const input = document.getElementById('referral-link');
+    input.select();
+    input.setSelectionRange(0, 99999);
+
+    try {
+        document.execCommand('copy');
+        const msg = window.t ? window.t('referidos_copy_success') : 'Link copiado al portapapeles!';
+        if (window.showToast) {
+            window.showToast(msg, 'success');
+        }
+        if (window.vibrateDevice) {
+            window.vibrateDevice([10]);
+        }
+    } catch (err) {
+        console.error('Error al copiar:', err);
+        if (window.showToast) {
+            window.showToast('Error al copiar link', 'error');
+        }
+    }
+}
+
+// Share referral link
+function shareReferralLink() {
+    const link = document.getElementById('referral-link').value;
+    const text = `¡Únete a SALLY-E y comienza a ganar S-E! 💎\n\nUsa mi link de referido:\n${link}`;
+
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
+        const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('¡Únete a SALLY-E y comienza a ganar S-E! 💎')}`;
+        window.Telegram.WebApp.openTelegramLink(shareUrl);
+    }
+    else if (navigator.share) {
+        navigator.share({
+            title: 'SALLY-E',
+            text: text,
+            url: link
+        }).catch(err => console.log('Error compartiendo:', err));
+    }
+    else {
+        copyReferralLink();
+    }
+}
+
+// Pagination variables
+let currentPage = 1;
+const pageSize = 15;
+let hasMoreReferrals = true;
+let isLoadingReferrals = false;
+let referralsLoaded = [];
+
+// Render a single referral item
+function renderReferralItem(ref) {
+    const statusColor = ref.validated ? 'var(--color-success)' : 'var(--color-warning)';
+    const statusIcon = ref.validated ? 'user-check' : 'clock';
+    const statusText = ref.validated 
+        ? (window.t ? window.t('referidos_validated') : 'Validado')
+        : (window.t ? window.t('referidos_pending') : 'Pendiente');
+
+    return `
+        <div class="item" style="transform: scale(0.88);">
+            <div class="item-icon" style="background: ${ref.validated ? 'rgba(0, 255, 136, 0.1)' : 'rgba(255, 184, 0, 0.1)'};">
+                <i data-lucide="${statusIcon}" style="width: 20px; height: 20px; color: ${statusColor};"></i>
+            </div>
+            <div class="item-content">
+                <div class="item-title">${ref.username || ref.first_name || 'Usuario'}</div>
+                <div class="item-subtitle" style="color: ${statusColor};">${statusText}</div>
+            </div>
+            ${ref.validated ? `
+                <div style="text-align: right;">
+                    <div style="font-weight: 600; font-size: 0.875rem; color: var(--color-success);">+${REFERRAL_BONUS} S-E</div>
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+// Render load more button
+function renderLoadMoreButton() {
+    const loadMoreText = window.t ? window.t('referidos_load_more') : 'Cargar más';
+    return `
+        <div id="load-more-container" style="text-align: center; padding: var(--space-4);">
+            <button class="btn btn-secondary btn-sm" onclick="loadMoreReferrals()" id="load-more-btn">
+                <i data-lucide="chevron-down" style="width: 16px; height: 16px; margin-right: var(--space-2);"></i>
+                ${loadMoreText}
+            </button>
+        </div>
+    `;
+}
+
+// Load referrals with pagination
+async function loadReferrals(append = false) {
+    if (isLoadingReferrals) return;
+    isLoadingReferrals = true;
+
+    const listContainer = document.getElementById('referral-list');
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('user_id');
+
+    if (!userId) {
+        listContainer.innerHTML = '<div style="text-align: center; padding: var(--space-8); color: var(--color-error);">Usuario no identificado</div>';
+        isLoadingReferrals = false;
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/referrals?user_id=${userId}&page=${currentPage}&page_size=${pageSize}`);
+        const data = await response.json();
+
+        if (data.success) {
+            hasMoreReferrals = data.has_more;
+
+            if (data.stats) {
+                const referralCountDisplay = document.getElementById('referral-count-display');
+                const seEarnedDisplay = document.getElementById('se-earned-display');
+                const validatedDisplay = document.getElementById('validated-count-display');
+                const pendingDisplay = document.getElementById('pending-count-display');
+
+                if (referralCountDisplay) {
+                    if (typeof animateCounter === 'function') {
+                        animateCounter(referralCountDisplay, data.stats.total_referrals);
+                    } else {
+                        referralCountDisplay.textContent = data.stats.total_referrals;
+                    }
+                }
+
+                if (seEarnedDisplay) {
+                    if (typeof animateCounter === 'function') {
+                        animateCounter(seEarnedDisplay, data.total_se_earned);
+                    } else {
+                        seEarnedDisplay.textContent = data.total_se_earned;
+                    }
+                }
+
+                if (validatedDisplay) {
+                    validatedDisplay.textContent = data.validated_count;
+                }
+
+                if (pendingDisplay) {
+                    pendingDisplay.textContent = data.pending_count;
+                }
+
+                const commissionDisplay = document.getElementById('total-commission-display');
+                if (commissionDisplay) {
+                    if (typeof animateCounter === 'function') {
+                        animateCounter(commissionDisplay, data.total_commission);
+                    } else {
+                        commissionDisplay.textContent = data.total_commission.toFixed(4);
+                    }
+                }
+            }
+
+            referralsLoaded = append ? [...referralsLoaded, ...data.referrals] : data.referrals;
+
+            const noReferralsText = window.t ? window.t('referidos_no_referrals') : 'Aún no tienes referidos';
+            const shareStartText = window.t ? window.t('referidos_share_start') : '¡Comparte tu link y comienza a ganar!';
+            const seenAllText = window.t ? window.t('referidos_seen_all') : 'Has visto todos tus referidos';
+
+            if (referralsLoaded.length > 0) {
+                if (append) {
+                    const oldLoadMore = document.getElementById('load-more-container');
+                    if (oldLoadMore) {
+                        oldLoadMore.remove();
+                    }
+                    const newItemsHtml = data.referrals.map(ref => renderReferralItem(ref)).join('');
+                    listContainer.insertAdjacentHTML('beforeend', newItemsHtml);
+                } else {
+                    listContainer.innerHTML = referralsLoaded.map(ref => renderReferralItem(ref)).join('');
+                }
+
+                if (hasMoreReferrals) {
+                    listContainer.insertAdjacentHTML('beforeend', renderLoadMoreButton());
+                } else if (referralsLoaded.length > 15) {
+                    listContainer.insertAdjacentHTML('beforeend', `
+                        <div style="text-align: center; padding: var(--space-4); color: var(--color-text-tertiary); font-size: 0.875rem;">
+                            <i data-lucide="check-circle" style="width: 20px; height: 20px; vertical-align: middle; margin-right: var(--space-2);"></i>
+                            ${seenAllText}
+                        </div>
+                    `);
+                }
+            } else {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-8); color: var(--color-text-tertiary);">
+                        <i data-lucide="users" style="width: 64px; height: 64px; margin-bottom: var(--space-4); opacity: 0.3;"></i>
+                        <p style="font-size: 1.125rem; margin-bottom: var(--space-2);">${noReferralsText}</p>
+                        <p style="font-size: 0.9375rem;">${shareStartText}</p>
+                    </div>
+                `;
+            }
+
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        } else {
+            throw new Error(data.message || 'Error desconocido');
+        }
+    } catch (error) {
+        console.error('Error cargando referidos:', error);
+        const errorLoadingText = window.t ? window.t('referidos_error_loading') : 'Error al cargar referidos';
+        const retryText = window.t ? window.t('referidos_retry') : 'Reintentar';
+        
+        if (!append) {
+            listContainer.innerHTML = `
+                <div style="text-align: center; padding: var(--space-8); color: var(--color-error);">
+                    <i data-lucide="alert-circle" style="width: 48px; height: 48px; margin-bottom: var(--space-3);"></i>
+                    <p style="font-size: 1.125rem; margin-bottom: var(--space-2);">${errorLoadingText}</p>
+                    <p style="font-size: 0.875rem;">${error.message}</p>
+                    <button class="btn btn-secondary btn-sm" onclick="retryLoadReferrals()" style="margin-top: var(--space-4);">
+                        <i data-lucide="refresh-cw" style="width: 16px; height: 16px; margin-right: var(--space-2);"></i>
+                        ${retryText}
+                    </button>
+                </div>
+            `;
+        }
+
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    } finally {
+        isLoadingReferrals = false;
+    }
+}
+
+function loadMoreReferrals() {
+    if (!hasMoreReferrals || isLoadingReferrals) return;
+    currentPage++;
+    loadReferrals(true);
+}
+
+function retryLoadReferrals() {
+    currentPage = 1;
+    hasMoreReferrals = true;
+    referralsLoaded = [];
+    loadReferrals(false);
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+    loadReferrals();
+    
+    // Aplicar traducciones después de cargar
+    if (typeof applyTranslations === 'function') {
+        setTimeout(applyTranslations, 100);
+    }
+});
+</script>
+{% endblock %}

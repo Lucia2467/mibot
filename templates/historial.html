@@ -1,0 +1,801 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Historial Ultra Pro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div style="margin-bottom: var(--space-6);">
+        <h1 class="page-title">📊 <span data-i18n="transaction_history">Historial de Transacciones</span></h1>
+        <p class="text-muted" data-i18n="all_operations">Todas tus operaciones y movimientos</p>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: var(--space-4); gap: var(--space-3);">
+        <div class="stat-card" style="padding: var(--space-3);">
+            <div style="margin-bottom: var(--space-2);">
+                <i data-lucide="trending-up" style="width: 18px; height: 18px; color: var(--color-success);"></i>
+            </div>
+            <div class="stat-value" id="total-received" style="color: var(--color-success); font-size: 1.1rem; margin-bottom: var(--space-1);">+0.0000</div>
+            <div class="stat-label" style="font-size: 0.65rem;" data-i18n="total_received">Total Recibido</div>
+        </div>
+
+        <div class="stat-card" style="padding: var(--space-3);">
+            <div style="margin-bottom: var(--space-2);">
+                <i data-lucide="trending-down" style="width: 18px; height: 18px; color: var(--color-error);"></i>
+            </div>
+            <div class="stat-value" id="total-sent" style="color: var(--color-error); font-size: 1.1rem; margin-bottom: var(--space-1);">-0.0000</div>
+            <div class="stat-label" style="font-size: 0.65rem;" data-i18n="total_sent">Total Enviado</div>
+        </div>
+    </div>
+
+    <!-- Filters Card -->
+    <div class="card" style="padding: var(--space-4);">
+        <h2 class="section-title" style="font-size: 0.95rem;">🔍 <span data-i18n="filters">Filtros</span></h2>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-2);">
+            <button
+                class="btn btn-secondary"
+                onclick="filterTransactions('all')"
+                data-filter="all"
+                style="background: var(--gradient-primary); color: white; font-size: 0.8rem; padding: 8px 12px;">
+                <i data-lucide="list" style="width: 16px; height: 16px;"></i>
+                <span data-i18n="all">Todas</span>
+            </button>
+
+            <button
+                class="btn btn-secondary"
+                onclick="filterTransactions('mining')"
+                data-filter="mining"
+                style="font-size: 0.8rem; padding: 8px 12px;">
+                <i data-lucide="pickaxe" style="width: 16px; height: 16px;"></i>
+                Mining
+            </button>
+
+            <button
+                class="btn btn-secondary"
+                onclick="filterTransactions('referral')"
+                data-filter="referral"
+                style="font-size: 0.8rem; padding: 8px 12px;">
+                <i data-lucide="users" style="width: 16px; height: 16px;"></i>
+                <span data-i18n="referrals">Referidos</span>
+            </button>
+
+            <button
+                class="btn btn-secondary"
+                onclick="filterTransactions('withdrawal')"
+                data-filter="withdrawal"
+                style="font-size: 0.8rem; padding: 8px 12px;">
+                <i data-lucide="arrow-up-right" style="width: 16px; height: 16px;"></i>
+                <span data-i18n="withdrawals">Retiros</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Transactions List -->
+    <div class="card" style="padding: var(--space-4);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+            <h2 class="section-title" style="margin-bottom: 0; font-size: 0.95rem;">📜 <span data-i18n="recent_transactions">Transacciones Recientes</span></h2>
+            <button class="btn btn-secondary btn-sm" onclick="refreshTransactions()" style="font-size: 0.75rem; padding: 6px 10px;">
+                <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i>
+                <span data-i18n="refresh">Actualizar</span>
+            </button>
+        </div>
+
+        <!-- Loading state -->
+        <div id="loading-state" style="text-align: center; padding: var(--space-6); color: var(--color-text-tertiary);">
+            <div class="rotating" style="width: 32px; height: 32px; margin: 0 auto var(--space-3); border: 2px solid var(--color-text-tertiary); border-top-color: transparent; border-radius: 50%;"></div>
+            <p style="font-size: 0.85rem;" data-i18n="loading_transactions">Cargando transacciones...</p>
+        </div>
+
+        <!-- Empty state -->
+        <div id="empty-state" style="display: none; text-align: center; padding: var(--space-6); color: var(--color-text-tertiary);">
+            <i data-lucide="inbox" style="width: 48px; height: 48px; margin-bottom: var(--space-3); opacity: 0.3;"></i>
+            <p style="font-size: 1rem; margin-bottom: var(--space-2);" data-i18n="no_transactions">No hay transacciones</p>
+            <p style="font-size: 0.85rem;" data-i18n="transactions_appear_here">Tus transacciones aparecerán aquí</p>
+        </div>
+
+        <!-- Contenedor de transacciones -->
+        <div class="item-list transaction-list-compact" id="transactions-list">
+        </div>
+    </div>
+
+    <!-- Transaction Types Info -->
+    <div class="card" style="padding: var(--space-4);">
+        <h2 class="section-title" style="font-size: 0.95rem;">💡 Tipos de Transacciones</h2>
+
+        <div class="item-list" style="gap: 8px;">
+            <div class="item tx-type-item">
+                <div class="item-icon" style="width: 36px; height: 36px; background: linear-gradient(135deg, rgba(0, 255, 136, 0.2) 0%, rgba(0, 255, 136, 0.05) 100%);">
+                    <i data-lucide="pickaxe" style="width: 16px; height: 16px; color: var(--color-success);"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">Mining Reward</div>
+                    <div class="item-subtitle">Recompensas de mining</div>
+                </div>
+                <div class="badge badge-success" style="font-size: 0.65rem;">Ingreso</div>
+            </div>
+
+            <div class="item tx-type-item">
+                <div class="item-icon" style="width: 36px; height: 36px; background: linear-gradient(135deg, rgba(0, 82, 204, 0.2) 0%, rgba(0, 82, 204, 0.05) 100%);">
+                    <i data-lucide="users" style="width: 16px; height: 16px; color: var(--color-neon-purple);"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">Referral Bonus</div>
+                    <div class="item-subtitle">Bonos por referidos</div>
+                </div>
+                <div class="badge" style="background: rgba(0, 82, 204, 0.15); color: var(--color-neon-purple); font-size: 0.65rem;">Ingreso</div>
+            </div>
+
+            <div class="item tx-type-item">
+                <div class="item-icon" style="width: 36px; height: 36px; background: linear-gradient(135deg, rgba(255, 184, 0, 0.2) 0%, rgba(255, 184, 0, 0.05) 100%);">
+                    <i data-lucide="check-square" style="width: 16px; height: 16px; color: var(--color-warning);"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">Task Reward</div>
+                    <div class="item-subtitle">Recompensas por tareas</div>
+                </div>
+                <div class="badge badge-warning" style="font-size: 0.65rem;">Ingreso</div>
+            </div>
+
+            <div class="item tx-type-item">
+                <div class="item-icon" style="width: 36px; height: 36px; background: linear-gradient(135deg, rgba(255, 51, 102, 0.2) 0%, rgba(255, 51, 102, 0.05) 100%);">
+                    <i data-lucide="arrow-up-right" style="width: 16px; height: 16px; color: var(--color-error);"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">Withdrawal</div>
+                    <div class="item-subtitle">Retiros a wallet</div>
+                </div>
+                <div class="badge badge-error" style="font-size: 0.65rem;">Egreso</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Options -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.08) 0%, rgba(0, 82, 204, 0.08) 100%); padding: var(--space-4);">
+        <div style="display: flex; align-items: flex-start; gap: var(--space-3);">
+            <div style="flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 245, 255, 0.2) 0%, rgba(0, 82, 204, 0.2) 100%); border-radius: var(--radius-md);">
+                <i data-lucide="download" style="width: 22px; height: 22px; color: var(--color-neon-cyan);"></i>
+            </div>
+            <div style="flex: 1;">
+                <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: var(--space-1); background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    Exportar Historial
+                </h3>
+                <p style="color: var(--color-text-secondary); font-size: 0.8rem; margin-bottom: var(--space-3);">
+                    Descarga tus transacciones en formato CSV
+                </p>
+                <button class="btn btn-primary" onclick="exportTransactions()" style="font-size: 0.8rem; padding: 8px 14px;">
+                    <i data-lucide="file-spreadsheet" style="width: 16px; height: 16px;"></i>
+                    Exportar CSV
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de detalles de transacción -->
+<div id="transaction-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header" style="padding: var(--space-4);">
+            <h2 class="modal-title" style="font-size: 1.1rem;">Detalles de Transacción</h2>
+            <button class="modal-close" onclick="closeTransactionModal()" style="width: 36px; height: 36px;">
+                <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+            </button>
+        </div>
+        <div class="modal-body" id="transaction-details" style="padding: var(--space-4);">
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.rotating {
+    animation: rotate 1s linear infinite;
+}
+
+/* ========== ESTILOS COMPACTOS CORREGIDOS ========== */
+
+/* Contenedor de lista de transacciones */
+.transaction-list-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 10px !important;
+}
+
+/* Cada item de transacción */
+.transaction-list-compact .item {
+    padding: 12px 14px !important;
+    gap: 12px !important;
+    align-items: flex-start !important;
+}
+
+/* Icono más pequeño */
+.transaction-list-compact .item-icon {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    flex-shrink: 0;
+}
+
+.transaction-list-compact .item-icon i {
+    width: 18px !important;
+    height: 18px !important;
+}
+
+/* Contenido con mejor espaciado */
+.transaction-list-compact .item-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px !important;
+    line-height: 1.35 !important;
+}
+
+/* Título de transacción */
+.transaction-list-compact .item-title {
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
+/* Subtítulo (fecha) */
+.transaction-list-compact .item-subtitle {
+    font-size: 0.72rem !important;
+    line-height: 1.3 !important;
+    color: var(--color-text-tertiary) !important;
+    margin-top: 2px !important;
+}
+
+/* Hash de transacción */
+.transaction-list-compact .tx-hash {
+    font-size: 0.6rem !important;
+    font-family: monospace;
+    color: var(--color-text-tertiary);
+    margin-top: 4px !important;
+    word-break: break-all;
+}
+
+/* Área de acción (monto y badge) */
+.transaction-list-compact .item-action {
+    text-align: right !important;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px !important;
+}
+
+/* Monto */
+.transaction-list-compact .tx-amount {
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap;
+}
+
+/* Badge de estado */
+.transaction-list-compact .badge {
+    font-size: 0.6rem !important;
+    padding: 3px 8px !important;
+    white-space: nowrap;
+}
+
+/* Items de tipo de transacción */
+.tx-type-item {
+    padding: 10px 12px !important;
+}
+
+.tx-type-item .item-content {
+    gap: 2px !important;
+}
+
+.tx-type-item .item-title {
+    font-size: 0.8rem !important;
+}
+
+.tx-type-item .item-subtitle {
+    font-size: 0.7rem !important;
+}
+
+/* ========== ESTILOS DEL MODAL ========== */
+
+.transaction-detail-card {
+    background: var(--glass-ultra);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--glass-border);
+    gap: 10px;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.detail-value {
+    color: var(--color-text-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: right;
+    word-break: break-all;
+    max-width: 55%;
+}
+
+.hash-link {
+    color: var(--color-neon-cyan);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.copy-btn {
+    background: var(--glass-ultra);
+    border: 1px solid var(--glass-border);
+    color: var(--color-text-primary);
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3);
+}
+
+.modal-content {
+    background: var(--color-background);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    max-height: 85vh;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.modal-close {
+    background: var(--glass-ultra);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+</style>
+
+<script>
+// Transaction types config
+const transactionTypes = {
+    mining: {
+        icon: 'pickaxe',
+        color: 'var(--color-success)',
+        bg: 'linear-gradient(135deg, rgba(0, 255, 136, 0.2) 0%, rgba(0, 255, 136, 0.05) 100%)',
+        shadow: '0 0 15px rgba(0, 255, 136, 0.2)',
+        sign: '+'
+    },
+    referral: {
+        icon: 'users',
+        color: 'var(--color-neon-purple)',
+        bg: 'linear-gradient(135deg, rgba(0, 82, 204, 0.2) 0%, rgba(0, 82, 204, 0.05) 100%)',
+        shadow: '0 0 15px rgba(0, 82, 204, 0.2)',
+        sign: '+'
+    },
+    task: {
+        icon: 'check-square',
+        color: 'var(--color-warning)',
+        bg: 'linear-gradient(135deg, rgba(255, 184, 0, 0.2) 0%, rgba(255, 184, 0, 0.05) 100%)',
+        shadow: '0 0 15px rgba(255, 184, 0, 0.2)',
+        sign: '+'
+    },
+    withdrawal: {
+        icon: 'arrow-up-right',
+        color: 'var(--color-error)',
+        bg: 'linear-gradient(135deg, rgba(255, 51, 102, 0.2) 0%, rgba(255, 51, 102, 0.05) 100%)',
+        shadow: '0 0 15px rgba(255, 51, 102, 0.2)',
+        sign: '-'
+    },
+    upgrade: {
+        icon: 'trending-up',
+        color: 'var(--color-neon-cyan)',
+        bg: 'linear-gradient(135deg, rgba(0, 245, 255, 0.2) 0%, rgba(0, 245, 255, 0.05) 100%)',
+        shadow: '0 0 15px rgba(0, 245, 255, 0.2)',
+        sign: '-'
+    },
+    swap: {
+        icon: 'repeat',
+        color: 'var(--color-info)',
+        bg: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(6, 182, 212, 0.05) 100%)',
+        shadow: '0 0 15px rgba(6, 182, 212, 0.2)',
+        sign: ''
+    },
+    promo: {
+        icon: 'gift',
+        color: 'var(--color-success)',
+        bg: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.05) 100%)',
+        shadow: '0 0 15px rgba(34, 197, 94, 0.2)',
+        sign: '+'
+    }
+};
+
+let transactions = [];
+let currentFilter = 'all';
+
+// Cargar transacciones
+async function loadTransactions() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('user_id');
+
+        if (!userId) {
+            showEmptyState('Usuario no identificado');
+            return;
+        }
+
+        const response = await fetch(`/api/transactions?user_id=${userId}&limit=100`);
+        const data = await response.json();
+
+        if (data.success && data.transactions) {
+            transactions = data.transactions;
+            updateStats(transactions);
+            renderTransactions(transactions);
+        } else {
+            showEmptyState(data.message || 'Error al cargar transacciones');
+        }
+    } catch (error) {
+        console.error('Error loading transactions:', error);
+        showEmptyState('Error de conexión');
+    }
+}
+
+// Actualizar estadísticas
+function updateStats(txs) {
+    let totalReceived = 0;
+    let totalSent = 0;
+
+    txs.forEach(tx => {
+        const amount = tx.amount || 0;
+        if (tx.type === 'withdrawal') {
+            totalSent += amount;
+        } else {
+            totalReceived += amount;
+        }
+    });
+
+    document.getElementById('total-received').textContent = `+${totalReceived.toFixed(4)} S-E`;
+    document.getElementById('total-sent').textContent = `-${totalSent.toFixed(4)} S-E`;
+}
+
+// Mostrar estado vacío
+function showEmptyState(message = null) {
+    const listContainer = document.getElementById('transactions-list');
+    const emptyState = document.getElementById('empty-state');
+    const loadingState = document.getElementById('loading-state');
+
+    if (loadingState) loadingState.style.display = 'none';
+
+    if (emptyState) {
+        emptyState.style.display = 'block';
+        if (message) {
+            const msgElement = emptyState.querySelector('p:first-of-type');
+            if (msgElement) {
+                msgElement.textContent = message;
+            }
+        }
+    }
+
+    const items = listContainer.querySelectorAll('.item');
+    items.forEach(item => item.remove());
+}
+
+// Renderizar transacciones - CORREGIDO
+function renderTransactions(txs) {
+    const listContainer = document.getElementById('transactions-list');
+    const emptyState = document.getElementById('empty-state');
+    const loadingState = document.getElementById('loading-state');
+
+    if (loadingState) loadingState.style.display = 'none';
+    if (listContainer) listContainer.innerHTML = '';
+
+    if (!txs || txs.length === 0) {
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+    }
+
+    if (emptyState) emptyState.style.display = 'none';
+
+    const html = txs.map(tx => {
+        const typeInfo = transactionTypes[tx.type] || transactionTypes.mining;
+        const date = new Date(tx.date || tx.timestamp || new Date());
+        const formattedDate = date.toLocaleDateString('es-ES', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const isProcessed = tx.tx_hash || tx.status === 'completed' || tx.status === 'exitoso';
+        const isWithdrawal = tx.type === 'withdrawal';
+        const currency = tx.currency || 'S-E';
+        const amount = typeof tx.amount === 'number' ? tx.amount.toFixed(4) : '0.0000';
+
+        // Determinar badge según estado
+        let statusBadge = '';
+        if (isProcessed) {
+            statusBadge = `<span class="badge badge-success">PROCESADO</span>`;
+        } else if (tx.status === 'pending' || tx.status === 'pendiente') {
+            statusBadge = `<span class="badge badge-warning">PENDIENTE</span>`;
+        } else if (tx.status === 'failed' || tx.status === 'error') {
+            statusBadge = `<span class="badge badge-error">FAILED</span>`;
+        }
+
+        // Truncar descripción si es muy larga
+        let description = tx.description || 'Transacción';
+        if (description.length > 20) {
+            description = description.substring(0, 18) + '...';
+        }
+
+        return `
+            <div class="item" onclick='${isWithdrawal ? `showTransactionDetails(${JSON.stringify(tx).replace(/'/g, "&apos;")})` : ""}' style="${isWithdrawal ? 'cursor: pointer;' : ''}">
+                <div class="item-icon" style="background: ${typeInfo.bg};">
+                    <i data-lucide="${typeInfo.icon}" style="color: ${typeInfo.color};"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">${description}</div>
+                    <div class="item-subtitle">${formattedDate}</div>
+                    ${isWithdrawal && tx.tx_hash ? `
+                        <div class="tx-hash">
+                            Hash: ${tx.tx_hash.substring(0, 8)}...${tx.tx_hash.substring(tx.tx_hash.length - 6)}
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="item-action">
+                    <div class="tx-amount" style="color: ${typeInfo.sign === '+' ? 'var(--color-success)' : 'var(--color-error)'};">
+                        ${typeInfo.sign}${amount} ${currency}
+                    </div>
+                    ${statusBadge}
+                    ${isWithdrawal ? `
+                        <i data-lucide="chevron-right" style="width: 14px; height: 14px; color: var(--color-text-tertiary); margin-top: 2px;"></i>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    listContainer.innerHTML = html;
+
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+// Mostrar detalles de transacción
+function showTransactionDetails(tx) {
+    const modal = document.getElementById('transaction-modal');
+    const detailsContainer = document.getElementById('transaction-details');
+
+    const date = new Date(tx.date || tx.timestamp);
+    const formattedDate = date.toLocaleString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    const isProcessed = tx.tx_hash || tx.status === 'completed' || tx.status === 'exitoso';
+    const statusColor = isProcessed ? 'var(--color-success)' :
+                       tx.status === 'pending' || tx.status === 'pendiente' ? 'var(--color-warning)' :
+                       'var(--color-error)';
+    const statusText = isProcessed ? 'Procesado' :
+                      tx.status === 'pending' || tx.status === 'pendiente' ? 'Pendiente' : 'Fallido';
+
+    let explorerUrl = '';
+    if (tx.tx_hash) {
+        explorerUrl = `https://bscscan.com/tx/${tx.tx_hash}`;
+    }
+
+    detailsContainer.innerHTML = `
+        <div class="transaction-detail-card">
+            <div class="detail-row">
+                <span class="detail-label">Estado</span>
+                <span class="detail-value" style="color: ${statusColor}; font-weight: 700;">${statusText}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Monto</span>
+                <span class="detail-value" style="color: var(--color-error);">-${tx.amount?.toFixed(4) || '0.0000'} ${tx.currency || 'S-E'}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Fecha</span>
+                <span class="detail-value">${formattedDate}</span>
+            </div>
+            ${tx.wallet_address ? `
+                <div class="detail-row">
+                    <span class="detail-label">Wallet</span>
+                    <span class="detail-value" style="font-family: monospace; font-size: 0.7rem;">
+                        ${tx.wallet_address.substring(0, 8)}...${tx.wallet_address.substring(tx.wallet_address.length - 6)}
+                    </span>
+                </div>
+            ` : ''}
+        </div>
+
+        ${tx.tx_hash ? `
+            <div class="transaction-detail-card">
+                <div class="detail-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                    <span class="detail-label">Hash de Transacción</span>
+                    <span class="detail-value" style="font-family: monospace; font-size: 0.65rem; max-width: 100%; word-break: break-all;">
+                        ${tx.tx_hash}
+                    </span>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <button class="copy-btn" onclick="copyToClipboard('${tx.tx_hash}', 'Hash copiado')">
+                            <i data-lucide="copy" style="width: 12px; height: 12px;"></i>
+                            Copiar
+                        </button>
+                        <a href="${explorerUrl}" target="_blank" class="copy-btn" style="text-decoration: none;">
+                            <i data-lucide="external-link" style="width: 12px; height: 12px;"></i>
+                            BSCScan
+                        </a>
+                    </div>
+                </div>
+            </div>
+        ` : ''}
+
+        <div class="detail-row" style="border: none; padding-top: var(--space-2);">
+            <span class="detail-label">ID</span>
+            <span class="detail-value" style="font-family: monospace; font-size: 0.6rem;">
+                ${tx.id || 'N/A'}
+            </span>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+// Cerrar modal
+function closeTransactionModal() {
+    document.getElementById('transaction-modal').style.display = 'none';
+}
+
+// Copiar al portapapeles
+async function copyToClipboard(text, message) {
+    try {
+        await navigator.clipboard.writeText(text);
+        if (window.showToast) {
+            window.showToast(message || 'Copiado', 'success');
+        }
+    } catch (err) {
+        console.error('Error copiando:', err);
+    }
+}
+
+// Filtrar transacciones
+function filterTransactions(type) {
+    currentFilter = type;
+
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+        if (btn.getAttribute('data-filter') === type) {
+            btn.style.background = 'var(--gradient-primary)';
+            btn.style.color = 'white';
+        } else {
+            btn.style.background = 'var(--glass-ultra)';
+            btn.style.color = 'var(--color-text-primary)';
+        }
+    });
+
+    const filtered = type === 'all' ?
+        transactions :
+        transactions.filter(tx => tx.type === type);
+
+    renderTransactions(filtered);
+}
+
+// Refrescar
+async function refreshTransactions() {
+    await loadTransactions();
+    if (window.showToast) {
+        window.showToast('Historial actualizado', 'success');
+    }
+}
+
+// Exportar
+function exportTransactions() {
+    if (!transactions || transactions.length === 0) {
+        if (window.showToast) {
+            window.showToast('No hay transacciones', 'warning');
+        }
+        return;
+    }
+
+    const headers = 'Fecha,Tipo,Descripción,Monto,Moneda,Estado,Hash\n';
+    const rows = transactions.map(tx => {
+        const date = new Date(tx.date || tx.timestamp).toLocaleString('es-ES');
+        const typeInfo = transactionTypes[tx.type] || transactionTypes.mining;
+        return `"${date}","${tx.type}","${tx.description}","${typeInfo.sign}${tx.amount?.toFixed(4) || 0}","${tx.currency || 'S-E'}","${tx.status}","${tx.tx_hash || 'N/A'}"`;
+    }).join('\n');
+
+    const csv = headers + rows;
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `sally-e-historial-${Date.now()}.csv`;
+    link.click();
+
+    if (window.showToast) {
+        window.showToast('Exportado exitosamente', 'success');
+    }
+}
+
+// Cerrar modal al hacer click fuera
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('transaction-modal');
+    if (e.target === modal) {
+        closeTransactionModal();
+    }
+});
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+    loadTransactions();
+});
+</script>
+{% endblock %}

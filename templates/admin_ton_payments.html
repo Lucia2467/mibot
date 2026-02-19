@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión TON Payments - Admin Panel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f0f1a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+        
+        .admin-container { max-width: 1600px; margin: 0 auto; }
+        
+        .admin-header {
+            background: linear-gradient(135deg, rgba(0, 152, 234, 0.15) 0%, rgba(0, 119, 182, 0.15) 100%);
+            border: 1px solid rgba(0, 152, 234, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .admin-header h1 {
+            color: #0098EA;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-header h1::before {
+            content: '💎';
+            font-size: 28px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #0098EA 0%, #0077B6 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 152, 234, 0.4); }
+        .nav-btn.secondary { background: linear-gradient(135deg, #333 0%, #555 100%); }
+        .nav-btn.success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+        .nav-btn.danger { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); }
+        
+        /* Wallet Status Card */
+        .wallet-card {
+            background: linear-gradient(135deg, rgba(0, 152, 234, 0.1) 0%, rgba(0, 119, 182, 0.1) 100%);
+            border: 2px solid rgba(0, 152, 234, 0.4);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .wallet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .wallet-stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+        }
+        
+        .wallet-stat .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0098EA;
+            margin-bottom: 5px;
+        }
+        
+        .wallet-stat .label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+        }
+        
+        .wallet-stat.success .value { color: #28a745; }
+        .wallet-stat.warning .value { color: #ffc107; }
+        .wallet-stat.danger .value { color: #dc3545; }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-box .value { font-size: 28px; font-weight: bold; color: #0098EA; }
+        .stat-box .label { font-size: 12px; color: #888; margin-top: 5px; }
+        .stat-box.pending .value { color: #ffc107; }
+        .stat-box.success .value { color: #28a745; }
+        .stat-box.danger .value { color: #dc3545; }
+        
+        /* Content Container */
+        .content-container {
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            color: #0098EA;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 152, 234, 0.3);
+        }
+        
+        /* Configuration Form */
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .config-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .config-item label {
+            display: block;
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        
+        .config-item input,
+        .config-item select {
+            width: 100%;
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .config-item input:focus,
+        .config-item select:focus {
+            outline: none;
+            border-color: #0098EA;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #333;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch.active { background: #0098EA; }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: left 0.3s;
+        }
+        
+        .toggle-switch.active::after { left: 33px; }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover { background: rgba(0, 152, 234, 0.2); color: #fff; }
+        .tab.active { background: #0098EA; color: white; border-color: #0098EA; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Payment Cards */
+        .payment-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .payment-card:hover {
+            border-color: #0098EA;
+            box-shadow: 0 5px 20px rgba(0, 152, 234, 0.2);
+        }
+        
+        .payment-card.pending { border-left: 4px solid #ffc107; }
+        .payment-card.approved { border-left: 4px solid #17a2b8; }
+        .payment-card.processing { border-left: 4px solid #6f42c1; }
+        .payment-card.sent { border-left: 4px solid #20c997; }
+        .payment-card.confirmed { border-left: 4px solid #28a745; }
+        .payment-card.failed { border-left: 4px solid #dc3545; }
+        .payment-card.cancelled { border-left: 4px solid #6c757d; }
+        
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .payment-info h3 {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .payment-info p { font-size: 12px; color: #888; }
+        
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge.pending { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+        .badge.approved { background: rgba(23, 162, 184, 0.2); color: #17a2b8; }
+        .badge.processing { background: rgba(111, 66, 193, 0.2); color: #6f42c1; }
+        .badge.sent { background: rgba(32, 201, 151, 0.2); color: #20c997; }
+        .badge.confirmed { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+        .badge.failed { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
+        .badge.cancelled { background: rgba(108, 117, 125, 0.2); color: #6c757d; }
+        
+        .payment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .detail-item {
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .detail-label { font-size: 11px; color: #666; margin-bottom: 3px; }
+        .detail-value { font-size: 14px; font-weight: 600; color: #0098EA; }
+        .detail-value.amount { color: #28a745; }
+        
+        .wallet-address {
+            font-family: monospace;
+            font-size: 12px;
+            color: #888;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            word-break: break-all;
+            margin-bottom: 15px;
+        }
+        
+        .payment-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary { background: linear-gradient(135deg, #0098EA 0%, #0077B6 100%); color: white; }
+        .btn-success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; }
+        .btn-warning { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #000; }
+        .btn-secondary { background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; }
+        
+        .btn:hover { transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        /* Filters */
+        .filters-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filter-group label { font-size: 13px; color: #888; }
+        
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 13px;
+        }
+        
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .data-table th {
+            background: rgba(0, 152, 234, 0.2);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #0098EA;
+            border-bottom: 2px solid rgba(0, 152, 234, 0.3);
+        }
+        
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #ccc;
+        }
+        
+        .data-table tr:hover td { background: rgba(0, 152, 234, 0.05); }
+        
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active { display: flex; }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid rgba(0, 152, 234, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            color: #0098EA;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-state .icon { font-size: 60px; margin-bottom: 20px; }
+        .empty-state p { font-size: 16px; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-header { flex-direction: column; text-align: center; }
+            .payment-header { flex-direction: column; }
+            .payment-actions { justify-content: center; }
+            .filters-bar { flex-direction: column; }
+        }
+        
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+        
+        .toast {
+            background: #1a1a2e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .toast.success { border-left: 4px solid #28a745; }
+        .toast.error { border-left: 4px solid #dc3545; }
+        .toast.info { border-left: 4px solid #0098EA; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1>TON Payments Manager</h1>
+            <div class="nav-buttons">
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-btn secondary">← Dashboard</a>
+                <a href="{{ url_for('admin_withdrawals') }}" class="nav-btn secondary">📋 All Withdrawals</a>
+                <button class="nav-btn" onclick="refreshWalletInfo()">🔄 Refresh</button>
+                <button class="nav-btn success" onclick="processAllPending()">⚡ Process All Pending</button>
+            </div>
+        </div>
+        
+        <!-- Wallet Status -->
+        <div class="wallet-card">
+            <h2 style="margin-bottom: 20px; color: #0098EA;">💎 System TON Wallet</h2>
+            <div class="wallet-grid" id="walletInfo">
+                <div class="wallet-stat">
+                    <div class="value" id="walletBalance">{{ "%.4f"|format(wallet_info.balance|default(0)) }}</div>
+                    <div class="label">TON Balance</div>
+                </div>
+                <div class="wallet-stat {{ 'success' if wallet_info.configured else 'danger' }}">
+                    <div class="value">{{ '✅' if wallet_info.configured else '❌' }}</div>
+                    <div class="label">Status</div>
+                </div>
+                <div class="wallet-stat">
+                    <div class="value">{{ wallet_info.network|default('mainnet')|upper }}</div>
+                    <div class="label">Network</div>
+                </div>
+                <div class="wallet-stat {{ 'success' if wallet_info.can_process else 'warning' }}">
+                    <div class="value">{{ '✅' if wallet_info.can_process else '⚠️' }}</div>
+                    <div class="label">Can Process</div>
+                </div>
+            </div>
+            <div style="margin-top: 15px; font-family: monospace; font-size: 12px; color: #666; word-break: break-all;">
+                📋 Address: {{ wallet_info.address|default('Not configured') }}
+            </div>
+        </div>
+        
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-box pending">
+                <div class="value">{{ stats.pending_payments|default(0) }}</div>
+                <div class="label">⏳ Pending</div>
+            </div>
+            <div class="stat-box" style="border-left: 3px solid #6f42c1;">
+                <div class="value" style="color: #6f42c1;">{{ stats.processing|default(0) }}</div>
+                <div class="label">⚙️ Processing</div>
+            </div>
+            <div class="stat-box success">
+                <div class="value">{{ stats.confirmed_payments|default(0) }}</div>
+                <div class="label">✅ Confirmed</div>
+            </div>
+            <div class="stat-box danger">
+                <div class="value">{{ stats.failed_payments|default(0) }}</div>
+                <div class="label">❌ Failed</div>
+            </div>
+            <div class="stat-box">
+                <div class="value">{{ "%.2f"|format(stats.total_amount|default(0)) }}</div>
+                <div class="label">💰 Total TON</div>
+            </div>
+        </div>
+        
+        <!-- Configuration -->
+        <div class="content-container">
+            <h3 class="section-title">⚙️ TON Payment Configuration</h3>
+            <form id="configForm" onsubmit="saveConfig(event)">
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Auto-Pay Enabled</label>
+                        <div class="toggle-switch {{ 'active' if config.ton_auto_pay_enabled else '' }}" 
+                             id="toggleAutoPay" 
+                             onclick="toggleConfig('ton_auto_pay_enabled', this)">
+                        </div>
+                    </div>
+                    <div class="config-item">
+                        <label>Maintenance Mode</label>
+                        <div class="toggle-switch {{ 'active' if config.ton_maintenance_mode else '' }}" 
+                             id="toggleMaintenance" 
+                             onclick="toggleConfig('ton_maintenance_mode', this)">
+                        </div>
+                    </div>
+                    <div class="config-item">
+                        <label>Minimum Withdrawal (TON)</label>
+                        <input type="number" step="0.01" name="ton_min_withdrawal" 
+                               value="{{ config.ton_min_withdrawal|default(0.1) }}">
+                    </div>
+                    <div class="config-item">
+                        <label>Maximum Withdrawal (TON)</label>
+                        <input type="number" step="0.01" name="ton_max_withdrawal" 
+                               value="{{ config.ton_max_withdrawal|default(100) }}">
+                    </div>
+                    <div class="config-item">
+                        <label>Withdrawal Fee (TON)</label>
+                        <input type="number" step="0.001" name="ton_withdrawal_fee" 
+                               value="{{ config.ton_withdrawal_fee|default(0.01) }}">
+                    </div>
+                    <div class="config-item">
+                        <label>Fee Type</label>
+                        <select name="ton_withdrawal_fee_type">
+                            <option value="fixed" {{ 'selected' if config.ton_withdrawal_fee_type == 'fixed' else '' }}>Fixed</option>
+                            <option value="percentage" {{ 'selected' if config.ton_withdrawal_fee_type == 'percentage' else '' }}>Percentage</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label>Daily Limit (TON)</label>
+                        <input type="number" step="1" name="ton_daily_limit" 
+                               value="{{ config.ton_daily_limit|default(1000) }}">
+                    </div>
+                    <div class="config-item">
+                        <label>Per-User Daily Limit (TON)</label>
+                        <input type="number" step="1" name="ton_user_daily_limit" 
+                               value="{{ config.ton_user_daily_limit|default(50) }}">
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <button type="submit" class="btn btn-primary">💾 Save Configuration</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Payments Tabs -->
+        <div class="content-container">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('pending')">⏳ Pending ({{ pending|length }})</button>
+                <button class="tab" onclick="showTab('processing')">⚙️ Processing</button>
+                <button class="tab" onclick="showTab('sent')">📤 Sent</button>
+                <button class="tab" onclick="showTab('confirmed')">✅ Confirmed</button>
+                <button class="tab" onclick="showTab('failed')">❌ Failed</button>
+                <button class="tab" onclick="showTab('all')">📋 All Payments</button>
+            </div>
+            
+            <!-- Filters -->
+            <div class="filters-bar" id="filtersBar" style="display: none;">
+                <div class="filter-group">
+                    <label>User ID:</label>
+                    <input type="text" id="filterUserId" placeholder="Search user...">
+                </div>
+                <div class="filter-group">
+                    <label>Date From:</label>
+                    <input type="date" id="filterDateFrom">
+                </div>
+                <div class="filter-group">
+                    <label>Date To:</label>
+                    <input type="date" id="filterDateTo">
+                </div>
+                <button class="btn btn-primary" onclick="applyFilters()">🔍 Filter</button>
+                <button class="btn btn-secondary" onclick="resetFilters()">↺ Reset</button>
+            </div>
+            
+            <!-- Pending Payments -->
+            <div id="tab-pending" class="tab-content active">
+                {% if pending and pending|length > 0 %}
+                    {% for payment in pending %}
+                    <div class="payment-card pending">
+                        <div class="payment-header">
+                            <div class="payment-info">
+                                <h3>
+                                    {{ payment.username or payment.first_name or 'User' }}
+                                    <span class="badge pending">⏳ PENDING</span>
+                                </h3>
+                                <p>ID: {{ payment.user_id }} | Payment: {{ payment.payment_id }} | {{ payment.created_at }}</p>
+                            </div>
+                        </div>
+                        <div class="payment-details">
+                            <div class="detail-item">
+                                <div class="detail-label">💰 Amount</div>
+                                <div class="detail-value amount">{{ "%.4f"|format(payment.amount|float) }} TON</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">💸 Fee</div>
+                                <div class="detail-value">{{ "%.4f"|format(payment.fee|float) }} TON</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">📤 Net Amount</div>
+                                <div class="detail-value amount">{{ "%.4f"|format(payment.net_amount|float) }} TON</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">📋 Type</div>
+                                <div class="detail-value">{{ payment.payment_type|upper }}</div>
+                            </div>
+                        </div>
+                        <div class="wallet-address">
+                            📋 To: {{ payment.to_address }}
+                        </div>
+                        <div class="payment-actions">
+                            <button class="btn btn-success" onclick="processPayment('{{ payment.payment_id }}')">
+                                ⚡ Process Now
+                            </button>
+                            <button class="btn btn-primary" onclick="approvePayment('{{ payment.payment_id }}')">
+                                ✅ Approve
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectPayment('{{ payment.payment_id }}')">
+                                ❌ Reject
+                            </button>
+                            <button class="btn btn-secondary" onclick="viewPaymentDetails('{{ payment.payment_id }}')">
+                                👁️ Details
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="icon">📭</div>
+                        <p>No pending TON payments</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Processing Payments -->
+            <div id="tab-processing" class="tab-content">
+                {% if processing and processing|length > 0 %}
+                    {% for payment in processing %}
+                    <div class="payment-card processing">
+                        <div class="payment-header">
+                            <div class="payment-info">
+                                <h3>
+                                    {{ payment.username or payment.first_name or 'User' }}
+                                    <span class="badge processing">⚙️ PROCESSING</span>
+                                </h3>
+                                <p>ID: {{ payment.user_id }} | {{ payment.payment_id }}</p>
+                            </div>
+                        </div>
+                        <div class="payment-details">
+                            <div class="detail-item">
+                                <div class="detail-label">💰 Amount</div>
+                                <div class="detail-value amount">{{ "%.4f"|format(payment.net_amount|float) }} TON</div>
+                            </div>
+                        </div>
+                        <div class="wallet-address">
+                            📋 To: {{ payment.to_address }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="icon">⚙️</div>
+                        <p>No payments currently processing</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Sent Payments -->
+            <div id="tab-sent" class="tab-content">
+                {% if sent and sent|length > 0 %}
+                    {% for payment in sent %}
+                    <div class="payment-card sent">
+                        <div class="payment-header">
+                            <div class="payment-info">
+                                <h3>
+                                    {{ payment.username or payment.first_name or 'User' }}
+                                    <span class="badge sent">📤 SENT</span>
+                                </h3>
+                                <p>TX: {{ payment.tx_hash[:20] if payment.tx_hash else 'N/A' }}...</p>
+                            </div>
+                        </div>
+                        <div class="payment-details">
+                            <div class="detail-item">
+                                <div class="detail-label">💰 Amount</div>
+                                <div class="detail-value amount">{{ "%.4f"|format(payment.net_amount|float) }} TON</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">📤 Sent At</div>
+                                <div class="detail-value">{{ payment.sent_at }}</div>
+                            </div>
+                        </div>
+                        {% if payment.tx_hash %}
+                        <div style="margin-bottom: 15px;">
+                            <a href="https://tonscan.org/tx/{{ payment.tx_hash }}" target="_blank" class="btn btn-secondary">
+                                🔗 View on TonScan
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="icon">📤</div>
+                        <p>No sent payments awaiting confirmation</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Confirmed Payments -->
+            <div id="tab-confirmed" class="tab-content">
+                {% if confirmed and confirmed|length > 0 %}
+                    {% for payment in confirmed %}
+                    <div class="payment-card confirmed">
+                        <div class="payment-header">
+                            <div class="payment-info">
+                                <h3>
+                                    {{ payment.username or payment.first_name or 'User' }}
+                                    <span class="badge confirmed">✅ CONFIRMED</span>
+                                </h3>
+                                <p>Confirmed: {{ payment.confirmed_at }}</p>
+                            </div>
+                        </div>
+                        <div class="payment-details">
+                            <div class="detail-item">
+                                <div class="detail-label">💰 Amount</div>
+                                <div class="detail-value amount">{{ "%.4f"|format(payment.net_amount|float) }} TON</div>
+                            </div>
+                        </div>
+                        {% if payment.tx_hash %}
+                        <a href="https://tonscan.org/tx/{{ payment.tx_hash }}" target="_blank" class="btn btn-secondary">
+                            🔗 View on TonScan
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="icon">✅</div>
+                        <p>No confirmed payments yet</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Failed Payments -->
+            <div id="tab-failed" class="tab-content">
+                {% if failed and failed|length > 0 %}
+                    {% for payment in failed %}
+                    <div class="payment-card failed">
+                        <div class="payment-header">
+                            <div class="payment-info">
+                                <h3>
+                                    {{ payment.username or payment.first_name or 'User' }}
+                                    <span class="badge failed">❌ FAILED</span>
+                                </h3>
+                                <p>Error: {{ payment.error_message or 'Unknown error' }}</p>
+                            </div>
+                        </div>
+                        <div class="payment-details">
+                            <div class="detail-item">
+                                <div class="detail-label">💰 Amount</div>
+                                <div class="detail-value">{{ "%.4f"|format(payment.amount|float) }} TON</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">🔄 Retries</div>
+                                <div class="detail-value">{{ payment.retry_count|default(0) }}</div>
+                            </div>
+                        </div>
+                        <div class="payment-actions">
+                            <button class="btn btn-warning" onclick="retryPayment('{{ payment.payment_id }}')">
+                                🔄 Retry
+                            </button>
+                            <button class="btn btn-danger" onclick="cancelPayment('{{ payment.payment_id }}')">
+                                ❌ Cancel & Refund
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="icon">✅</div>
+                        <p>No failed payments</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- All Payments -->
+            <div id="tab-all" class="tab-content">
+                <div id="allPaymentsTable"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Payment Details Modal -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <h3 class="modal-title">💎 Payment Details</h3>
+            <div id="paymentDetails"></div>
+            <div style="margin-top: 20px; text-align: right;">
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = message;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+        
+        // Tab switching
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Show/hide filters for 'all' tab
+            document.getElementById('filtersBar').style.display = tabName === 'all' ? 'flex' : 'none';
+            
+            if (tabName === 'all') {
+                loadAllPayments();
+            }
+        }
+        
+        // Toggle configuration
+        async function toggleConfig(key, element) {
+            const newValue = !element.classList.contains('active');
+            
+            try {
+                const response = await fetch('/api/admin/ton/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: key, value: newValue })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    element.classList.toggle('active');
+                    showToast(`${key} ${newValue ? 'enabled' : 'disabled'}`, 'success');
+                } else {
+                    showToast('Error: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                showToast('Connection error: ' + error.message, 'error');
+            }
+        }
+        
+        // Save configuration
+        async function saveConfig(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const config = {};
+            
+            formData.forEach((value, key) => {
+                config[key] = value;
+            });
+            
+            try {
+                const response = await fetch('/api/admin/ton/config/bulk', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Configuration saved successfully', 'success');
+                } else {
+                    showToast('Error: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                showToast('Connection error: ' + error.message, 'error');
+            }
+        }
+        
+        // Process payment
+        async function processPayment(paymentId) {
+            if (!confirm('Process this payment now?')) return;
+            
+            try {
+                const response = await fetch(`/api/admin/ton/process/${paymentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Payment processed: ' + data.message, 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast('Error: ' + (data.message || data.error), 'error');
+                }
+            } catch (error) {
+                showToast('Connection error: ' + error.message, 'error');
+            }
+        }
+        
+        // Approve payment
+        async function approvePayment(paymentId) {
+            if (!confirm('Approve this payment for processing?')) return;
+            
+            try {
+                const response = await fetch(`/api/admin/ton/approve/${paymentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Payment approved', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast('Error: ' + (data.message || data.error), 'error');
+                }
+            } catch (error) {
+                showToast('Connection error: ' + error.message, 'error');
+            }
+        }
+        
+        // Reject payment
+        async function rejectPayment(paymentId) {
+            const reason = prompt('Rejection reason (optional):');
+            if (reason === null) return;
+            
+            try {
+                const response = await fetch(`/api/admin/ton/reject/${paymentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reason: reason })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Payment rejected and balance refunded', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast('Error: ' + (data.message || data.error), 'error');
+                }
+            } catch (error) {
+                showToast('Connection error: ' + error.message, 'error');
+            }
+        }
+        
+        // Retry payment
+        async function retryPayment(paymentId) {
+            if (!confirm('Retry this failed payment?')) return;
+            
+            try {
+                const response = await fetch(`/api/admin/ton/retry/${paymentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Payment retry initiated', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast('Error: ' + (data.message || data.error), 'error');
+                }
+            } catch (error) {
+                showToast('Connection error: ' + error.message, 'error');
+            }
+        }
+        
+        // Cancel payment
+        async function cancelPayment(paymentId) {
+            if (!confirm('Cancel this payment and refund the user?')) return;
+            
+            try {
+                const response = await fetch(`/api/admin/ton/cancel/${paymentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Payment cancelled and refunded', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast('Error: ' + (data.message || data.error), 'error');
+                }
+            } catch (error) {
+                showToast('Connection error: ' + error.message, 'error');
+            }
+        }
+        
+        // Process all pending
+        async function processAllPending() {
+            if (!confirm('Process ALL pending payments automatically?\n\nThis requires sufficient TON balance.')) return;
+            
+            try {
+                const response = await fetch('/api/admin/ton/process-all', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(`Processed: ${data.results.processed}, Success: ${data.results.success}, Failed: ${data.results.failed}`, 'success');
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    showToast('Error: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                showToast('Connection error: ' + error.message, 'error');
+            }
+        }
+        
+        // Refresh wallet info
+        async function refreshWalletInfo() {
+            try {
+                const response = await fetch('/api/admin/ton/wallet-info');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('walletBalance').textContent = data.wallet.balance.toFixed(4);
+                    showToast('Wallet info refreshed', 'success');
+                } else {
+                    showToast('Error: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                showToast('Connection error: ' + error.message, 'error');
+            }
+        }
+        
+        // View payment details
+        async function viewPaymentDetails(paymentId) {
+            try {
+                const response = await fetch(`/api/admin/ton/payment/${paymentId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const payment = data.payment;
+                    const logs = data.logs || [];
+                    
+                    let html = `
+                        <div class="payment-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Payment ID</div>
+                                <div class="detail-value">${payment.payment_id}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">User</div>
+                                <div class="detail-value">${payment.user_id}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Amount</div>
+                                <div class="detail-value amount">${payment.amount} TON</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Fee</div>
+                                <div class="detail-value">${payment.fee} TON</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Status</div>
+                                <div class="detail-value">${payment.status.toUpperCase()}</div>
+                            </div>
+                        </div>
+                        <div class="wallet-address" style="margin-top: 15px;">
+                            <strong>To:</strong> ${payment.to_address}
+                        </div>
+                        ${payment.tx_hash ? `<div class="wallet-address"><strong>TX Hash:</strong> ${payment.tx_hash}</div>` : ''}
+                        
+                        <h4 style="margin-top: 20px; color: #0098EA;">📋 Audit Log</h4>
+                        <div style="max-height: 200px; overflow-y: auto;">
+                    `;
+                    
+                    logs.forEach(log => {
+                        html += `
+                            <div style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 12px;">
+                                <strong>${log.action}</strong> - ${log.actor_type}:${log.actor_id || 'system'}<br>
+                                <span style="color: #888;">${log.created_at}</span>
+                                ${log.details ? `<br><span style="color: #666;">${log.details}</span>` : ''}
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                    
+                    document.getElementById('paymentDetails').innerHTML = html;
+                    document.getElementById('paymentModal').classList.add('active');
+                }
+            } catch (error) {
+                showToast('Error loading payment details', 'error');
+            }
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+        }
+        
+        // Load all payments
+        async function loadAllPayments() {
+            const container = document.getElementById('allPaymentsTable');
+            container.innerHTML = '<p>Loading...</p>';
+            
+            try {
+                const userId = document.getElementById('filterUserId').value;
+                const dateFrom = document.getElementById('filterDateFrom').value;
+                const dateTo = document.getElementById('filterDateTo').value;
+                
+                let url = '/api/admin/ton/payments?limit=100';
+                if (userId) url += `&user_id=${userId}`;
+                if (dateFrom) url += `&start_date=${dateFrom}`;
+                if (dateTo) url += `&end_date=${dateTo}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const payments = data.payments;
+                    
+                    if (payments.length === 0) {
+                        container.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>No payments found</p></div>';
+                        return;
+                    }
+                    
+                    let html = `<table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Type</th>
+                                <th>TX Hash</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    `;
+                    
+                    payments.forEach(p => {
+                        html += `
+                            <tr>
+                                <td>${p.created_at}</td>
+                                <td>${p.username || p.user_id}</td>
+                                <td style="color: #28a745; font-weight: bold;">${parseFloat(p.amount).toFixed(4)} TON</td>
+                                <td><span class="badge ${p.status}">${p.status.toUpperCase()}</span></td>
+                                <td>${p.payment_type}</td>
+                                <td>${p.tx_hash ? p.tx_hash.substring(0, 12) + '...' : '-'}</td>
+                                <td>
+                                    <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 11px;" 
+                                            onclick="viewPaymentDetails('${p.payment_id}')">👁️</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                }
+            } catch (error) {
+                container.innerHTML = '<p style="color: #dc3545;">Error loading payments</p>';
+            }
+        }
+        
+        function applyFilters() {
+            loadAllPayments();
+        }
+        
+        function resetFilters() {
+            document.getElementById('filterUserId').value = '';
+            document.getElementById('filterDateFrom').value = '';
+            document.getElementById('filterDateTo').value = '';
+            loadAllPayments();
+        }
+    </script>
+</body>
+</html>

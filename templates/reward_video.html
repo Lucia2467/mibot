@@ -1,0 +1,924 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Reward Video{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(138, 43, 226, 0.08) 0%, rgba(75, 0, 130, 0.08) 50%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(138, 43, 226, 0.2); position: relative; overflow: hidden;">
+        <!-- Elementos de fondo -->
+        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(138, 43, 226, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(75, 0, 130, 0.12) 0%, transparent 70%); border-radius: 50%; animation: float 10s ease-in-out infinite reverse;"></div>
+
+        <div style="position: relative; z-index: 1; text-align: center; padding: var(--space-4);">
+            <!-- Icono principal -->
+            <div class="floating" style="width: 80px; height: 80px; margin: 0 auto var(--space-4); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(138, 43, 226, 0.2) 0%, rgba(75, 0, 130, 0.2) 100%); border-radius: 20px; box-shadow: 0 8px 32px rgba(138, 43, 226, 0.3);">
+                <i data-lucide="video" style="width: 40px; height: 40px; color: #9B59B6;"></i>
+            </div>
+
+            <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: var(--space-2); background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                Reward Video
+            </h1>
+            <p style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.6); line-height: 1.6;" data-i18n="watch_videos_earn">
+                Ve videos completos y gana DOGE extra
+            </p>
+        </div>
+    </div>
+
+    <!-- Progress Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(138, 43, 226, 0.04) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(138, 43, 226, 0.2); margin-top: var(--space-4); position: relative; overflow: hidden;">
+        <div style="position: relative; z-index: 1;">
+            <!-- Progress Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(138, 43, 226, 0.1); border-radius: 12px;">
+                        <i data-lucide="film" style="width: 22px; height: 22px; color: #9B59B6;"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9375rem; color: white;" data-i18n="videos_today">Videos Hoy</div>
+                        <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="completed">Completados</div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div id="rv-progress-text" style="font-weight: 700; font-size: 1.25rem; color: #9B59B6;">
+                        {{ progress.videos_watched }} / 10
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div style="height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; margin-bottom: var(--space-4);">
+                <div id="rv-progress-bar" style="height: 100%; background: linear-gradient(90deg, #9B59B6 0%, #8E44AD 100%); border-radius: 4px; transition: width 0.5s ease; width: {{ (progress.videos_watched / 10 * 100) }}%;"></div>
+            </div>
+
+            <!-- Reward Info -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-3); background: rgba(138, 43, 226, 0.05); border-radius: 12px; border: 1px solid rgba(138, 43, 226, 0.1);">
+                <div style="display: flex; align-items: center; gap: var(--space-2);">
+                    <i data-lucide="coins" style="width: 18px; height: 18px; color: #9B59B6;"></i>
+                    <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7);" data-i18n="earned_today">Ganado hoy</span>
+                </div>
+                <div id="rv-earned-amount" style="font-weight: 700; font-size: 1rem; color: #9B59B6;">
+                    {{ "%.3f"|format(progress.total_earned) }} DOGE
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(18, 18, 18, 0.98) 100%); border: 1px solid rgba(138, 43, 226, 0.15); margin-top: var(--space-4);">
+        <div style="text-align: center;">
+            <!-- Reward per view -->
+            <div style="margin-bottom: var(--space-4);">
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);" data-i18n="reward_per_video">Recompensa por video</div>
+                <div style="font-weight: 700; font-size: 1.5rem; color: #9B59B6;">+0.003 DOGE</div>
+            </div>
+
+            <!-- Main Action Button -->
+            <button id="rv-watch-btn"
+                    onclick="startRewardVideo()"
+                    {% if progress.completed %}disabled{% endif %}
+                    style="width: 100%; padding: var(--space-4); border-radius: 14px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; {% if progress.completed %}background: rgba(138, 43, 226, 0.15); color: rgba(255, 255, 255, 0.5);{% else %}background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%); color: #fff;{% endif %}">
+                {% if progress.completed %}
+                    <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
+                        <span data-i18n="completed">Completado</span>
+                    </span>
+                {% else %}
+                    <span id="rv-btn-content" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i data-lucide="play-circle" style="width: 20px; height: 20px;"></i>
+                        <span data-i18n="watch_reward_video">Ver Reward Video</span>
+                    </span>
+                {% endif %}
+            </button>
+
+            <!-- Info text -->
+            <div id="rv-status-text" style="margin-top: var(--space-3); font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">
+                {% if progress.completed %}
+                    <span data-i18n="daily_limit_come_back">¡Límite diario alcanzado! Vuelve mañana para más.</span>
+                {% else %}
+                    <span data-i18n="max_10_videos">Máximo 10 videos por día • 40 seg entre cada video • 15 seg mínimo</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Reward Info -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(138, 43, 226, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(138, 43, 226, 0.15); margin-top: var(--space-4);">
+        <div style="display: flex; align-items: center; gap: var(--space-3);">
+            <div style="flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(138, 43, 226, 0.1); border-radius: 12px;">
+                <i data-lucide="trophy" style="width: 22px; height: 22px; color: #9B59B6;"></i>
+            </div>
+            <div>
+                <div style="font-weight: 600; font-size: 0.9375rem; color: white; margin-bottom: var(--space-1);">
+                    Recompensa Total
+                </div>
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">
+                    Completa los 10 videos para ganar <span style="color: #9B59B6; font-weight: 600;">hasta 10 DOGE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How it Works -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(138, 43, 226, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(138, 43, 226, 0.1); margin-top: var(--space-4);">
+        <div style="font-weight: 600; font-size: 0.9375rem; color: white; margin-bottom: var(--space-3);">
+            <i data-lucide="info" style="width: 16px; height: 16px; color: #9B59B6; vertical-align: middle; margin-right: 6px;"></i>
+            ¿Cómo funciona?
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(138, 43, 226, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #9B59B6;">1</div>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);">Presiona el botón para iniciar</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(138, 43, 226, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #9B59B6;">2</div>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);">Ve el video completo (mínimo 10 segundos)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(138, 43, 226, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #9B59B6;">3</div>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);">Recibe tu recompensa automáticamente</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Animación flotante */
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(10px, 10px);
+    }
+}
+
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Button states */
+#rv-watch-btn:disabled {
+    cursor: not-allowed;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Load initial status
+    loadRewardVideoStatus();
+});
+
+// ============================================
+// REWARD VIDEO ADS SYSTEM - TELEGA.IO (PAGA MÁS)
+// ============================================
+// Usa Telega.io Rewarded Ads para máximos ingresos
+// La recompensa se otorga SOLO via backend callback (/ad_reward)
+// NO se otorga recompensa desde el frontend
+// ============================================
+
+// State variables
+let rvIsWatching = false;
+let rvCooldownTimer = null;
+let rvCooldownSeconds = 0;
+let rvSessionToken = null;
+let rvWatchStartTime = null;
+
+// Configuration
+const RV_CONFIG = {
+    minWatchSeconds: 10,
+    cooldownSeconds: 60,
+    maxDailyVideos: 10,
+    rewardPerVideo: 0.003
+};
+
+// Load status from backend
+function loadRewardVideoStatus() {
+    const userId = window.USER_ID || new URLSearchParams(window.location.search).get('user_id');
+
+    fetch(`/api/reward-video/status?user_id=${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Handle cooldown if active
+                if (!data.can_watch && data.cooldown_remaining > 0) {
+                    startRVCooldown(data.cooldown_remaining);
+                }
+
+                // Handle completed state
+                if (data.progress.completed) {
+                    setRVCompleted();
+                }
+            }
+        })
+        .catch(error => {
+            console.error('[RewardVideo] Error loading status:', error);
+        });
+}
+
+// Start Reward Video - Uses Telega.io (PAGA MÁS)
+function startRewardVideo() {
+    const btn = document.getElementById('rv-watch-btn');
+    const btnContent = document.getElementById('rv-btn-content');
+
+    if (rvIsWatching || btn.disabled) return;
+
+    // Haptic feedback
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+
+    rvIsWatching = true;
+    btn.disabled = true;
+    btnContent.innerHTML = '<i data-lucide="loader" style="width: 20px; height: 20px; animation: spin 1s linear infinite;"></i><span>Iniciando...</span>';
+    lucide.createIcons();
+
+    const userId = window.USER_ID || new URLSearchParams(window.location.search).get('user_id');
+
+    // Request session token from backend
+    fetch('/api/reward-video/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            rvSessionToken = data.session_token;
+            rvWatchStartTime = Date.now();
+
+            // Show Telega.io Rewarded Ad (PAGA MÁS)
+            showRewardVideoAd();
+        } else {
+            handleRVError(data);
+        }
+    })
+    .catch(error => {
+        console.error('[RewardVideo] Error starting:', error);
+        showToast('❌ ' + (window.tt ? window.tt('toast_connection_error') : 'Error de conexión'), 'error');
+        resetRVButton();
+        rvIsWatching = false;
+    });
+}
+
+// Show Reward Video Ad via Telega.io
+// ============================================
+// IMPORTANTE: Pasamos user_id a Telega.io para que el callback
+// sepa a quién recompensar. Sin esto, Telega.io no puede enviar
+// el user_id en el callback a /ad_reward
+// ============================================
+let rvPreviousVideosWatched = 0;
+
+function showRewardVideoAd() {
+    const btnContent = document.getElementById('rv-btn-content');
+    const userId = window.USER_ID || new URLSearchParams(window.location.search).get('user_id');
+
+    if (!userId) {
+        showToast('⚠️ ' + (window.tt ? window.tt('toast_user_not_identified') : 'Error: Usuario no identificado'), 'error');
+        resetRVButton();
+        rvIsWatching = false;
+        return;
+    }
+
+    // Guardar el progreso actual para comparar después
+    const currentProgressText = document.getElementById('rv-progress-text').textContent;
+    const match = currentProgressText.match(/(\d+)\s*\/\s*(\d+)/);
+    rvPreviousVideosWatched = match ? parseInt(match[1]) : 0;
+
+    // Mostrar estado
+    const watchingText = window.tt ? window.tt('toast_ad_in_progress') : 'Viendo anuncio...';
+    btnContent.innerHTML = `<i data-lucide="video" style="width: 20px; height: 20px; animation: pulse 1s ease-in-out infinite;"></i><span>${watchingText}</span>`;
+    lucide.createIcons();
+
+    // Mostrar anuncio Telega.io - PASAMOS EL USER_ID
+    if (window.TelegaAds) {
+        console.log('🎬 [RewardVideo] Showing Telega.io ad for user:', userId);
+
+        // CRÍTICO: Pasar user_id para que Telega.io lo incluya en el callback
+        // Telega.io llamará a /ad_reward?user_id=XXXXX
+        window.TelegaAds.ad_show({
+            adBlockUuid: "3a1b92a1-f630-4632-a0c3-992a3a3790a2",
+            user: String(userId),     // Formato 1: user
+            userId: String(userId),   // Formato 2: userId
+            user_id: String(userId)   // Formato 3: user_id
+        });
+
+        // Cambiar estado a verificando
+        setTimeout(() => {
+            const verifyingText = window.tt ? window.tt('toast_validating') : 'Verificando...';
+            btnContent.innerHTML = `<i data-lucide="loader" style="width: 20px; height: 20px; animation: spin 1s linear infinite;"></i><span>${verifyingText}</span>`;
+            lucide.createIcons();
+        }, 2000);
+
+        // Verificar recompensa después de 6 segundos (dar tiempo al callback)
+        setTimeout(() => checkRewardStatus(true), 6000);
+    } else {
+        showToast('⚠️ ' + (window.tt ? window.tt('toast_ads_not_available') : 'Sistema de anuncios no disponible'), 'error');
+        resetRVButton();
+        rvIsWatching = false;
+    }
+}
+
+// Check reward status after showing Telega.io ad
+// Backend should have received callback from Telega.io
+// SOLO mostramos éxito si realmente aumentó el contador
+function checkRewardStatus(isFirstCheck = false) {
+    const userId = window.USER_ID || new URLSearchParams(window.location.search).get('user_id');
+
+    fetch(`/api/reward-video/status?user_id=${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const currentProgress = data.progress;
+                const newVideosWatched = currentProgress.videos_watched;
+
+                // Actualizar UI con los nuevos datos
+                document.getElementById('rv-progress-text').textContent =
+                    `${newVideosWatched} / ${RV_CONFIG.maxDailyVideos}`;
+
+                const progressBar = document.getElementById('rv-progress-bar');
+                progressBar.style.width = `${(newVideosWatched / RV_CONFIG.maxDailyVideos) * 100}%`;
+
+                document.getElementById('rv-earned-amount').textContent =
+                    `${currentProgress.total_earned.toFixed(3)} DOGE`;
+
+                // VERIFICAR SI REALMENTE SE OTORGÓ LA RECOMPENSA
+                // Comparar con el valor anterior guardado
+                if (newVideosWatched > rvPreviousVideosWatched) {
+                    // ¡SÍ se recibió la recompensa del callback!
+                    showToast(`+${RV_CONFIG.rewardPerVideo} DOGE`, 'success');
+
+                    // Haptic feedback
+                    if (window.Telegram && window.Telegram.WebApp) {
+                        window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+                    }
+
+                    // Handle completion or cooldown
+                    if (currentProgress.completed) {
+                        setRVCompleted();
+                    } else if (data.cooldown_remaining > 0) {
+                        startRVCooldown(data.cooldown_remaining);
+                    } else {
+                        // Iniciar cooldown manual si no viene del backend
+                        startRVCooldown(RV_CONFIG.cooldownSeconds);
+                    }
+                } else if (isFirstCheck) {
+                    // Primera verificación falló, reintentar en 3 segundos más
+                    console.log('[RewardVideo] Reward not yet received, retrying...');
+                    setTimeout(() => checkRewardStatus(false), 3000);
+                    return; // No resetear el botón todavía
+                } else {
+                    // Segunda verificación también falló - el callback no llegó
+                    console.warn('[RewardVideo] Reward callback not received from Telega.io');
+                    showToast('⚠️ ' + (window.tt ? window.tt('toast_compatibility_error') : 'Error de compatibilidad'), 'error');
+                    resetRVButton();
+                }
+            } else {
+                // No se pudo verificar - resetear botón
+                showToast('⚠️ ' + (window.tt ? window.tt('toast_verify_reward_error') : 'Error verificando recompensa'), 'error');
+                resetRVButton();
+            }
+
+            rvIsWatching = false;
+            rvSessionToken = null;
+        })
+        .catch(error => {
+            console.error('[RewardVideo] Error checking status:', error);
+            showToast('❌ ' + (window.tt ? window.tt('toast_connection_error') : 'Error de conexión'), 'error');
+            resetRVButton();
+            rvIsWatching = false;
+            rvSessionToken = null;
+        });
+}
+
+// Complete Reward Video
+function completeRewardVideo() {
+    const userId = window.USER_ID || new URLSearchParams(window.location.search).get('user_id');
+    const watchDuration = Math.floor((Date.now() - rvWatchStartTime) / 1000);
+
+    const btnContent = document.getElementById('rv-btn-content');
+    btnContent.innerHTML = '<i data-lucide="loader" style="width: 20px; height: 20px; animation: spin 1s linear infinite;"></i><span>Verificando...</span>';
+    lucide.createIcons();
+
+    fetch('/api/reward-video/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            user_id: userId,
+            session_token: rvSessionToken,
+            watch_duration: Math.max(watchDuration, RV_CONFIG.minWatchSeconds)
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update UI with new data
+            document.getElementById('rv-progress-text').textContent =
+                `${data.videos_watched} / ${RV_CONFIG.maxDailyVideos}`;
+
+            const progressBar = document.getElementById('rv-progress-bar');
+            progressBar.style.width = `${(data.videos_watched / RV_CONFIG.maxDailyVideos) * 100}%`;
+
+            document.getElementById('rv-earned-amount').textContent =
+                `${data.total_earned.toFixed(3)} DOGE`;
+
+            // Show success toast
+            showToast(`+${data.reward} DOGE`, 'success');
+
+            // Haptic feedback
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+
+            // Handle completion or cooldown
+            if (data.completed) {
+                setRVCompleted();
+            } else {
+                startRVCooldown(data.cooldown);
+            }
+        } else {
+            handleRVError(data);
+        }
+
+        rvIsWatching = false;
+        rvSessionToken = null;
+    })
+    .catch(error => {
+        console.error('[RewardVideo] Error completing:', error);
+        showToast('❌ ' + (window.tt ? window.tt('toast_connection_error') : 'Error de conexión'), 'error');
+        resetRVButton();
+        rvIsWatching = false;
+        rvSessionToken = null;
+    });
+}
+
+// Cancel Reward Video
+function cancelRewardVideo(error) {
+    const userId = window.USER_ID || new URLSearchParams(window.location.search).get('user_id');
+    const watchDuration = rvWatchStartTime ? Math.floor((Date.now() - rvWatchStartTime) / 1000) : 0;
+
+    // Show appropriate error message
+    let errorMessage = '❌ ' + (window.t ? window.t('error_occurred') : 'Video no completado');
+    if (error && error.type === 'skip') {
+        errorMessage = '⚠️ ' + (window.t ? window.t('error_occurred') : 'Video saltado - Sin recompensa');
+    } else if (error && error.type === 'not_ready') {
+        errorMessage = '⚠️ ' + (window.tt ? window.tt('toast_no_ads_available') : 'Videos no disponibles');
+    }
+
+    showToast(errorMessage, 'error');
+
+    // Haptic feedback
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+    }
+
+    // Notify backend of cancellation
+    if (rvSessionToken) {
+        fetch('/api/reward-video/cancel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                session_token: rvSessionToken,
+                watch_duration: watchDuration
+            })
+        }).catch(console.error);
+    }
+
+    resetRVButton();
+    rvIsWatching = false;
+    rvSessionToken = null;
+}
+
+// Handle Errors
+function handleRVError(data) {
+    if (data.cooldown_remaining > 0) {
+        startRVCooldown(data.cooldown_remaining);
+    } else if (data.completed) {
+        setRVCompleted();
+    } else {
+        showToast(data.error || '❌ ' + (window.t ? window.t('error_occurred') : 'Error'), 'error');
+        resetRVButton();
+    }
+
+    rvIsWatching = false;
+}
+
+// Start Cooldown Timer
+function startRVCooldown(seconds) {
+    const btn = document.getElementById('rv-watch-btn');
+    const btnContent = document.getElementById('rv-btn-content');
+    const statusText = document.getElementById('rv-status-text');
+
+    rvCooldownSeconds = seconds;
+    btn.disabled = true;
+    btn.style.background = 'rgba(138, 43, 226, 0.2)';
+    btn.style.color = 'rgba(255, 255, 255, 0.5)';
+
+    function formatTime(secs) {
+        const mins = Math.floor(secs / 60);
+        const remainSecs = secs % 60;
+        if (mins > 0) {
+            return `${mins}m ${remainSecs}s`;
+        }
+        return `${remainSecs}s`;
+    }
+
+    function updateCooldownTimer() {
+        if (rvCooldownSeconds > 0) {
+            btnContent.innerHTML = `<i data-lucide="clock" style="width: 20px; height: 20px;"></i><span>Espera ${formatTime(rvCooldownSeconds)}</span>`;
+            lucide.createIcons();
+            statusText.textContent = `Próximo video disponible en ${formatTime(rvCooldownSeconds)}`;
+            rvCooldownSeconds--;
+            rvCooldownTimer = setTimeout(updateCooldownTimer, 1000);
+        } else {
+            resetRVButton();
+            statusText.textContent = 'Máximo 10 videos por día • 3 minutos entre cada video • 10 seg mínimo';
+        }
+    }
+
+    if (rvCooldownTimer) {
+        clearTimeout(rvCooldownTimer);
+    }
+
+    updateCooldownTimer();
+}
+
+// Reset Button
+function resetRVButton() {
+    const btn = document.getElementById('rv-watch-btn');
+    const btnContent = document.getElementById('rv-btn-content');
+
+    btn.disabled = false;
+    btn.style.background = 'linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%)';
+    btn.style.color = '#fff';
+    btnContent.innerHTML = '<i data-lucide="play-circle" style="width: 20px; height: 20px;"></i><span>Ver Reward Video</span>';
+    lucide.createIcons();
+}
+
+// Set Completed State
+function setRVCompleted() {
+    const btn = document.getElementById('rv-watch-btn');
+    const btnContent = document.getElementById('rv-btn-content');
+    const statusText = document.getElementById('rv-status-text');
+
+    if (rvCooldownTimer) {
+        clearTimeout(rvCooldownTimer);
+        rvCooldownTimer = null;
+    }
+
+    btn.disabled = true;
+    btn.style.background = 'rgba(138, 43, 226, 0.15)';
+    btn.style.color = 'rgba(255, 255, 255, 0.5)';
+    btnContent.innerHTML = '<i data-lucide="check-circle" style="width: 20px; height: 20px;"></i><span>Completado</span>';
+    lucide.createIcons();
+
+    statusText.textContent = '¡Límite diario alcanzado! Vuelve mañana para más.';
+}
+
+// ============================================
+// TOAST NOTIFICATION - PREMIUM (VIOLETA)
+// ============================================
+function showToast(message, type) {
+    // Crear overlay con backdrop premium
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    `;
+
+    // Crear contenedor principal de notificación
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: relative;
+        background: linear-gradient(135deg, rgba(18, 18, 18, 0.98) 0%, rgba(30, 30, 30, 0.98) 100%);
+        padding: 0;
+        border-radius: 32px;
+        text-align: center;
+        box-shadow:
+            0 0 0 1px ${type === 'success' ? 'rgba(138, 43, 226, 0.3)' : 'rgba(239, 68, 68, 0.3)'},
+            0 30px 90px rgba(0, 0, 0, 0.8),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        min-width: 320px;
+        max-width: 90vw;
+        overflow: hidden;
+    `;
+
+    // Efecto de brillo animado en el borde
+    const glowEffect = document.createElement('div');
+    glowEffect.style.cssText = `
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(135deg,
+            ${type === 'success' ? '#9B59B6, #8E44AD, #9B59B6' : '#EF4444, #DC2626, #EF4444'});
+        border-radius: 32px;
+        opacity: 0.6;
+        filter: blur(20px);
+        animation: rotateGlow 3s linear infinite;
+        z-index: -1;
+    `;
+
+    // Header con gradiente
+    const header = document.createElement('div');
+    header.style.cssText = `
+        background: linear-gradient(135deg,
+            ${type === 'success' ? 'rgba(138, 43, 226, 0.15)' : 'rgba(239, 68, 68, 0.15)'} 0%,
+            ${type === 'success' ? 'rgba(75, 0, 130, 0.05)' : 'rgba(220, 38, 38, 0.05)'} 100%);
+        padding: 40px 30px 30px;
+        border-bottom: 1px solid ${type === 'success' ? 'rgba(138, 43, 226, 0.2)' : 'rgba(239, 68, 68, 0.2)'};
+        position: relative;
+        overflow: hidden;
+    `;
+
+    // Partículas de fondo
+    const particles = document.createElement('div');
+    particles.innerHTML = `
+        <div style="position: absolute; top: 10%; left: 10%; width: 4px; height: 4px; background: ${type === 'success' ? '#9B59B6' : '#EF4444'}; border-radius: 50%; animation: particle1 2s ease-in-out infinite;"></div>
+        <div style="position: absolute; top: 30%; right: 15%; width: 3px; height: 3px; background: ${type === 'success' ? '#B388FF' : '#F87171'}; border-radius: 50%; animation: particle2 2.5s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: 20%; left: 20%; width: 5px; height: 5px; background: ${type === 'success' ? '#8E44AD' : '#DC2626'}; border-radius: 50%; animation: particle3 3s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: 40%; right: 25%; width: 3px; height: 3px; background: ${type === 'success' ? '#B388FF' : '#F87171'}; border-radius: 50%; animation: particle1 2.2s ease-in-out infinite;"></div>
+    `;
+    header.appendChild(particles);
+
+    // Contenedor del icono con anillo animado
+    const iconContainer = document.createElement('div');
+    iconContainer.style.cssText = `
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 20px;
+        z-index: 1;
+    `;
+
+    // Anillo exterior giratorio
+    const outerRing = document.createElement('div');
+    outerRing.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100px;
+        height: 100px;
+        border: 2px solid transparent;
+        border-top-color: ${type === 'success' ? '#9B59B6' : '#EF4444'};
+        border-right-color: ${type === 'success' ? '#9B59B6' : '#EF4444'};
+        border-radius: 50%;
+        animation: spin 2s linear infinite;
+        opacity: 0.6;
+    `;
+
+    // Icono central
+    const icon = document.createElement('div');
+    icon.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg,
+            ${type === 'success' ? 'rgba(138, 43, 226, 0.25)' : 'rgba(239, 68, 68, 0.25)'} 0%,
+            ${type === 'success' ? 'rgba(75, 0, 130, 0.15)' : 'rgba(220, 38, 38, 0.15)'} 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow:
+            0 0 30px ${type === 'success' ? 'rgba(138, 43, 226, 0.4)' : 'rgba(239, 68, 68, 0.4)'},
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        animation: iconPulse 1.5s ease-in-out infinite;
+    `;
+    icon.innerHTML = type === 'success'
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9B59B6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+
+    iconContainer.appendChild(outerRing);
+    iconContainer.appendChild(icon);
+    header.appendChild(iconContainer);
+
+    // Título principal
+    const title = document.createElement('div');
+    title.style.cssText = `
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: ${type === 'success' ? '#B388FF' : '#F87171'};
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+    `;
+    title.textContent = type === 'success' ? '✨ Recompensa' : '⚠️ Error';
+    header.appendChild(title);
+
+    // Body con el mensaje principal
+    const body = document.createElement('div');
+    body.style.cssText = `
+        padding: 30px;
+    `;
+
+    // Mensaje principal con efecto gradiente
+    const messageText = document.createElement('div');
+    messageText.style.cssText = `
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg,
+            ${type === 'success' ? '#9B59B6 0%, #B388FF 50%, #D1C4E9 100%' : '#EF4444 0%, #F87171 50%, #FCA5A5 100%'});
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 12px;
+        text-shadow: 0 0 30px ${type === 'success' ? 'rgba(138, 43, 226, 0.3)' : 'rgba(239, 68, 68, 0.3)'};
+        animation: textGlow 2s ease-in-out infinite;
+        letter-spacing: 1px;
+    `;
+    messageText.textContent = message;
+
+    // Subtítulo
+    const subtitle = document.createElement('div');
+    subtitle.style.cssText = `
+        font-size: 0.9375rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-weight: 500;
+        margin-bottom: 20px;
+    `;
+    subtitle.textContent = type === 'success' ? '¡Se ha añadido a tu balance!' : 'Algo salió mal';
+
+    // Línea decorativa
+    const divider = document.createElement('div');
+    divider.style.cssText = `
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            ${type === 'success' ? '#9B59B6' : '#EF4444'} 50%,
+            transparent 100%);
+        margin: 0 auto;
+        border-radius: 2px;
+        animation: dividerGlow 2s ease-in-out infinite;
+    `;
+
+    body.appendChild(messageText);
+    body.appendChild(subtitle);
+    body.appendChild(divider);
+
+    // Ensamblar notificación
+    notification.appendChild(glowEffect);
+    notification.appendChild(header);
+    notification.appendChild(body);
+    overlay.appendChild(notification);
+    document.body.appendChild(overlay);
+
+    // Cerrar automáticamente después de 3 segundos
+    setTimeout(() => {
+        overlay.style.animation = 'fadeOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        notification.style.animation = 'scaleOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        setTimeout(() => overlay.remove(), 400);
+    }, 3000);
+
+    // Cerrar al hacer clic en el overlay
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.style.animation = 'fadeOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            notification.style.animation = 'scaleOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            setTimeout(() => overlay.remove(), 400);
+        }
+    });
+}
+
+// Add CSS animations premium
+const animStyle = document.createElement('style');
+animStyle.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    @keyframes scaleIn {
+        from {
+            transform: scale(0.5) rotateX(-30deg);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1) rotateX(0deg);
+            opacity: 1;
+        }
+    }
+    @keyframes scaleOut {
+        from {
+            transform: scale(1) rotateX(0deg);
+            opacity: 1;
+        }
+        to {
+            transform: scale(0.8) rotateX(30deg);
+            opacity: 0;
+        }
+    }
+    @keyframes iconPulse {
+        0%, 100% {
+            transform: translate(-50%, -50%) scale(1);
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.4);
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 0 50px rgba(138, 43, 226, 0.6);
+        }
+    }
+    @keyframes rotateGlow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    @keyframes particle1 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.3;
+        }
+        50% {
+            transform: translate(10px, -10px) scale(1.5);
+            opacity: 0.8;
+        }
+    }
+    @keyframes particle2 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.4;
+        }
+        50% {
+            transform: translate(-15px, 10px) scale(1.3);
+            opacity: 0.9;
+        }
+    }
+    @keyframes particle3 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.3;
+        }
+        50% {
+            transform: translate(8px, 12px) scale(1.4);
+            opacity: 0.7;
+        }
+    }
+    @keyframes textGlow {
+        0%, 100% {
+            filter: brightness(1);
+        }
+        50% {
+            filter: brightness(1.2);
+        }
+    }
+    @keyframes dividerGlow {
+        0%, 100% {
+            opacity: 0.5;
+            transform: scaleX(1);
+        }
+        50% {
+            opacity: 1;
+            transform: scaleX(1.1);
+        }
+    }
+`;
+document.head.appendChild(animStyle);
+</script>
+{% endblock %}

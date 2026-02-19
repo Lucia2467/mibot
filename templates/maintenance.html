@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0015">
+    <title>{{ title or 'Mantenimiento' }} - SALLY-E</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-void: #030108;
+            --bg-deep: #0a0015;
+            --primary-neon: #ff00ff;
+            --primary-electric: #c800ff;
+            --primary-glow: #e040fb;
+            --accent-cyan: #00d4ff;
+            --accent-gold: #ffd700;
+            --accent-rose: #ff1493;
+            --text-pure: #ffffff;
+            --text-soft: rgba(255,255,255,0.85);
+            --text-dim: rgba(255,255,255,0.5);
+            --glass-border: rgba(255,255,255,0.06);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-void);
+            color: var(--text-pure);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Background */
+        .cosmic-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            background: var(--bg-void);
+        }
+
+        .mesh-gradient {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 100% 100% at 0% 0%, rgba(200,0,255,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse 80% 80% at 100% 100%, rgba(0,245,255,0.1) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 60% at 50% 0%, rgba(255,0,255,0.12) 0%, transparent 40%);
+            animation: meshMove 20s ease-in-out infinite;
+        }
+
+        @keyframes meshMove {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(1deg); }
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            will-change: transform;
+        }
+
+        .orb-1 {
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, var(--primary-electric) 0%, transparent 70%);
+            top: -300px; left: -200px;
+            opacity: 0.4;
+            animation: orbDrift1 25s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, var(--accent-cyan) 0%, transparent 70%);
+            bottom: -200px; right: -150px;
+            opacity: 0.3;
+            animation: orbDrift2 30s ease-in-out infinite;
+        }
+
+        .orb-3 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, var(--accent-rose) 0%, transparent 70%);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.2;
+            animation: orbPulse 8s ease-in-out infinite;
+        }
+
+        @keyframes orbDrift1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(100px, 50px) scale(1.1); }
+        }
+
+        @keyframes orbDrift2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-80px, -60px) scale(1.15); }
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { opacity: 0.2; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.35; transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        .stars-container { position: absolute; inset: 0; overflow: hidden; }
+
+        .star {
+            position: absolute;
+            width: 3px; height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: starTwinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        .particles-container { position: absolute; inset: 0; overflow: hidden; }
+
+        .particle {
+            position: absolute;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            opacity: 0;
+            animation: particleRise 12s ease-out infinite;
+        }
+
+        .particle-cyan { background: var(--accent-cyan); box-shadow: 0 0 20px var(--accent-cyan); }
+        .particle-magenta { background: var(--primary-neon); box-shadow: 0 0 20px var(--primary-neon); }
+        .particle-gold { background: var(--accent-gold); box-shadow: 0 0 20px var(--accent-gold); }
+
+        @keyframes particleRise {
+            0% { opacity: 0; transform: translateY(100vh) scale(0); }
+            10% { opacity: 0.8; transform: translateY(90vh) scale(1); }
+            90% { opacity: 0.6; transform: translateY(-10vh) scale(0.8); }
+            100% { opacity: 0; transform: translateY(-20vh) scale(0); }
+        }
+
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 80px 80px;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 70%);
+            animation: gridPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            opacity: 0.3;
+            animation: scanDown 8s linear infinite;
+        }
+
+        @keyframes scanDown {
+            0% { top: -10%; }
+            100% { top: 110%; }
+        }
+
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 580px;
+            padding: 25px;
+            transform: scale(0.8);
+            transform-origin: center center;
+        }
+
+        .glass-card {
+            position: relative;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            backdrop-filter: blur(60px);
+            -webkit-backdrop-filter: blur(60px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 60px 50px;
+            text-align: center;
+            overflow: hidden;
+            box-shadow: 
+                0 0 0 1px rgba(255,255,255,0.05) inset,
+                0 50px 100px -20px rgba(0,0,0,0.5),
+                0 0 150px -50px var(--primary-glow);
+            animation: cardAppear 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+        }
+
+        @keyframes cardAppear {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            background: conic-gradient(from 0deg, var(--primary-neon), var(--accent-cyan), var(--primary-electric), var(--accent-gold), var(--accent-rose), var(--primary-neon));
+            border-radius: 42px;
+            z-index: -2;
+            animation: borderRotate 6s linear infinite;
+            opacity: 0.6;
+        }
+
+        .glass-card::after {
+            content: '';
+            position: absolute;
+            inset: 1px;
+            background: linear-gradient(135deg, var(--bg-deep) 0%, var(--bg-void) 100%);
+            border-radius: 39px;
+            z-index: -1;
+        }
+
+        @keyframes borderRotate {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Icon System - SVG Based */
+        .icon-system {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 45px;
+        }
+
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid transparent;
+        }
+
+        .ring-1 { inset: 0; border-color: var(--primary-neon); opacity: 0.3; animation: ringRotate1 10s linear infinite; }
+        .ring-2 { inset: 15px; border-color: var(--accent-cyan); border-style: dashed; opacity: 0.4; animation: ringRotate2 15s linear infinite reverse; }
+        .ring-3 { inset: 30px; border-color: var(--accent-gold); opacity: 0.3; animation: ringRotate1 8s linear infinite; }
+
+        @keyframes ringRotate1 { to { transform: rotate(360deg); } }
+        @keyframes ringRotate2 { to { transform: rotate(-360deg); } }
+
+        .orbit-dot {
+            position: absolute;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            top: 50%; left: 50%;
+        }
+
+        .orbit-dot-1 { background: var(--primary-neon); box-shadow: 0 0 20px var(--primary-neon); animation: orbitDot1 5s linear infinite; }
+        .orbit-dot-2 { background: var(--accent-cyan); box-shadow: 0 0 20px var(--accent-cyan); animation: orbitDot2 7s linear infinite; }
+        .orbit-dot-3 { background: var(--accent-gold); box-shadow: 0 0 20px var(--accent-gold); animation: orbitDot3 4s linear infinite; }
+
+        @keyframes orbitDot1 {
+            0% { transform: translate(-50%, -50%) rotate(0deg) translateX(80px) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg) translateX(80px) rotate(-360deg); }
+        }
+
+        @keyframes orbitDot2 {
+            0% { transform: translate(-50%, -50%) rotate(120deg) translateX(65px) rotate(-120deg); }
+            100% { transform: translate(-50%, -50%) rotate(480deg) translateX(65px) rotate(-480deg); }
+        }
+
+        @keyframes orbitDot3 {
+            0% { transform: translate(-50%, -50%) rotate(240deg) translateX(50px) rotate(-240deg); }
+            100% { transform: translate(-50%, -50%) rotate(600deg) translateX(50px) rotate(-600deg); }
+        }
+
+        /* Central SVG Icon */
+        .central-icon {
+            position: absolute;
+            inset: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        .icon-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            filter: blur(30px);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        .maintenance-svg {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .maintenance-svg path,
+        .maintenance-svg circle {
+            fill: none;
+            stroke: url(#iconGradient);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.05); }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+
+        /* Typography */
+        .title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 34px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            animation: textReveal 1s ease-out 0.3s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .title-gradient {
+            background: linear-gradient(135deg, var(--text-pure) 0%, var(--primary-glow) 50%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes textReveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text-soft);
+            margin-bottom: 40px;
+            animation: textReveal 1s ease-out 0.5s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Premium Loader */
+        .loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            animation: textReveal 1s ease-out 0.7s forwards;
+            opacity: 0;
+        }
+
+        .premium-loader {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .loader-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid transparent;
+        }
+
+        .loader-ring-1 { inset: 0; border-top-color: var(--primary-neon); border-right-color: var(--primary-neon); animation: loaderSpin 1.5s linear infinite; }
+        .loader-ring-2 { inset: 10px; border-bottom-color: var(--accent-cyan); border-left-color: var(--accent-cyan); animation: loaderSpin 2s linear infinite reverse; }
+        .loader-ring-3 { inset: 20px; border-top-color: var(--accent-gold); animation: loaderSpin 1s linear infinite; }
+
+        .loader-core {
+            position: absolute;
+            inset: 28px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: corePulse 1s ease-in-out infinite;
+        }
+
+        @keyframes loaderSpin { to { transform: rotate(360deg); } }
+        @keyframes corePulse {
+            0%, 100% { opacity: 0.5; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .loader-text {
+            font-size: 13px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: textPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Time Badge */
+        .time-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,20,147,0.1) 100%);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 100px;
+            margin-top: 30px;
+            animation: textReveal 1s ease-out 0.9s forwards;
+            opacity: 0;
+        }
+
+        .time-icon-svg {
+            width: 20px;
+            height: 20px;
+            animation: iconBounce 2s ease-in-out infinite;
+        }
+
+        .time-icon-svg path,
+        .time-icon-svg circle {
+            fill: none;
+            stroke: var(--accent-gold);
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .time-text {
+            font-size: 14px;
+            color: var(--accent-gold);
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 45px;
+            padding-top: 30px;
+            border-top: 1px solid var(--glass-border);
+            animation: textReveal 1s ease-out 1.1s forwards;
+            opacity: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary-electric) 0%, var(--primary-neon) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px -10px var(--primary-glow);
+        }
+
+        .brand-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .brand-icon svg path {
+            fill: white;
+        }
+
+        .brand-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-pure) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-text {
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .main-container { padding: 20px; }
+            .glass-card { padding: 45px 30px; border-radius: 30px; }
+            .icon-system { width: 130px; height: 130px; margin-bottom: 35px; }
+            .central-icon { inset: 35px; }
+            .maintenance-svg { width: 50px; height: 50px; }
+            .title { font-size: 26px; }
+            .message { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- SVG Definitions -->
+    <svg style="position:absolute;width:0;height:0">
+        <defs>
+            <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffffff"/>
+                <stop offset="50%" style="stop-color:#e040fb"/>
+                <stop offset="100%" style="stop-color:#00d4ff"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <!-- Background -->
+    <div class="cosmic-bg">
+        <div class="mesh-gradient"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="stars-container" id="stars"></div>
+        <div class="particles-container" id="particles"></div>
+        <div class="grid-overlay"></div>
+        <div class="scan-line"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="glass-card">
+            <!-- Icon System -->
+            <div class="icon-system">
+                <div class="ring ring-1"></div>
+                <div class="ring ring-2"></div>
+                <div class="ring ring-3"></div>
+                <div class="orbit-dot orbit-dot-1"></div>
+                <div class="orbit-dot orbit-dot-2"></div>
+                <div class="orbit-dot orbit-dot-3"></div>
+                <div class="central-icon">
+                    <div class="icon-glow"></div>
+                    <!-- Wrench/Gear SVG Icon -->
+                    <svg class="maintenance-svg" viewBox="0 0 24 24">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <h1 class="title">
+                <span class="title-gradient">{{ title or 'Mantenimiento Programado' }}</span>
+            </h1>
+
+            <!-- Message -->
+            <p class="message">{{ message or 'La plataforma se encuentra actualmente en mantenimiento programado. Estamos realizando mejoras para optimizar la estabilidad, seguridad y el rendimiento del servicio. Agradecemos tu comprensión.' }}</p>
+
+            <!-- Premium Loader -->
+            <div class="loader-container">
+                <div class="premium-loader">
+                    <div class="loader-ring loader-ring-1"></div>
+                    <div class="loader-ring loader-ring-2"></div>
+                    <div class="loader-ring loader-ring-3"></div>
+                    <div class="loader-core"></div>
+                </div>
+                <span class="loader-text">Trabajando en mejoras</span>
+            </div>
+
+            <!-- Time Badge -->
+            {% if estimated_time %}
+            <div class="time-badge">
+                <svg class="time-icon-svg" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 6v6l4 2"/>
+                </svg>
+                <span class="time-text">Tiempo estimado: {{ estimated_time }}</span>
+            </div>
+            {% endif %}
+
+            <!-- Footer -->
+            <div class="footer">
+                <div class="brand">
+                    <div class="brand-icon">
+                        <!-- Diamond SVG -->
+                        <svg viewBox="0 0 24 24">
+                            <path d="M6 3h12l4 6-10 13L2 9z"/>
+                            <path d="M2 9h20"/>
+                            <path d="M10 3l-2 6 4 13 4-13-2-6"/>
+                        </svg>
+                    </div>
+                    <span class="brand-name">SALLY-E</span>
+                </div>
+                <p class="footer-text">Volvemos pronto con una mejor experiencia</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate Stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 80; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            star.style.animationDuration = (2 + Math.random() * 3) + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Generate Particles
+        const particlesContainer = document.getElementById('particles');
+        const colors = ['particle-cyan', 'particle-magenta', 'particle-gold'];
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle ' + colors[i % 3];
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 12 + 's';
+            particle.style.animationDuration = (10 + Math.random() * 8) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Auto-refresh check
+        async function checkStatus() {
+            try {
+                const response = await fetch('/api/maintenance/status');
+                const data = await response.json();
+                if (!data.maintenance) {
+                    window.location.reload();
+                }
+            } catch (e) {}
+        }
+        setInterval(checkStatus, 30000);
+    </script>
+</body>
+</html>

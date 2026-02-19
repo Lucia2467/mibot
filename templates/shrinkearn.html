@@ -1,0 +1,638 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | ShrinkEarn{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 150, 200, 0.08) 50%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(0, 212, 255, 0.2); position: relative; overflow: hidden;">
+        <!-- Elementos de fondo -->
+        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(0, 150, 200, 0.12) 0%, transparent 70%); border-radius: 50%; animation: float 10s ease-in-out infinite reverse;"></div>
+
+        <div style="position: relative; z-index: 1; text-align: center; padding: var(--space-4);">
+            <!-- Icono principal -->
+            <div class="floating" style="width: 80px; height: 80px; margin: 0 auto var(--space-4); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 150, 200, 0.2) 100%); border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 212, 255, 0.3);">
+                <i data-lucide="link" style="width: 40px; height: 40px; color: #00D4FF;"></i>
+            </div>
+
+            <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: var(--space-2); background: linear-gradient(135deg, #00D4FF 0%, #0096C8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                ShrinkEarn
+            </h1>
+            <p style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.6); line-height: 1.6;" data-i18n="shrinkearn_subtitle">
+                Completa tareas de enlaces y gana DOGE + PTS
+            </p>
+        </div>
+    </div>
+
+    <!-- Stats Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(255, 204, 0, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(255, 204, 0, 0.15); margin-top: var(--space-4);">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); text-align: center;">
+            <div>
+                <div id="stats-completed" style="font-size: 1.5rem; font-weight: 800; color: #00FF88;">0</div>
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);" data-i18n="completed_today">Completadas</div>
+            </div>
+            <div>
+                <div id="stats-remaining" style="font-size: 1.5rem; font-weight: 800; color: #00D4FF;">1</div>
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);" data-i18n="remaining_today">Restantes</div>
+            </div>
+            <div>
+                <div id="stats-earned" style="font-size: 1.5rem; font-weight: 800; color: #FFCC00;">0.00</div>
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">DOGE</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Missions List -->
+    <div class="card" style="margin-top: var(--space-4);">
+        <h2 style="font-size: 1rem; font-weight: 700; margin-bottom: var(--space-4); display: flex; align-items: center; gap: 8px;">
+            <span>🎯</span>
+            <span data-i18n="available_missions">Misiones Disponibles</span>
+        </h2>
+
+        <div id="missions-container" style="display: flex; flex-direction: column; gap: var(--space-3);">
+            <!-- Loading -->
+            <div id="missions-loading" style="text-align: center; padding: 40px 20px;">
+                <div class="loading-spinner" style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #00D4FF; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+                <p style="color: rgba(255,255,255,0.5);" data-i18n="loading_missions">Cargando misiones...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(0, 212, 255, 0.15); margin-top: var(--space-4);">
+        <div style="display: flex; align-items: flex-start; gap: var(--space-3);">
+            <div style="flex-shrink: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(0, 212, 255, 0.1); border-radius: 10px;">
+                <i data-lucide="info" style="width: 18px; height: 18px; color: #00D4FF;"></i>
+            </div>
+            <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6); line-height: 1.6;">
+                <strong style="color: white;" data-i18n="how_it_works">¿Cómo funciona?</strong><br>
+                <span data-i18n="shrinkearn_instructions">
+                    1. Selecciona una misión<br>
+                    2. Se abrirá una nueva ventana<br>
+                    3. Completa los anuncios mostrados<br>
+                    4. Tu recompensa se acreditará automáticamente
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="/explore/link-center?user_id={{ user_id }}" style="text-decoration: none;">
+        <div class="card" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(0, 245, 255, 0.15); margin-top: var(--space-4); cursor: pointer; transition: all 0.3s ease;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-3);">
+                <i data-lucide="arrow-left" style="width: 20px; height: 20px; color: #00D4FF;"></i>
+                <span style="font-weight: 600; font-size: 0.9375rem; color: #00D4FF;" data-i18n="back_to_link_center">
+                    Volver al Centro de Enlaces
+                </span>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Modal de Misión -->
+<div id="mission-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="modal-icon" style="font-size: 48px;">🎯</span>
+            <h3 id="modal-title" data-i18n="mission_started">Misión Iniciada</h3>
+        </div>
+        <div class="modal-body">
+            <p id="modal-mission-name" style="font-weight: 600; margin-bottom: 16px;"></p>
+            <div class="modal-reward" style="background: rgba(255,204,0,0.1); border-radius: 12px; padding: 12px; margin-bottom: 20px;">
+                <span style="color: rgba(255,255,255,0.6);" data-i18n="reward">Recompensa:</span>
+                <span id="modal-reward" style="font-weight: 700; color: #FFCC00; margin-left: 8px;"></span>
+            </div>
+            <div class="modal-steps">
+                <div class="step"><span class="step-num">1</span><span data-i18n="step_1">Se abrirá una nueva ventana</span></div>
+                <div class="step"><span class="step-num">2</span><span data-i18n="step_2">Completa todos los anuncios</span></div>
+                <div class="step"><span class="step-num">3</span><span data-i18n="step_3">Recibirás tu recompensa automáticamente</span></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn" onclick="closeMissionModal()" data-i18n="understood">Entendido</button>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(10px, 10px); }
+}
+
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Mission Cards */
+.mission-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mission-card:hover:not(.disabled) {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: #00D4FF;
+    transform: translateY(-2px);
+}
+
+.mission-card.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.mission-icon {
+    font-size: 32px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(138, 43, 226, 0.1));
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.mission-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.mission-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.mission-desc {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mission-reward {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.reward-amount {
+    font-size: 14px;
+    font-weight: 700;
+    color: #FFCC00;
+}
+
+.reward-pts {
+    font-size: 11px;
+    color: #00D4FF;
+    margin-top: 2px;
+}
+
+.mission-action {
+    min-width: 50px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.start-btn {
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00D4FF, #8A2BE2);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.start-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+}
+
+.start-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.cooldown-timer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.cooldown-icon {
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.limit-reached {
+    font-size: 11px;
+    color: #FF3366;
+    text-transform: uppercase;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: #12121a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 360px;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.modal-overlay.visible .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.modal-header {
+    text-align: center;
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.modal-header h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #00D4FF;
+    margin: 12px 0 0;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-steps .step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.modal-steps .step-num {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #00D4FF, #8A2BE2);
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.modal-footer {
+    padding: 16px 20px 20px;
+}
+
+.modal-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #00D4FF, #8A2BE2);
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    z-index: 10000;
+    animation: toastIn 0.3s ease;
+}
+
+.toast-success { background: #00FF88; color: #000; }
+.toast-error { background: #FF3366; color: #fff; }
+.toast-info { background: #00D4FF; color: #000; }
+.toast-warning { background: #FFCC00; color: #000; }
+
+@keyframes toastIn {
+    from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// User ID
+const userId = '{{ user_id }}';
+let missionData = null;
+let cooldownIntervals = {};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+    loadMissions();
+});
+
+// Load missions from API
+async function loadMissions() {
+    if (!userId) {
+        showToast('Error: Usuario no identificado', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/shrinkearn/status?user_id=${userId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            missionData = data;
+            renderMissions(data);
+            updateStats(data.daily_stats);
+        } else {
+            document.getElementById('missions-loading').innerHTML = `
+                <p style="color: #FF3366;">Error al cargar misiones</p>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading missions:', error);
+        document.getElementById('missions-loading').innerHTML = `
+            <p style="color: #FF3366;">Error de conexión</p>
+        `;
+    }
+}
+
+// Render missions
+function renderMissions(data) {
+    const container = document.getElementById('missions-container');
+    const missions = data.missions;
+    
+    if (!data.enabled) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px;">
+                <span style="font-size: 48px;">🚧</span>
+                <p style="color: rgba(255,255,255,0.5); margin-top: 16px;">Sistema temporalmente deshabilitado</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    
+    missions.forEach(mission => {
+        const isAvailable = mission.available;
+        const cooldown = mission.cooldown_remaining;
+        
+        html += `
+            <div class="mission-card ${!isAvailable ? 'disabled' : ''}" 
+                 data-mission-id="${mission.id}"
+                 onclick="${isAvailable ? `startMission('${mission.id}')` : ''}">
+                
+                <div class="mission-icon">${mission.icon}</div>
+                
+                <div class="mission-info">
+                    <div class="mission-name">${mission.name_es}</div>
+                    <div class="mission-desc">${mission.description_es}</div>
+                </div>
+                
+                <div class="mission-reward">
+                    <div class="reward-amount">+${mission.reward} DOGE</div>
+                    ${mission.reward_pts > 0 ? `<div class="reward-pts">+${mission.reward_pts} PTS</div>` : ''}
+                </div>
+                
+                <div class="mission-action">
+                    ${isAvailable ? `
+                        <button class="start-btn" id="btn-${mission.id}">
+                            <span>▶</span>
+                        </button>
+                    ` : cooldown > 0 ? `
+                        <div class="cooldown-timer" data-mission="${mission.id}" data-seconds="${cooldown}">
+                            <span class="cooldown-icon">⏱</span>
+                            <span class="cooldown-time">${formatCooldown(cooldown)}</span>
+                        </div>
+                    ` : `
+                        <div class="limit-reached">Límite</div>
+                    `}
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+    
+    // Start cooldown timers
+    startCooldownTimers();
+}
+
+// Update stats
+function updateStats(stats) {
+    document.getElementById('stats-completed').textContent = stats.completed;
+    document.getElementById('stats-remaining').textContent = stats.remaining;
+    document.getElementById('stats-earned').textContent = stats.earned_doge.toFixed(4);
+}
+
+// Format cooldown
+function formatCooldown(seconds) {
+    if (seconds < 60) return `${seconds}s`;
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Start cooldown timers
+function startCooldownTimers() {
+    // Clear existing intervals
+    Object.values(cooldownIntervals).forEach(clearInterval);
+    cooldownIntervals = {};
+    
+    const timers = document.querySelectorAll('.cooldown-timer');
+    
+    timers.forEach(timer => {
+        const missionId = timer.dataset.mission;
+        let seconds = parseInt(timer.dataset.seconds);
+        
+        cooldownIntervals[missionId] = setInterval(() => {
+            seconds--;
+            
+            if (seconds <= 0) {
+                clearInterval(cooldownIntervals[missionId]);
+                loadMissions(); // Reload
+                return;
+            }
+            
+            const timeSpan = timer.querySelector('.cooldown-time');
+            if (timeSpan) {
+                timeSpan.textContent = formatCooldown(seconds);
+            }
+        }, 1000);
+    });
+}
+
+// Start mission
+async function startMission(missionId) {
+    const btn = document.getElementById(`btn-${missionId}`);
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<div style="width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;"></div>';
+    }
+    
+    try {
+        const response = await fetch('/shrinkearn/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                mission_type: missionId
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Haptic feedback
+            if (window.Telegram?.WebApp?.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+            }
+            
+            // Show modal
+            showMissionModal(data);
+            
+            // Open link
+            setTimeout(() => {
+                window.open(data.shortened_url, '_blank');
+            }, 300);
+            
+        } else {
+            showToast(data.error_es || data.error || 'Error al iniciar misión', 'error');
+            
+            if (data.cooldown_remaining) {
+                showToast(`Espera ${formatCooldown(data.cooldown_remaining)}`, 'warning');
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<span>▶</span>';
+        }
+        
+        // Reload after delay
+        setTimeout(loadMissions, 2000);
+    }
+}
+
+// Show mission modal
+function showMissionModal(data) {
+    const mission = data.mission;
+    
+    document.getElementById('modal-icon').textContent = mission.icon;
+    document.getElementById('modal-mission-name').textContent = mission.name_es;
+    document.getElementById('modal-reward').textContent = `+${mission.reward} DOGE${mission.reward_pts > 0 ? ` + ${mission.reward_pts} PTS` : ''}`;
+    
+    const modal = document.getElementById('mission-modal');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('visible'), 10);
+}
+
+// Close modal
+function closeMissionModal() {
+    const modal = document.getElementById('mission-modal');
+    modal.classList.remove('visible');
+    setTimeout(() => modal.style.display = 'none', 300);
+}
+
+// Close modal on overlay click
+document.getElementById('mission-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeMissionModal();
+});
+
+// Toast notification
+function showToast(message, type = 'info') {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'toastIn 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+</script>
+{% endblock %}

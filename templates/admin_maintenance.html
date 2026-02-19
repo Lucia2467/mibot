@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Mantenimiento - SALLY-E Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .admin-container { 
+            max-width: 1100px; 
+            margin: 0 auto; 
+        }
+        
+        .admin-header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .admin-header h1 { 
+            color: #003D99; 
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-badge {
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-active {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            color: white;
+            animation: badgePulse 2s ease-in-out infinite;
+        }
+
+        .badge-inactive {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(255, 107, 107, 0); }
+        }
+        
+        .nav-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 15px rgba(0, 61, 153, 0.3);
+        }
+        
+        .nav-btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 61, 153, 0.4);
+        }
+
+        /* Main Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 900px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .content-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .content-card.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #003D99;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+            border-radius: 16px;
+            margin-bottom: 25px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .toggle-container.active {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-color: #ef5350;
+        }
+
+        .toggle-info {
+            flex: 1;
+        }
+
+        .toggle-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .toggle-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 70px;
+            height: 36px;
+            cursor: pointer;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: #ccc;
+            border-radius: 36px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #ef5350 0%, #f44336 100%);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(34px);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .form-group label .hint {
+            font-weight: 400;
+            color: #888;
+            font-size: 12px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #0066FF;
+            box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        /* Checkbox Items */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            border-color: #0066FF;
+            background: #fdf2f8;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #0066FF;
+            cursor: pointer;
+        }
+
+        .checkbox-item .checkbox-label {
+            font-size: 14px;
+            color: #333;
+            flex: 1;
+        }
+
+        /* Action Buttons */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 61, 153, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 61, 153, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: #eee;
+            border-color: #ccc;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef5350 0%, #f44336 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
+        }
+
+        /* Preview Panel */
+        .preview-panel {
+            margin-top: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a0e2e 0%, #2d1b4e 100%);
+            border-radius: 16px;
+            color: white;
+        }
+
+        .preview-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preview-content {
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .preview-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .preview-heading {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .preview-text {
+            font-size: 13px;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        /* Status Cards */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .status-card {
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+            border-radius: 14px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .status-card-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .status-card-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #003D99;
+        }
+
+        .status-card-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Alert Box */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .alert-warning {
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            color: #e65100;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            color: #2e7d32;
+        }
+
+        .alert-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .alert-text {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 16px 24px;
+            background: #333;
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #ef5350 0%, #c62828 100%);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1>
+                <span>🛠️</span>
+                Sistema de Mantenimiento
+                <span class="header-badge {{ 'badge-active' if config.maintenance_enabled else 'badge-inactive' }}" id="statusBadge">
+                    {{ 'ACTIVO' if config.maintenance_enabled else 'INACTIVO' }}
+                </span>
+            </h1>
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">← Volver al Panel</a>
+        </div>
+
+        <form id="maintenanceForm" method="POST" action="{{ url_for('admin_maintenance_save') }}">
+            <div class="content-grid">
+                <!-- Maintenance Mode Control -->
+                <div class="content-card full-width">
+                    <div class="card-title">
+                        <span>⚡</span>
+                        Control de Modo Mantenimiento
+                    </div>
+                    <div class="card-subtitle">
+                        Activa el modo mantenimiento para bloquear el acceso a la aplicación mientras realizas cambios o actualizaciones.
+                    </div>
+
+                    <div class="toggle-container {{ 'active' if config.maintenance_enabled else '' }}" id="toggleContainer">
+                        <div class="toggle-info">
+                            <div class="toggle-label">Modo Mantenimiento</div>
+                            <div class="toggle-desc" id="toggleDesc">
+                                {{ 'La aplicación está bloqueada para los usuarios' if config.maintenance_enabled else 'La aplicación está funcionando normalmente' }}
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" 
+                                   name="maintenance_mode" 
+                                   id="maintenanceToggle"
+                                   {{ 'checked' if config.maintenance_enabled else '' }}
+                                   onchange="updateToggleUI()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    {% if config.maintenance_enabled and config.maintenance_started_at %}
+                    <div class="alert alert-warning">
+                        <span class="alert-icon">⏰</span>
+                        <div class="alert-content">
+                            <div class="alert-title">Mantenimiento en curso</div>
+                            <div class="alert-text">
+                                Iniciado: {{ config.maintenance_started_at }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Maintenance Message Configuration -->
+                <div class="content-card">
+                    <div class="card-title">
+                        <span>📝</span>
+                        Mensaje de Mantenimiento
+                    </div>
+                    <div class="card-subtitle">
+                        Personaliza el mensaje que verán los usuarios durante el mantenimiento.
+                    </div>
+
+                    <div class="form-group">
+                        <label>Título</label>
+                        <input type="text" 
+                               name="maintenance_title" 
+                               id="maintenanceTitle"
+                               value="{{ config.maintenance_title }}"
+                               placeholder="Mantenimiento Programado"
+                               oninput="updatePreview()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mensaje <span class="hint">(Se muestra a los usuarios)</span></label>
+                        <textarea name="maintenance_message" 
+                                  id="maintenanceMessage"
+                                  placeholder="La plataforma se encuentra en mantenimiento..."
+                                  oninput="updatePreview()">{{ config.maintenance_message }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tiempo estimado <span class="hint">(Opcional)</span></label>
+                        <input type="text" 
+                               name="maintenance_estimated_time"
+                               id="maintenanceTime"
+                               value="{{ config.maintenance_estimated_time }}"
+                               placeholder="Ej: 30 minutos, 2 horas...">
+                        <small>Informa a los usuarios cuánto durará aproximadamente el mantenimiento.</small>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" 
+                                   name="maintenance_allow_admin" 
+                                   {{ 'checked' if config.maintenance_allow_admin else '' }}>
+                            <span class="checkbox-label">Permitir acceso a administradores durante el mantenimiento</span>
+                        </label>
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="preview-panel">
+                        <div class="preview-title">
+                            <span>👁️</span> Vista Previa
+                        </div>
+                        <div class="preview-content">
+                            <div class="preview-icon">🛠️</div>
+                            <div class="preview-heading" id="previewTitle">{{ config.maintenance_title or 'Mantenimiento Programado' }}</div>
+                            <div class="preview-text" id="previewMessage">{{ config.maintenance_message or 'La plataforma se encuentra actualmente en mantenimiento programado.' }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message Configuration -->
+                <div class="content-card">
+                    <div class="card-title">
+                        <span>⚠️</span>
+                        Mensajes de Error
+                    </div>
+                    <div class="card-subtitle">
+                        Configura los mensajes que se mostrarán cuando ocurra un error en el sistema.
+                    </div>
+
+                    <div class="form-group">
+                        <label>Título de Error</label>
+                        <input type="text" 
+                               name="error_title" 
+                               id="errorTitle"
+                               value="{{ config.error_title }}"
+                               placeholder="Incidencia Temporal"
+                               oninput="updateErrorPreview()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mensaje de Error <span class="hint">(Se muestra a los usuarios)</span></label>
+                        <textarea name="error_message" 
+                                  id="errorMessage"
+                                  placeholder="Se ha producido una incidencia temporal..."
+                                  oninput="updateErrorPreview()">{{ config.error_message }}</textarea>
+                        <small>⚠️ No incluyas información técnica ni sensible en este mensaje.</small>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" 
+                                   name="error_show_retry" 
+                                   {{ 'checked' if config.error_show_retry else '' }}>
+                            <span class="checkbox-label">Mostrar botón "Intentar de nuevo"</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" 
+                                   name="error_show_support" 
+                                   {{ 'checked' if config.error_show_support else '' }}>
+                            <span class="checkbox-label">Mostrar enlace de soporte</span>
+                        </label>
+                    </div>
+
+                    <!-- Error Preview -->
+                    <div class="preview-panel" style="background: linear-gradient(135deg, #2d1b1b 0%, #4e2d2d 100%);">
+                        <div class="preview-title">
+                            <span>👁️</span> Vista Previa de Error
+                        </div>
+                        <div class="preview-content" style="border-color: rgba(255,167,38,0.3);">
+                            <div class="preview-icon">⚠️</div>
+                            <div class="preview-heading" id="errorPreviewTitle" style="color: #ffa726;">{{ config.error_title or 'Incidencia Temporal' }}</div>
+                            <div class="preview-text" id="errorPreviewMessage">{{ config.error_message or 'Se ha producido una incidencia temporal en el sistema.' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="content-card full-width" style="margin-top: 25px;">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">
+                        <span>💾</span>
+                        Guardar Configuración
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetToDefaults()">
+                        <span>🔄</span>
+                        Restaurar Valores Predeterminados
+                    </button>
+                    {% if config.maintenance_enabled %}
+                    <button type="button" class="btn btn-danger" onclick="quickDisableMaintenance()">
+                        <span>🚀</span>
+                        Desactivar Mantenimiento Ahora
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toastIcon">✓</span>
+        <span id="toastMessage">Guardado correctamente</span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+        // Update toggle UI
+        function updateToggleUI() {
+            const toggle = document.getElementById('maintenanceToggle');
+            const container = document.getElementById('toggleContainer');
+            const desc = document.getElementById('toggleDesc');
+            const badge = document.getElementById('statusBadge');
+
+            if (toggle.checked) {
+                container.classList.add('active');
+                desc.textContent = 'La aplicación estará bloqueada para los usuarios';
+                badge.textContent = 'ACTIVO';
+                badge.className = 'header-badge badge-active';
+            } else {
+                container.classList.remove('active');
+                desc.textContent = 'La aplicación está funcionando normalmente';
+                badge.textContent = 'INACTIVO';
+                badge.className = 'header-badge badge-inactive';
+            }
+        }
+
+        // Update maintenance preview
+        function updatePreview() {
+            const title = document.getElementById('maintenanceTitle').value;
+            const message = document.getElementById('maintenanceMessage').value;
+            
+            document.getElementById('previewTitle').textContent = title || 'Mantenimiento Programado';
+            document.getElementById('previewMessage').textContent = message || 'La plataforma se encuentra actualmente en mantenimiento programado.';
+        }
+
+        // Update error preview
+        function updateErrorPreview() {
+            const title = document.getElementById('errorTitle').value;
+            const message = document.getElementById('errorMessage').value;
+            
+            document.getElementById('errorPreviewTitle').textContent = title || 'Incidencia Temporal';
+            document.getElementById('errorPreviewMessage').textContent = message || 'Se ha producido una incidencia temporal en el sistema.';
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const msg = document.getElementById('toastMessage');
+            
+            toast.className = 'toast ' + type;
+            icon.textContent = type === 'success' ? '✓' : '✕';
+            msg.textContent = message;
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Show loading
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+
+        // Hide loading
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+
+        // Reset to defaults
+        function resetToDefaults() {
+            if (!confirm('¿Estás seguro de restaurar los valores predeterminados? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            document.getElementById('maintenanceTitle').value = 'Mantenimiento Programado';
+            document.getElementById('maintenanceMessage').value = 'La plataforma se encuentra actualmente en mantenimiento programado. Estamos realizando mejoras para optimizar la estabilidad, seguridad y el rendimiento del servicio. Agradecemos tu comprensión.';
+            document.getElementById('errorTitle').value = 'Incidencia Temporal';
+            document.getElementById('errorMessage').value = 'Se ha producido una incidencia temporal en el sistema. Nuestro equipo técnico ya se encuentra trabajando para restablecer el servicio a la mayor brevedad posible. Por favor, intenta nuevamente en unos minutos.';
+            
+            updatePreview();
+            updateErrorPreview();
+            showToast('Valores restaurados. Guarda para aplicar cambios.');
+        }
+
+        // Quick disable maintenance
+        async function quickDisableMaintenance() {
+            if (!confirm('¿Desactivar el modo mantenimiento inmediatamente?')) {
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const response = await fetch('{{ url_for("admin_maintenance_toggle") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ enabled: false })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Modo mantenimiento desactivado');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Error al desactivar', 'error');
+                }
+            } catch (e) {
+                showToast('Error de conexión', 'error');
+            }
+
+            hideLoading();
+        }
+
+        // Form submission
+        document.getElementById('maintenanceForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            showLoading();
+
+            try {
+                const formData = new FormData(this);
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Configuración guardada correctamente');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast(data.error || 'Error al guardar', 'error');
+                }
+            } catch (e) {
+                showToast('Error de conexión', 'error');
+            }
+
+            hideLoading();
+        });
+    </script>
+</body>
+</html>

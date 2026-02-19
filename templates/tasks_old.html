@@ -1,0 +1,991 @@
+{% extends "base.html" %}
+{% block title %}SALLY-E | Tareas{% endblock %}
+{% block content %}
+<div class="container">
+    <!-- Header de Tareas Premium -->
+    <div class="tasks-header">
+        <h1 class="page-title">
+            <i data-lucide="clipboard-check"></i> Tareas
+        </h1>
+        <p class="page-subtitle">Completa tareas y gana recompensas S-E</p>
+    </div>
+
+    <!-- Estadísticas de Tareas - Premium Cards -->
+    <div class="stats-row">
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon available">
+                <i data-lucide="list-checks"></i>
+            </div>
+            <div class="stat-mini-info">
+                <span class="stat-mini-value">{{ available_tasks|length }}</span>
+                <span class="stat-mini-label">Disponibles</span>
+            </div>
+        </div>
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon completed">
+                <i data-lucide="check-circle-2"></i>
+            </div>
+            <div class="stat-mini-info">
+                <span class="stat-mini-value">{{ completed_tasks|length }}</span>
+                <span class="stat-mini-label">Completadas</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Task Section (si existe) -->
+    {% for task_id, task in available_tasks.items() %}
+        {% if task.is_daily_task %}
+        <div class="daily-task-banner">
+            <div class="daily-task-glow"></div>
+            <div class="daily-task-content">
+                <div class="daily-task-icon">
+                    <i data-lucide="calendar-check"></i>
+                </div>
+                <div class="daily-task-info">
+                    <span class="daily-task-label">TAREA DIARIA</span>
+                    <span class="daily-task-title">{{ task.title }}</span>
+                    <span class="daily-task-reward">+{{ "%.2f"|format(task.reward) }} S-E</span>
+                </div>
+                <button class="btn btn-daily" onclick="completeTask('{{ task_id }}', '', 'daily')">
+                    <i data-lucide="gift"></i>
+                    Reclamar
+                </button>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+
+    <!-- Tareas Disponibles -->
+    <div class="tasks-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i data-lucide="sparkles"></i> Tareas Disponibles
+            </h2>
+        </div>
+
+        {% set regular_tasks = {} %}
+        {% for task_id, task in available_tasks.items() %}
+            {% if not task.is_daily_task %}
+                {% set _ = regular_tasks.update({task_id: task}) %}
+            {% endif %}
+        {% endfor %}
+
+        {% if regular_tasks|length > 0 %}
+            <div class="tasks-list">
+                {% for task_id, task in regular_tasks.items() %}
+                <div class="task-card" data-task-id="{{ task_id }}">
+                    <!-- Indicador de tipo de tarea -->
+                    <div class="task-type-indicator {% if task.task_type == 'telegram' %}telegram{% elif task.task_type == 'social' %}social{% elif task.task_type == 'youtube' %}youtube{% else %}general{% endif %}">
+                        {% if task.task_type == 'telegram' %}
+                            <i data-lucide="send"></i>
+                        {% elif task.task_type == 'social' or task.task_type == 'twitter' %}
+                            <i data-lucide="twitter"></i>
+                        {% elif task.task_type == 'youtube' %}
+                            <i data-lucide="youtube"></i>
+                        {% elif task.task_type == 'website' %}
+                            <i data-lucide="globe"></i>
+                        {% else %}
+                            <i data-lucide="star"></i>
+                        {% endif %}
+                    </div>
+
+                    <!-- Contenido de la tarea -->
+                    <div class="task-content">
+                        <div class="task-header-row">
+                            <h3 class="task-title">{{ task.title }}</h3>
+                            {% if task.requires_channel_join %}
+                            <span class="task-badge verification">
+                                <i data-lucide="shield-check"></i> Verificación
+                            </span>
+                            {% endif %}
+                        </div>
+                        
+                        {% if task.description %}
+                        <p class="task-description">{{ task.description }}</p>
+                        {% endif %}
+
+                        <div class="task-meta">
+                            <div class="task-reward">
+                                <i data-lucide="coins"></i>
+                                <span>+{{ "%.2f"|format(task.reward) }} S-E</span>
+                            </div>
+                            
+                            {% if task.max_completions %}
+                            <div class="task-claims">
+                                <i data-lucide="users"></i>
+                                <span>{{ task.current_completions|default(0) }}/{{ task.max_completions }}</span>
+                                {% set remaining = task.max_completions - task.current_completions|default(0) %}
+                                {% if remaining <= 10 %}
+                                <span class="claims-warning">¡Solo {{ remaining }} restantes!</span>
+                                {% endif %}
+                            </div>
+                            {% else %}
+                            <div class="task-claims unlimited">
+                                <i data-lucide="infinity"></i>
+                                <span>Ilimitado</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Botón de acción -->
+                    <button class="task-action-btn" onclick="completeTask('{{ task_id }}', '{{ task.url or '' }}', '{{ task.task_type or 'link' }}', {{ 'true' if task.requires_channel_join else 'false' }}, '{{ task.channel_username or '' }}')">
+                        <span class="btn-text">Completar</span>
+                        <span class="btn-icon"><i data-lucide="arrow-right"></i></span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Estado vacío premium -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i data-lucide="inbox"></i>
+                </div>
+                <h3 class="empty-title">No hay tareas disponibles</h3>
+                <p class="empty-description">Vuelve pronto, nuevas tareas se agregan regularmente</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Tareas Completadas -->
+    {% if completed_tasks|length > 0 %}
+    <div class="tasks-section completed-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i data-lucide="check-circle"></i> Completadas
+            </h2>
+            <span class="section-count">{{ completed_tasks|length }} tareas</span>
+        </div>
+
+        <div class="tasks-list completed">
+            {% for task_id, task in completed_tasks.items() %}
+            <div class="task-card completed">
+                <div class="task-completed-check">
+                    <i data-lucide="check"></i>
+                </div>
+                <div class="task-content">
+                    <h3 class="task-title">{{ task.title }}</h3>
+                    <div class="task-meta">
+                        <div class="task-reward earned">
+                            <i data-lucide="coins"></i>
+                            <span>{{ "%.2f"|format(task.reward) }} S-E ganados</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-status-badge">
+                    <i data-lucide="badge-check"></i>
+                    <span>Completada</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal de Verificación -->
+<div id="verification-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-icon loading">
+            <div class="spinner"></div>
+        </div>
+        <h3 class="modal-title">Verificando membresía...</h3>
+        <p class="modal-description">Por favor espera mientras verificamos que te hayas unido al canal</p>
+    </div>
+</div>
+
+<style>
+/* ==================== TASKS PAGE PREMIUM STYLES ==================== */
+
+.tasks-header {
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+}
+
+.page-title i {
+    width: 32px;
+    height: 32px;
+    color: var(--color-neon-pink);
+}
+
+.page-subtitle {
+    color: var(--color-text-tertiary);
+    font-size: 0.9rem;
+}
+
+/* Stats Row */
+.stats-row {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.stat-mini-card {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: var(--glass-ultra);
+    border: var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    backdrop-filter: blur(20px);
+}
+
+.stat-mini-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-mini-icon i {
+    width: 22px;
+    height: 22px;
+}
+
+.stat-mini-icon.available {
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.2), rgba(0, 82, 204, 0.2));
+    color: var(--color-neon-pink);
+}
+
+.stat-mini-icon.completed {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 217, 255, 0.2));
+    color: var(--color-success);
+}
+
+.stat-mini-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-mini-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: 1;
+}
+
+.stat-mini-label {
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+    margin-top: 2px;
+}
+
+/* Daily Task Banner */
+.daily-task-banner {
+    position: relative;
+    background: linear-gradient(135deg, 
+        rgba(255, 184, 0, 0.15) 0%, 
+        rgba(255, 136, 0, 0.15) 50%,
+        rgba(255, 184, 0, 0.15) 100%);
+    border: 1px solid rgba(255, 184, 0, 0.3);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    margin-bottom: var(--space-6);
+    overflow: hidden;
+}
+
+.daily-task-glow {
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 184, 0, 0.3) 0%, transparent 70%);
+    animation: dailyGlow 3s ease-in-out infinite;
+}
+
+@keyframes dailyGlow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+.daily-task-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    z-index: 1;
+}
+
+.daily-task-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #FFB800, #00A3FF);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(255, 184, 0, 0.4);
+}
+
+.daily-task-icon i {
+    width: 28px;
+    height: 28px;
+    color: #000;
+}
+
+.daily-task-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.daily-task-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--color-warning);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.daily-task-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.daily-task-reward {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-success);
+}
+
+.btn-daily {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    background: linear-gradient(135deg, #FFB800, #00A3FF);
+    color: #000;
+    border: none;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 184, 0, 0.4);
+}
+
+.btn-daily:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(255, 184, 0, 0.5);
+}
+
+.btn-daily:active {
+    transform: translateY(0);
+}
+
+.btn-daily i {
+    width: 18px;
+    height: 18px;
+}
+
+/* Tasks Section */
+.tasks-section {
+    margin-bottom: var(--space-8);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.section-title i {
+    width: 20px;
+    height: 20px;
+    color: var(--color-neon-pink);
+}
+
+.section-count {
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+    background: var(--glass-ultra);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+}
+
+/* Task Cards */
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.task-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    background: var(--glass-ultra);
+    border: var(--glass-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-4);
+    backdrop-filter: blur(20px);
+    transition: all 0.3s ease;
+}
+
+.task-card:hover {
+    border-color: rgba(0, 102, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 102, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.task-card.completed {
+    opacity: 0.7;
+    background: var(--glass-ultra);
+}
+
+.task-card.completed:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Task Type Indicator */
+.task-type-indicator {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.task-type-indicator i {
+    width: 24px;
+    height: 24px;
+}
+
+.task-type-indicator.telegram {
+    background: linear-gradient(135deg, rgba(0, 136, 204, 0.2), rgba(0, 180, 255, 0.2));
+    color: #0088cc;
+}
+
+.task-type-indicator.social {
+    background: linear-gradient(135deg, rgba(29, 155, 240, 0.2), rgba(29, 200, 255, 0.2));
+    color: #1DA1F2;
+}
+
+.task-type-indicator.youtube {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(255, 80, 80, 0.2));
+    color: #FF0000;
+}
+
+.task-type-indicator.general {
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.2), rgba(0, 82, 204, 0.2));
+    color: var(--color-neon-pink);
+}
+
+/* Task Content */
+.task-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-header-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-1);
+}
+
+.task-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.task-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.65rem;
+    font-weight: 600;
+}
+
+.task-badge.verification {
+    background: rgba(0, 255, 136, 0.15);
+    color: var(--color-success);
+}
+
+.task-badge.verification i {
+    width: 10px;
+    height: 10px;
+}
+
+.task-description {
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+    margin: var(--space-1) 0 var(--space-2) 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.task-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.task-reward, .task-claims {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.8rem;
+}
+
+.task-reward {
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+.task-reward.earned {
+    color: var(--color-text-secondary);
+}
+
+.task-reward i, .task-claims i {
+    width: 14px;
+    height: 14px;
+}
+
+.task-claims {
+    color: var(--color-text-tertiary);
+}
+
+.task-claims.unlimited {
+    color: var(--color-info);
+}
+
+.claims-warning {
+    color: var(--color-warning);
+    font-weight: 600;
+    margin-left: var(--space-1);
+}
+
+/* Task Action Button */
+.task-action-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: linear-gradient(135deg, var(--color-neon-pink), var(--color-neon-purple));
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.task-action-btn:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-glow-pink);
+}
+
+.task-action-btn:active {
+    transform: scale(0.98);
+}
+
+.task-action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.task-action-btn .btn-icon i {
+    width: 16px;
+    height: 16px;
+}
+
+/* Completed Task Elements */
+.task-completed-check {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 217, 255, 0.2));
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-success);
+}
+
+.task-completed-check i {
+    width: 24px;
+    height: 24px;
+}
+
+.task-status-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    background: rgba(0, 255, 136, 0.1);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    border-radius: var(--radius-full);
+    color: var(--color-success);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.task-status-badge i {
+    width: 14px;
+    height: 14px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: var(--space-10) var(--space-6);
+}
+
+.empty-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--space-5);
+    background: var(--glass-ultra);
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-icon i {
+    width: 40px;
+    height: 40px;
+    color: var(--color-text-muted);
+}
+
+.empty-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+}
+
+.empty-description {
+    font-size: 0.9rem;
+    color: var(--color-text-tertiary);
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.modal-content {
+    position: relative;
+    background: var(--color-bg-secondary);
+    border: var(--glass-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    max-width: 320px;
+    text-align: center;
+}
+
+.modal-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--space-5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-icon.loading {
+    background: var(--glass-ultra);
+    border-radius: 50%;
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--glass-border);
+    border-top-color: var(--color-neon-pink);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.modal-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+}
+
+.modal-description {
+    font-size: 0.9rem;
+    color: var(--color-text-tertiary);
+}
+
+/* Completed Section */
+.completed-section .tasks-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.completed-section .tasks-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.completed-section .tasks-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.completed-section .tasks-list::-webkit-scrollbar-thumb {
+    background: var(--color-text-muted);
+    border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .task-card {
+        flex-wrap: wrap;
+    }
+    
+    .task-action-btn {
+        width: 100%;
+        justify-content: center;
+        margin-top: var(--space-3);
+    }
+    
+    .daily-task-content {
+        flex-wrap: wrap;
+    }
+    
+    .btn-daily {
+        width: 100%;
+        justify-content: center;
+        margin-top: var(--space-3);
+    }
+    
+    .stats-row {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+// Variables globales
+const userId = new URLSearchParams(window.location.search).get('user_id');
+const BOT_TOKEN = '{{ bot_token|default("") }}';
+
+// Función principal para completar tareas
+async function completeTask(taskId, taskUrl, taskType, requiresVerification = false, channelUsername = '') {
+    const btn = event.target.closest('button');
+    
+    if (!userId) {
+        showToast('Error: Usuario no identificado', 'error');
+        return;
+    }
+
+    // Deshabilitar botón
+    btn.disabled = true;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="btn-text">Verificando...</span>';
+
+    try {
+        // Si es tarea de Telegram que requiere verificación de canal
+        if (requiresVerification || (taskType === 'telegram' && taskUrl && taskUrl.includes('t.me'))) {
+            // Abrir el enlace de Telegram
+            if (taskUrl) {
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.openTelegramLink(taskUrl);
+                } else {
+                    window.open(taskUrl, '_blank');
+                }
+            }
+
+            showToast('Únete al canal y espera la verificación...', 'info');
+            
+            // Mostrar modal de verificación
+            showVerificationModal();
+
+            // Esperar 5 segundos para dar tiempo al usuario
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            // Verificar membresía
+            const verifyResult = await verifyChannelMembership(taskId, channelUsername);
+            
+            hideVerificationModal();
+
+            if (!verifyResult.verified) {
+                showToast('❌ Debes unirte al canal para completar esta tarea', 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                return;
+            }
+
+            // Proceder a completar
+            await submitTaskCompletion(taskId, btn, originalText);
+
+        } else if (taskUrl && taskUrl !== '') {
+            // Para otras URLs, abrir y completar
+            window.open(taskUrl, '_blank');
+            showToast('Completando tarea...', 'info');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            await submitTaskCompletion(taskId, btn, originalText);
+        } else {
+            // Sin URL, completar directamente (ej: Daily Check-in)
+            await submitTaskCompletion(taskId, btn, originalText);
+        }
+    } catch (error) {
+        console.error('Error al completar tarea:', error);
+        showToast('Error al completar la tarea', 'error');
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
+
+// Verificar membresía del canal
+async function verifyChannelMembership(taskId, channelUsername) {
+    try {
+        const response = await fetch(`/api/task/verify?user_id=${userId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                task_id: taskId,
+                user_id: userId,
+                channel_username: channelUsername
+            })
+        });
+
+        const data = await response.json();
+        return { verified: data.verified || false, message: data.message };
+    } catch (error) {
+        console.error('Error verificando membresía:', error);
+        return { verified: false, message: 'Error de conexión' };
+    }
+}
+
+// Enviar completación de tarea
+async function submitTaskCompletion(taskId, btn, originalText) {
+    try {
+        const response = await fetch(`/api/task/complete?user_id=${userId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task_id: taskId })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showToast(`🎉 ¡Tarea completada! +${data.reward} S-E`, 'success');
+            
+            // Haptic feedback
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+
+            // Animar la tarjeta
+            const card = btn.closest('.task-card');
+            if (card) {
+                card.style.animation = 'taskCompleted 0.5s ease-out forwards';
+            }
+
+            // Recargar después de animación
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            if (data.verification_failed) {
+                showToast('❌ Debes unirte al canal para completar esta tarea', 'error');
+            } else {
+                showToast(data.message || 'Error al completar la tarea', 'error');
+            }
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    } catch (error) {
+        console.error('Error en la completación:', error);
+        showToast('Error al completar la tarea', 'error');
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
+
+// Modal de verificación
+function showVerificationModal() {
+    document.getElementById('verification-modal')?.classList.remove('hidden');
+}
+
+function hideVerificationModal() {
+    document.getElementById('verification-modal')?.classList.add('hidden');
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+
+// Animación de tarea completada
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes taskCompleted {
+        0% { opacity: 1; transform: translateX(0); }
+        50% { opacity: 0.5; transform: translateX(10px); }
+        100% { opacity: 0; transform: translateX(100%); height: 0; padding: 0; margin: 0; overflow: hidden; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

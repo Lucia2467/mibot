@@ -1,0 +1,1167 @@
+{% extends "base.html" %}
+{% block title %}SALLY-E | Promote Task{% endblock %}
+{% block content %}
+<style>
+/* ==================== PROMOTE TASK STYLES ==================== */
+.promote-container {
+    padding: var(--space-4);
+    max-width: 100%;
+}
+
+.promote-header {
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
+
+.promote-header h1 {
+    font-size: 1.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--space-2);
+}
+
+.promote-header p {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+}
+
+/* Balance Display */
+.balance-display {
+    background: var(--glass-ultra);
+    border: var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.balance-label {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+}
+
+.balance-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #FFD700;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+/* Tabs */
+.tabs-container {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+    background: var(--glass-ultra);
+    border-radius: var(--radius-lg);
+    padding: var(--space-1);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Packages Grid */
+.packages-grid {
+    display: grid;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.package-card {
+    background: var(--glass-ultra);
+    border: var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.package-card:hover {
+    border-color: var(--color-neon-pink);
+    transform: translateY(-2px);
+}
+
+.package-card.selected {
+    border: 2px solid var(--color-neon-pink);
+    background: rgba(0, 102, 255, 0.1);
+}
+
+.package-card.popular::before {
+    content: 'POPULAR';
+    position: absolute;
+    top: 10px;
+    right: -30px;
+    background: var(--gradient-primary);
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 700;
+    padding: 2px 30px;
+    transform: rotate(45deg);
+}
+
+.package-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.package-icon {
+    font-size: 1.75rem;
+}
+
+.package-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.package-price {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #FFD700;
+    margin-bottom: var(--space-2);
+}
+
+.package-completions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-neon-cyan);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+}
+
+.package-desc {
+    color: var(--color-text-tertiary);
+    font-size: 0.8rem;
+}
+
+/* Form */
+.form-section {
+    background: var(--glass-ultra);
+    border: var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-4);
+}
+
+.form-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.form-group {
+    margin-bottom: var(--space-4);
+}
+
+.form-label {
+    display: block;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: var(--space-2);
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-neon-pink);
+    box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+}
+
+.form-input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.form-select {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.form-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: rgba(0, 245, 255, 0.05);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+}
+
+.form-checkbox input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--color-neon-cyan);
+    cursor: pointer;
+}
+
+.checkbox-text {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.checkbox-text strong {
+    color: var(--color-neon-cyan);
+}
+
+/* Warning Box */
+.warning-box {
+    background: rgba(255, 184, 0, 0.1);
+    border: 1px solid rgba(255, 184, 0, 0.3);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.warning-box-title {
+    color: var(--color-warning);
+    font-weight: 700;
+    font-size: 0.875rem;
+    margin-bottom: var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.warning-box-text {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    padding: var(--space-4);
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: var(--radius-lg);
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);
+}
+
+.submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* My Tasks */
+.my-tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.my-task-card {
+    background: var(--glass-ultra);
+    border: var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+}
+
+.my-task-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-3);
+}
+
+.my-task-title {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+}
+
+.my-task-status {
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-active {
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--color-success);
+}
+
+.status-paused {
+    background: rgba(255, 184, 0, 0.1);
+    color: var(--color-warning);
+}
+
+.status-completed {
+    background: rgba(0, 217, 255, 0.1);
+    color: var(--color-info);
+}
+
+.my-task-progress {
+    margin-bottom: var(--space-3);
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--space-2);
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+    transition: width 0.3s;
+}
+
+.progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+}
+
+.my-task-actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.action-btn {
+    flex: 1;
+    padding: var(--space-2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    border-color: var(--color-neon-pink);
+    color: var(--color-neon-pink);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: var(--space-8);
+    color: var(--color-text-tertiary);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    opacity: 0.5;
+    margin-bottom: var(--space-4);
+}
+
+/* Stats Grid */
+.stats-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+.stat-mini-card {
+    background: var(--glass-ultra);
+    border: var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    text-align: center;
+}
+
+.stat-mini-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.stat-mini-label {
+    font-size: 0.7rem;
+    color: var(--color-text-tertiary);
+    margin-top: 2px;
+}
+
+/* Info Box */
+.info-box {
+    background: rgba(0, 245, 255, 0.05);
+    border: 1px solid rgba(0, 245, 255, 0.2);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.info-box-text {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.info-box-text i {
+    color: var(--color-neon-cyan);
+    margin-right: var(--space-2);
+}
+
+/* Terms and Conditions Section */
+.terms-section {
+    background: var(--glass-ultra);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-4);
+}
+
+.terms-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.terms-header-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, rgba(255, 184, 0, 0.2) 0%, rgba(255, 107, 0, 0.2) 100%);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-warning);
+}
+
+.terms-header-text h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+}
+
+.terms-header-text p {
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+}
+
+.terms-content {
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: var(--space-2);
+    margin-bottom: var(--space-4);
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-neon-pink) transparent;
+}
+
+.terms-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.terms-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.terms-content::-webkit-scrollbar-thumb {
+    background: var(--color-neon-pink);
+    border-radius: 4px;
+}
+
+.term-item {
+    margin-bottom: var(--space-4);
+}
+
+.term-item:last-child {
+    margin-bottom: 0;
+}
+
+.term-item-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+.term-item-number {
+    width: 24px;
+    height: 24px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.term-item-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.term-item-content {
+    padding-left: 32px;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+.term-item-content strong {
+    color: var(--color-neon-cyan);
+}
+
+.term-item-content .term-highlight {
+    color: var(--color-warning);
+    font-weight: 600;
+}
+
+.term-item-content .term-danger {
+    color: #FF4757;
+    font-weight: 600;
+}
+
+.terms-accept-box {
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.1) 0%, rgba(0, 82, 204, 0.1) 100%);
+    border: 1px solid rgba(0, 102, 255, 0.3);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+.terms-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    cursor: pointer;
+}
+
+.terms-checkbox-label input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--color-neon-pink);
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.terms-checkbox-text {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+}
+
+.terms-checkbox-text strong {
+    color: var(--color-neon-pink);
+}
+
+.terms-error {
+    display: none;
+    margin-top: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: rgba(255, 71, 87, 0.1);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    color: #FF4757;
+}
+
+.terms-error.show {
+    display: block;
+}
+</style>
+
+<div class="promote-container">
+    <!-- Header -->
+    <div class="promote-header">
+        <h1><i data-lucide="megaphone"></i> Promociona tu Tarea</h1>
+        <p data-i18n="promote_subtitle">Publica tu canal o link y obtén usuarios reales</p>
+    </div>
+
+    <!-- Balance Display -->
+    <div class="balance-display">
+        <div class="balance-label" data-i18n="your_doge_balance">Tu Balance DOGE</div>
+        <div class="balance-value">
+            <span id="userDogeBalance">{{ "%.4f"|format(user.doge_balance|default(0)|float) }}</span>
+            <span>DOGE</span>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('create')" data-i18n="create_task">
+            <i data-lucide="plus-circle"></i> Crear Tarea
+        </button>
+        <button class="tab-btn" onclick="switchTab('my-tasks')" data-i18n="my_tasks">
+            <i data-lucide="list"></i> Mis Tareas
+        </button>
+    </div>
+
+    <!-- Tab: Create Task -->
+    <div id="tab-create" class="tab-content active">
+        <!-- Packages -->
+        <div class="form-section">
+            <div class="form-section-title">
+                <i data-lucide="package"></i>
+                <span data-i18n="select_package">Selecciona un Paquete</span>
+            </div>
+            
+            <div class="packages-grid">
+                {% for pkg_id, pkg in packages.items() %}
+                <div class="package-card {% if pkg.popular %}popular{% endif %}" 
+                     onclick="selectPackage('{{ pkg_id }}')" 
+                     data-package="{{ pkg_id }}">
+                    <div class="package-header">
+                        <span class="package-icon">{{ pkg.icon }}</span>
+                        <span class="package-name">{{ pkg.name }}</span>
+                    </div>
+                    <div class="package-price">{{ pkg.price_doge }} DOGE</div>
+                    <div class="package-completions">
+                        <i data-lucide="users"></i>
+                        <span>{{ pkg.max_completions }} completaciones</span>
+                    </div>
+                    <div class="package-desc">{{ pkg.description }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Task Details Form -->
+        <div class="form-section">
+            <div class="form-section-title">
+                <i data-lucide="edit-3"></i>
+                <span data-i18n="task_details">Detalles de la Tarea</span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" data-i18n="task_type">Tipo de Tarea</label>
+                <select class="form-select" id="taskType" onchange="updateFormFields()">
+                    <option value="telegram_channel">📢 Canal de Telegram</option>
+                    <option value="telegram_group">👥 Grupo de Telegram</option>
+                    <option value="website">🌐 Sitio Web</option>
+                    <option value="social">📱 Red Social</option>
+                    <option value="other">🔗 Otro Link</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" data-i18n="task_title">Título de la Tarea</label>
+                <input type="text" class="form-input" id="taskTitle" 
+                       placeholder="Ej: Únete a mi canal de cripto" maxlength="100">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" data-i18n="task_description">Descripción (opcional)</label>
+                <input type="text" class="form-input" id="taskDescription" 
+                       placeholder="Breve descripción de la tarea" maxlength="255">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" data-i18n="task_url">URL del Link</label>
+                <input type="url" class="form-input" id="taskUrl" 
+                       placeholder="https://t.me/tuchannel">
+            </div>
+
+            <!-- Telegram Channel Fields -->
+            <div id="telegramFields">
+                <div class="form-group">
+                    <label class="form-label" data-i18n="channel_username">Username del Canal</label>
+                    <input type="text" class="form-input" id="channelUsername" 
+                           placeholder="@tuchannel (sin https://t.me/)">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-checkbox">
+                        <input type="checkbox" id="requiresJoin" onchange="toggleJoinWarning()">
+                        <div class="checkbox-text">
+                            <strong data-i18n="require_join">Verificar unión al canal</strong><br>
+                            <span data-i18n="require_join_desc">Los usuarios deben unirse para completar la tarea</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div id="joinWarning" class="warning-box" style="display: none;">
+                    <div class="warning-box-title">
+                        <i data-lucide="alert-triangle"></i>
+                        <span data-i18n="important">Importante</span>
+                    </div>
+                    <div class="warning-box-text" data-i18n="bot_admin_warning">
+                        Para verificar que los usuarios se unan a tu canal, debes agregar a 
+                        <strong>@SallyEDogeBot</strong> como <strong>administrador</strong> de tu canal.
+                        El bot solo necesita el permiso de ver miembros.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <div class="info-box-text">
+                <i data-lucide="info"></i>
+                <span data-i18n="reward_info">Cada usuario que complete tu tarea recibirá <strong>{{ reward_per_completion }} S-E</strong> como recompensa.</span>
+            </div>
+        </div>
+
+        <!-- Terms and Conditions Section -->
+        <div class="terms-section">
+            <div class="terms-header">
+                <div class="terms-header-icon">
+                    <i data-lucide="file-text"></i>
+                </div>
+                <div class="terms-header-text">
+                    <h3 data-i18n="terms_title">Términos y Condiciones</h3>
+                    <p data-i18n="terms_subtitle">Lee y acepta antes de publicar</p>
+                </div>
+            </div>
+
+            <div class="terms-content">
+                <!-- Term 1 -->
+                <div class="term-item">
+                    <div class="term-item-header">
+                        <span class="term-item-number">1</span>
+                        <span class="term-item-title" data-i18n="terms_1_title">Dinámica del Servicio y Vigencia</span>
+                    </div>
+                    <div class="term-item-content">
+                        <p><strong data-i18n="terms_1_guarantee">Garantía por Objetivo:</strong> <span data-i18n="terms_1_guarantee_desc">La vigencia de la publicidad no está sujeta a un tiempo cronológico (horas o días), sino al cumplimiento de la meta de suscriptores/usuarios establecida en el plan elegido.</span></p>
+                        <p style="margin-top: 8px;"><strong data-i18n="terms_1_finalization">Finalización de Tarea:</strong> <span data-i18n="terms_1_finalization_desc">Una vez que el sistema detecte que se ha alcanzado la cantidad de usuarios pagados, la tarea se considerará finalizada y será eliminada automáticamente de Sally-E.</span></p>
+                    </div>
+                </div>
+
+                <!-- Term 2 -->
+                <div class="term-item">
+                    <div class="term-item-header">
+                        <span class="term-item-number">2</span>
+                        <span class="term-item-title" data-i18n="terms_2_title">Verificación de Pagos y Fraude</span>
+                    </div>
+                    <div class="term-item-content">
+                        <p><strong data-i18n="terms_2_validation">Validación Manual:</strong> <span data-i18n="terms_2_validation_desc">Todo pago debe ser verificado por un administrador.</span></p>
+                        <p style="margin-top: 8px;"><strong class="term-danger" data-i18n="terms_2_sanction">Sanción por Fraude:</strong> <span data-i18n="terms_2_sanction_desc">El envío de comprobantes de pago falsos, editados o el uso de métodos de pago fraudulentos resultará en la expulsión inmediata de la plataforma y el bloqueo permanente del canal/usuario sin derecho a aclaraciones.</span></p>
+                    </div>
+                </div>
+
+                <!-- Term 3 -->
+                <div class="term-item">
+                    <div class="term-item-header">
+                        <span class="term-item-number">3</span>
+                        <span class="term-item-title" data-i18n="terms_3_title">Requisitos Técnicos</span>
+                    </div>
+                    <div class="term-item-content">
+                        <p><strong data-i18n="terms_3_bot">Configuración del Bot:</strong> <span data-i18n="terms_3_bot_desc">Es indispensable mantener el bot oficial dentro del canal con los permisos requeridos durante todo el proceso. Si el bot es expulsado antes de cumplir el objetivo, el servicio se detendrá y no habrá reembolsos.</span></p>
+                    </div>
+                </div>
+
+                <!-- Term 4 -->
+                <div class="term-item">
+                    <div class="term-item-header">
+                        <span class="term-item-number">4</span>
+                        <span class="term-item-title" data-i18n="terms_4_title">Política de Contenido y Sanciones</span>
+                    </div>
+                    <div class="term-item-content">
+                        <p><strong class="term-danger" data-i18n="terms_4_prohibited">Contenido Prohibido:</strong> <span data-i18n="terms_4_prohibited_desc">No se permite la promoción de canales con pornografía, violencia, venta de armas, sustancias ilícitas, acoso (bullying) o estafas.</span></p>
+                        <p style="margin-top: 8px;"><strong class="term-highlight" data-i18n="terms_4_change">Cambio de Temática:</strong> <span data-i18n="terms_4_change_desc">Si un canal es aprobado inicialmente pero, durante la ejecución del servicio o después de la misma, cambia su contenido a cualquiera de las categorías prohibidas, será eliminado del sistema y reportado de inmediato. No se devolverá el saldo restante en estos casos.</span></p>
+                    </div>
+                </div>
+
+                <!-- Term 5 -->
+                <div class="term-item">
+                    <div class="term-item-header">
+                        <span class="term-item-number">5</span>
+                        <span class="term-item-title" data-i18n="terms_5_title">Modificaciones de los Términos</span>
+                    </div>
+                    <div class="term-item-content">
+                        <p><strong data-i18n="terms_5_updates">Actualizaciones:</strong> <span data-i18n="terms_5_updates_desc">La administración se reserva el derecho de modificar estos términos en cualquier momento para mejorar la seguridad del servicio.</span></p>
+                        <p style="margin-top: 8px;"><strong data-i18n="terms_5_acceptance">Aceptación Tácita:</strong> <span data-i18n="terms_5_acceptance_desc">El uso continuo de la plataforma y la contratación de nuevos planes tras una modificación implica la aceptación total de los nuevos términos y condiciones.</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="terms-accept-box">
+                <label class="terms-checkbox-label">
+                    <input type="checkbox" id="acceptTerms" onchange="validateForm()">
+                    <span class="terms-checkbox-text">
+                        <span data-i18n="terms_accept_text">He leído y acepto los</span>
+                        <strong data-i18n="terms_accept_link">Términos y Condiciones del Servicio</strong>
+                        <span data-i18n="terms_accept_text_2">de promoción de tareas en Sally-E</span>
+                    </span>
+                </label>
+                <div class="terms-error" id="termsError" data-i18n="terms_error">Debes aceptar los términos y condiciones para continuar</div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button class="submit-btn" id="submitBtn" onclick="createTask()" disabled>
+            <i data-lucide="rocket"></i>
+            <span data-i18n="publish_task">Publicar Tarea</span>
+        </button>
+    </div>
+
+    <!-- Tab: My Tasks -->
+    <div id="tab-my-tasks" class="tab-content">
+        <!-- Stats -->
+        <div class="stats-mini-grid">
+            <div class="stat-mini-card">
+                <div class="stat-mini-value">{{ stats.created.total|default(0) }}</div>
+                <div class="stat-mini-label" data-i18n="tasks_created">Tareas Creadas</div>
+            </div>
+            <div class="stat-mini-card">
+                <div class="stat-mini-value">{{ stats.created.active|default(0) }}</div>
+                <div class="stat-mini-label" data-i18n="active_tasks">Activas</div>
+            </div>
+            <div class="stat-mini-card">
+                <div class="stat-mini-value">{{ stats.created.total_completions|default(0) }}</div>
+                <div class="stat-mini-label" data-i18n="total_completions">Completaciones</div>
+            </div>
+            <div class="stat-mini-card">
+                <div class="stat-mini-value">{{ "%.2f"|format(stats.created.total_spent|default(0)|float) }}</div>
+                <div class="stat-mini-label" data-i18n="doge_spent">DOGE Gastado</div>
+            </div>
+        </div>
+
+        <!-- My Tasks List -->
+        <div class="my-tasks-list" id="myTasksList">
+            {% if user_tasks %}
+                {% for task in user_tasks %}
+                <div class="my-task-card" data-task-id="{{ task.task_id }}">
+                    <div class="my-task-header">
+                        <div class="my-task-title">{{ task.title }}</div>
+                        <div class="my-task-status status-{{ task.status }}">{{ task.status }}</div>
+                    </div>
+                    <div class="my-task-progress">
+                        {% set progress = (task.current_completions / task.max_completions * 100)|int if task.max_completions > 0 else 0 %}
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ progress }}%"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>{{ task.current_completions }} / {{ task.max_completions }}</span>
+                            <span>{{ progress }}%</span>
+                        </div>
+                    </div>
+                    <div class="my-task-actions">
+                        {% if task.status == 'active' %}
+                        <button class="action-btn" onclick="pauseTask('{{ task.task_id }}')">
+                            <i data-lucide="pause"></i> Pausar
+                        </button>
+                        {% elif task.status == 'paused' %}
+                        <button class="action-btn" onclick="resumeTask('{{ task.task_id }}')">
+                            <i data-lucide="play"></i> Reanudar
+                        </button>
+                        {% endif %}
+                        <button class="action-btn" onclick="window.open('{{ task.url }}', '_blank')">
+                            <i data-lucide="external-link"></i> Ver
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i data-lucide="inbox"></i>
+                    <p data-i18n="no_tasks_created">No has creado ninguna tarea todavía</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Variables globales
+let selectedPackage = null;
+const userId = '{{ user_id }}';
+const userDogeBalance = {{ user.doge_balance|default(0)|float }};
+
+const packages = {{ packages|tojson|safe }};
+
+// Cambiar tabs
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    event.target.closest('.tab-btn').classList.add('active');
+    document.getElementById(`tab-${tab}`).classList.add('active');
+}
+
+// Seleccionar paquete
+function selectPackage(packageId) {
+    selectedPackage = packageId;
+    
+    document.querySelectorAll('.package-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    document.querySelector(`[data-package="${packageId}"]`).classList.add('selected');
+    
+    validateForm();
+}
+
+// Actualizar campos del formulario según el tipo
+function updateFormFields() {
+    const taskType = document.getElementById('taskType').value;
+    const telegramFields = document.getElementById('telegramFields');
+    
+    if (taskType === 'telegram_channel' || taskType === 'telegram_group') {
+        telegramFields.style.display = 'block';
+    } else {
+        telegramFields.style.display = 'none';
+        document.getElementById('requiresJoin').checked = false;
+        toggleJoinWarning();
+    }
+    
+    validateForm();
+}
+
+// Mostrar/ocultar warning de admin
+function toggleJoinWarning() {
+    const requiresJoin = document.getElementById('requiresJoin').checked;
+    const warning = document.getElementById('joinWarning');
+    warning.style.display = requiresJoin ? 'block' : 'none';
+}
+
+// Validar formulario
+function validateForm() {
+    const title = document.getElementById('taskTitle').value.trim();
+    const url = document.getElementById('taskUrl').value.trim();
+    const taskType = document.getElementById('taskType').value;
+    const acceptTerms = document.getElementById('acceptTerms').checked;
+    
+    let isValid = selectedPackage && title.length >= 3 && url.length >= 5;
+    
+    // Verificar aceptación de términos
+    if (!acceptTerms) {
+        isValid = false;
+    }
+    
+    // Verificar balance
+    if (selectedPackage) {
+        const pkg = packages[selectedPackage];
+        if (pkg && userDogeBalance < pkg.price_doge) {
+            isValid = false;
+        }
+    }
+    
+    // Para Telegram con verificación, necesita username
+    if ((taskType === 'telegram_channel' || taskType === 'telegram_group') && 
+        document.getElementById('requiresJoin').checked) {
+        const channelUsername = document.getElementById('channelUsername').value.trim();
+        if (!channelUsername) {
+            isValid = false;
+        }
+    }
+    
+    document.getElementById('submitBtn').disabled = !isValid;
+    
+    // Ocultar error de términos si está marcado
+    const termsError = document.getElementById('termsError');
+    if (acceptTerms) {
+        termsError.classList.remove('show');
+    }
+}
+
+// Crear tarea
+async function createTask() {
+    // Verificar términos y condiciones
+    const acceptTerms = document.getElementById('acceptTerms').checked;
+    if (!acceptTerms) {
+        document.getElementById('termsError').classList.add('show');
+        showToast(window.t ? window.t('terms_error') : 'Debes aceptar los términos y condiciones', 'error');
+        // Scroll to terms section
+        document.querySelector('.terms-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+    
+    if (!selectedPackage) {
+        showToast('Selecciona un paquete', 'error');
+        return;
+    }
+    
+    const pkg = packages[selectedPackage];
+    if (userDogeBalance < pkg.price_doge) {
+        showToast(`Balance insuficiente. Necesitas ${pkg.price_doge} DOGE`, 'error');
+        return;
+    }
+    
+    const taskType = document.getElementById('taskType').value;
+    const title = document.getElementById('taskTitle').value.trim();
+    const description = document.getElementById('taskDescription').value.trim();
+    const url = document.getElementById('taskUrl').value.trim();
+    const channelUsername = document.getElementById('channelUsername').value.trim();
+    const requiresJoin = document.getElementById('requiresJoin').checked;
+    
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i data-lucide="loader"></i> Procesando...';
+    
+    try {
+        const response = await fetch(`/api/user-tasks/create?user_id=${userId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                task_type: taskType,
+                title: title,
+                description: description,
+                url: url,
+                channel_username: channelUsername,
+                requires_join: requiresJoin,
+                package_id: selectedPackage,
+                terms_accepted: true
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('¡Tarea publicada exitosamente!', 'success');
+            
+            // Actualizar balance
+            const newBalance = userDogeBalance - pkg.price_doge;
+            document.getElementById('userDogeBalance').textContent = newBalance.toFixed(4);
+            
+            // Vibración de éxito
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+            
+            // Recargar después de 1.5 segundos
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            showToast(data.message || 'Error al crear la tarea', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="rocket"></i> Publicar Tarea';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="rocket"></i> Publicar Tarea';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+}
+
+// Pausar tarea
+async function pauseTask(taskId) {
+    try {
+        const response = await fetch(`/api/user-tasks/pause?user_id=${userId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task_id: taskId })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Tarea pausada', 'success');
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            showToast(data.message || 'Error', 'error');
+        }
+    } catch (error) {
+        showToast('Error de conexión', 'error');
+    }
+}
+
+// Reanudar tarea
+async function resumeTask(taskId) {
+    try {
+        const response = await fetch(`/api/user-tasks/resume?user_id=${userId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task_id: taskId })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Tarea reactivada', 'success');
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            showToast(data.message || 'Error', 'error');
+        }
+    } catch (error) {
+        showToast('Error de conexión', 'error');
+    }
+}
+
+// Event listeners
+document.getElementById('taskTitle').addEventListener('input', validateForm);
+document.getElementById('taskUrl').addEventListener('input', validateForm);
+document.getElementById('channelUsername').addEventListener('input', validateForm);
+document.getElementById('requiresJoin').addEventListener('change', validateForm);
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+    updateFormFields();
+});
+</script>
+{% endblock %}

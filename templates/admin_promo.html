@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Códigos Promocionales - SALLY-E Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .admin-container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+        
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .admin-header h1 { 
+            color: #003D99; 
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-actions { 
+            display: flex; 
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .nav-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(0, 102, 255, 0.4);
+        }
+        
+        .nav-btn.success { 
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+        }
+        
+        .nav-btn.warning { 
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #333;
+        }
+        
+        .content-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            padding: 18px 15px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-3px);
+        }
+        
+        .stat-box .value { 
+            font-size: 28px; 
+            font-weight: bold;
+            line-height: 1.2;
+        }
+        
+        .stat-box .label { 
+            font-size: 11px; 
+            opacity: 0.9;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-box.success { 
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+        }
+        
+        .stat-box.warning { 
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); 
+            color: #333;
+        }
+        
+        .stat-box.danger { 
+            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%); 
+        }
+        
+        .stat-box.info { 
+            background: linear-gradient(135deg, #17a2b8 0%, #3498db 100%); 
+        }
+        
+        /* Promo Cards */
+        .promo-grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .promo-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .promo-card:hover {
+            border-color: #0066FF;
+            box-shadow: 0 5px 20px rgba(0, 102, 255, 0.15);
+        }
+        
+        .promo-card.inactive { 
+            background: #f8f9fa; 
+            opacity: 0.75;
+            border-color: #ddd;
+        }
+        
+        .promo-card.exhausted {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+            border-color: #ffcccc;
+        }
+        
+        .promo-card.expired {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
+            border-color: #ccc;
+        }
+        
+        .promo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .promo-code-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .promo-code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 20px;
+            font-weight: bold;
+            color: #003D99;
+            background: linear-gradient(135deg, #f8f0f5 0%, #fce4ec 100%);
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: 2px solid #e8b4d4;
+            letter-spacing: 1px;
+        }
+        
+        .promo-code.empty {
+            color: #999;
+            font-style: italic;
+            border-color: #ddd;
+            background: #f5f5f5;
+        }
+        
+        .promo-id {
+            font-size: 11px;
+            color: #999;
+            background: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .promo-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-item {
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+        
+        .stat-label { 
+            font-size: 10px; 
+            color: #888; 
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value { 
+            font-size: 16px; 
+            font-weight: 700; 
+            color: #003D99; 
+        }
+        
+        .stat-value.highlight {
+            color: #28a745;
+        }
+        
+        .promo-actions { 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: wrap;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-edit { 
+            background: linear-gradient(135deg, #4488ff 0%, #2196F3 100%); 
+            color: white; 
+        }
+        
+        .btn-toggle { 
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); 
+            color: #333; 
+        }
+        
+        .btn-delete { 
+            background: linear-gradient(135deg, #dc3545 0%, #c0392b 100%); 
+            color: white; 
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #3498db 100%);
+            color: white;
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-active { 
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); 
+            color: #155724;
+            border: 1px solid #b8dbc9;
+        }
+        
+        .badge-inactive { 
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%); 
+            color: #666;
+            border: 1px solid #ccc;
+        }
+        
+        .badge-exhausted { 
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); 
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .badge-expired { 
+            background: linear-gradient(135deg, #e2e3e5 0%, #d6d8db 100%); 
+            color: #383d41;
+            border: 1px solid #d6d8db;
+        }
+        
+        /* Progress bar for usage */
+        .usage-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .usage-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        
+        .usage-bar-fill.warning {
+            background: linear-gradient(90deg, #ffc107, #ff9800);
+        }
+        
+        .usage-bar-fill.danger {
+            background: linear-gradient(90deg, #dc3545, #c0392b);
+        }
+        
+        /* Alerts */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-success { 
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); 
+            border: 1px solid #c3e6cb; 
+            color: #155724; 
+        }
+        
+        .alert-error { 
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); 
+            border: 1px solid #f5c6cb; 
+            color: #721c24; 
+        }
+        
+        .alert-warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+        
+        /* Empty State */
+        .empty-state { 
+            text-align: center; 
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-state-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            color: #888;
+            margin-bottom: 20px;
+        }
+        
+        /* Date display */
+        .date-info {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            
+            .admin-header { 
+                flex-direction: column; 
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .header-actions {
+                justify-content: center;
+            }
+            
+            .promo-header { 
+                flex-direction: column; 
+                align-items: flex-start; 
+            }
+            
+            .promo-actions { 
+                flex-direction: column; 
+            }
+            
+            .btn { 
+                width: 100%; 
+                justify-content: center; 
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🎁 Códigos Promocionales</h1>
+            <div class="header-actions">
+                <a href="{{ url_for('admin_promo_create') }}" class="nav-btn success">➕ Nuevo Código</a>
+                <form method="POST" action="{{ url_for('admin_promo_cleanup') }}" style="display: inline;">
+                    <button type="submit" class="nav-btn warning" onclick="return confirm('¿Limpiar códigos vacíos/inválidos?')">
+                        🧹 Limpiar
+                    </button>
+                </form>
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">← Dashboard</a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {% if category == 'success' %}✅{% elif category == 'error' %}❌{% else %}⚠️{% endif %}
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="content-container">
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="value">{{ promo_stats.total_codes if promo_stats else (promos|length if promos else 0) }}</div>
+                    <div class="label">Total Códigos</div>
+                </div>
+                <div class="stat-box success">
+                    <div class="value">{{ promo_stats.active_codes if promo_stats else 0 }}</div>
+                    <div class="label">Activos</div>
+                </div>
+                <div class="stat-box warning">
+                    <div class="value">{{ promo_stats.exhausted_codes if promo_stats else 0 }}</div>
+                    <div class="label">Agotados</div>
+                </div>
+                <div class="stat-box danger">
+                    <div class="value">{{ promo_stats.disabled_codes if promo_stats else 0 }}</div>
+                    <div class="label">Desactivados</div>
+                </div>
+                <div class="stat-box info">
+                    <div class="value">{{ promo_stats.total_redemptions if promo_stats else 0 }}</div>
+                    <div class="label">Total Canjeados</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value">{{ "%.2f"|format(promo_stats.total_rewards_given|float if promo_stats and promo_stats.total_rewards_given else 0) }}</div>
+                    <div class="label">S-E Repartidos</div>
+                </div>
+            </div>
+
+            <!-- Promo Codes List -->
+            {% if promos and promos|length > 0 %}
+                <div class="promo-grid">
+                    {% for promo in promos %}
+                    {% set status = promo.status if promo.status else ('active' if promo.active else 'disabled') %}
+                    {% set current_uses = promo.current_uses|default(0)|int %}
+                    {% set max_uses = promo.max_uses %}
+                    {% set usage_percent = ((current_uses / max_uses) * 100)|round(1) if max_uses and max_uses > 0 else 0 %}
+                    {% set code_display = promo.code if promo.code and promo.code|trim else '' %}
+                    
+                    <div class="promo-card {% if not promo.active %}inactive{% endif %} {% if status == 'exhausted' %}exhausted{% endif %} {% if status == 'expired' %}expired{% endif %}">
+                        <div class="promo-header">
+                            <div class="promo-code-container">
+                                {% if code_display %}
+                                    <span class="promo-code">{{ code_display }}</span>
+                                {% else %}
+                                    <span class="promo-code empty">(código vacío)</span>
+                                {% endif %}
+                                <span class="promo-id">ID: {{ promo.id }}</span>
+                                
+                                {% if status == 'active' %}
+                                    <span class="badge badge-active">✅ Activo</span>
+                                {% elif status == 'exhausted' %}
+                                    <span class="badge badge-exhausted">🚫 Agotado</span>
+                                {% elif status == 'expired' %}
+                                    <span class="badge badge-expired">⏰ Expirado</span>
+                                {% else %}
+                                    <span class="badge badge-inactive">⏸️ Desactivado</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="promo-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">💰 Recompensa</div>
+                                <div class="stat-value">{{ "%.4f"|format(promo.reward|float if promo.reward else 0) }} {{ promo.currency|default('S-E') }}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">✅ Canjeados</div>
+                                <div class="stat-value highlight">{{ current_uses }}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">🎯 Límite</div>
+                                <div class="stat-value">{{ max_uses if max_uses else '∞' }}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">📅 Creado</div>
+                                <div class="stat-value" style="font-size: 12px;">
+                                    {% if promo.created_at %}
+                                        {% if promo.created_at is string %}
+                                            {{ promo.created_at[:10] }}
+                                        {% else %}
+                                            {{ promo.created_at.strftime('%d/%m/%Y') }}
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if max_uses %}
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-bottom: 4px;">
+                                <span>Uso: {{ current_uses }}/{{ max_uses }}</span>
+                                <span>{{ usage_percent }}%</span>
+                            </div>
+                            <div class="usage-bar">
+                                <div class="usage-bar-fill {% if usage_percent >= 90 %}danger{% elif usage_percent >= 70 %}warning{% endif %}" 
+                                     style="width: {{ usage_percent }}%"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if promo.expires_at %}
+                        <div class="date-info">
+                            ⏰ Expira: 
+                            {% if promo.expires_at is string %}
+                                {{ promo.expires_at }}
+                            {% else %}
+                                {{ promo.expires_at.strftime('%d/%m/%Y %H:%M') }}
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <div class="promo-actions">
+                            {% if code_display %}
+                                <a href="{{ url_for('admin_edit_promo', code=code_display) }}" class="btn btn-edit">
+                                    ✏️ Editar
+                                </a>
+                                
+                                <form method="POST" action="{{ url_for('admin_toggle_promo', code=code_display) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-toggle">
+                                        {% if promo.active %}⏸️ Desactivar{% else %}▶️ Activar{% endif %}
+                                    </button>
+                                </form>
+                                
+                                <form method="POST" action="{{ url_for('admin_promo_delete', code=code_display) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-delete" 
+                                            onclick="return confirm('¿Eliminar el código {{ code_display }}?\n\nEsto también eliminará el historial de canjes.')">
+                                        🗑️ Eliminar
+                                    </button>
+                                </form>
+                            {% else %}
+                                <!-- For empty codes, delete by ID -->
+                                <form method="POST" action="{{ url_for('admin_promo_delete_by_id', promo_id=promo.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-delete" 
+                                            onclick="return confirm('¿Eliminar este código vacío/inválido?')">
+                                        🗑️ Eliminar Código Vacío (ID: {{ promo.id }})
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">🎁</div>
+                    <h3>No hay códigos promocionales</h3>
+                    <p>Crea tu primer código promocional para ofrecer recompensas a tus usuarios.</p>
+                    <a href="{{ url_for('admin_promo_create') }}" class="nav-btn success">
+                        ➕ Crear Primer Código
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>

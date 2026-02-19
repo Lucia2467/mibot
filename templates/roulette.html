@@ -1,0 +1,845 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Ruleta de Premios{% endblock %}
+
+{% block extra_head %}
+<!-- SDK de Monetag - OBLIGATORIO -->
+<script src="//libtl.com/sdk.js" data-zone="10311387" data-sdk="show_10311387"></script>
+
+<style>
+.roulette-page {
+    padding: var(--space-4);
+    min-height: 100vh;
+    padding-bottom: 100px;
+}
+
+.roulette-header {
+    text-align: center;
+    margin-bottom: var(--space-4);
+}
+
+.roulette-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0066FF, #0052CC);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: var(--space-2);
+}
+
+.balance-display {
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.1), rgba(0, 82, 204, 0.1));
+    border: 1px solid rgba(0, 102, 255, 0.3);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.balance-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 4px;
+}
+
+.balance-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #00D4FF;
+}
+
+.wheel-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 0 auto var(--space-4);
+}
+
+.wheel-outer {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #0066FF, #0052CC, #00D4FF, #0040FF, #0066FF);
+    animation: rotateGlow 4s linear infinite;
+}
+
+@keyframes rotateGlow {
+    to { transform: rotate(360deg); }
+}
+
+.wheel-inner-bg {
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: #0B0B0F;
+}
+
+#wheelCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.wheel-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #1a1a2e, #0B0B0F);
+    border: 3px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.wheel-center i {
+    color: #0066FF;
+    width: 24px;
+    height: 24px;
+}
+
+.wheel-pointer {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+}
+
+.pointer-triangle {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 25px solid #0066FF;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.ads-section {
+    background: rgba(255, 183, 0, 0.1);
+    border: 1px solid rgba(255, 183, 0, 0.3);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+    text-align: center;
+}
+
+.ads-section.completed {
+    background: rgba(0, 255, 136, 0.1);
+    border-color: rgba(0, 255, 136, 0.3);
+}
+
+.ads-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #FFB700;
+    margin-bottom: var(--space-3);
+}
+
+.ads-section.completed .ads-title {
+    color: #00FF88;
+}
+
+.ads-dots {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.ad-dot {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    transition: all 0.3s;
+}
+
+.ad-dot.active {
+    border-color: #FFB700;
+    color: #FFB700;
+    animation: pulse 1s infinite;
+}
+
+.ad-dot.done {
+    background: linear-gradient(135deg, #00FF88, #00CC66);
+    border-color: #00FF88;
+    color: #000;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.watch-btn {
+    width: 100%;
+    padding: var(--space-3);
+    background: linear-gradient(135deg, #FFB700, #FF9500);
+    border: none;
+    border-radius: var(--radius-md);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.watch-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.timer-display {
+    margin-top: var(--space-3);
+    padding: var(--space-3);
+    background: rgba(255, 183, 0, 0.1);
+    border-radius: var(--radius-md);
+    display: none;
+}
+
+.timer-display.active {
+    display: block;
+}
+
+.timer-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #FFB700;
+    text-align: center;
+}
+
+.timer-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    margin-top: 4px;
+}
+
+.spin-btn {
+    width: 100%;
+    padding: var(--space-4);
+    background: linear-gradient(135deg, #0066FF, #0052CC);
+    border: none;
+    border-radius: var(--radius-lg);
+    color: #FFF;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s;
+}
+
+.spin-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #333;
+}
+
+.spin-cost {
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    margin-top: var(--space-2);
+}
+
+.result-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+}
+
+.result-modal.active {
+    display: flex;
+}
+
+.result-content {
+    background: linear-gradient(135deg, #1a1a2e, #0B0B0F);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    text-align: center;
+    max-width: 300px;
+    width: 100%;
+}
+
+.result-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-4);
+}
+
+.result-icon.win {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 200, 100, 0.1));
+    border: 2px solid #00FF88;
+}
+
+.result-icon.lose {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(200, 0, 0, 0.1));
+    border: 2px solid #FF4444;
+}
+
+.result-icon i {
+    width: 40px;
+    height: 40px;
+}
+
+.result-icon.win i { color: #00FF88; }
+.result-icon.lose i { color: #FF4444; }
+
+.result-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: var(--space-2);
+}
+
+.result-prize {
+    font-size: 2rem;
+    font-weight: 900;
+    margin-bottom: var(--space-4);
+}
+
+.result-prize.win { color: #00FF88; }
+.result-prize.lose { color: #FF4444; }
+
+.result-balance {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: var(--space-4);
+}
+
+.close-btn {
+    width: 100%;
+    padding: var(--space-3);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius-md);
+    color: #FFF;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.confetti-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1001;
+    overflow: hidden;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -20px;
+}
+
+@keyframes confettiFall {
+    0% { opacity: 1; transform: translateY(-10vh) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+}
+
+.sdk-status {
+    text-align: center;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.3);
+    margin-top: var(--space-2);
+}
+
+.sdk-status.ready { color: #00FF88; }
+.sdk-status.error { color: #FF4444; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="roulette-page">
+    <div class="roulette-header">
+        <h1 class="roulette-title">🎰 Ruleta de Premios</h1>
+    </div>
+
+    <div class="balance-display">
+        <div class="balance-label">Tu balance</div>
+        <div class="balance-value" id="balanceDisplay">{{ user.se_balance|default(0)|round(4) }} S-E</div>
+    </div>
+
+    <div class="ads-section" id="adsSection">
+        <div class="ads-title" id="adsTitle">Mira 3 anuncios para girar</div>
+        <div class="ads-dots">
+            <div class="ad-dot" id="dot1">1</div>
+            <div class="ad-dot" id="dot2">2</div>
+            <div class="ad-dot" id="dot3">3</div>
+        </div>
+        <button class="watch-btn" id="watchBtn">
+            <span id="watchBtnText">Ver anuncio 1/3</span>
+        </button>
+        <div class="timer-display" id="timerDisplay">
+            <div class="timer-text" id="timerText">15</div>
+            <div class="timer-label">segundos restantes</div>
+        </div>
+        <div class="sdk-status" id="sdkStatus">Cargando Monetag...</div>
+    </div>
+
+    <div class="wheel-container">
+        <div class="wheel-outer"></div>
+        <div class="wheel-inner-bg"></div>
+        <canvas id="wheelCanvas"></canvas>
+        <div class="wheel-center">
+            <i data-lucide="star"></i>
+        </div>
+        <div class="wheel-pointer">
+            <div class="pointer-triangle"></div>
+        </div>
+    </div>
+
+    <button class="spin-btn" id="spinBtn" disabled>
+        <span id="spinBtnText">COMPLETA 3 ANUNCIOS</span>
+    </button>
+    <div class="spin-cost">Costo por giro: 2 S-E</div>
+</div>
+
+<div class="result-modal" id="resultModal">
+    <div class="result-content">
+        <div class="result-icon" id="resultIcon">
+            <i data-lucide="gift"></i>
+        </div>
+        <div class="result-title" id="resultTitle">¡Felicidades!</div>
+        <div class="result-prize" id="resultPrize">2 S-E</div>
+        <div class="result-balance">Nuevo balance: <span id="newBalance">0</span></div>
+        <button class="close-btn" id="closeResultBtn">CERRAR</button>
+    </div>
+</div>
+
+<div class="confetti-container" id="confettiContainer"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    // Config
+    const USER_ID = '{{ user_id }}';
+    const SPIN_COST = 2;
+    const REQUIRED_ADS = 3;
+    const AD_DURATION = 15;
+
+    // Premios
+    const PRIZES = [
+        { text: '2 S-E', value: 2, currency: 'SE', color: '#0066FF' },
+        { text: '0.02 TON', value: 0.02, currency: 'TON', color: '#0088CC' },
+        { text: ':((', value: 0, currency: 'NONE', color: '#2D2D3D' },
+        { text: '1 S-E', value: 1, currency: 'SE', color: '#0040FF' },
+        { text: 'T_T', value: 0, currency: 'NONE', color: '#1a1a2e' },
+        { text: '0.01 TON', value: 0.01, currency: 'TON', color: '#0098EA' },
+        { text: '0.5 S-E', value: 0.5, currency: 'SE', color: '#00A3FF' },
+        { text: ':_(', value: 0, currency: 'NONE', color: '#2D2D3D' },
+        { text: '0.002 TON', value: 0.002, currency: 'TON', color: '#0077B5' },
+        { text: '0.5 S-E', value: 0.5, currency: 'SE', color: '#E91E63' },
+        { text: '>_<', value: 0, currency: 'NONE', color: '#1a1a2e' },
+        { text: '1 S-E', value: 1, currency: 'SE', color: '#673AB7' }
+    ];
+
+    // Estado
+    let adsWatched = 0;
+    let currentBalance = {{ user.se_balance|default(0) }};
+    let isSpinning = false;
+    let isWatchingAd = false;
+    let currentRotation = 0;
+    let adTimer = null;
+    let monetagReady = false;
+
+    // Elementos
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    const watchBtn = document.getElementById('watchBtn');
+    const spinBtn = document.getElementById('spinBtn');
+    const adsSection = document.getElementById('adsSection');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timerText = document.getElementById('timerText');
+    const resultModal = document.getElementById('resultModal');
+    const sdkStatus = document.getElementById('sdkStatus');
+
+    // Init
+    document.addEventListener('DOMContentLoaded', function() {
+        initWheel();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        
+        // Event listeners
+        watchBtn.addEventListener('click', watchAd);
+        spinBtn.addEventListener('click', spinWheel);
+        document.getElementById('closeResultBtn').addEventListener('click', closeResult);
+        
+        // Verificar SDK de Monetag
+        checkMonetagSDK();
+        
+        console.log('[Roulette] Ready - User:', USER_ID);
+    });
+
+    // Verificar si Monetag está disponible
+    function checkMonetagSDK() {
+        let attempts = 0;
+        const maxAttempts = 20;
+        
+        const checkInterval = setInterval(function() {
+            attempts++;
+            
+            if (typeof show_10311387 === 'function') {
+                clearInterval(checkInterval);
+                monetagReady = true;
+                sdkStatus.textContent = '✓ Monetag listo';
+                sdkStatus.className = 'sdk-status ready';
+                console.log('[Monetag] SDK loaded successfully');
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkInterval);
+                sdkStatus.textContent = '⚠ Monetag no disponible';
+                sdkStatus.className = 'sdk-status error';
+                console.error('[Monetag] SDK failed to load after', maxAttempts, 'attempts');
+            } else {
+                sdkStatus.textContent = 'Cargando Monetag... (' + attempts + ')';
+            }
+        }, 500);
+    }
+
+    // ==================== ANUNCIOS ====================
+    function watchAd() {
+        if (isWatchingAd || adsWatched >= REQUIRED_ADS) return;
+        
+        if (currentBalance < SPIN_COST) {
+            showAlert('Balance insuficiente. Necesitas ' + SPIN_COST + ' S-E');
+            return;
+        }
+        
+        // Verificar que Monetag esté listo
+        if (!monetagReady || typeof show_10311387 !== 'function') {
+            showAlert('El sistema de anuncios aún está cargando. Espera un momento.');
+            return;
+        }
+        
+        isWatchingAd = true;
+        
+        // Marcar dot como activo
+        const dot = document.getElementById('dot' + (adsWatched + 1));
+        if (dot) dot.classList.add('active');
+        
+        // Deshabilitar botón y mostrar timer
+        watchBtn.disabled = true;
+        document.getElementById('watchBtnText').textContent = 'Anuncio en curso...';
+        timerDisplay.classList.add('active');
+        
+        // Iniciar timer
+        let remaining = AD_DURATION;
+        timerText.textContent = remaining;
+        
+        // Llamar a Monetag para mostrar el anuncio
+        try {
+            console.log('[Monetag] Calling show_10311387()...');
+            show_10311387();
+            console.log('[Monetag] Ad triggered successfully');
+        } catch (error) {
+            console.error('[Monetag] Error triggering ad:', error);
+        }
+        
+        // Timer de cuenta regresiva
+        adTimer = setInterval(function() {
+            remaining--;
+            timerText.textContent = remaining;
+            
+            if (remaining <= 0) {
+                clearInterval(adTimer);
+                adComplete(dot);
+            }
+        }, 1000);
+    }
+
+    function adComplete(dot) {
+        timerDisplay.classList.remove('active');
+        
+        // Marcar completado
+        if (dot) {
+            dot.classList.remove('active');
+            dot.classList.add('done');
+            dot.innerHTML = '✓';
+        }
+        
+        adsWatched++;
+        isWatchingAd = false;
+        
+        console.log('[Roulette] Ad completed:', adsWatched, '/', REQUIRED_ADS);
+        
+        if (adsWatched >= REQUIRED_ADS) {
+            // Habilitar giro
+            adsSection.classList.add('completed');
+            document.getElementById('adsTitle').textContent = '¡Listo para girar!';
+            watchBtn.style.display = 'none';
+            spinBtn.disabled = false;
+            document.getElementById('spinBtnText').textContent = 'GIRAR RULETA';
+            
+            haptic('success');
+        } else {
+            // Siguiente anuncio
+            watchBtn.disabled = false;
+            document.getElementById('watchBtnText').textContent = 'Ver anuncio ' + (adsWatched + 1) + '/3';
+            
+            haptic('medium');
+        }
+    }
+
+    // ==================== GIRAR ====================
+    async function spinWheel() {
+        if (isSpinning || adsWatched < REQUIRED_ADS) return;
+        
+        if (currentBalance < SPIN_COST) {
+            showAlert('Balance insuficiente');
+            return;
+        }
+        
+        isSpinning = true;
+        spinBtn.disabled = true;
+        document.getElementById('spinBtnText').textContent = 'Preparando...';
+        
+        haptic('medium');
+        
+        // DELAY DE 2 SEGUNDOS ANTES DE GIRAR
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        document.getElementById('spinBtnText').textContent = 'Girando...';
+        haptic('heavy');
+        
+        try {
+            const response = await fetch('/api/roulette/spin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: USER_ID,
+                    ads_watched: adsWatched
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+                showAlert(data.error || 'Error al girar');
+                resetState();
+                return;
+            }
+            
+            // Animar rueda - CORREGIDO
+            const prizeIndex = data.prize_index;
+            const numPrizes = PRIZES.length;
+            const segmentAngle = 360 / numPrizes;
+            
+            // Normalizar rotación actual
+            const normalizedCurrent = currentRotation % 360;
+            
+            // Calcular ángulo donde debe quedar el premio (el puntero está arriba)
+            // El segmento 0 empieza arriba, cada segmento es 30°
+            // Para que el centro del segmento N quede arriba: rotar para que N quede en posición 0
+            const prizeAngle = prizeIndex * segmentAngle + (segmentAngle / 2);
+            const destinationAngle = 360 - prizeAngle;
+            
+            // Calcular cuánto necesitamos rotar desde la posición actual normalizada
+            let rotation = destinationAngle - normalizedCurrent;
+            
+            // Asegurar que sea positivo (siempre gira hacia adelante)
+            if (rotation <= 0) {
+                rotation += 360;
+            }
+            
+            // Agregar giros completos (5-7 vueltas)
+            const spins = 5 + Math.floor(Math.random() * 3);
+            const totalRotation = currentRotation + rotation + (spins * 360);
+            
+            canvas.style.transition = 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+            canvas.style.transform = 'rotate(' + totalRotation + 'deg)';
+            currentRotation = totalRotation;
+            
+            // Guardar el premio real del servidor
+            const serverPrize = data.prize;
+            
+            // Mostrar resultado después de la animación
+            setTimeout(function() {
+                currentBalance = data.new_balance;
+                updateBalance();
+                // Usar el premio del SERVIDOR, no el del array local
+                showResult(serverPrize, data.new_balance);
+                resetState();
+            }, 5100);
+            
+        } catch (error) {
+            console.error('[Roulette] Error:', error);
+            showAlert('Error de conexión');
+            resetState();
+        }
+    }
+
+    function resetState() {
+        isSpinning = false;
+        adsWatched = 0;
+        
+        // Resetear UI
+        adsSection.classList.remove('completed');
+        document.getElementById('adsTitle').textContent = 'Mira 3 anuncios para girar';
+        watchBtn.style.display = 'flex';
+        watchBtn.disabled = false;
+        document.getElementById('watchBtnText').textContent = 'Ver anuncio 1/3';
+        
+        spinBtn.disabled = true;
+        document.getElementById('spinBtnText').textContent = 'COMPLETA 3 ANUNCIOS';
+        
+        // Resetear dots
+        for (let i = 1; i <= 3; i++) {
+            const dot = document.getElementById('dot' + i);
+            if (dot) {
+                dot.classList.remove('active', 'done');
+                dot.innerHTML = i.toString();
+            }
+        }
+    }
+
+    // ==================== UI ====================
+    function showResult(prize, newBalance) {
+        const isWin = prize.value > 0;
+        
+        const icon = document.getElementById('resultIcon');
+        icon.className = 'result-icon ' + (isWin ? 'win' : 'lose');
+        icon.innerHTML = isWin ? '<i data-lucide="gift"></i>' : '<i data-lucide="x"></i>';
+        
+        document.getElementById('resultTitle').textContent = isWin ? '¡Felicidades!' : 'Sin suerte';
+        
+        const prizeEl = document.getElementById('resultPrize');
+        prizeEl.className = 'result-prize ' + (isWin ? 'win' : 'lose');
+        prizeEl.textContent = prize.text;
+        
+        document.getElementById('newBalance').textContent = newBalance.toFixed(4) + ' S-E';
+        
+        resultModal.classList.add('active');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        
+        if (isWin) {
+            createConfetti();
+            haptic('success');
+        }
+    }
+
+    function closeResult() {
+        resultModal.classList.remove('active');
+    }
+
+    function updateBalance() {
+        document.getElementById('balanceDisplay').textContent = currentBalance.toFixed(4) + ' S-E';
+    }
+
+    function showAlert(msg) {
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.showAlert(msg);
+        } else {
+            alert(msg);
+        }
+    }
+
+    function haptic(type) {
+        try {
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred(type);
+            }
+        } catch(e) {}
+    }
+
+    // ==================== RUEDA ====================
+    function initWheel() {
+        const container = document.querySelector('.wheel-container');
+        const size = container.offsetWidth;
+        
+        canvas.width = size * 2;
+        canvas.height = size * 2;
+        canvas.style.width = size + 'px';
+        canvas.style.height = size + 'px';
+        
+        drawWheel();
+    }
+
+    function drawWheel() {
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = canvas.width / 2 - 10;
+        const segmentAngle = (2 * Math.PI) / PRIZES.length;
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        PRIZES.forEach(function(prize, index) {
+            const startAngle = index * segmentAngle - Math.PI / 2;
+            const endAngle = startAngle + segmentAngle;
+            
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = prize.color;
+            ctx.fill();
+            
+            ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(startAngle + segmentAngle / 2);
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#FFF';
+            ctx.font = 'bold ' + (canvas.width * 0.035) + 'px Arial';
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 3;
+            ctx.fillText(prize.text, radius - 15, 0);
+            ctx.restore();
+        });
+    }
+
+    // ==================== CONFETTI ====================
+    function createConfetti() {
+        const container = document.getElementById('confettiContainer');
+        const colors = ['#0066FF', '#0052CC', '#00D4FF', '#FFD700', '#00FF88'];
+        
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+            confetti.style.animation = 'confettiFall ' + (2 + Math.random() * 2) + 's ease-out forwards';
+            container.appendChild(confetti);
+            
+            setTimeout(function() { confetti.remove(); }, 4000);
+        }
+    }
+
+    // Resize
+    window.addEventListener('resize', initWheel);
+})();
+</script>
+{% endblock %}

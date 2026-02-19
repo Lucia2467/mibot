@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SALLY-E | Cuenta Suspendida</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a1a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(139, 0, 0, 0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 40px rgba(220, 53, 69, 0.5), 0 0 80px rgba(220, 53, 69, 0.2), inset 0 0 60px rgba(220, 53, 69, 0.1); }
+            50% { box-shadow: 0 0 60px rgba(220, 53, 69, 0.7), 0 0 120px rgba(220, 53, 69, 0.3), inset 0 0 80px rgba(220, 53, 69, 0.15); }
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .banned-card {
+            background: linear-gradient(135deg, rgba(26, 10, 10, 0.95) 0%, rgba(13, 2, 2, 0.95) 100%);
+            border: 2px solid rgba(220, 53, 69, 0.5);
+            border-radius: 24px;
+            padding: 40px 30px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 40px rgba(220, 53, 69, 0.5),
+                        0 0 80px rgba(220, 53, 69, 0.2),
+                        inset 0 0 60px rgba(220, 53, 69, 0.1);
+            animation: glow 3s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banned-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #dc3545 0%, #c82333 50%, #dc3545 100%);
+            box-shadow: 0 0 20px rgba(220, 53, 69, 0.8);
+        }
+
+        .icon-container {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .ban-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.3) 0%, rgba(139, 0, 0, 0.2) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            box-shadow: 0 0 40px rgba(220, 53, 69, 0.4),
+                        inset 0 0 30px rgba(220, 53, 69, 0.2);
+            position: relative;
+        }
+
+        .ban-icon::after {
+            content: '🚫';
+            filter: drop-shadow(0 0 10px rgba(220, 53, 69, 0.8));
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #dc3545 0%, #ff6b6b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-shadow: 0 0 30px rgba(220, 53, 69, 0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 15px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .info-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #ffffff;
+            font-size: 15px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.2) 0%, rgba(139, 0, 0, 0.2) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .user-id {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+            font-family: monospace;
+        }
+
+        .support-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .support-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .support-btn:hover::before {
+            left: 100%;
+        }
+
+        .support-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(220, 53, 69, 0.6),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .support-btn:active {
+            transform: translateY(0);
+        }
+
+        .note {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        .telegram-icon {
+            font-size: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .banned-card {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .ban-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="banned-card">
+            <div class="icon-container">
+                <div class="ban-icon"></div>
+            </div>
+
+            <h1>Cuenta Suspendida</h1>
+            <p class="subtitle">
+                Tu acceso a SALLY-E ha sido restringido por violar nuestros términos de servicio.
+            </p>
+
+            <div class="user-info">
+                <div class="user-avatar">👤</div>
+                <div class="user-details">
+                    <div class="user-name">{{ user.first_name or 'Usuario' }}</div>
+                    <div class="user-id">ID: {{ user.user_id[:12] if user.user_id|length > 12 else user.user_id }}...</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-label">Razón de la suspensión</div>
+                <div class="info-value">{{ user.ban_reason or 'Violación de términos de servicio' }}</div>
+            </div>
+
+            {% if user.updated_at %}
+            <div class="info-box">
+                <div class="info-label">Fecha de suspensión</div>
+                <div class="info-value">{{ user.updated_at[:10] if user.updated_at is string else (user.updated_at.strftime('%Y-%m-%d') if user.updated_at else 'N/A') }}</div>
+            </div>
+            {% endif %}
+
+            <a href="https://t.me/Soporte_Sally" class="support-btn" target="_blank">
+                <span class="telegram-icon">✈️</span>
+                <span>Contactar Soporte</span>
+            </a>
+
+            <p class="note">
+                Si crees que esto es un error, contacta a nuestro equipo de soporte para resolver la situación.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

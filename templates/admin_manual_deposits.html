@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depósitos Manuales - SALLY-E Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-header h1 {
+            color: #003D99;
+            font-size: 24px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .content-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-box.active {
+            box-shadow: 0 0 0 3px white, 0 0 0 6px #003D99;
+        }
+
+        .stat-box.pending { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .stat-box.approved { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+        .stat-box.rejected { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .stat-box.auto_rejected { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); }
+
+        .stat-box .value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .stat-box .label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: #0066FF;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #003D99;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-auto_rejected {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        /* Action Buttons */
+        .btn-sm {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 5px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-sm:hover {
+            opacity: 0.8;
+        }
+
+        .btn-approve {
+            background: #22c55e;
+            color: white;
+        }
+
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-view {
+            background: #3b82f6;
+            color: white;
+        }
+
+        /* Proof Image */
+        .proof-thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .proof-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: #003D99;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-body img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.2s;
+        }
+
+        .pagination a:hover {
+            border-color: #0066FF;
+        }
+
+        .pagination a.active {
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .pagination a.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            color: #92400e;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #666;
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #1e40af;
+        }
+
+        .info-box strong {
+            color: #1e3a8a;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filters {
+                overflow-x: auto;
+            }
+
+            th, td {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>💰 Depósitos Manuales</h1>
+            <div class="header-actions">
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">← Dashboard</a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="content-container">
+            <!-- Info Box -->
+            <div class="info-box">
+                <strong>⚠️ Regla de Monto Mínimo:</strong> Los depósitos menores a <strong>{{ min_deposit }} DOGE</strong> son rechazados automáticamente y NO pueden ser aprobados.
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <a href="?status=all" class="stat-box {% if status_filter == 'all' %}active{% endif %}" style="text-decoration: none;">
+                    <div class="value">{{ status_counts.get('pending', 0) + status_counts.get('approved', 0) + status_counts.get('rejected', 0) + status_counts.get('auto_rejected', 0) }}</div>
+                    <div class="label">Total</div>
+                </a>
+                <a href="?status=pending" class="stat-box pending {% if status_filter == 'pending' %}active{% endif %}" style="text-decoration: none;">
+                    <div class="value">{{ status_counts.get('pending', 0) }}</div>
+                    <div class="label">Pendientes</div>
+                </a>
+                <a href="?status=approved" class="stat-box approved {% if status_filter == 'approved' %}active{% endif %}" style="text-decoration: none;">
+                    <div class="value">{{ status_counts.get('approved', 0) }}</div>
+                    <div class="label">Aprobados</div>
+                </a>
+                <a href="?status=rejected" class="stat-box rejected {% if status_filter == 'rejected' %}active{% endif %}" style="text-decoration: none;">
+                    <div class="value">{{ status_counts.get('rejected', 0) }}</div>
+                    <div class="label">Rechazados</div>
+                </a>
+                <a href="?status=auto_rejected" class="stat-box auto_rejected {% if status_filter == 'auto_rejected' %}active{% endif %}" style="text-decoration: none;">
+                    <div class="value">{{ status_counts.get('auto_rejected', 0) }}</div>
+                    <div class="label">Auto-Rechazados</div>
+                </a>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                {% if deposits %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Monto</th>
+                            <th>Método</th>
+                            <th>Comprobante</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for deposit in deposits %}
+                        <tr>
+                            <td>
+                                <code style="font-size: 11px;">{{ deposit.deposit_id }}</code>
+                            </td>
+                            <td>
+                                <strong>{{ deposit.first_name or 'Usuario' }}</strong><br>
+                                <small style="color: #666;">@{{ deposit.username or deposit.user_id }}</small>
+                            </td>
+                            <td>
+                                <strong style="color: {% if deposit.amount < min_deposit %}#ef4444{% else %}#22c55e{% endif %};">
+                                    {{ "%.4f"|format(deposit.amount) }}
+                                </strong>
+                                <span style="color: #666;">{{ deposit.currency }}</span>
+                                {% if deposit.amount < min_deposit %}
+                                <br><small style="color: #ef4444;">⚠️ Bajo mínimo</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if deposit.method == 'wallet' %}
+                                <span style="background: #C9A635; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px;">
+                                    🔗 Wallet
+                                </span>
+                                {% else %}
+                                <span style="background: #f0b90b; color: #000; padding: 3px 8px; border-radius: 4px; font-size: 11px;">
+                                    📱 Binance Pay
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <img src="{{ deposit.proof_image }}" 
+                                     alt="Comprobante" 
+                                     class="proof-thumb"
+                                     onclick="openProofModal('{{ deposit.proof_image }}', '{{ deposit.deposit_id }}')">
+                            </td>
+                            <td>
+                                {{ deposit.created_at.strftime('%d/%m/%Y') }}<br>
+                                <small style="color: #666;">{{ deposit.created_at.strftime('%H:%M') }}</small>
+                            </td>
+                            <td>
+                                <span class="badge badge-{{ deposit.status }}">
+                                    {{ DEPOSIT_STATUS.get(deposit.status, deposit.status) }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if deposit.status == 'pending' %}
+                                    {% if deposit.amount >= min_deposit %}
+                                    <button class="btn-sm btn-approve" onclick="openApproveModal('{{ deposit.deposit_id }}', {{ deposit.amount }}, '{{ deposit.currency }}')">
+                                        ✓ Aprobar
+                                    </button>
+                                    {% endif %}
+                                    <button class="btn-sm btn-reject" onclick="openRejectModal('{{ deposit.deposit_id }}')">
+                                        ✗ Rechazar
+                                    </button>
+                                {% elif deposit.status == 'auto_rejected' %}
+                                    <span style="color: #666; font-size: 12px;">No aprobable</span>
+                                {% else %}
+                                    <span style="color: #666; font-size: 12px;">Procesado</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <h3>No hay depósitos</h3>
+                    <p>No se encontraron depósitos con los filtros seleccionados.</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Pagination -->
+            {% if total_pages > 1 %}
+            <div class="pagination">
+                {% if page > 1 %}
+                <a href="?status={{ status_filter }}&page={{ page - 1 }}">← Anterior</a>
+                {% endif %}
+                
+                {% for p in range(1, total_pages + 1) %}
+                    {% if p == page %}
+                    <a href="#" class="active">{{ p }}</a>
+                    {% elif p <= 3 or p > total_pages - 2 or (p >= page - 1 and p <= page + 1) %}
+                    <a href="?status={{ status_filter }}&page={{ p }}">{{ p }}</a>
+                    {% elif p == 4 or p == total_pages - 2 %}
+                    <span style="padding: 8px;">...</span>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page < total_pages %}
+                <a href="?status={{ status_filter }}&page={{ page + 1 }}">Siguiente →</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Modal para ver comprobante -->
+    <div id="proof-modal" class="modal-overlay" onclick="closeProofModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>📸 Comprobante</h3>
+                <button class="modal-close" onclick="closeProofModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <img id="proof-image" src="" alt="Comprobante de pago">
+                <p id="proof-deposit-id" style="margin-top: 15px; color: #666; font-size: 12px;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para aprobar -->
+    <div id="approve-modal" class="modal-overlay" onclick="closeApproveModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>✅ Aprobar Depósito</h3>
+                <button class="modal-close" onclick="closeApproveModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="approve-form" method="POST" action="{{ url_for('manual_deposits.approve_deposit') }}">
+                    <input type="hidden" name="deposit_id" id="approve-deposit-id">
+                    
+                    <div style="background: #d1fae5; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                        <p style="color: #065f46;">
+                            <strong>⚠️ Confirmar acreditación:</strong><br>
+                            Se acreditarán <strong id="approve-amount"></strong> <strong id="approve-currency"></strong> al usuario.
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Notas (opcional)</label>
+                        <textarea name="admin_notes" rows="3" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; resize: vertical;" placeholder="Notas internas..."></textarea>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" style="flex: 1; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            ✓ Confirmar Aprobación
+                        </button>
+                        <button type="button" onclick="closeApproveModal()" style="padding: 12px 20px; background: #f3f4f6; border: none; border-radius: 8px; cursor: pointer;">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para rechazar -->
+    <div id="reject-modal" class="modal-overlay" onclick="closeRejectModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>❌ Rechazar Depósito</h3>
+                <button class="modal-close" onclick="closeRejectModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="reject-form" method="POST" action="{{ url_for('manual_deposits.reject_deposit') }}">
+                    <input type="hidden" name="deposit_id" id="reject-deposit-id">
+                    
+                    <div style="background: #fee2e2; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                        <p style="color: #991b1b;">
+                            <strong>⚠️ Atención:</strong><br>
+                            El depósito será marcado como rechazado y NO se acreditará ningún saldo.
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Razón del rechazo</label>
+                        <textarea name="admin_notes" rows="3" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; resize: vertical;" placeholder="Ej: Comprobante inválido, monto incorrecto, etc." required></textarea>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" style="flex: 1; padding: 12px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            ✗ Confirmar Rechazo
+                        </button>
+                        <button type="button" onclick="closeRejectModal()" style="padding: 12px 20px; background: #f3f4f6; border: none; border-radius: 8px; cursor: pointer;">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Proof Modal
+        function openProofModal(imageSrc, depositId) {
+            document.getElementById('proof-image').src = imageSrc;
+            document.getElementById('proof-deposit-id').textContent = 'ID: ' + depositId;
+            document.getElementById('proof-modal').style.display = 'flex';
+        }
+
+        function closeProofModal(e) {
+            if (!e || e.target.classList.contains('modal-overlay')) {
+                document.getElementById('proof-modal').style.display = 'none';
+            }
+        }
+
+        // Approve Modal
+        function openApproveModal(depositId, amount, currency) {
+            document.getElementById('approve-deposit-id').value = depositId;
+            document.getElementById('approve-amount').textContent = amount.toFixed(4);
+            document.getElementById('approve-currency').textContent = currency;
+            document.getElementById('approve-modal').style.display = 'flex';
+        }
+
+        function closeApproveModal(e) {
+            if (!e || e.target.classList.contains('modal-overlay')) {
+                document.getElementById('approve-modal').style.display = 'none';
+            }
+        }
+
+        // Reject Modal
+        function openRejectModal(depositId) {
+            document.getElementById('reject-deposit-id').value = depositId;
+            document.getElementById('reject-modal').style.display = 'flex';
+        }
+
+        function closeRejectModal(e) {
+            if (!e || e.target.classList.contains('modal-overlay')) {
+                document.getElementById('reject-modal').style.display = 'none';
+            }
+        }
+
+        // Close modals with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

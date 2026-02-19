@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misiones de Referidos - SALLY-E Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-header h1 {
+            color: #003D99;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: transform 0.2s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .nav-btn.secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .content-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-box .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .stat-box .value {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .stat-box .label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .stat-box.success { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+        .stat-box.warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .stat-box.info { background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); }
+
+        /* Section Title */
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #003D99;
+            margin: 25px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Missions Table */
+        .missions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .missions-table th,
+        .missions-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .missions-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .missions-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .missions-table .mission-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .missions-table .mission-desc {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .reward-badge {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #1a1a2e;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+            display: inline-block;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .status-badge.inactive {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .btn-sm.edit {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .btn-sm.toggle {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .btn-sm.delete {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-sm:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        /* Alert messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state p {
+            margin-bottom: 20px;
+        }
+
+        /* Info box */
+        .info-box {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .info-box .icon {
+            font-size: 20px;
+        }
+
+        .info-box .text {
+            font-size: 13px;
+            color: #0369a1;
+            line-height: 1.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .missions-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>👥 Misiones de Referidos</h1>
+            <div class="header-actions">
+                <a href="{{ url_for('referral_missions.admin_mission_new') }}" class="nav-btn success">➕ Nueva Misión</a>
+                <a href="{{ url_for('referral_missions.admin_missions_audit') }}" class="nav-btn secondary">📋 Auditoría</a>
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">🏠 Dashboard</a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="content-container">
+            <!-- Estadísticas -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="icon">📋</div>
+                    <div class="value">{{ stats.total_missions or 0 }}</div>
+                    <div class="label">Total Misiones</div>
+                </div>
+                <div class="stat-box success">
+                    <div class="icon">✅</div>
+                    <div class="value">{{ stats.active_missions or 0 }}</div>
+                    <div class="label">Activas</div>
+                </div>
+                <div class="stat-box info">
+                    <div class="icon">👥</div>
+                    <div class="value">{{ stats.users_with_progress or 0 }}</div>
+                    <div class="label">Usuarios Participando</div>
+                </div>
+                <div class="stat-box warning">
+                    <div class="icon">🏆</div>
+                    <div class="value">{{ stats.total_completions or 0 }}</div>
+                    <div class="label">Misiones Completadas</div>
+                </div>
+                <div class="stat-box">
+                    <div class="icon">🎁</div>
+                    <div class="value">{{ stats.total_claimed or 0 }}</div>
+                    <div class="label">Recompensas Reclamadas</div>
+                </div>
+                <div class="stat-box success">
+                    <div class="icon">💰</div>
+                    <div class="value">{{ "%.2f"|format(stats.total_rewards_paid or 0) }}</div>
+                    <div class="label">DOGE Pagados</div>
+                </div>
+            </div>
+
+            <!-- Info box -->
+            <div class="info-box">
+                <div class="icon">💡</div>
+                <div class="text">
+                    <strong>¿Cómo funciona?</strong><br>
+                    Las misiones de referidos permiten a los usuarios ganar recompensas por invitar amigos. 
+                    Cada misión tiene un objetivo de referidos y una recompensa específica. 
+                    Solo se cuentan los referidos nuevos registrados mientras la misión está activa.
+                </div>
+            </div>
+
+            <!-- Lista de Misiones -->
+            <div class="section-title">
+                <span>📝 Lista de Misiones</span>
+            </div>
+
+            {% if missions and missions|length > 0 %}
+            <table class="missions-table">
+                <thead>
+                    <tr>
+                        <th>Orden</th>
+                        <th>Misión</th>
+                        <th>Requisito</th>
+                        <th>Recompensa</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mission in missions %}
+                    <tr>
+                        <td>{{ mission.display_order or 0 }}</td>
+                        <td>
+                            <div class="mission-title">{{ mission.title }}</div>
+                            <div class="mission-desc">{{ mission.description or 'Sin descripción' }}</div>
+                        </td>
+                        <td>{{ mission.required_referrals }} referidos</td>
+                        <td>
+                            <span class="reward-badge">{{ mission.reward_amount }} {{ mission.reward_currency }}</span>
+                        </td>
+                        <td>
+                            {% if mission.active %}
+                            <span class="status-badge active">✓ Activa</span>
+                            {% else %}
+                            <span class="status-badge inactive">✗ Inactiva</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <a href="{{ url_for('referral_missions.admin_mission_edit', mission_id=mission.mission_id) }}" class="btn-sm edit">
+                                    ✏️ Editar
+                                </a>
+                                <form action="{{ url_for('referral_missions.admin_mission_toggle', mission_id=mission.mission_id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn-sm toggle">
+                                        {{ '⏸️ Pausar' if mission.active else '▶️ Activar' }}
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('referral_missions.admin_mission_delete', mission_id=mission.mission_id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar esta misión? Esta acción no se puede deshacer.');">
+                                    <button type="submit" class="btn-sm delete">🗑️ Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div class="icon">📋</div>
+                <p>No hay misiones creadas todavía</p>
+                <a href="{{ url_for('referral_missions.admin_mission_new') }}" class="nav-btn success">
+                    ➕ Crear Primera Misión
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

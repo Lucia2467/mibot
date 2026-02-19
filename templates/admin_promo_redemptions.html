@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Canjes - {{ promo.code }} - SALLY-E Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .admin-container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+        }
+        
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .admin-header h1 { 
+            color: #003D99; 
+            font-size: 24px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .nav-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(0, 102, 255, 0.4);
+        }
+        
+        .content-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Promo Summary */
+        .promo-summary {
+            background: linear-gradient(135deg, #f8f0f5 0%, #fce4ec 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            border: 2px solid #e8b4d4;
+        }
+        
+        .summary-item {
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #003D99;
+        }
+        
+        .summary-value.code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 20px;
+            letter-spacing: 2px;
+        }
+        
+        .summary-label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+        
+        th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .user-username {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .user-id {
+            font-family: monospace;
+            font-size: 12px;
+            color: #666;
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .reward-value {
+            font-weight: 600;
+            color: #28a745;
+        }
+        
+        .date-value {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+        
+        .empty-state-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+        
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stats-bar-left {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .stats-bar-right {
+            display: flex;
+            gap: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-header { 
+                flex-direction: column; 
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .promo-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            th, td {
+                padding: 10px 8px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>📋 Historial de Canjes</h1>
+            <a href="{{ url_for('admin_promo') }}" class="nav-btn">← Volver a Códigos</a>
+        </div>
+
+        <div class="content-container">
+            <!-- Promo Summary -->
+            <div class="promo-summary">
+                <div class="summary-item">
+                    <div class="summary-value code">{{ promo.code }}</div>
+                    <div class="summary-label">Código</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">{{ "%.4f"|format(promo.reward|float) }}</div>
+                    <div class="summary-label">Recompensa {{ promo.currency|default('S-E') }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">{{ promo.current_uses|default(0) }}</div>
+                    <div class="summary-label">Veces Canjeado</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">{{ promo.max_uses if promo.max_uses else '∞' }}</div>
+                    <div class="summary-label">Límite Máximo</div>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stats-bar-left">
+                    Mostrando <strong>{{ redemptions|length }}</strong> canjes
+                </div>
+                <div class="stats-bar-right">
+                    <a href="{{ url_for('admin_edit_promo', code=promo.code) }}" class="nav-btn" style="padding: 8px 16px; font-size: 13px;">
+                        ✏️ Editar Código
+                    </a>
+                </div>
+            </div>
+
+            <!-- Redemptions Table -->
+            {% if redemptions and redemptions|length > 0 %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Usuario</th>
+                            <th>User ID</th>
+                            <th>Recompensa</th>
+                            <th>Fecha de Canje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for redemption in redemptions %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <div class="user-info">
+                                    <span class="user-name">{{ redemption.first_name|default('Usuario') }}</span>
+                                    {% if redemption.username %}
+                                    <span class="user-username">@{{ redemption.username }}</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <span class="user-id">{{ redemption.user_id }}</span>
+                            </td>
+                            <td>
+                                <span class="reward-value">+{{ "%.4f"|format(redemption.reward|float) }} {{ redemption.currency|default('SE') }}</span>
+                            </td>
+                            <td>
+                                <span class="date-value">
+                                    {% if redemption.redeemed_at %}
+                                        {% if redemption.redeemed_at is string %}
+                                            {{ redemption.redeemed_at }}
+                                        {% else %}
+                                            {{ redemption.redeemed_at.strftime('%d/%m/%Y %H:%M:%S') }}
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <h3>Sin canjes aún</h3>
+                <p>Este código aún no ha sido canjeado por ningún usuario.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

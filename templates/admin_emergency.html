@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 Herramientas de Emergencia - SALLY-E Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            color: #ff4757;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .warning-banner {
+            background: linear-gradient(135deg, rgba(255,71,87,0.2), rgba(255,107,107,0.2));
+            border: 1px solid rgba(255,71,87,0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .warning-banner h3 {
+            color: #ff4757;
+            margin-bottom: 10px;
+        }
+        
+        .warning-banner p {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .tool-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .tool-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+        
+        .tool-card p {
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .form-group input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffa502, #ff7f50);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff4757, #ff6b6b);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #2ed573, #1abc9c);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        
+        .result-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            display: none;
+        }
+        
+        .result-box.success {
+            border-left: 4px solid #2ed573;
+        }
+        
+        .result-box.error {
+            border-left: 4px solid #ff4757;
+        }
+        
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 Herramientas de Emergencia</h1>
+            <div class="nav-links">
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">📊 Dashboard</a>
+                <a href="{{ url_for('admin_users') }}" class="nav-btn">👥 Usuarios</a>
+            </div>
+        </div>
+        
+        <div class="warning-banner">
+            <h3>⚠️ PRECAUCIÓN</h3>
+            <p>Estas herramientas modifican datos directamente. Úsalas solo cuando sea absolutamente necesario.</p>
+        </div>
+        
+        <div class="tools-grid">
+            <!-- Restaurar Balance -->
+            <div class="tool-card">
+                <h3>💰 Restaurar Balance</h3>
+                <p>Agrega o establece el balance de un usuario manualmente.</p>
+                <form id="restoreBalanceForm">
+                    <div class="form-group">
+                        <label>ID de Usuario</label>
+                        <input type="number" name="user_id" placeholder="Ej: 12345" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Moneda</label>
+                        <select name="currency">
+                            <option value="se">S-E</option>
+                            <option value="usdt">USDT</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cantidad</label>
+                        <input type="number" name="amount" step="0.0001" placeholder="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Acción</label>
+                        <select name="action">
+                            <option value="add">Agregar al balance actual</option>
+                            <option value="set">Establecer como nuevo balance</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-warning">💰 Restaurar Balance</button>
+                    <div class="result-box" id="restoreBalanceResult"></div>
+                </form>
+            </div>
+            
+            <!-- Agregar Referido -->
+            <div class="tool-card">
+                <h3>👥 Agregar Referido Manual</h3>
+                <p>Crea una relación de referido manualmente entre dos usuarios.</p>
+                <form id="addReferralForm">
+                    <div class="form-group">
+                        <label>ID del Referidor (quien invitó)</label>
+                        <input type="number" name="referrer_id" placeholder="ID del que invitó" required>
+                    </div>
+                    <div class="form-group">
+                        <label>ID del Referido (nuevo usuario)</label>
+                        <input type="number" name="referred_id" placeholder="ID del invitado" required>
+                    </div>
+                    <div class="form-group">
+                        <label>¿Dar bonus?</label>
+                        <select name="give_bonus">
+                            <option value="yes">Sí, dar bonus al referidor</option>
+                            <option value="no">No dar bonus</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">👥 Agregar Referido</button>
+                    <div class="result-box" id="addReferralResult"></div>
+                </form>
+            </div>
+            
+            <!-- Desbanear por IP -->
+            <div class="tool-card">
+                <h3>🔓 Desbanear por IP</h3>
+                <p>Desbanea todos los usuarios asociados a una dirección IP.</p>
+                <form id="unbanIpForm">
+                    <div class="form-group">
+                        <label>Dirección IP</label>
+                        <input type="text" name="ip" placeholder="Ej: 192.168.1.100" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger">🔓 Desbanear IP</button>
+                    <div class="result-box" id="unbanIpResult"></div>
+                </form>
+            </div>
+            
+            <!-- Recalcular Referidos -->
+            <div class="tool-card">
+                <h3>🔄 Recalcular Referidos</h3>
+                <p>Recalcula el contador de referidos de un usuario basándose en la base de datos.</p>
+                <form id="recalcReferralsForm">
+                    <div class="form-group">
+                        <label>ID de Usuario</label>
+                        <input type="number" name="user_id" placeholder="ID del usuario" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning">🔄 Recalcular</button>
+                    <div class="result-box" id="recalcReferralsResult"></div>
+                </form>
+            </div>
+            
+            <!-- Reset Mining Timer -->
+            <div class="tool-card">
+                <h3>⏱️ Resetear Timer de Minería</h3>
+                <p>Permite al usuario volver a minar inmediatamente.</p>
+                <form id="resetMiningForm">
+                    <div class="form-group">
+                        <label>ID de Usuario</label>
+                        <input type="number" name="user_id" placeholder="ID del usuario" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">⏱️ Resetear Timer</button>
+                    <div class="result-box" id="resetMiningResult"></div>
+                </form>
+            </div>
+            
+            <!-- Validar Referido -->
+            <div class="tool-card">
+                <h3>✅ Validar Referido Pendiente</h3>
+                <p>Valida manualmente un referido que no se procesó correctamente.</p>
+                <form id="validateReferralForm">
+                    <div class="form-group">
+                        <label>ID del Referido (usuario nuevo)</label>
+                        <input type="number" name="referred_id" placeholder="ID del usuario referido" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">✅ Validar</button>
+                    <div class="result-box" id="validateReferralResult"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generic form handler
+        async function handleForm(formId, endpoint, resultId) {
+            const form = document.getElementById(formId);
+            const resultBox = document.getElementById(resultId);
+            
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    resultBox.style.display = 'block';
+                    if (result.success) {
+                        resultBox.className = 'result-box success';
+                        resultBox.innerHTML = '✅ ' + (result.message || 'Operación exitosa');
+                    } else {
+                        resultBox.className = 'result-box error';
+                        resultBox.innerHTML = '❌ ' + (result.error || 'Error desconocido');
+                    }
+                } catch (error) {
+                    resultBox.style.display = 'block';
+                    resultBox.className = 'result-box error';
+                    resultBox.innerHTML = '❌ Error de conexión: ' + error.message;
+                }
+            });
+        }
+        
+        // Initialize all forms
+        handleForm('restoreBalanceForm', '/api/emergency/restore-balance', 'restoreBalanceResult');
+        handleForm('addReferralForm', '/api/emergency/add-referral', 'addReferralResult');
+        handleForm('unbanIpForm', '/api/emergency/unban-ip', 'unbanIpResult');
+        handleForm('recalcReferralsForm', '/api/emergency/recalc-referrals', 'recalcReferralsResult');
+        handleForm('resetMiningForm', '/api/emergency/reset-mining', 'resetMiningResult');
+        handleForm('validateReferralForm', '/api/emergency/validate-referral', 'validateReferralResult');
+    </script>
+</body>
+</html>

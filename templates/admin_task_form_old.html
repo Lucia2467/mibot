@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Editar' if task else 'Crear' }} Tarea - SALLY-E Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .admin-container { max-width: 900px; margin: 0 auto; }
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        .admin-header h1 { color: #003D99; font-size: 24px; }
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+        .nav-btn:hover { transform: translateY(-2px); }
+        .content-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #003D99;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #0066FF;
+        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        .form-group small { color: #999; font-size: 12px; margin-top: 5px; display: block; }
+        .form-group.disabled input,
+        .form-group.disabled select {
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+        
+        /* Checkbox Toggle */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .toggle-group:hover {
+            background: #f0f0f0;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #ccc;
+            border-radius: 13px;
+            transition: background 0.3s;
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .toggle-group input {
+            display: none;
+        }
+        .toggle-group input:checked + .toggle-switch {
+            background: #28a745;
+        }
+        .toggle-group input:checked + .toggle-switch::after {
+            transform: translateX(24px);
+        }
+        .toggle-label {
+            flex: 1;
+        }
+        .toggle-label strong {
+            display: block;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        .toggle-label small {
+            color: #999;
+            font-size: 12px;
+        }
+        
+        /* Conditional Fields */
+        .conditional-field {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 8px;
+            border: 1px solid #b8daff;
+        }
+        .conditional-field.visible {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn-submit:hover { transform: translateY(-2px); }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .alert-error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .alert-success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .alert-info { background: #cce5ff; border: 1px solid #b8daff; color: #004085; }
+        
+        /* Info Box */
+        .info-box {
+            background: #e8f4fd;
+            border: 1px solid #b8daff;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #004085;
+        }
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>{{ '✏️ Editar' if task else '➕ Crear' }} Tarea</h1>
+            <a href="{{ url_for('admin_tasks') }}" class="nav-btn">← Volver</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="content-container">
+            <form method="POST" action="{{ url_for('admin_task_edit', task_id=task.task_id or task.id) if task else url_for('admin_task_create') }}" id="taskForm">
+                
+                <!-- Sección: Información Básica -->
+                <div class="form-section">
+                    <div class="section-title">📋 Información Básica</div>
+                    
+                    <div class="form-group">
+                        <label>Título de la Tarea *</label>
+                        <input type="text" name="title" value="{{ task.title if task else '' }}" required placeholder="Ej: Unirse al canal de Telegram">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea name="description" placeholder="Describe la tarea que debe completar el usuario">{{ task.description if task else '' }}</textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tipo de Tarea</label>
+                            <select name="type" id="taskType" onchange="updateFormVisibility()">
+                                <option value="telegram" {% if task and task.task_type == 'telegram' %}selected{% endif %}>📱 Telegram (Canal/Grupo)</option>
+                                <option value="twitter" {% if task and task.task_type == 'twitter' %}selected{% endif %}>🐦 Twitter/X</option>
+                                <option value="youtube" {% if task and task.task_type == 'youtube' %}selected{% endif %}>📺 YouTube</option>
+                                <option value="website" {% if task and task.task_type == 'website' %}selected{% endif %}>🌐 Sitio Web</option>
+                                <option value="other" {% if task and task.task_type == 'other' %}selected{% endif %}>📋 Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Recompensa (S-E) *</label>
+                            <input type="number" name="reward" step="0.0001" min="0" value="{{ task.reward if task else '0.1' }}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Enlace y Verificación -->
+                <div class="form-section">
+                    <div class="section-title">🔗 Enlace y Verificación</div>
+                    
+                    <div class="form-group">
+                        <label>URL de la Tarea</label>
+                        <input type="url" name="url" id="taskUrl" value="{{ task.url if task else '' }}" placeholder="https://t.me/tu_canal">
+                        <small>Enlace donde el usuario debe ir para completar la tarea</small>
+                    </div>
+                    
+                    <!-- Toggle de Verificación de Canal -->
+                    <div id="channelVerificationToggle">
+                        <label class="toggle-group">
+                            <input type="checkbox" name="requires_channel_join" id="requiresChannelJoin" value="true" 
+                                   {% if task and task.requires_channel_join %}checked{% endif %}
+                                   onchange="updateFormVisibility()">
+                            <span class="toggle-switch"></span>
+                            <span class="toggle-label">
+                                <strong>Requiere verificación de membresía</strong>
+                                <small>El usuario debe unirse al canal antes de recibir la recompensa</small>
+                            </span>
+                        </label>
+                        
+                        <div class="conditional-field" id="channelUsernameField">
+                            <div class="info-box">
+                                <strong>ℹ️ Verificación de Canal</strong>
+                                Si activas esta opción, el bot verificará que el usuario realmente se haya unido al canal antes de dar la recompensa.
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Username del Canal</label>
+                                <input type="text" name="channel_username" value="{{ task.channel_username if task else '' }}" 
+                                       placeholder="@nombredelcanal o -1001234567890">
+                                <small>El username del canal (con @) o el ID del chat. El bot debe ser administrador del canal.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Límites y Prioridad -->
+                <div class="form-section">
+                    <div class="section-title">⚙️ Límites y Configuración</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Máximo de Completaciones</label>
+                            <input type="number" name="max_completions" min="0" 
+                                   value="{{ task.max_completions if task and task.max_completions else '' }}" 
+                                   placeholder="Vacío = ilimitado">
+                            <small>Cantidad máxima de usuarios que pueden completar esta tarea. Dejar vacío o 0 para ilimitado.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Prioridad de Orden</label>
+                            <input type="number" name="priority" min="0" value="{{ task.priority if task else '0' }}">
+                            <small>Mayor número = aparece primero en la lista</small>
+                        </div>
+                    </div>
+                    
+                    {% if task and task.current_completions %}
+                    <div class="info-box">
+                        <strong>📊 Estadísticas actuales:</strong>
+                        Esta tarea ha sido completada {{ task.current_completions }} veces
+                        {% if task.max_completions %}
+                            de {{ task.max_completions }} posibles
+                        {% endif %}.
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Sección: Estado -->
+                <div class="form-section">
+                    <div class="section-title">🔘 Estado de la Tarea</div>
+                    
+                    <label class="toggle-group">
+                        <input type="checkbox" name="active" value="true" {% if not task or task.active %}checked{% endif %}>
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <strong>Tarea Activa</strong>
+                            <small>Solo las tareas activas son visibles para los usuarios</small>
+                        </span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    {{ '💾 Guardar Cambios' if task else '➕ Crear Tarea' }}
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function updateFormVisibility() {
+            const taskType = document.getElementById('taskType').value;
+            const requiresChannel = document.getElementById('requiresChannelJoin');
+            const channelVerificationToggle = document.getElementById('channelVerificationToggle');
+            const channelUsernameField = document.getElementById('channelUsernameField');
+            
+            // Mostrar/ocultar opciones de verificación de canal según el tipo
+            if (taskType === 'telegram') {
+                channelVerificationToggle.style.display = 'block';
+            } else {
+                channelVerificationToggle.style.display = 'none';
+                requiresChannel.checked = false;
+            }
+            
+            // Mostrar/ocultar campo de username del canal
+            if (requiresChannel && requiresChannel.checked) {
+                channelUsernameField.classList.add('visible');
+            } else {
+                channelUsernameField.classList.remove('visible');
+            }
+        }
+        
+        // Inicializar visibilidad
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFormVisibility();
+        });
+    </script>
+</body>
+</html>

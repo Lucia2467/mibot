@@ -1,0 +1,753 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | GigaPub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.08) 0%, rgba(123, 31, 162, 0.08) 50%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(156, 39, 176, 0.2); position: relative; overflow: hidden;">
+        <!-- Elementos de fondo -->
+        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(156, 39, 176, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(123, 31, 162, 0.12) 0%, transparent 70%); border-radius: 50%; animation: float 10s ease-in-out infinite reverse;"></div>
+
+        <div style="position: relative; z-index: 1; text-align: center; padding: var(--space-4);">
+            <!-- Icono principal -->
+            <div class="floating" style="width: 80px; height: 80px; margin: 0 auto var(--space-4); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(156, 39, 176, 0.2) 0%, rgba(123, 31, 162, 0.2) 100%); border-radius: 20px; box-shadow: 0 8px 32px rgba(156, 39, 176, 0.3);">
+                <i data-lucide="zap" style="width: 40px; height: 40px; color: #9C27B0;"></i>
+            </div>
+
+            <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: var(--space-2); background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                GigaPub
+            </h1>
+            <p style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.6); line-height: 1.6;" data-i18n="ad_reward_description_gigapub">
+                Ver anuncio • Ganar 0.002 DOGE + 5 PTS
+            </p>
+            <!-- Recompensa clara visible -->
+            <div style="margin-top: var(--space-3); padding: var(--space-2) var(--space-3); background: rgba(156, 39, 176, 0.15); border-radius: 10px; display: inline-block;">
+                <span style="font-weight: 700; color: #9C27B0; font-size: 1rem;" data-i18n="ad_reward_gigapub">Gana 0.002 DOGE + 5 PTS</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.04) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(156, 39, 176, 0.2); margin-top: var(--space-4); position: relative; overflow: hidden;">
+        <div style="position: relative; z-index: 1;">
+            <!-- Progress Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(156, 39, 176, 0.1); border-radius: 12px;">
+                        <i data-lucide="bar-chart-3" style="width: 22px; height: 22px; color: #9C27B0;"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9375rem; color: white;" data-i18n="ads_today">Anuncios Hoy</div>
+                        <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="max_12_per_day">Máximo 12 por día</div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div id="giga-progress-text" style="font-weight: 700; font-size: 1.25rem; color: #9C27B0;">
+                        {{ progress.ads_watched }} / 12
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div style="height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; margin-bottom: var(--space-4);">
+                <div id="giga-progress-bar" style="height: 100%; background: linear-gradient(90deg, #9C27B0 0%, #7B1FA2 100%); border-radius: 4px; transition: width 0.5s ease; width: {{ (progress.ads_watched / 12 * 100) }}%;"></div>
+            </div>
+
+            <!-- Reward Info -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-3); background: rgba(156, 39, 176, 0.05); border-radius: 12px; border: 1px solid rgba(156, 39, 176, 0.1);">
+                <div style="display: flex; align-items: center; gap: var(--space-2);">
+                    <i data-lucide="coins" style="width: 18px; height: 18px; color: #9C27B0;"></i>
+                    <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7);" data-i18n="earned_today">Ganado hoy</span>
+                </div>
+                <div id="giga-earned-amount" style="font-weight: 700; font-size: 1rem; color: #9C27B0;">
+                    {{ "%.3f"|format(progress.total_earned) }} DOGE
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(18, 18, 18, 0.98) 100%); border: 1px solid rgba(156, 39, 176, 0.15); margin-top: var(--space-4);">
+        <div style="text-align: center;">
+            <!-- Reward per view -->
+            <div style="margin-bottom: var(--space-4);">
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);" data-i18n="reward_per_ad">Recompensa por anuncio</div>
+                <div style="font-weight: 700; font-size: 1.5rem; color: #9C27B0;">
+                    +{{ config.reward_per_ad }} DOGE + 5 PTS
+                </div>
+            </div>
+
+            <!-- Main Action Button -->
+            <button id="giga-watch-btn"
+                    onclick="startGigaPub()"
+                    {% if progress.completed %}disabled{% endif %}
+                    style="width: 100%; padding: var(--space-4); border-radius: 14px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; {% if progress.completed %}background: rgba(156, 39, 176, 0.15); color: rgba(255, 255, 255, 0.5);{% else %}background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%); color: #fff;{% endif %}">
+                {% if progress.completed %}
+                    <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
+                        <span data-i18n="daily_limit_reached">Límite diario alcanzado</span>
+                    </span>
+                {% else %}
+                    <span id="giga-btn-content" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i data-lucide="play-circle" style="width: 20px; height: 20px;"></i>
+                        <span data-i18n="watch_ad">Ver Anuncio</span>
+                    </span>
+                {% endif %}
+            </button>
+
+            <!-- Info text -->
+            <div id="giga-status-text" style="margin-top: var(--space-3); font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">
+                {% if progress.completed %}
+                    ¡Límite diario alcanzado! Vuelve mañana para más.
+                {% else %}
+                    Máximo 12 anuncios por día • 40 segundos entre cada anuncio • 15 seg mínimo
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Timer Card (Hidden by default, shows during ad) -->
+    <div id="giga-timer-card" class="card" style="display: none; background: linear-gradient(135deg, rgba(156, 39, 176, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(156, 39, 176, 0.3); margin-top: var(--space-4);">
+        <div style="text-align: center;">
+            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-2);" data-i18n="keep_ad_open">
+                Mantén el anuncio abierto
+            </div>
+            <div id="giga-timer-display" style="font-weight: 800; font-size: 2.5rem; color: #9C27B0;">
+                15
+            </div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4); margin-top: var(--space-2);" data-i18n="seconds_to_validate">
+                segundos restantes para validar
+            </div>
+            <!-- Progress bar for timer -->
+            <div style="height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; margin-top: var(--space-3);">
+                <div id="giga-timer-bar" style="height: 100%; background: linear-gradient(90deg, #9C27B0 0%, #7B1FA2 100%); border-radius: 3px; transition: width 1s linear; width: 0%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Reward Info -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(156, 39, 176, 0.15); margin-top: var(--space-4);">
+        <div style="display: flex; align-items: center; gap: var(--space-3);">
+            <div style="flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(156, 39, 176, 0.1); border-radius: 12px;">
+                <i data-lucide="gift" style="width: 22px; height: 22px; color: #9C27B0;"></i>
+            </div>
+            <div>
+                <div style="font-weight: 600; font-size: 0.9375rem; color: white; margin-bottom: var(--space-1);" data-i18n="total_reward">
+                    Recompensa Total
+                </div>
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="complete_12_ads">
+                    Completa los 12 anuncios para ganar <span style="color: #9C27B0; font-weight: 600;">hasta 0.024 DOGE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How it Works -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(156, 39, 176, 0.1); margin-top: var(--space-4);">
+        <div style="font-weight: 600; font-size: 0.9375rem; color: white; margin-bottom: var(--space-3);">
+            <i data-lucide="info" style="width: 16px; height: 16px; color: #9C27B0; vertical-align: middle; margin-right: 6px;"></i>
+            <span data-i18n="how_it_works">¿Cómo funciona?</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(156, 39, 176, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #9C27B0;">1</div>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);" data-i18n="step_1_watch">Presiona "Ver Anuncio" para iniciar</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(156, 39, 176, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #9C27B0;">2</div>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);" data-i18n="step_2_wait">Mira el anuncio completo (mínimo 15 segundos)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(156, 39, 176, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #9C27B0;">3</div>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);" data-i18n="step_3_reward">¡Recibe tu recompensa automáticamente!</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="/explore/ads-center?user_id={{ user_id }}" style="text-decoration: none;">
+        <div class="card" style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(156, 39, 176, 0.15); margin-top: var(--space-4); cursor: pointer; transition: all 0.3s ease;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-3);">
+                <i data-lucide="arrow-left" style="width: 20px; height: 20px; color: #9C27B0;"></i>
+                <span style="font-weight: 600; font-size: 0.9375rem; color: #9C27B0;" data-i18n="back_to_ads_center">
+                    Volver al Centro de ADS
+                </span>
+            </div>
+        </div>
+    </a>
+</div>
+
+<style>
+/* Animación flotante */
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(10px, 10px);
+    }
+}
+
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Efecto pulse para el botón */
+@keyframes pulse-giga {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(156, 39, 176, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 15px rgba(156, 39, 176, 0);
+    }
+}
+
+#giga-watch-btn:not(:disabled) {
+    animation: pulse-giga 2s infinite;
+}
+
+#giga-watch-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(156, 39, 176, 0.4);
+}
+
+#giga-watch-btn:not(:disabled):active {
+    transform: translateY(0);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ============================================
+// GIGAPUB - SISTEMA DE ANUNCIOS REWARD-BASED
+// ============================================
+
+const GIGA_USER_ID = '{{ user_id }}';
+let gigaSessionToken = null;
+let gigaWatchStartTime = null;
+let gigaTimerInterval = null;
+let gigaIsWatching = false;
+
+/**
+ * Inicia el proceso de visualización de GigaPub
+ * 1. Solicita token al backend
+ * 2. Muestra el anuncio usando window.showGiga("principal")
+ * 3. Valida y otorga recompensa
+ */
+async function startGigaPub() {
+    const btn = document.getElementById('giga-watch-btn');
+    const statusText = document.getElementById('giga-status-text');
+    const timerCard = document.getElementById('giga-timer-card');
+
+    if (gigaIsWatching) {
+        console.log('[GigaPub] Ya hay un anuncio en progreso');
+        return;
+    }
+
+    // Verificar que el SDK esté cargado
+    if (typeof window.showGiga !== 'function') {
+        console.error('[GigaPub] SDK no cargado');
+        statusText.textContent = 'Error: SDK no disponible. Recarga la página.';
+        statusText.style.color = '#EF4444';
+        return;
+    }
+
+    // Deshabilitar botón
+    btn.disabled = true;
+    btn.innerHTML = `
+        <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <div style="width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <span>Cargando...</span>
+        </span>
+    `;
+
+    try {
+        // 1. Solicitar token al backend
+        const startResponse = await fetch('/gigapub/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: GIGA_USER_ID })
+        });
+
+        const startData = await startResponse.json();
+
+        if (!startData.success) {
+            throw new Error(startData.error || 'Error al iniciar sesión');
+        }
+
+        gigaSessionToken = startData.session_token;
+        gigaWatchStartTime = Date.now();
+        gigaIsWatching = true;
+
+        console.log('[GigaPub] Sesión iniciada, mostrando anuncio...');
+
+        // Mostrar timer card
+        timerCard.style.display = 'block';
+        startGigaTimer();
+
+        // 2. Mostrar el anuncio usando window.showGiga("principal")
+        await window.showGiga("principal");
+
+        // 3. El anuncio se completó exitosamente
+        console.log('[GigaPub] Anuncio completado');
+        
+        const watchDuration = Math.floor((Date.now() - gigaWatchStartTime) / 1000);
+        await claimGigaReward(watchDuration);
+
+    } catch (error) {
+        console.error('[GigaPub] Error:', error);
+        
+        // El anuncio fue cerrado o falló
+        const watchDuration = gigaWatchStartTime ? Math.floor((Date.now() - gigaWatchStartTime) / 1000) : 0;
+        
+        if (watchDuration >= 15 && gigaSessionToken) {
+            // Si vio suficiente tiempo, intentar dar recompensa
+            await claimGigaReward(watchDuration);
+        } else {
+            // No vio suficiente tiempo o error
+            await cancelGigaSession(watchDuration);
+            
+            statusText.textContent = 'Anuncio cancelado o no disponible. Intenta de nuevo.';
+            statusText.style.color = '#EF4444';
+            
+            setTimeout(() => {
+                statusText.textContent = 'Máximo 12 anuncios por día • 40 segundos entre cada anuncio • 15 seg mínimo';
+                statusText.style.color = 'rgba(255, 255, 255, 0.4)';
+            }, 3000);
+        }
+
+        resetGigaButton();
+    }
+}
+
+/**
+ * Timer visual durante la visualización
+ */
+function startGigaTimer() {
+    const timerDisplay = document.getElementById('giga-timer-display');
+    const timerBar = document.getElementById('giga-timer-bar');
+    let seconds = 15;
+
+    gigaTimerInterval = setInterval(() => {
+        seconds--;
+        timerDisplay.textContent = Math.max(0, seconds);
+        timerBar.style.width = `${((15 - seconds) / 15) * 100}%`;
+
+        if (seconds <= 0) {
+            clearInterval(gigaTimerInterval);
+            timerDisplay.textContent = '✓';
+            timerDisplay.style.color = '#10B981';
+        }
+    }, 1000);
+}
+
+/**
+ * Reclama la recompensa del anuncio
+ */
+async function claimGigaReward(watchDuration) {
+    const statusText = document.getElementById('giga-status-text');
+
+    try {
+        const response = await fetch('/gigapub/reward', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: GIGA_USER_ID,
+                session_token: gigaSessionToken,
+                watch_duration: watchDuration
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            console.log('[GigaPub] Recompensa otorgada:', data);
+            
+            // Actualizar UI
+            updateGigaProgress(data);
+            showGigaNotification('success', `+${data.reward} DOGE + 5 PTS`);
+            
+            // Haptic feedback
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+
+            if (data.completed) {
+                markGigaCompleted();
+            } else {
+                // Iniciar cooldown
+                startGigaCooldown(data.cooldown || 40);
+            }
+        } else {
+            console.warn('[GigaPub] Error en recompensa:', data.error);
+            statusText.textContent = data.error || 'Error al procesar recompensa';
+            statusText.style.color = '#EF4444';
+            
+            setTimeout(() => resetGigaButton(), 3000);
+        }
+
+    } catch (error) {
+        console.error('[GigaPub] Error reclamando recompensa:', error);
+        statusText.textContent = 'Error de conexión. Intenta de nuevo.';
+        statusText.style.color = '#EF4444';
+        
+        setTimeout(() => resetGigaButton(), 3000);
+    }
+
+    // Limpiar
+    clearInterval(gigaTimerInterval);
+    gigaSessionToken = null;
+    gigaWatchStartTime = null;
+    gigaIsWatching = false;
+    document.getElementById('giga-timer-card').style.display = 'none';
+}
+
+/**
+ * Cancela la sesión sin recompensa
+ */
+async function cancelGigaSession(watchDuration) {
+    if (!gigaSessionToken) return;
+
+    try {
+        await fetch('/gigapub/cancel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: GIGA_USER_ID,
+                session_token: gigaSessionToken,
+                watch_duration: watchDuration
+            })
+        });
+    } catch (e) {
+        console.warn('[GigaPub] Error cancelando sesión:', e);
+    }
+
+    clearInterval(gigaTimerInterval);
+    gigaSessionToken = null;
+    gigaWatchStartTime = null;
+    gigaIsWatching = false;
+    document.getElementById('giga-timer-card').style.display = 'none';
+}
+
+/**
+ * Actualiza el progreso visual
+ */
+function updateGigaProgress(data) {
+    const progressText = document.getElementById('giga-progress-text');
+    const progressBar = document.getElementById('giga-progress-bar');
+    const earnedAmount = document.getElementById('giga-earned-amount');
+
+    if (progressText) {
+        progressText.textContent = `${data.ads_watched} / 12`;
+    }
+
+    if (progressBar) {
+        progressBar.style.width = `${(data.ads_watched / 12) * 100}%`;
+    }
+
+    if (earnedAmount) {
+        earnedAmount.textContent = `${data.total_earned.toFixed(3)} DOGE`;
+    }
+}
+
+/**
+ * Inicia el cooldown entre anuncios
+ */
+function startGigaCooldown(seconds) {
+    const btn = document.getElementById('giga-watch-btn');
+    const statusText = document.getElementById('giga-status-text');
+
+    btn.disabled = true;
+    
+    let remaining = seconds;
+    const cooldownInterval = setInterval(() => {
+        remaining--;
+        btn.innerHTML = `
+            <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i data-lucide="clock" style="width: 20px; height: 20px;"></i>
+                <span>Espera ${remaining}s</span>
+            </span>
+        `;
+        lucide.createIcons();
+
+        if (remaining <= 0) {
+            clearInterval(cooldownInterval);
+            resetGigaButton();
+        }
+    }, 1000);
+
+    statusText.textContent = `Cooldown activo. Próximo anuncio en ${seconds} segundos.`;
+}
+
+/**
+ * Resetea el botón a su estado normal
+ */
+function resetGigaButton() {
+    const btn = document.getElementById('giga-watch-btn');
+    const statusText = document.getElementById('giga-status-text');
+
+    btn.disabled = false;
+    btn.innerHTML = `
+        <span id="giga-btn-content" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i data-lucide="play-circle" style="width: 20px; height: 20px;"></i>
+            <span data-i18n="watch_ad">Ver Anuncio</span>
+        </span>
+    `;
+    lucide.createIcons();
+
+    statusText.textContent = 'Máximo 12 anuncios por día • 40 segundos entre cada anuncio • 15 seg mínimo';
+    statusText.style.color = 'rgba(255, 255, 255, 0.4)';
+}
+
+/**
+ * Marca como completado el límite diario
+ */
+function markGigaCompleted() {
+    const btn = document.getElementById('giga-watch-btn');
+    const statusText = document.getElementById('giga-status-text');
+
+    btn.disabled = true;
+    btn.style.background = 'rgba(156, 39, 176, 0.15)';
+    btn.style.color = 'rgba(255, 255, 255, 0.5)';
+    btn.innerHTML = `
+        <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
+            <span data-i18n="daily_limit_reached">Límite diario alcanzado</span>
+        </span>
+    `;
+    lucide.createIcons();
+
+    statusText.textContent = '¡Límite diario alcanzado! Vuelve mañana para más.';
+}
+
+/**
+ * Muestra notificación premium de recompensa
+ */
+function showGigaNotification(type, message) {
+    // Overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    `;
+
+    // Notification card
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        background: linear-gradient(145deg, rgba(30, 30, 35, 0.98) 0%, rgba(20, 20, 25, 0.98) 100%);
+        border: 1px solid rgba(156, 39, 176, 0.3);
+        border-radius: 24px;
+        padding: 32px;
+        text-align: center;
+        max-width: 320px;
+        width: 90%;
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(156, 39, 176, 0.2);
+        animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
+        overflow: hidden;
+    `;
+
+    // Glow effect
+    const glowEffect = document.createElement('div');
+    glowEffect.style.cssText = `
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(from 0deg, transparent 0%, rgba(156, 39, 176, 0.1) 25%, transparent 50%);
+        animation: rotateGlow 4s linear infinite;
+        pointer-events: none;
+    `;
+
+    // Header
+    const header = document.createElement('div');
+    header.style.cssText = `position: relative; z-index: 1; margin-bottom: 20px;`;
+
+    // Icon container
+    const iconContainer = document.createElement('div');
+    iconContainer.style.cssText = `
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 16px;
+        background: linear-gradient(135deg, rgba(156, 39, 176, 0.2) 0%, rgba(123, 31, 162, 0.1) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        animation: iconPulse 2s ease-in-out infinite;
+        box-shadow: 0 0 40px rgba(156, 39, 176, 0.3);
+    `;
+
+    iconContainer.innerHTML = type === 'success'
+        ? '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9C27B0" stroke-width="2"><polyline points="20,6 9,17 4,12"></polyline></svg>'
+        : '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+
+    header.appendChild(iconContainer);
+
+    // Body
+    const body = document.createElement('div');
+    body.style.cssText = `position: relative; z-index: 1;`;
+
+    const messageText = document.createElement('div');
+    messageText.style.cssText = `
+        font-size: 1.75rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #9C27B0 0%, #E040FB 50%, #9C27B0 100%);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 12px;
+        text-shadow: 0 0 30px rgba(156, 39, 176, 0.3);
+        animation: textGlow 2s ease-in-out infinite;
+        letter-spacing: 1px;
+    `;
+    messageText.textContent = message;
+
+    const subtitle = document.createElement('div');
+    subtitle.style.cssText = `
+        font-size: 0.9375rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-weight: 500;
+        margin-bottom: 20px;
+    `;
+    subtitle.textContent = type === 'success' ? '¡Se ha añadido a tu balance!' : 'Algo salió mal';
+
+    const divider = document.createElement('div');
+    divider.style.cssText = `
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent 0%, #9C27B0 50%, transparent 100%);
+        margin: 0 auto;
+        border-radius: 2px;
+        animation: dividerGlow 2s ease-in-out infinite;
+    `;
+
+    body.appendChild(messageText);
+    body.appendChild(subtitle);
+    body.appendChild(divider);
+
+    notification.appendChild(glowEffect);
+    notification.appendChild(header);
+    notification.appendChild(body);
+    overlay.appendChild(notification);
+    document.body.appendChild(overlay);
+
+    // Auto close
+    setTimeout(() => {
+        overlay.style.animation = 'fadeOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        notification.style.animation = 'scaleOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        setTimeout(() => overlay.remove(), 400);
+    }, 3000);
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.style.animation = 'fadeOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            notification.style.animation = 'scaleOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            setTimeout(() => overlay.remove(), 400);
+        }
+    });
+}
+
+// CSS animations
+const animStyle = document.createElement('style');
+animStyle.textContent = `
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    @keyframes scaleIn {
+        from {
+            transform: scale(0.5) rotateX(-30deg);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1) rotateX(0deg);
+            opacity: 1;
+        }
+    }
+    @keyframes scaleOut {
+        from {
+            transform: scale(1) rotateX(0deg);
+            opacity: 1;
+        }
+        to {
+            transform: scale(0.8) rotateX(30deg);
+            opacity: 0;
+        }
+    }
+    @keyframes iconPulse {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 0 30px rgba(156, 39, 176, 0.4);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(156, 39, 176, 0.6);
+        }
+    }
+    @keyframes rotateGlow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    @keyframes textGlow {
+        0%, 100% {
+            filter: brightness(1);
+        }
+        50% {
+            filter: brightness(1.2);
+        }
+    }
+    @keyframes dividerGlow {
+        0%, 100% {
+            opacity: 0.5;
+            transform: scaleX(1);
+        }
+        50% {
+            opacity: 1;
+            transform: scaleX(1.1);
+        }
+    }
+`;
+document.head.appendChild(animStyle);
+
+// Initialize icons
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+</script>
+{% endblock %}

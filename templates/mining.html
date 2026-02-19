@@ -1,0 +1,526 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Minería{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header con botón de regreso -->
+    <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4);">
+        <a href="/explore?user_id={{ user_id }}" style="text-decoration: none;">
+            <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: all 0.3s ease;">
+                <i data-lucide="arrow-left" style="width: 22px; height: 22px; color: rgba(255, 255, 255, 0.7);"></i>
+            </div>
+        </a>
+        <div>
+            <h1 data-i18n="mining_area" style="font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: var(--space-1);">Área Minera</h1>
+            <p data-i18n="mining_subtitle" style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Tu estación de minería</p>
+        </div>
+    </div>
+
+    <!-- Mining Hero Card (S-E Mining) -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(0, 255, 136, 0.25); position: relative; overflow: hidden; margin-bottom: var(--space-4);">
+        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0, 255, 136, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite;"></div>
+        
+        <div style="position: relative; z-index: 1; text-align: center; padding: var(--space-4);">
+            <div class="floating" style="width: 80px; height: 80px; margin: 0 auto var(--space-4); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 255, 136, 0.25) 0%, rgba(0, 200, 100, 0.15) 100%); border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3);">
+                <i data-lucide="cpu" style="width: 40px; height: 40px; color: #00FF88;"></i>
+            </div>
+            
+            <div data-i18n="unclaimed_se" style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-2);">Ganancias S-E Sin Reclamar</div>
+            <div style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #00FF88 0%, #00CC66 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: var(--space-4);">
+                {{ "%.4f"|format(unclaimed or 0) }} S-E
+            </div>
+            
+            <a href="/?user_id={{ user_id }}" style="text-decoration: none;">
+                <button style="background: linear-gradient(135deg, #00FF88 0%, #00CC66 100%); border: none; border-radius: 14px; padding: 14px 32px; color: #0B0B0F; font-size: 1rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);">
+                    <i data-lucide="arrow-down-to-line" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>
+                    <span data-i18n="go_claim">Ir a Reclamar</span>
+                </button>
+            </a>
+        </div>
+    </div>
+
+    <!-- ===================== DOGE MINING MACHINE SECTION ===================== -->
+    <div id="doge-machine-section" class="card" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.05) 50%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(255, 193, 7, 0.3); position: relative; overflow: hidden; margin-bottom: var(--space-4);">
+        
+        <!-- Badge Premium -->
+        <div style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); border-radius: 20px; padding: 4px 12px; font-size: 0.7rem; font-weight: 700; color: #000; z-index: 10;">
+            ⚡ PREMIUM
+        </div>
+        
+        <!-- Fondo animado -->
+        <div style="position: absolute; top: -80px; right: -80px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(255, 193, 7, 0.12) 0%, transparent 70%); border-radius: 50%; animation: float 10s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: -60px; left: -60px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(255, 152, 0, 0.1) 0%, transparent 70%); border-radius: 50%; animation: float 12s ease-in-out infinite reverse;"></div>
+        
+        <div style="position: relative; z-index: 1; padding: var(--space-3);">
+            
+            <!-- Header de la sección -->
+            <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4);">
+                <div class="floating" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(255, 193, 7, 0.3) 0%, rgba(255, 152, 0, 0.2) 100%); border-radius: 16px; box-shadow: 0 6px 24px rgba(255, 193, 7, 0.35);">
+                    <span style="font-size: 28px;">🐕</span>
+                </div>
+                <div>
+                    <h2 data-i18n="doge_miner_pro" style="font-size: 1.25rem; font-weight: 800; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 4px;">
+                        DOGE Miner Pro
+                    </h2>
+                    <p data-i18n="doge_miner_desc" style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);">
+                        Máquina de minería automática de DOGE
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Contenido dinámico - Sin máquina activa -->
+            <div id="machine-purchase-section" style="display: none;">
+                <!-- Info de la máquina -->
+                <div style="background: rgba(0, 0, 0, 0.3); border-radius: 16px; padding: var(--space-4); margin-bottom: var(--space-4);">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3);">
+                        <div style="text-align: center; padding: var(--space-3); background: rgba(255, 193, 7, 0.08); border-radius: 12px;">
+                            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: 4px;" data-i18n="machine_price">Precio</div>
+                            <div style="font-size: 1.25rem; font-weight: 800; color: #FFD700;">
+                                <span id="machine-price">10</span> DOGE
+                            </div>
+                        </div>
+                        <div style="text-align: center; padding: var(--space-3); background: rgba(0, 255, 136, 0.08); border-radius: 12px;">
+                            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: 4px;" data-i18n="total_earnings">Ganancia Total</div>
+                            <div style="font-size: 1.25rem; font-weight: 800; color: #00FF88;">
+                                <span id="machine-earnings">15</span> DOGE
+                            </div>
+                        </div>
+                        <div style="text-align: center; padding: var(--space-3); background: rgba(0, 82, 204, 0.08); border-radius: 12px;">
+                            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: 4px;" data-i18n="duration">Duración</div>
+                            <div style="font-size: 1.25rem; font-weight: 800; color: #0052CC;">
+                                <span id="machine-duration">30</span> <span data-i18n="days">días</span>
+                            </div>
+                        </div>
+                        <div style="text-align: center; padding: var(--space-3); background: rgba(0, 245, 255, 0.08); border-radius: 12px;">
+                            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: 4px;">ROI</div>
+                            <div style="font-size: 1.25rem; font-weight: 800; color: #00D4FF;">
+                                +<span id="machine-roi">50</span>%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tu balance DOGE actual -->
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255, 193, 7, 0.06); border-radius: 12px; padding: var(--space-3); margin-bottom: var(--space-4); border: 1px solid rgba(255, 193, 7, 0.15);">
+                    <div>
+                        <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);" data-i18n="your_doge_balance">Tu balance DOGE</div>
+                        <div style="font-size: 1.125rem; font-weight: 700; color: #FFD700;">
+                            <span id="user-doge-balance">{{ "%.4f"|format(user.doge_balance or 0) }}</span> DOGE
+                        </div>
+                    </div>
+                    <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255, 193, 7, 0.15); border-radius: 12px;">
+                        <span style="font-size: 22px;">💰</span>
+                    </div>
+                </div>
+                
+                <!-- Botón de compra -->
+                <button id="btn-purchase-machine" onclick="purchaseMachine()" style="width: 100%; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); border: none; border-radius: 14px; padding: 16px 24px; color: #000; font-size: 1rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 20px rgba(255, 193, 7, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <i data-lucide="shopping-cart" style="width: 20px; height: 20px;"></i>
+                    <span data-i18n="buy_machine">Comprar Máquina</span>
+                </button>
+                
+                <div id="purchase-error" style="display: none; margin-top: var(--space-3); padding: var(--space-3); background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 12px; color: #ff6b6b; font-size: 0.875rem; text-align: center;"></div>
+            </div>
+            
+            <!-- Contenido dinámico - Con máquina activa -->
+            <div id="machine-active-section" style="display: none;">
+                
+                <!-- Barra de progreso principal -->
+                <div style="background: rgba(0, 0, 0, 0.3); border-radius: 16px; padding: var(--space-4); margin-bottom: var(--space-4);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3);">
+                        <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7);" data-i18n="mining_progress">Progreso de Minería</span>
+                        <span id="progress-percent" style="font-size: 0.875rem; font-weight: 700; color: #FFD700;">0%</span>
+                    </div>
+                    
+                    <div style="height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 20px; overflow: hidden; margin-bottom: var(--space-3);">
+                        <div id="progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #FFD700 0%, #FFA500 50%, #00A3FF 100%); border-radius: 20px; transition: width 0.5s ease; position: relative;">
+                            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%); animation: shimmer 2s infinite;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tiempo restante -->
+                    <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-2);">
+                        <i data-lucide="clock" style="width: 16px; height: 16px; color: rgba(255, 255, 255, 0.5);"></i>
+                        <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);" data-i18n="time_remaining">Tiempo restante:</span>
+                        <span id="time-remaining" style="font-size: 0.875rem; font-weight: 700; color: white;">-- días --h</span>
+                    </div>
+                </div>
+                
+                <!-- Ganancias Grid -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-bottom: var(--space-4);">
+                    <div style="text-align: center; padding: var(--space-3); background: rgba(0, 255, 136, 0.08); border-radius: 12px; border: 1px solid rgba(0, 255, 136, 0.2);">
+                        <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: 4px;" data-i18n="earned_so_far">Ganado hasta ahora</div>
+                        <div id="earned-so-far" style="font-size: 1.375rem; font-weight: 800; color: #00FF88;">0.0000 DOGE</div>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-3); background: rgba(255, 193, 7, 0.08); border-radius: 12px; border: 1px solid rgba(255, 193, 7, 0.2);">
+                        <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: 4px;" data-i18n="available_to_claim">Disponible para reclamar</div>
+                        <div id="available-earnings" style="font-size: 1.375rem; font-weight: 800; color: #FFD700;">0.0000 DOGE</div>
+                    </div>
+                </div>
+                
+                <!-- Botón de reclamar ganancias -->
+                <button id="btn-claim-machine" onclick="claimMachineEarnings()" style="width: 100%; background: linear-gradient(135deg, #00FF88 0%, #00CC66 100%); border: none; border-radius: 14px; padding: 16px 24px; color: #000; font-size: 1rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <i data-lucide="coins" style="width: 20px; height: 20px;"></i>
+                    <span data-i18n="claim_doge_earnings">Reclamar Ganancias DOGE</span>
+                </button>
+                
+                <div id="claim-message" style="display: none; margin-top: var(--space-3); padding: var(--space-3); border-radius: 12px; font-size: 0.875rem; text-align: center;"></div>
+                
+                <!-- Info de la máquina -->
+                <div style="margin-top: var(--space-4); display: flex; align-items: center; gap: var(--space-2); justify-content: center;">
+                    <i data-lucide="info" style="width: 14px; height: 14px; color: rgba(255, 255, 255, 0.4);"></i>
+                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);" data-i18n="daily_rate_info">Tasa diaria: 0.5 DOGE/día</span>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <!-- ===================== END DOGE MINING MACHINE SECTION ===================== -->
+
+    <!-- Stats Grid -->
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-bottom: var(--space-4);">
+        <div class="card" style="text-align: center; padding: var(--space-4);">
+            <div style="width: 48px; height: 48px; margin: 0 auto var(--space-3); display: flex; align-items: center; justify-content: center; background: rgba(0, 245, 255, 0.1); border-radius: 12px;">
+                <i data-lucide="gauge" style="width: 24px; height: 24px; color: #00D4FF;"></i>
+            </div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: var(--space-1);">{{ user.mining_power or 1.0 }}</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);" data-i18n="se_per_hour_stat">S-E por Hora</div>
+        </div>
+        
+        <div class="card" style="text-align: center; padding: var(--space-4);">
+            <div style="width: 48px; height: 48px; margin: 0 auto var(--space-3); display: flex; align-items: center; justify-content: center; background: rgba(255, 215, 0, 0.1); border-radius: 12px;">
+                <i data-lucide="star" style="width: 24px; height: 24px; color: #FFD700;"></i>
+            </div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: var(--space-1);">{{ user.mining_level or 1 }}</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);" data-i18n="mining_level">Nivel de Minería</div>
+        </div>
+        
+        <div class="card" style="text-align: center; padding: var(--space-4);">
+            <div style="width: 48px; height: 48px; margin: 0 auto var(--space-3); display: flex; align-items: center; justify-content: center; background: rgba(0, 102, 255, 0.1); border-radius: 12px;">
+                <i data-lucide="battery-charging" style="width: 24px; height: 24px; color: #0066FF;"></i>
+            </div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: var(--space-1);">24h</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);" data-i18n="max_capacity">Capacidad Máx.</div>
+        </div>
+        
+        <div class="card" style="text-align: center; padding: var(--space-4);">
+            <div style="width: 48px; height: 48px; margin: 0 auto var(--space-3); display: flex; align-items: center; justify-content: center; background: rgba(0, 82, 204, 0.1); border-radius: 12px;">
+                <i data-lucide="users" style="width: 24px; height: 24px; color: #0052CC;"></i>
+            </div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: var(--space-1);">{{ user.referral_count }}</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);" data-i18n="active_referrals">Referidos Activos</div>
+        </div>
+    </div>
+
+    <!-- Balance Total Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.06) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(255, 215, 0, 0.2); margin-bottom: var(--space-4);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);" data-i18n="total_wallet_balance">Balance Total en Wallet</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #FFD700;">{{ "%.4f"|format(user.se_balance) }} S-E</div>
+                <div style="font-size: 1rem; font-weight: 600; color: #FFA500; margin-top: 4px;">{{ "%.4f"|format(user.doge_balance or 0) }} DOGE</div>
+            </div>
+            <div style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; background: rgba(255, 215, 0, 0.15); border-radius: 14px;">
+                <i data-lucide="wallet" style="width: 28px; height: 28px; color: #FFD700;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cómo funciona la minería -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.04) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(0, 245, 255, 0.15);">
+        <h3 style="font-size: 1rem; font-weight: 700; color: white; margin-bottom: var(--space-4); display: flex; align-items: center; gap: var(--space-2);">
+            <i data-lucide="info" style="width: 18px; height: 18px; color: #00D4FF;"></i>
+            <span data-i18n="how_it_works">Cómo Funciona</span>
+        </h3>
+        
+        <div style="display: grid; gap: var(--space-3);">
+            <div style="display: flex; gap: var(--space-3); align-items: flex-start;">
+                <div style="width: 32px; height: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgba(0, 255, 136, 0.1); border-radius: 8px;">
+                    <span style="font-weight: 700; color: #00FF88;">1</span>
+                </div>
+                <div>
+                    <div style="font-weight: 600; color: white; margin-bottom: 2px;" data-i18n="auto_mining">Minería Automática</div>
+                    <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="auto_mining_desc">Tu estación mina S-E automáticamente cada hora</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: var(--space-3); align-items: flex-start;">
+                <div style="width: 32px; height: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgba(255, 215, 0, 0.1); border-radius: 8px;">
+                    <span style="font-weight: 700; color: #FFD700;">2</span>
+                </div>
+                <div>
+                    <div style="font-weight: 600; color: white; margin-bottom: 2px;" data-i18n="doge_machine">Máquina DOGE</div>
+                    <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="doge_machine_desc">Compra una máquina y gana 15 DOGE en 30 días</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: var(--space-3); align-items: flex-start;">
+                <div style="width: 32px; height: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgba(0, 102, 255, 0.1); border-radius: 8px;">
+                    <span style="font-weight: 700; color: #0066FF;">3</span>
+                </div>
+                <div>
+                    <div style="font-weight: 600; color: white; margin-bottom: 2px;" data-i18n="level_up">Sube de Nivel</div>
+                    <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="level_up_desc">Invita amigos para aumentar tu tasa de minería</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(10px, 10px); }
+}
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+#btn-purchase-machine:hover, #btn-claim-machine:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(255, 193, 7, 0.5);
+}
+#btn-purchase-machine:active, #btn-claim-machine:active {
+    transform: translateY(0);
+}
+#btn-purchase-machine:disabled, #btn-claim-machine:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const userId = '{{ user_id }}';
+let machineStatus = null;
+let updateInterval = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    loadMachineStatus();
+    updateInterval = setInterval(loadMachineStatus, 30000);
+});
+
+async function loadMachineStatus() {
+    try {
+        const response = await fetch(`/api/mining-machine/status?user_id=${userId}`);
+        const data = await response.json();
+        if (data.success) {
+            machineStatus = data;
+            updateUI(data);
+        }
+    } catch (error) {
+        console.error('Error loading machine status:', error);
+    }
+}
+
+function updateUI(data) {
+    const purchaseSection = document.getElementById('machine-purchase-section');
+    const activeSection = document.getElementById('machine-active-section');
+    
+    if (data.has_machine && data.machine) {
+        purchaseSection.style.display = 'none';
+        activeSection.style.display = 'block';
+        
+        const progress = data.progress;
+        document.getElementById('progress-percent').textContent = `${progress.percent.toFixed(1)}%`;
+        document.getElementById('progress-bar').style.width = `${progress.percent}%`;
+        
+        let timeText = '';
+        if (progress.days_remaining > 0) {
+            timeText = `${progress.days_remaining} días ${progress.hours_remaining}h`;
+        } else if (progress.hours_remaining > 0) {
+            timeText = `${progress.hours_remaining}h`;
+        } else {
+            timeText = 'Completado';
+        }
+        document.getElementById('time-remaining').textContent = timeText;
+        
+        document.getElementById('earned-so-far').textContent = `${data.machine.earned_so_far.toFixed(4)} DOGE`;
+        document.getElementById('available-earnings').textContent = `${data.machine.available_earnings.toFixed(4)} DOGE`;
+        
+        const claimBtn = document.getElementById('btn-claim-machine');
+        if (data.machine.available_earnings <= 0) {
+            claimBtn.disabled = true;
+            claimBtn.style.opacity = '0.6';
+        } else {
+            claimBtn.disabled = false;
+            claimBtn.style.opacity = '1';
+        }
+    } else {
+        purchaseSection.style.display = 'block';
+        activeSection.style.display = 'none';
+        
+        if (data.machine_config) {
+            document.getElementById('machine-price').textContent = data.machine_config.price;
+            document.getElementById('machine-earnings').textContent = data.machine_config.total_earnings;
+            document.getElementById('machine-duration').textContent = data.machine_config.duration_days;
+            document.getElementById('machine-roi').textContent = data.machine_config.roi_percent || 50;
+        }
+        
+        if (data.doge_balance !== undefined) {
+            document.getElementById('user-doge-balance').textContent = data.doge_balance.toFixed(4);
+        }
+        
+        const purchaseBtn = document.getElementById('btn-purchase-machine');
+        const price = data.machine_config ? data.machine_config.price : 10;
+        if (data.doge_balance < price) {
+            purchaseBtn.disabled = true;
+            purchaseBtn.style.opacity = '0.6';
+        } else {
+            purchaseBtn.disabled = false;
+            purchaseBtn.style.opacity = '1';
+        }
+    }
+    
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+async function purchaseMachine() {
+    const btn = document.getElementById('btn-purchase-machine');
+    const errorDiv = document.getElementById('purchase-error');
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i data-lucide="loader-2" class="spin" style="width: 20px; height: 20px;"></i> Procesando...';
+    errorDiv.style.display = 'none';
+    
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+    }
+    
+    try {
+        const response = await fetch('/api/mining-machine/purchase', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+            await loadMachineStatus();
+            showToast('¡Máquina comprada exitosamente! 🎉', 'success');
+        } else {
+            errorDiv.textContent = data.message || 'Error al comprar la máquina';
+            errorDiv.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="shopping-cart" style="width: 20px; height: 20px;"></i> Comprar Máquina';
+        }
+    } catch (error) {
+        console.error('Error purchasing machine:', error);
+        errorDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+        errorDiv.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="shopping-cart" style="width: 20px; height: 20px;"></i> Comprar Máquina';
+    }
+    
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+async function claimMachineEarnings() {
+    const btn = document.getElementById('btn-claim-machine');
+    const messageDiv = document.getElementById('claim-message');
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i data-lucide="loader-2" class="spin" style="width: 20px; height: 20px;"></i> Reclamando...';
+    messageDiv.style.display = 'none';
+    
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+    }
+    
+    try {
+        const response = await fetch('/api/mining-machine/claim', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+            
+            messageDiv.style.background = 'rgba(0, 255, 136, 0.1)';
+            messageDiv.style.border = '1px solid rgba(0, 255, 136, 0.3)';
+            messageDiv.style.color = '#00FF88';
+            messageDiv.textContent = `¡Has reclamado ${data.amount.toFixed(4)} DOGE! 🎉`;
+            messageDiv.style.display = 'block';
+            
+            showToast(`+${data.amount.toFixed(4)} DOGE reclamados! 💰`, 'success');
+            await loadMachineStatus();
+        } else {
+            messageDiv.style.background = 'rgba(255, 0, 0, 0.1)';
+            messageDiv.style.border = '1px solid rgba(255, 0, 0, 0.3)';
+            messageDiv.style.color = '#ff6b6b';
+            messageDiv.textContent = data.message || 'No hay ganancias disponibles';
+            messageDiv.style.display = 'block';
+            
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="coins" style="width: 20px; height: 20px;"></i> Reclamar Ganancias DOGE';
+        }
+    } catch (error) {
+        console.error('Error claiming earnings:', error);
+        messageDiv.style.background = 'rgba(255, 0, 0, 0.1)';
+        messageDiv.style.border = '1px solid rgba(255, 0, 0, 0.3)';
+        messageDiv.style.color = '#ff6b6b';
+        messageDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+        messageDiv.style.display = 'block';
+        
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="coins" style="width: 20px; height: 20px;"></i> Reclamar Ganancias DOGE';
+    }
+    
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+        padding: 12px 24px; border-radius: 12px; font-size: 0.875rem; font-weight: 600;
+        z-index: 9999; animation: slideUp 0.3s ease; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    `;
+    
+    if (type === 'success') {
+        toast.style.background = 'linear-gradient(135deg, #00FF88 0%, #00CC66 100%)';
+        toast.style.color = '#000';
+    } else {
+        toast.style.background = 'rgba(0, 0, 0, 0.9)';
+        toast.style.color = 'white';
+    }
+    
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideDown 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideUp { from { transform: translateX(-50%) translateY(20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+    @keyframes slideDown { from { transform: translateX(-50%) translateY(0); opacity: 1; } to { transform: translateX(-50%) translateY(20px); opacity: 0; } }
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

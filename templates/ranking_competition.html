@@ -1,0 +1,1456 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Top Rankings{% endblock %}
+
+{% block content %}
+<style>
+/* ==================== RANKING PREMIUM - FORMATO FILAS ==================== */
+
+/* TABS */
+.rank-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 14px;
+    padding: 5px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rank-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.rank-tab:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.rank-tab.active {
+    background: linear-gradient(135deg, #0066FF 0%, #0052CC 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 102, 255, 0.35);
+}
+
+.rank-tab svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* MI POSICIÓN CARD */
+.my-position-card {
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.1) 0%, rgba(0, 50, 120, 0.15) 100%);
+    border: 1px solid rgba(0, 102, 255, 0.2);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.my-position-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.my-position-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.my-position-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #FFFFFF;
+}
+
+.my-position-right {
+    text-align: right;
+}
+
+.my-position-rank-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.my-position-rank {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #00D4FF;
+}
+
+/* CONTENEDOR DE RANKING */
+.rank-container {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+/* FILA DE RANKING */
+.rank-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background 0.2s ease;
+}
+
+.rank-row:last-child {
+    border-bottom: none;
+}
+
+.rank-row:hover {
+    background: rgba(0, 102, 255, 0.06);
+}
+
+/* TOP 3 ESPECIALES */
+.rank-row.top-1 {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.12) 0%, transparent 100%);
+    border-left: 3px solid #FFD700;
+}
+
+.rank-row.top-2 {
+    background: linear-gradient(90deg, rgba(192, 192, 192, 0.1) 0%, transparent 100%);
+    border-left: 3px solid #C0C0C0;
+}
+
+.rank-row.top-3 {
+    background: linear-gradient(90deg, rgba(205, 127, 50, 0.1) 0%, transparent 100%);
+    border-left: 3px solid #CD7F32;
+}
+
+.rank-row.is-me {
+    background: linear-gradient(90deg, rgba(0, 102, 255, 0.15) 0%, rgba(0, 102, 255, 0.05) 100%);
+    border-left: 3px solid #0066FF;
+}
+
+/* NÚMERO DE POSICIÓN */
+.rank-number {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-right: 14px;
+    flex-shrink: 0;
+    border-radius: 8px;
+}
+
+.rank-row.top-1 .rank-number {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #000;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.rank-row.top-2 .rank-number {
+    background: linear-gradient(135deg, #E0E0E0 0%, #B0B0B0 100%);
+    color: #333;
+    box-shadow: 0 2px 8px rgba(192, 192, 192, 0.3);
+}
+
+.rank-row.top-3 .rank-number {
+    background: linear-gradient(135deg, #CD7F32 0%, #A0522D 100%);
+    color: #FFF;
+    box-shadow: 0 2px 8px rgba(205, 127, 50, 0.3);
+}
+
+.rank-number.normal {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* AVATAR */
+.rank-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: white;
+    margin-right: 12px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.rank-row.top-1 .rank-avatar {
+    border-color: rgba(255, 215, 0, 0.5);
+    background: linear-gradient(135deg, #2a2a1e 0%, #3d3520 100%);
+}
+
+.rank-row.top-2 .rank-avatar {
+    border-color: rgba(192, 192, 192, 0.5);
+    background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+}
+
+.rank-row.top-3 .rank-avatar {
+    border-color: rgba(205, 127, 50, 0.5);
+    background: linear-gradient(135deg, #2a2015 0%, #3d2a18 100%);
+}
+
+/* INFO DEL USUARIO */
+.rank-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.rank-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 2px;
+}
+
+.rank-stats {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* BADGE TÚ */
+.rank-you-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #00D4FF;
+    background: rgba(0, 212, 255, 0.15);
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-left: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+/* VALOR/SCORE */
+.rank-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.8);
+    margin-left: 12px;
+    flex-shrink: 0;
+}
+
+.rank-row.top-1 .rank-value { color: #FFD700; }
+.rank-row.top-2 .rank-value { color: #C0C0C0; }
+.rank-row.top-3 .rank-value { color: #CD7F32; }
+</style>
+
+<div class="container" style="padding-bottom: 120px;">
+
+    <!-- TABS -->
+    <div class="rank-tabs">
+        <button id="tab-referrals" class="rank-tab active" onclick="switchTab('referrals')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span data-i18n="ranking_referrals">Referidos</span>
+        </button>
+        <button id="tab-pts" class="rank-tab" onclick="switchTab('pts')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span data-i18n="ranking_pts_weekly">PTS Semanal</span>
+        </button>
+    </div>
+
+    <!-- RANKING DE REFERIDOS -->
+    <div id="panel-referrals" class="ranking-panel">
+        
+        <!-- Mi Posición -->
+        <div class="my-position-card">
+            <div class="my-position-left">
+                <span class="my-position-label" data-i18n="ranking_your_referrals">Tus Referidos</span>
+                <span class="my-position-value">{{ user.referral_count }}</span>
+            </div>
+            <div class="my-position-right">
+                <span class="my-position-rank-label" data-i18n="ranking_your_position">Tu posición</span>
+                <span class="my-position-rank">#{{ user_rank }}</span>
+            </div>
+        </div>
+
+        {% if top_users %}
+        <!-- Lista de Ranking -->
+        <div class="rank-container">
+            {% for item in top_users %}
+            {% if loop.index <= 10 %}
+            <div class="rank-row {% if loop.index == 1 %}top-1{% elif loop.index == 2 %}top-2{% elif loop.index == 3 %}top-3{% endif %}{% if item.user_id == user.user_id %} is-me{% endif %}">
+                <div class="rank-number {% if loop.index > 3 %}normal{% endif %}">{{ loop.index }}</div>
+                <div class="rank-avatar">{{ (item.username or item.first_name or 'U')[0]|upper }}</div>
+                <div class="rank-info">
+                    <div class="rank-name">{{ item.username or item.first_name }}</div>
+                    <div class="rank-stats">{{ item.referral_count }} <span data-i18n="ranking_referrals">referidos</span></div>
+                </div>
+                {% if item.user_id == user.user_id %}<span class="rank-you-badge">Tú</span>{% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- RANKING DE PTS - COMPETENCIA SEMANAL -->
+    <div id="panel-pts" class="ranking-panel" style="display: none;">
+
+        <!-- Floating Terms Button -->
+        <button class="terms-floating-btn" onclick="openPtsTermsModal()" aria-label="Terms and Conditions">
+            <svg class="terms-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            <span class="terms-btn-text" data-i18n="pts_terms_btn">Reglas</span>
+        </button>
+
+        <!-- Terms Modal -->
+        <div class="pts-terms-modal-overlay" id="ptsTermsModal" onclick="closePtsTermsModalOutside(event)">
+            <div class="pts-terms-modal">
+                <div class="pts-terms-modal-header">
+                    <div class="pts-terms-modal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                    </div>
+                    <div class="pts-terms-modal-title-wrapper">
+                        <h2 data-i18n="pts_terms_title">Términos y Condiciones</h2>
+                        <p data-i18n="pts_terms_subtitle">Top Semanal de Recompensas</p>
+                    </div>
+                    <button class="pts-terms-modal-close" onclick="closePtsTermsModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="pts-terms-modal-content">
+                    <!-- Section 1 -->
+                    <div class="pts-terms-section">
+                        <div class="pts-terms-section-header">
+                            <span class="pts-terms-section-num">1</span>
+                            <h3 data-i18n="pts_terms_1_title">Objeto</h3>
+                        </div>
+                        <p data-i18n="pts_terms_1_desc">El TOP Semanal de Recompensas es un sistema promocional mediante el cual la plataforma premia a los usuarios que obtengan la mayor puntuación acumulada durante un período semanal, conforme a las reglas establecidas en el presente documento.</p>
+                    </div>
+
+                    <!-- Section 2 -->
+                    <div class="pts-terms-section">
+                        <div class="pts-terms-section-header">
+                            <span class="pts-terms-section-num">2</span>
+                            <h3 data-i18n="pts_terms_2_title">Período de Vigencia</h3>
+                        </div>
+                        <p data-i18n="pts_terms_2_desc">El TOP semanal tiene una duración de siete (7) días, iniciando cada lunes a las 00:00 horas (UTC) y finalizando el siguiente lunes a las 00:00 horas (UTC).</p>
+                        <div class="pts-terms-highlight info">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span data-i18n="pts_terms_2_utc">Todos los horarios se rigen exclusivamente por UTC, independientemente de la ubicación del usuario.</span>
+                        </div>
+                    </div>
+
+                    <!-- Section 3 -->
+                    <div class="pts-terms-section">
+                        <div class="pts-terms-section-header">
+                            <span class="pts-terms-section-num">3</span>
+                            <h3 data-i18n="pts_terms_3_title">Cierre, Distribución y Preparación</h3>
+                        </div>
+                        <p data-i18n="pts_terms_3_desc">Una vez alcanzadas las 00:00 horas (UTC) del lunes, el TOP semanal se cierra automáticamente y se ejecutan los siguientes procesos:</p>
+                        <ul class="pts-terms-list">
+                            <li><strong data-i18n="pts_terms_3_dist">Distribución:</strong> <span data-i18n="pts_terms_3_dist_desc">Puede tardar hasta 30 minutos en completarse.</span></li>
+                            <li><strong data-i18n="pts_terms_3_prep">Preparación:</strong> <span data-i18n="pts_terms_3_prep_desc">El sistema puede tardar hasta 1 hora adicional para mostrar el nuevo ranking.</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Section 4 -->
+                    <div class="pts-terms-section">
+                        <div class="pts-terms-section-header">
+                            <span class="pts-terms-section-num">4</span>
+                            <h3 data-i18n="pts_terms_4_title">Obtención de Puntos</h3>
+                        </div>
+                        <p data-i18n="pts_terms_4_desc">Solo se contabilizarán los puntos obtenidos durante la semana activa, a través de los métodos habilitados oficialmente por la plataforma.</p>
+                        <div class="pts-terms-highlight warning">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <span data-i18n="pts_terms_4_fraud">Cualquier intento de generar puntos mediante métodos no autorizados será considerado fraude.</span>
+                        </div>
+                    </div>
+
+                    <!-- Section 5 -->
+                    <div class="pts-terms-section">
+                        <div class="pts-terms-section-header">
+                            <span class="pts-terms-section-num">5</span>
+                            <h3 data-i18n="pts_terms_5_title">Ranking</h3>
+                        </div>
+                        <p data-i18n="pts_terms_5_desc">El ranking semanal se ordena de forma descendente según la cantidad de puntos obtenidos. En caso de empate, la posición será asignada al usuario que haya alcanzado primero el puntaje correspondiente.</p>
+                    </div>
+
+                    <!-- Section 6 -->
+                    <div class="pts-terms-section">
+                        <div class="pts-terms-section-header">
+                            <span class="pts-terms-section-num">6</span>
+                            <h3 data-i18n="pts_terms_6_title">Recompensas Variables</h3>
+                        </div>
+                        <p data-i18n="pts_terms_6_desc">Las recompensas del TOP semanal no son fijas y pueden variar cada semana, tanto en tipo como en cantidad (criptomonedas como DOGE, S-E u otras). La plataforma no garantiza la repetición de recompensas en semanas consecutivas.</p>
+                    </div>
+
+                    <!-- Section 7 -->
+                    <div class="pts-terms-section">
+                        <div class="pts-terms-section-header">
+                            <span class="pts-terms-section-num">7</span>
+                            <h3 data-i18n="pts_terms_7_title">Confirmación de Recompensas</h3>
+                        </div>
+                        <p data-i18n="pts_terms_7_desc">Las recompensas se determinan y confirman únicamente al cierre del período semanal. Una vez cerrada la semana y asignadas las recompensas, estas quedarán definitivamente registradas y no podrán ser modificadas, sustituidas ni reclamadas.</p>
+                    </div>
+
+                    <!-- Section 8 -->
+                    <div class="pts-terms-section">
+                        <div class="pts-terms-section-header">
+                            <span class="pts-terms-section-num">8</span>
+                            <h3 data-i18n="pts_terms_8_title">Entrega de Recompensas</h3>
+                        </div>
+                        <p data-i18n="pts_terms_8_desc">Cada usuario podrá recibir una (1) sola recompensa por semana. Las recompensas se entregan una única vez. Cualquier intento de obtener pagos duplicados será considerado una infracción grave.</p>
+                    </div>
+
+                    <!-- Section 9 - Fraud -->
+                    <div class="pts-terms-section fraud-section">
+                        <div class="pts-terms-section-header">
+                            <span class="pts-terms-section-num danger">9</span>
+                            <h3 data-i18n="pts_terms_9_title">Fraude, Trampas y Sanciones</h3>
+                        </div>
+                        <div class="pts-terms-highlight danger">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                            <span data-i18n="pts_terms_9_zero">La plataforma aplica tolerancia cero frente a cualquier forma de fraude o abuso.</span>
+                        </div>
+                        <p style="margin-top: 12px;"><strong data-i18n="pts_terms_9_fraud_types">Se considera fraude:</strong></p>
+                        <ul class="pts-terms-list danger-list">
+                            <li data-i18n="pts_terms_9_vpn">Uso de VPN, proxies o sistemas de ocultación</li>
+                            <li data-i18n="pts_terms_9_bots">Uso de bots, scripts o automatización</li>
+                            <li data-i18n="pts_terms_9_multi">Creación o uso de múltiples cuentas</li>
+                            <li data-i18n="pts_terms_9_manip">Manipulación de anuncios, tareas, rankings o recompensas</li>
+                            <li data-i18n="pts_terms_9_exploit">Explotación de errores o fallos del sistema</li>
+                        </ul>
+                        <p style="margin-top: 12px;"><strong data-i18n="pts_terms_9_sanctions">Sanciones aplicables sin previo aviso:</strong></p>
+                        <ul class="pts-terms-list sanction-list">
+                            <li data-i18n="pts_terms_9_s1">Descalificación inmediata del TOP semanal</li>
+                            <li data-i18n="pts_terms_9_s2">Pérdida total e irreversible de la recompensa</li>
+                            <li data-i18n="pts_terms_9_s3">Eliminación de puntos obtenidos fraudulentamente</li>
+                            <li data-i18n="pts_terms_9_s4">Suspensión temporal o bloqueo permanente</li>
+                            <li data-i18n="pts_terms_9_s5">Anulación de recompensas actuales y anteriores</li>
+                        </ul>
+                    </div>
+
+                    <!-- Section 10 -->
+                    <div class="pts-terms-section">
+                        <div class="pts-terms-section-header">
+                            <span class="pts-terms-section-num">10</span>
+                            <h3 data-i18n="pts_terms_10_title">Modificaciones y Suspensión</h3>
+                        </div>
+                        <p data-i18n="pts_terms_10_desc">La plataforma se reserva el derecho de modificar las recompensas, reglas o funcionamiento del TOP semanal, así como de suspenderlo o cancelarlo en cualquier momento.</p>
+                    </div>
+
+                    <!-- Section 11 -->
+                    <div class="pts-terms-section">
+                        <div class="pts-terms-section-header">
+                            <span class="pts-terms-section-num">11</span>
+                            <h3 data-i18n="pts_terms_11_title">Responsabilidad</h3>
+                        </div>
+                        <p data-i18n="pts_terms_11_desc">La plataforma no se responsabiliza por retrasos, fallos técnicos, interrupciones del servicio, errores de visualización o cualquier circunstancia externa que pueda afectar el funcionamiento del TOP o la entrega de recompensas.</p>
+                    </div>
+
+                    <!-- Section 12 -->
+                    <div class="pts-terms-section">
+                        <div class="pts-terms-section-header">
+                            <span class="pts-terms-section-num">12</span>
+                            <h3 data-i18n="pts_terms_12_title">Aceptación</h3>
+                        </div>
+                        <p data-i18n="pts_terms_12_desc">La participación en el TOP semanal implica la aceptación total, expresa y sin reservas de los presentes Términos y Condiciones.</p>
+                    </div>
+                </div>
+
+                <div class="pts-terms-modal-footer">
+                    <button class="pts-terms-accept-btn" onclick="closePtsTermsModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span data-i18n="pts_terms_understood">Entendido</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BANNER DE ESTADO DE COMPETENCIA -->
+        <div id="competition-state-banner" class="competition-state-banner">
+            <div class="state-indicator">
+                <div class="state-dot"></div>
+                <span class="state-label">Cargando...</span>
+            </div>
+            <p class="state-message"></p>
+            <div class="state-timer" style="display: none;"></div>
+        </div>
+
+        <!-- Header con info del usuario -->
+        <div class="pts-hero-card">
+            <div class="pts-hero-content">
+                <div class="pts-hero-header">
+                    <div>
+                        <h3 class="pts-hero-title" data-i18n="ranking_weekly">Competencia Semanal</h3>
+                        <p class="pts-hero-subtitle" id="competition-number">Cargando...</p>
+                    </div>
+                    <div class="pts-countdown-box">
+                        <span class="pts-countdown-label" id="countdown-label" data-i18n="ranking_ends_in">Termina en</span>
+                        <div id="pts-countdown" class="pts-countdown-value">--</div>
+                    </div>
+                </div>
+
+                <div class="pts-user-stats">
+                    <div class="pts-user-stat">
+                        <span class="pts-user-stat-label" data-i18n="ranking_your_pts_week">Tus PTS esta semana</span>
+                        <div class="pts-user-stat-value"><span id="user-pts-week">0</span> PTS</div>
+                    </div>
+                    <div class="pts-user-stat-divider"></div>
+                    <div class="pts-user-stat">
+                        <span class="pts-user-stat-label" data-i18n="ranking_your_position">Tu posicion</span>
+                        <div class="pts-user-stat-position">#<span id="user-pts-position">--</span></div>
+                        <div id="user-prize-status" class="pts-user-prize-status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PREMIOS -->
+        <div class="pts-rules-card">
+            <div class="pts-rules-header">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <h3 data-i18n="ranking_weekly_prizes">Premios Semanales</h3>
+            </div>
+
+            <div class="pts-min-rule">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <span data-i18n="ranking_min_pts_rule">Minimo 4,000 PTS para clasificar a premio</span>
+            </div>
+
+            <div class="pts-prizes-table">
+                <div class="pts-prize-row gold">
+                    <div class="pts-prize-medal">1</div>
+                    <div class="pts-prize-info">
+                        <span class="pts-prize-pos">Top 1</span>
+                        <span class="pts-prize-desc" data-i18n="ranking_most_pts">Mayor puntuacion</span>
+                    </div>
+                    <div class="pts-prize-reward">10 DOGE</div>
+                </div>
+                <div class="pts-prize-row silver">
+                    <div class="pts-prize-medal">2</div>
+                    <div class="pts-prize-info">
+                        <span class="pts-prize-pos">Top 2</span>
+                        <span class="pts-prize-desc" data-i18n="ranking_second_place">Segundo lugar</span>
+                    </div>
+                    <div class="pts-prize-reward">5 DOGE</div>
+                </div>
+                <div class="pts-prize-row bronze">
+                    <div class="pts-prize-medal">3</div>
+                    <div class="pts-prize-info">
+                        <span class="pts-prize-pos">Top 3</span>
+                        <span class="pts-prize-desc" data-i18n="ranking_third_place">Tercer lugar</span>
+                    </div>
+                    <div class="pts-prize-reward">2 DOGE</div>
+                </div>
+                <div class="pts-prize-row">
+                    <div class="pts-prize-medal">4</div>
+                    <div class="pts-prize-info">
+                        <span class="pts-prize-pos">Top 4</span>
+                        <span class="pts-prize-desc" data-i18n="ranking_fourth_place">Cuarto lugar</span>
+                    </div>
+                    <div class="pts-prize-reward">1 DOGE</div>
+                </div>
+                <div class="pts-prize-row">
+                    <div class="pts-prize-medal">5</div>
+                    <div class="pts-prize-info">
+                        <span class="pts-prize-pos">Top 5</span>
+                        <span class="pts-prize-desc" data-i18n="ranking_fifth_place">Quinto lugar</span>
+                    </div>
+                    <div class="pts-prize-reward">0.5 DOGE</div>
+                </div>
+            </div>
+
+            <div class="pts-rules-footer">
+                <span data-i18n="ranking_only_top5">Solo Top 5 con 4,000+ PTS reciben premio</span>
+            </div>
+        </div>
+
+        <!-- TOP 10 RANKING -->
+        <div class="card">
+            <h3 class="pts-ranking-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                <span data-i18n="ranking_top_10">Top 10 de la Semana</span>
+            </h3>
+            <div id="pts-ranking-list" class="pts-ranking-list">
+                <div class="pts-loading">
+                    <div class="pts-loading-spinner"></div>
+                    <span data-i18n="ranking_loading">Cargando...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMO GANAR PTS -->
+        <div class="pts-howto-card" id="howto-earn-pts">
+            <h3 class="pts-howto-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0052CC" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <span data-i18n="ranking_how_earn_pts">Como ganar PTS</span>
+            </h3>
+            <div class="pts-howto-list">
+                <div class="pts-howto-item cyan">
+                    <div class="pts-howto-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+                    <div class="pts-howto-info">
+                        <span class="pts-howto-reward">+5 PTS</span>
+                        <span class="pts-howto-desc" data-i18n="ranking_per_ad">por cada anuncio visto</span>
+                    </div>
+                </div>
+                <div class="pts-howto-item pink">
+                    <div class="pts-howto-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                    <div class="pts-howto-info">
+                        <span class="pts-howto-reward">+10 PTS</span>
+                        <span class="pts-howto-desc" data-i18n="ranking_daily_checkin">check-in diario</span>
+                    </div>
+                </div>
+                <div class="pts-howto-item yellow">
+                    <div class="pts-howto-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
+                    <div class="pts-howto-info">
+                        <span class="pts-howto-reward">+20 PTS</span>
+                        <span class="pts-howto-desc" data-i18n="ranking_bonus_5_ads">bonus por 5 anuncios</span>
+                    </div>
+                </div>
+                <div class="pts-howto-item green">
+                    <div class="pts-howto-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                    <div class="pts-howto-info">
+                        <span class="pts-howto-reward">+15 PTS</span>
+                        <span class="pts-howto-desc" data-i18n="ranking_activate_boost">activar boost de mineria</span>
+                    </div>
+                </div>
+            </div>
+            <p class="pts-howto-note" data-i18n="ranking_pts_only_ranking">Los PTS son solo para ranking. No se pueden retirar ni convertir.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Floating Terms Button */
+.terms-floating-btn {
+    position: fixed;
+    top: 80px;
+    left: 16px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, rgba(25, 30, 45, 0.95) 0%, rgba(35, 40, 55, 0.95) 100%);
+    border: 1px solid rgba(0, 245, 255, 0.3);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 245, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+.terms-floating-btn:hover {
+    border-color: rgba(0, 245, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 245, 255, 0.2);
+}
+.terms-floating-btn:active {
+    transform: translateY(0);
+}
+.terms-btn-icon {
+    width: 18px;
+    height: 18px;
+    stroke: #00D4FF;
+    flex-shrink: 0;
+}
+.terms-btn-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+}
+
+/* Terms Modal Overlay */
+.pts-terms-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.pts-terms-modal-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+
+/* Terms Modal */
+.pts-terms-modal {
+    width: 100%;
+    max-width: 480px;
+    max-height: 85vh;
+    background: linear-gradient(180deg, rgba(25, 30, 45, 0.98) 0%, rgba(18, 22, 35, 0.98) 100%);
+    border: 1px solid rgba(0, 245, 255, 0.2);
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(0, 245, 255, 0.1);
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.3s ease;
+}
+.pts-terms-modal-overlay.show .pts-terms-modal {
+    transform: translateY(0) scale(1);
+}
+
+/* Modal Header */
+.pts-terms-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(0, 245, 255, 0.1) 0%, rgba(0, 82, 204, 0.1) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+.pts-terms-modal-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, rgba(0, 245, 255, 0.2) 0%, rgba(0, 200, 255, 0.1) 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.pts-terms-modal-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: #00D4FF;
+}
+.pts-terms-modal-title-wrapper {
+    flex: 1;
+}
+.pts-terms-modal-title-wrapper h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 2px;
+}
+.pts-terms-modal-title-wrapper p {
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+    margin: 0;
+}
+.pts-terms-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.pts-terms-modal-close:hover {
+    background: rgba(255, 71, 87, 0.2);
+    border-color: rgba(255, 71, 87, 0.4);
+}
+.pts-terms-modal-close svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--color-text-secondary);
+}
+
+/* Modal Content */
+.pts-terms-modal-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-neon-pink) transparent;
+}
+.pts-terms-modal-content::-webkit-scrollbar {
+    width: 4px;
+}
+.pts-terms-modal-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+.pts-terms-modal-content::-webkit-scrollbar-thumb {
+    background: var(--color-neon-pink);
+    border-radius: 4px;
+}
+
+/* Terms Section */
+.pts-terms-section {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.pts-terms-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+.pts-terms-section.fraud-section {
+    background: rgba(255, 71, 87, 0.05);
+    border: 1px solid rgba(255, 71, 87, 0.2);
+    border-radius: 12px;
+    padding: 16px;
+    margin-left: -8px;
+    margin-right: -8px;
+}
+.pts-terms-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.pts-terms-section-num {
+    width: 26px;
+    height: 26px;
+    background: linear-gradient(135deg, #00D4FF 0%, #00C8FF 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #0a0e17;
+    flex-shrink: 0;
+}
+.pts-terms-section-num.danger {
+    background: linear-gradient(135deg, #FF4757 0%, #FF6B81 100%);
+    color: white;
+}
+.pts-terms-section-header h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+.pts-terms-section p {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Terms Highlight Box */
+.pts-terms-highlight {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+.pts-terms-highlight svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.pts-terms-highlight span {
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+.pts-terms-highlight.info {
+    background: rgba(0, 245, 255, 0.08);
+    border: 1px solid rgba(0, 245, 255, 0.2);
+}
+.pts-terms-highlight.info svg {
+    stroke: #00D4FF;
+}
+.pts-terms-highlight.info span {
+    color: #00D4FF;
+}
+.pts-terms-highlight.warning {
+    background: rgba(255, 193, 7, 0.08);
+    border: 1px solid rgba(255, 193, 7, 0.2);
+}
+.pts-terms-highlight.warning svg {
+    stroke: #FFC107;
+}
+.pts-terms-highlight.warning span {
+    color: #FFC107;
+}
+.pts-terms-highlight.danger {
+    background: rgba(255, 71, 87, 0.1);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+}
+.pts-terms-highlight.danger svg {
+    stroke: #FF4757;
+}
+.pts-terms-highlight.danger span {
+    color: #FF4757;
+    font-weight: 600;
+}
+
+/* Terms Lists */
+.pts-terms-list {
+    margin: 10px 0 0;
+    padding-left: 0;
+    list-style: none;
+}
+.pts-terms-list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+.pts-terms-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    background: #00D4FF;
+    border-radius: 50%;
+}
+.pts-terms-list li strong {
+    color: var(--color-text-primary);
+}
+.pts-terms-list.danger-list li::before {
+    background: #FF4757;
+}
+.pts-terms-list.sanction-list li::before {
+    background: #FF9800;
+}
+
+/* Modal Footer */
+.pts-terms-modal-footer {
+    padding: 16px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.pts-terms-accept-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #00D4FF 0%, #00C8FF 100%);
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0a0e17;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.pts-terms-accept-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 245, 255, 0.3);
+}
+.pts-terms-accept-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: #0a0e17;
+}
+
+/* Tabs */
+.ranking-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;background:transparent;border:none;border-radius:var(--radius-md);color:var(--color-text-tertiary);font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.3s ease}
+.ranking-tab.active{background:var(--gradient-primary);color:#fff}
+.ranking-tab:not(.active):hover{background:rgba(255,255,255,0.05);color:var(--color-text-secondary)}
+.crown-icon{position:absolute;top:-10px;right:-8px;width:22px;height:22px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFD700' stroke='%23B8860B' stroke-width='1'%3E%3Cpath d='M2 4l3 12h14l3-12-6 7-4-9-4 9-6-7zm3 14h14v2H5z'/%3E%3C/svg%3E") center/contain no-repeat}
+
+/* Competition State Banner */
+.competition-state-banner{
+    background: var(--glass-ultra);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+    text-align: center;
+}
+.competition-state-banner.state-active{
+    border-color: rgba(0, 245, 255, 0.4);
+    background: linear-gradient(135deg, rgba(0, 245, 255, 0.1) 0%, rgba(0, 200, 255, 0.05) 100%);
+}
+.competition-state-banner.state-ended{
+    border-color: rgba(255, 193, 7, 0.4);
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.05) 100%);
+}
+.competition-state-banner.state-distributing{
+    border-color: rgba(0, 82, 204, 0.4);
+    background: linear-gradient(135deg, rgba(0, 82, 204, 0.1) 0%, rgba(0, 102, 255, 0.05) 100%);
+}
+.competition-state-banner.state-distributed{
+    border-color: rgba(76, 175, 80, 0.4);
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(129, 199, 132, 0.05) 100%);
+}
+.competition-state-banner.state-preparation{
+    border-color: rgba(255, 152, 0, 0.4);
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
+}
+
+.state-indicator{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: var(--space-2);
+}
+.state-dot{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #00D4FF;
+    animation: pulse 2s infinite;
+}
+.state-active .state-dot{background: #00D4FF;}
+.state-ended .state-dot{background: #FFC107;}
+.state-distributing .state-dot{background: #0052CC; animation: pulse-fast 1s infinite;}
+.state-distributed .state-dot{background: #4CAF50;}
+.state-preparation .state-dot{background: #FF9800; animation: pulse 2s infinite;}
+
+@keyframes pulse{
+    0%, 100%{opacity: 1; transform: scale(1);}
+    50%{opacity: 0.5; transform: scale(0.8);}
+}
+@keyframes pulse-fast{
+    0%, 100%{opacity: 1; transform: scale(1);}
+    50%{opacity: 0.5; transform: scale(0.9);}
+}
+
+.state-label{
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.state-message{
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: 1.4;
+}
+.state-timer{
+    margin-top: var(--space-2);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-family: monospace;
+}
+
+/* PTS Hero Card */
+.pts-hero-card{
+    position:relative;
+    background:linear-gradient(135deg,rgba(0,245,255,0.08) 0%,rgba(0, 82, 204,0.08) 50%,rgba(232,82,170,0.08) 100%);
+    border:1px solid rgba(0,245,255,0.2);
+    border-radius:var(--radius-xl);
+    padding:var(--space-5);
+    margin-bottom:var(--space-4);
+    overflow:hidden
+}
+.pts-hero-content{position:relative;z-index:1}
+.pts-hero-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-4)}
+.pts-hero-title{font-size:1.25rem;font-weight:800;color:var(--color-text-primary);margin:0 0 4px}
+.pts-hero-subtitle{font-size:0.85rem;color:var(--color-text-tertiary);margin:0}
+.pts-countdown-box{text-align:right;padding:var(--space-3);background:var(--glass-ultra);border-radius:var(--radius-md);border:1px solid var(--glass-border)}
+.pts-countdown-label{font-size:0.75rem;color:var(--color-text-tertiary);display:block;margin-bottom:2px}
+.pts-countdown-value{font-size:1.1rem;font-weight:700;color:var(--color-neon-cyan)}
+.pts-user-stats{display:flex;align-items:stretch;gap:var(--space-4);padding:var(--space-4);background:var(--glass-ultra);border-radius:var(--radius-lg);border:1px solid var(--glass-border)}
+.pts-user-stat{flex:1;text-align:center}
+.pts-user-stat-label{font-size:0.75rem;color:var(--color-text-tertiary);display:block;margin-bottom:4px}
+.pts-user-stat-value{font-size:1.5rem;font-weight:800;background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.pts-user-stat-position{font-size:1.5rem;font-weight:800;color:var(--color-neon-cyan)}
+.pts-user-stat-divider{width:1px;background:var(--glass-border)}
+.pts-user-prize-status{font-size:0.75rem;margin-top:4px;padding:2px 8px;border-radius:var(--radius-sm);display:inline-block}
+.pts-user-prize-status.qualifies{background:rgba(76,175,80,0.2);color:#81C784}
+.pts-user-prize-status.not-qualifies{background:rgba(255,193,7,0.2);color:#FFD54F}
+.pts-user-prize-status.no-prize{display:none}
+
+/* Rules Card */
+.pts-rules-card{background:var(--glass-ultra);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-4)}
+.pts-rules-header{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4)}
+.pts-rules-header h3{font-size:1rem;font-weight:700;color:var(--color-text-primary);margin:0}
+.pts-min-rule{display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3);background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);border-radius:var(--radius-md);margin-bottom:var(--space-4);font-size:0.85rem;color:#FFD54F}
+.pts-prizes-table{display:flex;flex-direction:column;gap:var(--space-2)}
+.pts-prize-row{display:flex;align-items:center;padding:var(--space-3);background:var(--glass-ultra);border-radius:var(--radius-md);border:1px solid var(--glass-border)}
+.pts-prize-row.gold{border-color:rgba(255,215,0,0.4);background:linear-gradient(90deg,rgba(255,215,0,0.1) 0%,transparent 100%)}
+.pts-prize-row.silver{border-color:rgba(192,192,192,0.4);background:linear-gradient(90deg,rgba(192,192,192,0.1) 0%,transparent 100%)}
+.pts-prize-row.bronze{border-color:rgba(205,127,50,0.4);background:linear-gradient(90deg,rgba(205,127,50,0.1) 0%,transparent 100%)}
+.pts-prize-medal{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:800;color:var(--color-text-primary);margin-right:var(--space-3)}
+.gold .pts-prize-medal{color:#FFD700}
+.silver .pts-prize-medal{color:#C0C0C0}
+.bronze .pts-prize-medal{color:#CD7F32}
+.pts-prize-info{flex:1}
+.pts-prize-pos{font-size:0.9rem;font-weight:700;color:var(--color-text-primary);display:block}
+.pts-prize-desc{font-size:0.75rem;color:var(--color-text-tertiary)}
+.pts-prize-reward{font-size:1rem;font-weight:800;background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.pts-rules-footer{text-align:center;padding-top:var(--space-3);border-top:1px solid var(--glass-border);margin-top:var(--space-3);font-size:0.8rem;color:var(--color-text-tertiary)}
+
+/* Ranking List */
+.pts-ranking-title{display:flex;align-items:center;gap:var(--space-2);font-size:1rem;font-weight:700;color:var(--color-text-primary);margin:0 0 var(--space-4)}
+.pts-ranking-list{display:flex;flex-direction:column;gap:var(--space-2)}
+.pts-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--space-6);color:var(--color-text-tertiary)}
+.pts-loading-spinner{width:32px;height:32px;border:3px solid var(--glass-border);border-top-color:var(--color-neon-cyan);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:var(--space-3)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.pts-rank-item{display:flex;align-items:center;padding:var(--space-3);background:var(--glass-ultra);border-radius:var(--radius-md);border:1px solid var(--glass-border);gap:var(--space-3)}
+.pts-rank-item.top-1{border-color:rgba(255,215,0,0.4);background:linear-gradient(90deg,rgba(255,215,0,0.15) 0%,transparent 50%)}
+.pts-rank-item.top-2{border-color:rgba(192,192,192,0.4);background:linear-gradient(90deg,rgba(192,192,192,0.1) 0%,transparent 50%)}
+.pts-rank-item.top-3{border-color:rgba(205,127,50,0.4);background:linear-gradient(90deg,rgba(205,127,50,0.1) 0%,transparent 50%)}
+.pts-rank-item.top-4,.pts-rank-item.top-5{border-color:rgba(0,245,255,0.2)}
+.pts-rank-item.is-user{border-color:rgba(232,82,170,0.5);box-shadow:0 0 15px rgba(232,82,170,0.2)}
+.pts-rank-item.no-prize-zone{opacity:0.7}
+
+.pts-rank-pos{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:var(--color-text-secondary);background:var(--glass-ultra);border-radius:50%;border:1px solid var(--glass-border);flex-shrink:0}
+.top-1 .pts-rank-pos{background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);color:#000;border:none}
+.top-2 .pts-rank-pos{background:linear-gradient(135deg,#C0C0C0 0%,#808080 100%);color:#000;border:none}
+.top-3 .pts-rank-pos{background:linear-gradient(135deg,#CD7F32 0%,#8B4513 100%);color:#fff;border:none}
+
+.pts-rank-info{flex:1;min-width:0}
+.pts-rank-name{font-size:0.95rem;font-weight:600;color:var(--color-text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pts-rank-pts{font-size:0.8rem;color:var(--color-text-tertiary)}
+
+.pts-rank-right{text-align:right;flex-shrink:0}
+.pts-rank-reward{font-size:0.9rem;font-weight:700}
+.pts-rank-reward.has-reward{background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.pts-rank-reward.no-reward{color:var(--color-text-tertiary)}
+.pts-rank-status{font-size:0.7rem;margin-top:2px}
+.pts-rank-status.qualifies{color:#81C784}
+.pts-rank-status.needs-pts{color:#FFD54F}
+.pts-rank-status.no-prize{color:var(--color-text-tertiary)}
+.pts-rank-status.credited{color:#81C784}
+
+/* How to Card */
+.pts-howto-card{background:var(--glass-ultra);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:var(--space-4)}
+.pts-howto-card.disabled{opacity:0.5;pointer-events:none}
+.pts-howto-title{display:flex;align-items:center;gap:var(--space-2);font-size:1rem;font-weight:700;color:var(--color-text-primary);margin:0 0 var(--space-4)}
+.pts-howto-list{display:flex;flex-direction:column;gap:var(--space-3)}
+.pts-howto-item{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3);background:var(--glass-ultra);border-radius:var(--radius-md);border:1px solid var(--glass-border)}
+.pts-howto-item.cyan{border-color:rgba(0,245,255,0.3)}
+.pts-howto-item.pink{border-color:rgba(232,82,170,0.3)}
+.pts-howto-item.yellow{border-color:rgba(255,193,7,0.3)}
+.pts-howto-item.green{border-color:rgba(76,175,80,0.3)}
+.pts-howto-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-md);flex-shrink:0}
+.cyan .pts-howto-icon{background:rgba(0,245,255,0.15);color:#00D4FF}
+.pink .pts-howto-icon{background:rgba(232,82,170,0.15);color:#3B82F6}
+.yellow .pts-howto-icon{background:rgba(255,193,7,0.15);color:#FFC107}
+.green .pts-howto-icon{background:rgba(76,175,80,0.15);color:#4CAF50}
+.pts-howto-info{flex:1}
+.pts-howto-reward{font-size:1rem;font-weight:700;color:var(--color-text-primary);display:block}
+.pts-howto-desc{font-size:0.8rem;color:var(--color-text-tertiary)}
+.pts-howto-note{font-size:0.8rem;color:var(--color-text-tertiary);text-align:center;margin:var(--space-4) 0 0;padding-top:var(--space-3);border-top:1px solid var(--glass-border)}
+</style>
+
+<script>
+const userId = '{{ user.user_id }}';
+const MIN_PTS = 4000;
+const PRIZES = {1: 10, 2: 5, 3: 2, 4: 1, 5: 0.5};
+
+// Textos por estado
+const STATE_CLASSES = {
+    'ACTIVE': 'state-active',
+    'ENDED': 'state-ended',
+    'DISTRIBUTING': 'state-distributing',
+    'DISTRIBUTED': 'state-distributed',
+    'PREPARATION': 'state-preparation'
+};
+
+function switchTab(tab) {
+    document.querySelectorAll('.rank-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.ranking-panel').forEach(p => p.style.display = 'none');
+    document.getElementById(`tab-${tab}`).classList.add('active');
+    document.getElementById(`panel-${tab}`).style.display = 'block';
+
+    if (tab === 'pts') {
+        loadCompetitionData();
+    }
+}
+
+async function loadCompetitionData() {
+    try {
+        const resp = await fetch(`/api/competition/ranking?user_id=${userId}`);
+        const data = await resp.json();
+
+        if (data.success) {
+            updateCompetitionState(data.state);
+            updateUserStats(data.user_rank, data.state);
+            renderRankingList(data.ranking, data.state);
+        }
+    } catch (e) {
+        console.error('[Competition]', e);
+        document.getElementById('pts-ranking-list').innerHTML = `
+            <div class="pts-loading">
+                <span style="color: var(--color-error);">Error al cargar</span>
+            </div>
+        `;
+    }
+}
+
+function updateCompetitionState(state) {
+    const banner = document.getElementById('competition-state-banner');
+    const stateLabel = banner.querySelector('.state-label');
+    const stateMessage = banner.querySelector('.state-message');
+    const stateTimer = banner.querySelector('.state-timer');
+    const countdownBox = document.querySelector('.pts-countdown-box');
+    const countdownLabel = document.getElementById('countdown-label');
+    const countdownValue = document.getElementById('pts-countdown');
+    const competitionNumber = document.getElementById('competition-number');
+    const howtoCard = document.getElementById('howto-earn-pts');
+
+    // Remove all state classes
+    banner.className = 'competition-state-banner';
+
+    // Add current state class
+    banner.classList.add(STATE_CLASSES[state.state] || 'state-active');
+
+    // Update state label and message
+    stateLabel.textContent = state.title || 'Competencia Activa';
+    stateMessage.textContent = state.message || '';
+
+    // Update competition number
+    if (state.competition_number) {
+        competitionNumber.textContent = `Competencia #${state.competition_number}`;
+    }
+
+    // Handle countdown/timer based on state
+    if (state.state === 'ACTIVE') {
+        countdownBox.style.display = 'block';
+        stateTimer.style.display = 'none';
+        countdownLabel.textContent = window.t ? window.t('ranking_ends_in') : 'Termina en';
+
+        if (state.remaining_days !== undefined) {
+            const daysText = window.t ? window.t('ranking_days') : 'dias';
+            const hoursText = window.t ? window.t('ranking_hours') : 'h';
+            if (state.remaining_days > 0) {
+                countdownValue.innerHTML = `${state.remaining_days} ${daysText} ${state.remaining_hours || 0}${hoursText}`;
+            } else {
+                countdownValue.innerHTML = `${state.remaining_hours || 0}${hoursText} ${state.remaining_minutes || 0}m`;
+            }
+        }
+
+        howtoCard.classList.remove('disabled');
+    } else if (state.state === 'DISTRIBUTING') {
+        countdownBox.style.display = 'none';
+        stateTimer.style.display = 'block';
+
+        if (state.distribution_remaining_minutes !== undefined) {
+            stateTimer.textContent = `${state.distribution_remaining_minutes}m ${state.distribution_remaining_seconds || 0}s`;
+        }
+
+        howtoCard.classList.add('disabled');
+    } else if (state.state === 'PREPARATION') {
+        countdownBox.style.display = 'none';
+        stateTimer.style.display = 'block';
+
+        if (state.preparation_remaining_minutes !== undefined) {
+            stateTimer.textContent = `${state.preparation_remaining_minutes}m ${state.preparation_remaining_seconds || 0}s`;
+        }
+
+        howtoCard.classList.add('disabled');
+    } else {
+        countdownBox.style.display = 'none';
+        stateTimer.style.display = 'none';
+        howtoCard.classList.add('disabled');
+    }
+}
+
+function updateUserStats(userRank, state) {
+    if (!userRank) return;
+
+    document.getElementById('user-pts-week').textContent = userRank.pts || 0;
+    document.getElementById('user-pts-position').textContent = userRank.position || '--';
+
+    const statusEl = document.getElementById('user-prize-status');
+    const pos = userRank.position;
+    const pts = userRank.pts || 0;
+
+    // Handle different states
+    if (state.state === 'DISTRIBUTED' && userRank.reward_credited) {
+        statusEl.className = 'pts-user-prize-status qualifies';
+        statusEl.textContent = `+${userRank.reward_doge} DOGE acreditado`;
+    } else if (pos && pos <= 5) {
+        if (pts >= MIN_PTS) {
+            statusEl.className = 'pts-user-prize-status qualifies';
+            const reward = PRIZES[pos] || 0;
+            if (state.state === 'ACTIVE') {
+                statusEl.textContent = `Califica: ${reward} DOGE`;
+            } else {
+                statusEl.textContent = `Premio: ${reward} DOGE`;
+            }
+        } else {
+            statusEl.className = 'pts-user-prize-status not-qualifies';
+            statusEl.textContent = `Necesita ${MIN_PTS - pts} PTS`;
+        }
+    } else {
+        statusEl.className = 'pts-user-prize-status no-prize';
+        statusEl.textContent = '';
+    }
+}
+
+function renderRankingList(ranking, state) {
+    const container = document.getElementById('pts-ranking-list');
+    const noParticipantsText = window.t ? window.t('ranking_no_participants') : 'Sin participantes';
+    const youText = window.t ? window.t('ranking_you') : '(Tu)';
+    const qualifiesText = 'Califica';
+    const needsText = 'Necesita';
+    const noPrizeText = 'Sin premio';
+    const creditedText = 'Acreditado';
+
+    if (!ranking || ranking.length === 0) {
+        container.innerHTML = `
+            <div class="pts-loading">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:0.3;margin-bottom:var(--space-3)"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                <span>${noParticipantsText}</span>
+            </div>
+        `;
+        return;
+    }
+
+    const isActive = state.state === 'ACTIVE';
+    const isDistributed = state.state === 'DISTRIBUTED';
+
+    let html = '';
+    ranking.forEach((e, i) => {
+        const pos = e.position || (i + 1);
+        const isTop5 = pos <= 5;
+        const topClass = pos === 1 ? 'top-1' : pos === 2 ? 'top-2' : pos === 3 ? 'top-3' : pos === 4 ? 'top-4' : pos === 5 ? 'top-5' : '';
+        const isUser = e.user_id == userId;
+        const userClass = isUser ? 'is-user' : '';
+        const noPrizeZone = !isTop5 ? 'no-prize-zone' : '';
+
+        let rewardHtml = '';
+        let statusHtml = '';
+
+        if (isTop5) {
+            const prize = PRIZES[pos];
+            if (e.qualified || e.pts >= MIN_PTS) {
+                rewardHtml = `<div class="pts-rank-reward has-reward">${prize} DOGE</div>`;
+                if (isDistributed && e.reward_credited) {
+                    statusHtml = `<div class="pts-rank-status credited">${creditedText}</div>`;
+                } else {
+                    statusHtml = `<div class="pts-rank-status qualifies">${qualifiesText}</div>`;
+                }
+            } else {
+                const needed = MIN_PTS - e.pts;
+                rewardHtml = `<div class="pts-rank-reward no-reward">${prize} DOGE</div>`;
+                statusHtml = `<div class="pts-rank-status needs-pts">${needsText} ${needed} PTS</div>`;
+            }
+        } else {
+            rewardHtml = `<div class="pts-rank-reward no-reward">-</div>`;
+            statusHtml = `<div class="pts-rank-status no-prize">${noPrizeText}</div>`;
+        }
+
+        html += `
+            <div class="pts-rank-item ${topClass} ${userClass} ${noPrizeZone}">
+                <div class="pts-rank-pos">${pos}</div>
+                <div class="pts-rank-info">
+                    <div class="pts-rank-name">${e.first_name || e.username}${isUser ? ` <span style="color:var(--color-neon-pink);font-size:0.75rem;">${youText}</span>` : ''}</div>
+                    <div class="pts-rank-pts">${e.pts.toLocaleString()} PTS</div>
+                </div>
+                <div class="pts-rank-right">
+                    ${rewardHtml}
+                    ${statusHtml}
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+// PTS Terms Modal Functions
+function openPtsTermsModal() {
+    const modal = document.getElementById('ptsTermsModal');
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    
+    // Haptic feedback
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+    
+    // Apply translations if available
+    if (typeof applyTranslations === 'function') {
+        setTimeout(applyTranslations, 50);
+    }
+}
+
+function closePtsTermsModal() {
+    const modal = document.getElementById('ptsTermsModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+    
+    // Haptic feedback
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+}
+
+function closePtsTermsModalOutside(event) {
+    if (event.target.classList.contains('pts-terms-modal-overlay')) {
+        closePtsTermsModal();
+    }
+}
+
+// Auto-refresh when competition is not active (to show state changes)
+let refreshInterval = null;
+
+function startAutoRefresh() {
+    if (refreshInterval) clearInterval(refreshInterval);
+    refreshInterval = setInterval(() => {
+        const ptsPanel = document.getElementById('panel-pts');
+        if (ptsPanel && ptsPanel.style.display !== 'none') {
+            loadCompetitionData();
+        }
+    }, 30000); // Refresh every 30 seconds
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    if (new URLSearchParams(window.location.search).get('tab') === 'pts') switchTab('pts');
+
+    startAutoRefresh();
+
+    if (typeof applyTranslations === 'function') {
+        setTimeout(applyTranslations, 100);
+    }
+});
+</script>
+{% endblock %}

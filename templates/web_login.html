@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login - SALLY-E</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    
+    <!-- Telegram Login Widget -->
+    <script async src="https://telegram.org/js/telegram-widget.js?22"></script>
+    
+    <style>
+        /* ==================== RESET & BASE ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Premium Blue Gradient Colors */
+            --primary-blue: #0066FF;
+            --primary-blue-dark: #0052CC;
+            --primary-blue-light: #3385FF;
+            --accent-cyan: #00D4FF;
+            --accent-purple: #7B68EE;
+            
+            /* Background */
+            --bg-primary: #030308;
+            --bg-secondary: #0A0A12;
+            --bg-card: rgba(10, 10, 20, 0.85);
+            
+            /* Text */
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            
+            /* Borders & Effects */
+            --border-glow: rgba(0, 102, 255, 0.3);
+            --shadow-blue: 0 0 40px rgba(0, 102, 255, 0.15);
+            --shadow-intense: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* ==================== ANIMATED BACKGROUND ==================== */
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 102, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(123, 104, 238, 0.08) 0%, transparent 60%),
+                linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            z-index: 0;
+        }
+        
+        /* Floating Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+        
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--primary-blue));
+            bottom: -50px;
+            right: -50px;
+            animation-delay: -7s;
+        }
+        
+        .orb-3 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -14s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 30px) scale(1.02); }
+        }
+        
+        /* Grid Pattern Overlay */
+        .grid-pattern {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 102, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 102, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* ==================== MAIN CONTAINER ==================== */
+        .login-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+        
+        /* ==================== LOGIN CARD ==================== */
+        .login-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-radius: 24px;
+            border: 1px solid var(--border-glow);
+            padding: 40px 32px;
+            box-shadow: var(--shadow-intense), var(--shadow-blue);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Glow Effect on Card */
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-blue), var(--accent-cyan), var(--primary-blue), transparent);
+            border-radius: 2px;
+        }
+        
+        /* ==================== LOGO ==================== */
+        .logo-container {
+            margin-bottom: 28px;
+        }
+        
+        .logo {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(0, 102, 255, 0.3);
+            position: relative;
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 27px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan), var(--accent-purple));
+            z-index: -1;
+            opacity: 0.5;
+            filter: blur(10px);
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: white;
+        }
+        
+        /* ==================== TYPOGRAPHY ==================== */
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .login-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        
+        /* ==================== TELEGRAM WIDGET CONTAINER ==================== */
+        .telegram-widget-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+            min-height: 50px;
+        }
+        
+        /* Style the Telegram button to match our theme */
+        .telegram-widget-container iframe {
+            border-radius: 12px !important;
+        }
+        
+        /* ==================== ALTERNATIVE LOGIN BUTTON ==================== */
+        .miniapp-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.15), rgba(0, 212, 255, 0.1));
+            border: 1px solid rgba(0, 102, 255, 0.3);
+            border-radius: 14px;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .miniapp-link:hover {
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.25), rgba(0, 212, 255, 0.2));
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 102, 255, 0.2);
+        }
+        
+        .miniapp-link svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* ==================== DIVIDER ==================== */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        }
+        
+        .divider span {
+            padding: 0 16px;
+        }
+        
+        /* ==================== FEATURES ==================== */
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(0, 102, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 102, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .feature:hover {
+            background: rgba(0, 102, 255, 0.08);
+            border-color: rgba(0, 102, 255, 0.2);
+        }
+        
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .feature-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+        
+        .feature-text {
+            text-align: left;
+        }
+        
+        .feature-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .feature-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        
+        /* ==================== ERROR MESSAGE ==================== */
+        .error-banner {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.15), rgba(255, 107, 107, 0.1));
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .error-banner svg {
+            width: 24px;
+            height: 24px;
+            fill: #ff4757;
+            flex-shrink: 0;
+        }
+        
+        .error-banner span {
+            font-size: 14px;
+            color: #ff6b6b;
+            text-align: left;
+        }
+        
+        /* ==================== LOADING STATE ==================== */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 3, 8, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 102, 255, 0.2);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 20px;
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+        
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 32px 24px;
+            }
+            
+            .login-title {
+                font-size: 24px;
+            }
+            
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+        }
+        
+        /* ==================== SECURITY BADGE ==================== */
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .security-badge svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-gradient"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-pattern"></div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Iniciando sesión...</div>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo -->
+            <div class="logo-container">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <!-- Mining/Coin Icon -->
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h1 class="login-title">Bienvenido a SALLY-E</h1>
+            <p class="login-subtitle">
+                Inicia sesión con tu cuenta de Telegram para acceder a tu panel de minería y recompensas
+            </p>
+            
+            <!-- Error Message (if any) -->
+            {% if error %}
+            <div class="error-banner">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+            
+            <!-- Telegram Login Widget -->
+            <div class="telegram-widget-container" id="telegram-widget">
+                <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                        data-telegram-login="{{ bot_username }}"
+                        data-size="large"
+                        data-radius="12"
+                        data-onauth="onTelegramAuth(user)"
+                        data-request-access="write">
+                </script>
+            </div>
+            
+            <!-- Divider -->
+            <div class="divider">
+                <span>o</span>
+            </div>
+            
+            <!-- Alternative: Open in Telegram -->
+            <a href="https://t.me/{{ bot_username }}" class="miniapp-link" target="_blank">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .37z"/>
+                </svg>
+                Abrir MiniApp en Telegram
+            </a>
+            
+            <!-- Features -->
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        <div class="feature-title">Minería Automática 24/7</div>
+                        <div class="feature-desc">Gana S-E sin esfuerzo</div>
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        <div class="feature-title">100% Seguro</div>
+                        <div class="feature-desc">Autenticación verificada por Telegram</div>
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 18v1c0 1.1-.9 2-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14c1.1 0 2 .9 2 2v1h-9a2 2 0 00-2 2v8a2 2 0 002 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        <div class="feature-title">Retiros Rápidos</div>
+                        <div class="feature-desc">USDT, DOGE y TON disponibles</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Security Badge -->
+            <div class="security-badge">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/>
+                </svg>
+                Conexión segura con cifrado de extremo a extremo
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // =====================================================
+        // TELEGRAM LOGIN CALLBACK
+        // =====================================================
+        
+        function onTelegramAuth(user) {
+            console.log('✅ Telegram Auth recibido:', user);
+            
+            // Mostrar loading
+            const loading = document.getElementById('loading');
+            loading.classList.add('active');
+            
+            // Enviar datos al backend para validación
+            fetch('/api/telegram-web-auth', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('📦 Respuesta del servidor:', data);
+                
+                if (data.success) {
+                    // Login exitoso - redirigir
+                    console.log('🚀 Redirigiendo a:', data.redirect_url);
+                    window.location.href = data.redirect_url;
+                } else {
+                    // Error de validación
+                    loading.classList.remove('active');
+                    alert('Error: ' + (data.message || 'No se pudo iniciar sesión'));
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error:', error);
+                loading.classList.remove('active');
+                alert('Error de conexión. Por favor, intenta de nuevo.');
+            });
+        }
+        
+        // =====================================================
+        // CHECK EXISTING SESSION
+        // =====================================================
+        
+        (function() {
+            // Verificar si ya hay sesión activa
+            fetch('/api/web-session/status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.logged_in && data.user_id) {
+                    console.log('✅ Sesión existente detectada:', data.user_id);
+                    window.location.href = '/?user_id=' + data.user_id;
+                }
+            })
+            .catch(error => {
+                console.log('No hay sesión previa:', error);
+            });
+        })();
+        
+        // =====================================================
+        // WIDGET ERROR HANDLING
+        // =====================================================
+        
+        // Si el widget de Telegram no carga después de 5 segundos
+        setTimeout(function() {
+            const widget = document.getElementById('telegram-widget');
+            if (widget && widget.childNodes.length < 2) {
+                console.log('⚠️ Widget de Telegram no cargó, mostrando alternativa');
+                widget.innerHTML = `
+                    <a href="https://t.me/{{ bot_username }}" 
+                       class="miniapp-link" 
+                       style="background: linear-gradient(135deg, #0088cc, #00a8e8); border: none;">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;">
+                            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .37z"/>
+                        </svg>
+                        Iniciar sesión con Telegram
+                    </a>
+                `;
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

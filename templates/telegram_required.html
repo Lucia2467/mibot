@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticación Requerida - SALLY-E</title>
+    
+    <!-- Telegram WebApp Script - CRÍTICO -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 500px;
+        }
+        
+        .logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 16px 40px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .features {
+            margin-top: 50px;
+            text-align: left;
+        }
+        
+        .feature {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .feature-desc {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        /* Loading state */
+        .loading {
+            display: none;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .content.hidden {
+            display: none;
+        }
+        
+        .error-msg {
+            background: rgba(255,100,100,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading State -->
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <h1>Conectando...</h1>
+            <p>Verificando tu cuenta de Telegram</p>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content" id="main-content">
+            <div class="logo">🔐</div>
+            <h1>Acceso desde Telegram Requerido</h1>
+            <p>SALLY-E es una Telegram Mini App. Para acceder, debes abrir la aplicación desde Telegram.</p>
+            
+            <a href="https://t.me/SallyEbot" class="btn">
+                🚀 Abrir en Telegram
+            </a>
+            
+            <!-- NEW: Web Login Option -->
+            <div style="margin-top: 20px;">
+                <p style="font-size: 14px; opacity: 0.7; margin-bottom: 15px;">
+                    ¿Prefieres acceder desde el navegador?
+                </p>
+                <a href="/web-login" style="display: inline-block; padding: 12px 28px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; color: white; text-decoration: none; font-weight: 500; transition: all 0.3s ease;">
+                    🌐 Login con Telegram Web
+                </a>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-title">⛏️ Minería Automática</div>
+                    <div class="feature-desc">Mina S-E automáticamente 24/7 sin esfuerzo</div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-title">💰 Gana S-E</div>
+                    <div class="feature-desc">Completa tareas, invita amigos y mejora tu minero</div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-title">💸 Retira tus Ganancias</div>
+                    <div class="feature-desc">Convierte tus S-E a USDT, DOGE o TON</div>
+                </div>
+            </div>
+            
+            <div class="error-msg" id="error-msg" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // =====================================================
+        // DETECCIÓN AUTOMÁTICA DE TELEGRAM Y CREACIÓN DE CUENTA
+        // =====================================================
+        
+        (function() {
+            const loading = document.getElementById('loading');
+            const mainContent = document.getElementById('main-content');
+            const errorMsg = document.getElementById('error-msg');
+            
+            // Función para mostrar error
+            function showError(msg) {
+                loading.classList.remove('active');
+                mainContent.classList.remove('hidden');
+                errorMsg.textContent = msg;
+                errorMsg.style.display = 'block';
+            }
+            
+            // Función para redirigir
+            function redirectToApp(userId) {
+                const currentUrl = new URL(window.location.href);
+                const path = currentUrl.pathname === '/' ? '/' : currentUrl.pathname;
+                window.location.href = path + '?user_id=' + userId;
+            }
+            
+            // NUEVO: Verificar si hay sesión web activa primero
+            fetch('/api/web-session/status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.logged_in && data.user_id) {
+                    console.log('✅ Sesión web detectada:', data.user_id);
+                    redirectToApp(data.user_id);
+                    return;
+                }
+                
+                // Si no hay sesión web, continuar con la detección de Telegram
+                checkTelegramWebApp();
+            })
+            .catch(error => {
+                console.log('No hay sesión web previa, verificando Telegram...');
+                checkTelegramWebApp();
+            });
+            
+            function checkTelegramWebApp() {
+                // Verificar si estamos en Telegram WebApp
+                if (window.Telegram && window.Telegram.WebApp) {
+                    const tg = window.Telegram.WebApp;
+                    
+                    // Inicializar Telegram WebApp
+                    tg.ready();
+                    tg.expand();
+                    
+                    // Obtener datos del usuario
+                    const initDataUnsafe = tg.initDataUnsafe;
+                    const telegramUser = initDataUnsafe?.user;
+                    
+                    console.log('📱 Telegram WebApp detectado');
+                    console.log('👤 Usuario:', telegramUser);
+                    console.log('📦 initData:', tg.initData);
+                    
+                    if (telegramUser && telegramUser.id) {
+                        // ¡Tenemos un usuario de Telegram!
+                        loading.classList.add('active');
+                        mainContent.classList.add('hidden');
+                        
+                        const userId = telegramUser.id.toString();
+                        const username = telegramUser.username || null;
+                        const firstName = telegramUser.first_name || 'Usuario';
+                        
+                        console.log('🔄 Sincronizando usuario:', userId);
+                        
+                        // Sincronizar/crear usuario en el backend
+                        fetch('/api/sync-telegram-data', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                user_id: userId,
+                                username: username,
+                                first_name: firstName,
+                                last_name: telegramUser.last_name || null,
+                                init_data: tg.initData
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('✅ Respuesta del servidor:', data);
+                            if (data.success) {
+                                // Redirigir con el user_id
+                                redirectToApp(userId);
+                            } else {
+                                showError('Error al crear cuenta: ' + (data.error || 'Desconocido'));
+                            }
+                        })
+                        .catch(error => {
+                            console.error('❌ Error:', error);
+                            showError('Error de conexión. Por favor, intenta de nuevo.');
+                        });
+                        
+                    } else {
+                        // Telegram WebApp sin datos de usuario
+                        console.log('⚠️ Telegram detectado pero sin datos de usuario');
+                        console.log('initDataUnsafe:', JSON.stringify(initDataUnsafe));
+                        
+                        // Verificar si hay user_id en la URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const urlUserId = urlParams.get('user_id') || urlParams.get('userId');
+                        
+                        if (urlUserId) {
+                            redirectToApp(urlUserId);
+                        }
+                    }
+                } else {
+                    // No estamos en Telegram WebApp
+                    console.log('🌐 Acceso desde navegador normal (no Telegram)');
+                    
+                    // Verificar si hay user_id en la URL de todos modos
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const urlUserId = urlParams.get('user_id') || urlParams.get('userId');
+                    
+                    if (urlUserId) {
+                        // Intentar con el user_id de la URL
+                        loading.classList.add('active');
+                        mainContent.classList.add('hidden');
+                        
+                        fetch('/api/sync-telegram-data', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                user_id: urlUserId
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                redirectToApp(urlUserId);
+                            } else {
+                                showError('Usuario no encontrado');
+                            }
+                        })
+                        .catch(() => {
+                            showError('Error de conexión');
+                        });
+                    }
+                }
+            }
+        })();
+    </script>
+</body>
+</html>

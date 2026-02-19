@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de IPs - SALLY-E Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-header h1 {
+            color: #003D99;
+            font-size: 24px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .content-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-box .value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-box .label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .stat-box.warning {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .stat-box.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #003D99;
+            margin: 25px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .ip-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .ip-card:hover {
+            border-color: #0066FF;
+            box-shadow: 0 5px 15px rgba(0, 102, 255, 0.2);
+        }
+
+        .ip-card.suspicious {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+
+        .ip-card.banned {
+            background: #ffe0e0;
+            border-color: #ff6666;
+        }
+
+        .ip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .ip-hash {
+            font-family: monospace;
+            font-size: 14px;
+            color: #333;
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .ip-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #003D99;
+        }
+
+        .users-list {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            border-left: 3px solid #0066FF;
+        }
+
+        .user-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .ip-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-ban {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-ban:hover {
+            background: #c82333;
+        }
+
+        .btn-unban {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-unban:hover {
+            background: #218838;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .ip-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .ip-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🌐 Control de IPs</h1>
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">← Volver al Dashboard</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="content-container">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="value">{{ ips|length if ips else 0 }}</div>
+                    <div class="label">Total IPs</div>
+                </div>
+                <div class="stat-box warning">
+                    <div class="value">{{ duplicates|length if duplicates else 0 }}</div>
+                    <div class="label">IPs Duplicadas</div>
+                </div>
+                <div class="stat-box success">
+                    <div class="value">{{ ips|selectattr('is_banned')|list|length if ips else 0 }}</div>
+                    <div class="label">IPs Baneadas</div>
+                </div>
+            </div>
+
+            <!-- IPs Duplicadas (Sospechosas) -->
+            <div class="section-title">⚠️ IPs con Múltiples Cuentas</div>
+            
+            {% if ips and ips|length > 0 %}
+                {% for ip in ips %}
+                <div class="ip-card {% if ip.is_suspicious %}suspicious{% endif %} {% if ip.is_banned %}banned{% endif %}">
+                    <div class="ip-header">
+                        <div>
+                            <span class="ip-hash">{{ ip.ip_hash[:16] if ip.ip_hash else 'N/A' }}...</span>
+                            {% if ip.is_suspicious %}
+                                <span class="badge badge-warning">⚠️ SOSPECHOSA</span>
+                            {% endif %}
+                            {% if ip.is_banned %}
+                                <span class="badge badge-danger">🚫 BANEADA</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="ip-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">👥 Usuarios</div>
+                            <div class="stat-value">{{ ip.user_count or 0 }}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">📅 Primera vez</div>
+                            <div class="stat-value" style="font-size: 11px;">
+                                {% if ip.first_seen %}
+                                    {% if ip.first_seen.strftime is defined %}
+                                        {{ ip.first_seen.strftime('%Y-%m-%d') }}
+                                    {% else %}
+                                        {{ ip.first_seen }}
+                                    {% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">📅 Última vez</div>
+                            <div class="stat-value" style="font-size: 11px;">
+                                {% if ip.last_seen %}
+                                    {% if ip.last_seen.strftime is defined %}
+                                        {{ ip.last_seen.strftime('%Y-%m-%d') }}
+                                    {% else %}
+                                        {{ ip.last_seen }}
+                                    {% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if ip.users and ip.users|length > 0 %}
+                    <div class="users-list">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">Usuarios asociados:</div>
+                        {% for user in ip.users %}
+                        <div class="user-item">
+                            <div>
+                                <span style="font-weight: 600;">{{ user.full_name or user.first_name or 'Usuario' }}</span>
+                                {% if user.username and user.username != 'None' %}
+                                    <span style="color: #0088cc; font-size: 12px;">@{{ user.username }}</span>
+                                {% endif %}
+                                {% if user.banned %}
+                                    <span class="badge badge-danger" style="margin-left: 5px;">🚫</span>
+                                {% endif %}
+                            </div>
+                            <div style="font-size: 11px; color: #999;">
+                                ID: {{ user.user_id }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="ip-actions">
+                        {% if ip.is_banned %}
+                            <form method="POST" action="{{ url_for('admin_unban_ip', ip_hash=ip.ip_hash) }}">
+                                <button type="submit" class="btn btn-unban" onclick="return confirm('¿Desbanear esta IP?')">
+                                    ✅ Desbanear IP
+                                </button>
+                            </form>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('admin_ban_ip', ip_hash=ip.ip_hash) }}">
+                                <button type="submit" class="btn btn-ban" onclick="return confirm('¿Banear esta IP? Esto baneará a todos los usuarios asociados.')">
+                                    🚫 Banear IP
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No hay IPs duplicadas registradas.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

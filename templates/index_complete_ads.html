@@ -1,0 +1,1602 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Dashboard{% endblock %}
+
+{% block content %}
+<!-- Splash Screen Simplificado -->
+<div id="splash-screen" class="splash-screen">
+    <div class="splash-content">
+        <div class="splash-status">
+            <span class="status-text">Cargando datos...</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Hero Balance Card -->
+    <div class="card balance-card card-highlight">
+        <div class="balance-label">Balance Total</div>
+        <div class="balance-amount" id="total-balance">{{ "%.4f"|format(user.se_balance or 0) }}</div>
+        <div class="balance-currency">S-E</div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value" id="mining-level">{{ user.mining_level or 1 }}</div>
+            <div class="stat-label">Nivel</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="referral-count">{{ user.referral_count or 0 }}</div>
+            <div class="stat-label">Referidos</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ mining_rate or user.mining_power or 0.02 }}</div>
+            <div class="stat-label">S-E/Hora</div>
+        </div>
+    </div>
+
+    <!-- Mining Card -->
+    <div class="card">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="section-title" style="margin-bottom: var(--space-1);">Mining Station</h2>
+                <p class="text-muted">Ganancias sin reclamar</p>
+            </div>
+            <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: var(--gradient-subtle); border-radius: var(--radius-md); border: var(--glass-border);">
+                <i data-lucide="zap" style="width: 24px; height: 24px; color: var(--color-neon-pink);"></i>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: var(--space-6);">
+            <div style="font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: var(--space-2);" id="unclaimed-balance">
+                {{ "%.4f"|format(unclaimed or 0) }}
+            </div>
+            <div style="font-size: 0.875rem; color: var(--color-text-tertiary);">S-E pendientes</div>
+        </div>
+
+        <div class="progress mb-4">
+            <div class="progress-bar" id="mining-progress" style="width: 0%"></div>
+        </div>
+
+        <button class="btn btn-primary btn-lg btn-block" onclick="claimReward()">
+            <i data-lucide="arrow-down-to-line" style="width: 20px; height: 20px;"></i>
+             Reclamar
+        </button>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+        <h2 class="section-title">Acciones Rápidas</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3);">
+            <a href="/tasks?user_id={{ user_id }}" style="text-decoration: none;">
+                <div class="item" style="flex-direction: column; text-align: center; padding: var(--space-5); cursor: pointer;">
+                    <div class="item-icon" style="width: 56px; height: 56px; margin-bottom: var(--space-3);">
+                        <i data-lucide="check-square" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <div class="item-title" style="margin-bottom: 0;">Tareas</div>
+                </div>
+            </a>
+
+            <a href="/explore?user_id={{ user_id }}" style="text-decoration: none;">
+                <div class="item" style="flex-direction: column; text-align: center; padding: var(--space-5); cursor: pointer;">
+                    <div class="item-icon" style="width: 56px; height: 56px; margin-bottom: var(--space-3);">
+                        <i data-lucide="compass" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <div class="item-title" style="margin-bottom: 0;">Explorar</div>
+                </div>
+            </a>
+
+            <a href="/referidos?user_id={{ user_id }}" style="text-decoration: none;">
+                <div class="item" style="flex-direction: column; text-align: center; padding: var(--space-5); cursor: pointer;">
+                    <div class="item-icon" style="width: 56px; height: 56px; margin-bottom: var(--space-3);">
+                        <i data-lucide="users" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <div class="item-title" style="margin-bottom: 0;">Invitar</div>
+                </div>
+            </a>
+
+            <a href="/wallet?user_id={{ user_id }}" style="text-decoration: none;">
+                <div class="item" style="flex-direction: column; text-align: center; padding: var(--space-5); cursor: pointer;">
+                    <div class="item-icon" style="width: 56px; height: 56px; margin-bottom: var(--space-3);">
+                        <i data-lucide="wallet" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <div class="item-title" style="margin-bottom: 0;"> Billetera</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Activity Info -->
+    <div class="card">
+        <h2 class="section-title">Tu Actividad</h2>
+
+        <div class="item-list">
+            <div class="item">
+                <div class="item-icon">
+                    <i data-lucide="activity"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">Tasa de Minería</div>
+                    <div class="item-subtitle">{{ mining_rate or user.mining_power or 1.0 }} S-E por hora</div>
+                </div>
+                <div class="item-action">
+                    <div class="badge badge-success">Activo</div>
+                </div>
+            </div>
+
+            <div class="item">
+                <div class="item-icon">
+                    <i data-lucide="clock"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">Última Reclamación</div>
+                    <div class="item-subtitle">Hace 2 horas</div>
+                </div>
+            </div>
+
+            <div class="item">
+                <div class="item-icon">
+                    <i data-lucide="trending-up"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">Nivel Actual</div>
+                    <div class="item-subtitle">Nivel {{ user.mining_level or 1 }}</div>
+                </div>
+                <a href="/upgrade?user_id={{ user_id }}" class="btn btn-secondary btn-sm">
+                    Mejorar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips -->
+    <div class="card" style="background: rgba(0, 102, 255, 0.05); border-color: rgba(0, 102, 255, 0.1);">
+        <div style="display: flex; align-items: flex-start; gap: var(--space-4);">
+            <div style="flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0, 102, 255, 0.1); border-radius: var(--radius-md);">
+                <i data-lucide="lightbulb" style="width: 20px; height: 20px; color: var(--color-neon-pink);"></i>
+            </div>
+            <div style="flex: 1;">
+                <div style="font-weight: 600; margin-bottom: var(--space-2);"><img src="/static/icons/lightbulb.svg" style="width:20px; height:20px; vertical-align:middle; margin-right:8px;">Consejo Pro</div>
+                <div style="font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.6;">
+                    Reclama tus recompensas regularmente y mejora tu nivel de minería para maximizar tus ganancias diarias.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- REWARDED AD OVERLAY - Professional Ad System -->
+<!-- ========================================== -->
+<div id="ad-overlay" class="ad-overlay">
+    <div class="ad-modal">
+        <!-- Header -->
+        <div class="ad-header">
+            <div class="ad-header-content">
+                <div class="ad-icon-wrapper">
+                    <i data-lucide="tv" class="ad-icon"></i>
+                </div>
+                <h3 class="ad-title">Sponsored Content</h3>
+                <p class="ad-subtitle">Watch the ad to claim your reward</p>
+            </div>
+        </div>
+        
+        <!-- Ad Container -->
+        <div class="ad-container" id="ad-container">
+            <div class="ad-loading" id="ad-loading">
+                <div class="ad-spinner"></div>
+                <span>Loading ad...</span>
+            </div>
+            <!-- Ad content will be injected here -->
+            <div id="ad-content-wrapper" style="display: none; width: 100%; height: 100%;"></div>
+        </div>
+        
+        <!-- Footer with timer -->
+        <div class="ad-footer">
+            <div class="ad-timer-wrapper">
+                <div class="ad-timer-bar">
+                    <div class="ad-timer-progress" id="ad-timer-progress"></div>
+                </div>
+                <span class="ad-timer-text" id="ad-timer-text">Preparing...</span>
+            </div>
+            <button class="ad-close-btn" id="ad-close-btn" disabled onclick="handleAdComplete()">
+                <i data-lucide="check-circle"></i>
+                <span id="ad-btn-text">Continue</span>
+            </button>
+            <!-- Skip/Cancel button (only shows if ad fails) -->
+            <button class="ad-skip-btn" id="ad-skip-btn" style="display: none;" onclick="handleAdSkip()">
+                <i data-lucide="x"></i>
+                <span>Cancel</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Botón FAB - SOLO APARECE SI HAY CÓDIGOS ACTIVOS -->
+{% if show_promo_fab %}
+<button id="promo-fab" onclick="openPromoModal()">
+    <!-- TU GIF PERSONALIZADO - CAMBIA ESTA RUTA -->
+    <img src="{{ url_for('static', filename='images/promo.gif') }}" alt="Código Promocional">
+</button>
+{% endif %}
+
+<!-- Modal de Código Promocional - DISEÑO PROFESIONAL -->
+<div id="promo-modal" class="promo-modal-overlay">
+    <div class="promo-modal-container">
+        <!-- Header con gradiente -->
+        <div class="promo-modal-header">
+            <div class="promo-header-content">
+                <div class="promo-icon-wrapper">
+                    <i data-lucide="gift" class="promo-icon"></i>
+                </div>
+                <h2 class="promo-title">Código Promocional</h2>
+                <p class="promo-subtitle">Ingresa tu código para recibir recompensas</p>
+            </div>
+            <button class="promo-close-btn" onclick="closePromoModal()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <!-- Body del modal -->
+        <div class="promo-modal-body">
+            <div class="promo-input-container">
+                <label class="promo-input-label">Tu código</label>
+                <input 
+                    type="text" 
+                    id="promo-code-input" 
+                    class="promo-input"
+                    placeholder="EJEMPLO2024" 
+                    maxlength="30"
+                    autocomplete="off"
+                    autocapitalize="characters">
+                <div class="promo-input-hint">Los códigos no distinguen mayúsculas/minúsculas</div>
+            </div>
+
+            <button class="promo-submit-btn" onclick="submitPromoCode()" id="promo-submit-btn">
+                <i data-lucide="check-circle" class="btn-icon"></i>
+                <span>Canjear Código</span>
+            </button>
+
+            <!-- Info box -->
+            <div class="promo-info-box">
+                <i data-lucide="info" class="info-icon"></i>
+                <span>Los códigos son de uso único y pueden tener límite de usos</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ===== PROMO FAB BUTTON ===== */
+#promo-fab {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 70px;
+    height: 70px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 998;
+    padding: 0;
+    outline: none;
+    filter: drop-shadow(0 4px 12px rgba(0, 102, 255, 0.4));
+}
+
+#promo-fab img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    display: block;
+}
+
+#promo-fab:hover {
+    transform: scale(1.15) rotate(5deg);
+    filter: drop-shadow(0 6px 20px rgba(0, 102, 255, 0.6));
+}
+
+#promo-fab:active {
+    transform: scale(0.95);
+}
+
+/* ===== REWARDED AD OVERLAY STYLES ===== */
+.ad-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(11, 11, 15, 0.98);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: adFadeIn 0.3s ease-out;
+}
+
+@keyframes adFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.ad-modal {
+    background: linear-gradient(145deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 50%, var(--color-bg-primary) 100%);
+    border-radius: var(--radius-xl);
+    max-width: 400px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 0 80px rgba(0, 102, 255, 0.1);
+    animation: adSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes adSlideUp {
+    from {
+        transform: translateY(40px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Ad Header - Using app's gradient */
+.ad-header {
+    position: relative;
+    padding: 25px 20px 20px;
+    background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+    text-align: center;
+}
+
+.ad-header-content {
+    position: relative;
+    z-index: 1;
+}
+
+.ad-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    animation: adIconPulse 2s ease-in-out infinite;
+}
+
+@keyframes adIconPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.2); }
+}
+
+.ad-icon {
+    width: 28px;
+    height: 28px;
+    color: white;
+}
+
+.ad-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 6px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.ad-subtitle {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+}
+
+/* Ad Container */
+.ad-container {
+    min-height: 250px;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.ad-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    color: var(--color-text-tertiary);
+    font-size: 0.875rem;
+}
+
+.ad-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 102, 255, 0.2);
+    border-top-color: var(--color-neon-pink);
+    border-radius: 50%;
+    animation: adSpin 1s linear infinite;
+}
+
+@keyframes adSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* Ad Footer */
+.ad-footer {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ad-timer-wrapper {
+    margin-bottom: 15px;
+}
+
+.ad-timer-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.ad-timer-progress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--color-neon-pink), var(--color-neon-purple));
+    border-radius: 3px;
+    transition: width 0.1s linear;
+}
+
+.ad-timer-text {
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+    text-align: center;
+    display: block;
+}
+
+/* Continue Button */
+.ad-close-btn {
+    width: 100%;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.15) 0%, rgba(0, 200, 100, 0.08) 100%);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    border-radius: var(--radius-md);
+    color: rgba(0, 255, 136, 0.4);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: not-allowed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.ad-close-btn:disabled {
+    opacity: 0.5;
+}
+
+.ad-close-btn:not(:disabled) {
+    background: linear-gradient(135deg, var(--color-success) 0%, #00CC66 100%);
+    border-color: transparent;
+    color: var(--color-bg-primary);
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
+}
+
+.ad-close-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 255, 136, 0.5);
+}
+
+.ad-close-btn:not(:disabled):active {
+    transform: translateY(0);
+}
+
+.ad-close-btn i {
+    width: 20px;
+    height: 20px;
+}
+
+/* Skip/Cancel Button */
+.ad-skip-btn {
+    width: 100%;
+    padding: 12px 24px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    color: var(--color-text-tertiary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.ad-skip-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ad-skip-btn i {
+    width: 18px;
+    height: 18px;
+}
+
+/* ===== PROMO MODAL ===== */
+.promo-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.promo-modal-container {
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+    border-radius: 24px;
+    max-width: 420px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Header */
+.promo-modal-header {
+    position: relative;
+    padding: 30px 25px 25px;
+    background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+    text-align: center;
+}
+
+.promo-header-content {
+    position: relative;
+    z-index: 1;
+}
+
+.promo-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.promo-icon {
+    width: 30px;
+    height: 30px;
+    color: white;
+}
+
+.promo-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 8px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.promo-subtitle {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+}
+
+.promo-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.promo-close-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(90deg);
+}
+
+.promo-close-btn i {
+    width: 20px;
+    height: 20px;
+}
+
+/* Body */
+.promo-modal-body {
+    padding: 30px 25px;
+}
+
+.promo-input-container {
+    margin-bottom: 20px;
+}
+
+.promo-input-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.promo-input {
+    width: 100%;
+    padding: 18px 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transition: all 0.3s ease;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.promo-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+    font-weight: 400;
+    letter-spacing: 2px;
+}
+
+.promo-input:focus {
+    outline: none;
+    border-color: #0066FF;
+    background: rgba(0, 102, 255, 0.1);
+    box-shadow: 
+        0 0 0 4px rgba(0, 102, 255, 0.2),
+        inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.promo-input-hint {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 8px;
+    text-align: center;
+}
+
+/* Submit Button */
+.promo-submit-btn {
+    width: 100%;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+    border: none;
+    border-radius: 14px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 102, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.promo-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 102, 255, 0.5);
+}
+
+.promo-submit-btn:active {
+    transform: translateY(0);
+}
+
+.promo-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.promo-submit-btn .btn-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Info Box */
+.promo-info-box {
+    margin-top: 20px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(0, 245, 255, 0.08) 0%, rgba(0, 102, 255, 0.08) 100%);
+    border: 1px solid rgba(0, 245, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.promo-info-box .info-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--color-neon-cyan, #00d4ff);
+    flex-shrink: 0;
+}
+
+/* Loading state */
+.promo-submit-btn.loading {
+    pointer-events: none;
+}
+
+.promo-submit-btn.loading span {
+    opacity: 0;
+}
+
+.promo-submit-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Success state animation */
+@keyframes success-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.promo-modal-container.success {
+    animation: success-pulse 0.5s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .promo-modal-overlay {
+        padding: 15px;
+    }
+    
+    .promo-modal-container {
+        border-radius: 20px;
+    }
+    
+    .promo-modal-header {
+        padding: 25px 20px 20px;
+    }
+    
+    .promo-title {
+        font-size: 1.3rem;
+    }
+    
+    .promo-modal-body {
+        padding: 25px 20px;
+    }
+    
+    .promo-input {
+        font-size: 1.1rem;
+        padding: 16px;
+    }
+    
+    #promo-fab {
+        width: 60px;
+        height: 60px;
+        bottom: 80px;
+        right: 15px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-update unclaimed balance
+function updateUnclaimedBalance() {
+    // Usar la tasa efectiva (power * mining_rate global)
+    const effectiveRate = {{ mining_rate or user.mining_power or 1.0 }};
+    const ratePerSecond = effectiveRate / 3600;
+    const unclaimedElement = document.getElementById('unclaimed-balance');
+    const progressBar = document.getElementById('mining-progress');
+
+    // El backend YA calculó el unclaimed real, ahora solo sumamos desde ahí
+    const initialUnclaimed = {{ unclaimed or 0 }};
+    const startTime = Date.now();
+
+    // Actualizar cada segundo
+    setInterval(() => {
+        if (unclaimedElement) {
+            // Calcular segundos desde que cargó la página
+            const secondsPassed = (Date.now() - startTime) / 1000;
+
+            // Sumar al valor inicial que ya incluye todo lo acumulado
+            const newValue = initialUnclaimed + (secondsPassed * ratePerSecond);
+
+            unclaimedElement.textContent = newValue.toFixed(4);
+
+            const progress = Math.min((newValue / 100) * 100, 100);
+            if (progressBar) {
+                progressBar.style.width = progress + '%';
+            }
+        }
+    }, 1000);
+}
+
+// Claim reward function
+async function claimReward() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('user_id');
+
+    if (!userId) {
+        showToast('Error: User not identified', 'error');
+        return;
+    }
+
+    // Get current unclaimed amount
+    const unclaimedAmount = parseFloat(document.getElementById('unclaimed-balance').textContent);
+    
+    if (unclaimedAmount <= 0) {
+        showToast('No earnings to claim', 'warning');
+        return;
+    }
+
+    // Check cooldown before showing ad
+    const cooldownRemaining = checkAdCooldown('mining');
+    if (cooldownRemaining > 0) {
+        showToast(`⏳ You must wait ${cooldownRemaining} seconds before watching another ad.`, 'warning');
+        return;
+    }
+
+    // Store data for after ad
+    window.pendingClaimData = {
+        userId: userId,
+        amount: unclaimedAmount,
+        type: 'mining'
+    };
+
+    // Show ad first
+    showAdOverlay('mining');
+}
+
+// ========================================
+// REWARDED AD SYSTEM - Complete Implementation
+// ========================================
+
+// Ad Configuration (can be modified by admin)
+const AD_CONFIG = {
+    mining: {
+        cooldown: 30,           // 30 seconds cooldown
+        minWatchTime: 5,        // Minimum 5 seconds to watch
+        reward: null            // Uses unclaimed amount
+    },
+    taskCenter: {
+        cooldown: 20,           // 20 seconds cooldown
+        minWatchTime: 5,        // Minimum 5 seconds to watch
+        reward: 0.05,           // 0.05 S-E per ad
+        maxPerDay: 20           // Maximum 20 ads per day
+    }
+};
+
+// Ad State
+let adState = {
+    timer: null,
+    timeRemaining: 5,
+    adLoaded: false,
+    adCompleted: false,
+    adError: false,
+    currentType: 'mining',
+    startTime: null
+};
+
+// Cooldown Storage Keys
+const COOLDOWN_KEY_PREFIX = 'ad_cooldown_';
+const DAILY_ADS_KEY = 'daily_ads_count';
+const DAILY_ADS_DATE_KEY = 'daily_ads_date';
+
+// Check if cooldown is active
+function checkAdCooldown(type) {
+    const cooldownKey = COOLDOWN_KEY_PREFIX + type;
+    const lastAdTime = localStorage.getItem(cooldownKey);
+    
+    if (!lastAdTime) return 0;
+    
+    const elapsed = (Date.now() - parseInt(lastAdTime)) / 1000;
+    const cooldownTime = AD_CONFIG[type]?.cooldown || 30;
+    const remaining = Math.ceil(cooldownTime - elapsed);
+    
+    return remaining > 0 ? remaining : 0;
+}
+
+// Set cooldown after watching ad
+function setAdCooldown(type) {
+    const cooldownKey = COOLDOWN_KEY_PREFIX + type;
+    localStorage.setItem(cooldownKey, Date.now().toString());
+}
+
+// Check daily ad limit for task center
+function checkDailyAdLimit() {
+    const today = new Date().toDateString();
+    const savedDate = localStorage.getItem(DAILY_ADS_DATE_KEY);
+    
+    if (savedDate !== today) {
+        // Reset counter for new day
+        localStorage.setItem(DAILY_ADS_DATE_KEY, today);
+        localStorage.setItem(DAILY_ADS_KEY, '0');
+        return AD_CONFIG.taskCenter.maxPerDay;
+    }
+    
+    const count = parseInt(localStorage.getItem(DAILY_ADS_KEY) || '0');
+    return AD_CONFIG.taskCenter.maxPerDay - count;
+}
+
+// Increment daily ad count
+function incrementDailyAdCount() {
+    const count = parseInt(localStorage.getItem(DAILY_ADS_KEY) || '0');
+    localStorage.setItem(DAILY_ADS_KEY, (count + 1).toString());
+}
+
+// Show Ad Overlay
+function showAdOverlay(type = 'mining') {
+    const overlay = document.getElementById('ad-overlay');
+    const closeBtn = document.getElementById('ad-close-btn');
+    const skipBtn = document.getElementById('ad-skip-btn');
+    const timerProgress = document.getElementById('ad-timer-progress');
+    const timerText = document.getElementById('ad-timer-text');
+    const btnText = document.getElementById('ad-btn-text');
+    const adLoading = document.getElementById('ad-loading');
+    const adContent = document.getElementById('ad-content-wrapper');
+    
+    // Reset state
+    adState = {
+        timer: null,
+        timeRemaining: AD_CONFIG[type]?.minWatchTime || 5,
+        adLoaded: false,
+        adCompleted: false,
+        adError: false,
+        currentType: type,
+        startTime: Date.now()
+    };
+    
+    closeBtn.disabled = true;
+    btnText.textContent = 'Continue';
+    timerProgress.style.width = '0%';
+    skipBtn.style.display = 'none';
+    adLoading.style.display = 'flex';
+    adContent.style.display = 'none';
+    
+    // Show overlay
+    overlay.style.display = 'flex';
+    
+    // Reinitialize Lucide icons
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+    
+    // Haptic feedback
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+    
+    // Try to load and show the ad
+    loadRewardedAd();
+}
+
+// Load Interstitial Ad for Mining Claim
+// ============================================
+// INTERSTITIAL AD (Unit ID: int-19115)
+// NO REWARD is granted - this is just an ad before claim
+// ============================================
+function loadRewardedAd() {
+    const timerText = document.getElementById('ad-timer-text');
+    const adLoading = document.getElementById('ad-loading');
+    const adContent = document.getElementById('ad-content-wrapper');
+    const skipBtn = document.getElementById('ad-skip-btn');
+    
+    timerText.textContent = 'Loading ad...';
+    
+    // Use INTERSTITIAL AD for mining claim (NOT rewarded video)
+    // This uses Unit ID int-19115 - no rewards are granted
+    if (window.showInterstitialAd) {
+        try {
+            // Show interstitial ad (no reward)
+            window.showInterstitialAd()
+                .then((result) => {
+                    if (result.success && result.shown) {
+                        console.log('✅ [Mining Claim] Interstitial ad shown');
+                    } else {
+                        console.log('⚠️ [Mining Claim] Interstitial not shown:', result.reason);
+                    }
+                    
+                    if (!adState.adError) {
+                        adState.adLoaded = true;
+                        adLoading.style.display = 'none';
+                        adContent.style.display = 'block';
+                        startAdTimer();
+                    }
+                })
+                .catch((error) => {
+                    console.warn('⚠️ [Mining Claim] Interstitial error:', error);
+                    handleAdError();
+                });
+            
+            console.log('📺 [Mining Claim] Interstitial ad triggered (int-19115)');
+        } catch (e) {
+            console.error('❌ Error loading interstitial:', e);
+            handleAdError();
+        }
+    } else if (window.showAdsgramAd) {
+        // Fallback to legacy function (should not happen with new code)
+        try {
+            window.showAdsgramAd()
+                .then((result) => {
+                    console.log('✅ Ad completed (fallback)');
+                    if (!adState.adError) {
+                        adState.adLoaded = true;
+                        adLoading.style.display = 'none';
+                        adContent.style.display = 'block';
+                        startAdTimer();
+                    }
+                })
+                .catch((error) => {
+                    console.log('⚠️ Ad not completed (fallback):', error);
+                    handleAdError();
+                });
+        } catch (e) {
+            console.error('❌ Error loading ad:', e);
+            handleAdError();
+        }
+    } else {
+        // SDK not available - simulate ad for testing
+        console.log('⚠️ Ad SDK not available, using fallback');
+        
+        setTimeout(() => {
+            if (!adState.adError) {
+                adState.adLoaded = true;
+                adLoading.style.display = 'none';
+                adContent.style.display = 'block';
+                adContent.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center;">
+                        <i data-lucide="tv" style="width: 48px; height: 48px; color: var(--color-neon-pink); margin-bottom: 16px;"></i>
+                        <p style="color: var(--color-text-secondary); font-size: 0.875rem;">Advertisement Space</p>
+                        <p style="color: var(--color-text-tertiary); font-size: 0.75rem; margin-top: 8px;">Watch to continue</p>
+                    </div>
+                `;
+                if (window.lucide) lucide.createIcons();
+                startAdTimer();
+            }
+        }, 1500);
+    }
+    
+    // Set timeout for ad loading failure
+    setTimeout(() => {
+        if (!adState.adLoaded && !adState.adError) {
+            handleAdError();
+        }
+    }, 10000); // 10 second timeout
+}
+
+// Start Ad Timer
+function startAdTimer() {
+    const timerProgress = document.getElementById('ad-timer-progress');
+    const timerText = document.getElementById('ad-timer-text');
+    const closeBtn = document.getElementById('ad-close-btn');
+    const btnText = document.getElementById('ad-btn-text');
+    
+    const totalTime = adState.timeRemaining;
+    timerText.textContent = `Watch for ${adState.timeRemaining} seconds...`;
+    
+    adState.timer = setInterval(() => {
+        adState.timeRemaining--;
+        const progress = ((totalTime - adState.timeRemaining) / totalTime) * 100;
+        timerProgress.style.width = progress + '%';
+        
+        if (adState.timeRemaining > 0) {
+            timerText.textContent = `Watch for ${adState.timeRemaining} seconds...`;
+        } else {
+            // Ad completed successfully
+            clearInterval(adState.timer);
+            adState.adCompleted = true;
+            timerText.textContent = '✓ Ad completed! Claim your reward';
+            timerProgress.style.width = '100%';
+            timerProgress.style.background = 'linear-gradient(90deg, var(--color-success), #00CC66)';
+            
+            closeBtn.disabled = false;
+            btnText.textContent = 'Claim Reward';
+            
+            // Reinitialize icons
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+            
+            // Haptic feedback
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+        }
+    }, 1000);
+}
+
+// Handle Ad Error
+function handleAdError() {
+    const timerText = document.getElementById('ad-timer-text');
+    const timerProgress = document.getElementById('ad-timer-progress');
+    const skipBtn = document.getElementById('ad-skip-btn');
+    const adLoading = document.getElementById('ad-loading');
+    
+    adState.adError = true;
+    
+    if (adState.timer) {
+        clearInterval(adState.timer);
+    }
+    
+    timerText.textContent = '❌ Error loading ad';
+    timerProgress.style.width = '100%';
+    timerProgress.style.background = 'linear-gradient(90deg, var(--color-error), #CC0033)';
+    
+    adLoading.innerHTML = `
+        <div style="text-align: center; color: var(--color-error);">
+            <i data-lucide="alert-triangle" style="width: 48px; height: 48px; margin-bottom: 12px;"></i>
+            <p style="font-size: 0.875rem;">Failed to load ad</p>
+        </div>
+    `;
+    
+    if (window.lucide) lucide.createIcons();
+    
+    // Show skip button
+    skipBtn.style.display = 'flex';
+    
+    // Haptic feedback
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+    }
+}
+
+// Handle Ad Skip (when ad fails or user cancels)
+function handleAdSkip() {
+    closeAdOverlay();
+    showToast('❌ There was an error loading the ad. Please try again.', 'error');
+    window.pendingClaimData = null;
+}
+
+// Handle Ad Complete (Continue button clicked)
+function handleAdComplete() {
+    if (!adState.adCompleted) {
+        showToast('⚠️ You must watch the entire ad to claim your reward.', 'warning');
+        return;
+    }
+    
+    // Set cooldown
+    setAdCooldown(adState.currentType);
+    
+    // Increment daily count if task center
+    if (adState.currentType === 'taskCenter') {
+        incrementDailyAdCount();
+    }
+    
+    // Close overlay
+    closeAdOverlay();
+    
+    // Process the reward
+    if (window.pendingClaimData) {
+        if (adState.currentType === 'mining') {
+            processClaimReward(window.pendingClaimData.userId, window.pendingClaimData.amount);
+        } else if (adState.currentType === 'taskCenter') {
+            processTaskCenterAdReward(window.pendingClaimData.userId);
+        }
+        window.pendingClaimData = null;
+    }
+}
+
+// Close Ad Overlay
+function closeAdOverlay() {
+    const overlay = document.getElementById('ad-overlay');
+    
+    // Clear timer
+    if (adState.timer) {
+        clearInterval(adState.timer);
+        adState.timer = null;
+    }
+    
+    // Hide with animation
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        overlay.style.opacity = '1';
+    }, 300);
+}
+
+// Process Mining Claim Reward (after ad)
+async function processClaimReward(userId, unclaimedAmount) {
+    try {
+        // Show processing notification
+        if (window.showProcessingToast) {
+            window.showProcessingToast(
+                'Processing...',
+                `🎉 Reward successfully granted! +${unclaimedAmount.toFixed(4)} S-E`,
+                null,
+                1800
+            );
+        }
+
+        const response = await fetch('/api/claim?user_id=' + userId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('total-balance').textContent = data.new_balance.toFixed(4);
+            document.getElementById('unclaimed-balance').textContent = '0.0000';
+            document.getElementById('mining-progress').style.width = '0%';
+
+            showToast('🎉 Reward successfully granted.', 'success');
+
+            // Haptic feedback
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+            }
+
+            // Mark for quick reload
+            sessionStorage.setItem('quickReload', 'true');
+
+            // Reload after delay
+            setTimeout(() => {
+                window.location.reload();
+            }, 3500);
+        } else {
+            showToast(data.message || 'Error claiming reward', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Connection error', 'error');
+    }
+}
+
+// Process Task Center Ad Reward
+async function processTaskCenterAdReward(userId) {
+    try {
+        const response = await fetch('/api/ads/task-center/complete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showToast(`🎉 Reward successfully granted! +${data.reward} S-E`, 'success');
+            
+            // Update UI if elements exist
+            if (document.getElementById('total-balance')) {
+                document.getElementById('total-balance').textContent = data.new_balance.toFixed(4);
+            }
+            
+            // Update remaining ads counter
+            updateTaskCenterAdsRemaining();
+            
+            // Haptic feedback
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+        } else {
+            showToast(data.message || 'Error claiming reward', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Connection error', 'error');
+    }
+}
+
+// Update Task Center Ads Remaining Counter
+function updateTaskCenterAdsRemaining() {
+    const remaining = checkDailyAdLimit();
+    const counter = document.getElementById('task-center-ads-remaining');
+    if (counter) {
+        counter.textContent = remaining;
+    }
+    
+    // Update button state
+    const watchAdBtn = document.getElementById('task-center-watch-ad-btn');
+    if (watchAdBtn) {
+        if (remaining <= 0) {
+            watchAdBtn.disabled = true;
+            watchAdBtn.innerHTML = '<i data-lucide="check-circle"></i> <span>Daily Limit Reached</span>';
+        }
+        if (window.lucide) lucide.createIcons();
+    }
+}
+
+// Watch Ad from Task Center
+function watchTaskCenterAd() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('user_id');
+
+    if (!userId) {
+        showToast('Error: User not identified', 'error');
+        return;
+    }
+
+    // Check daily limit
+    const remaining = checkDailyAdLimit();
+    if (remaining <= 0) {
+        showToast('⚠️ You have reached your daily ad limit. Come back tomorrow!', 'warning');
+        return;
+    }
+
+    // Check cooldown
+    const cooldownRemaining = checkAdCooldown('taskCenter');
+    if (cooldownRemaining > 0) {
+        showToast(`⏳ You must wait ${cooldownRemaining} seconds before watching another ad.`, 'warning');
+        return;
+    }
+
+    // Store data for after ad
+    window.pendingClaimData = {
+        userId: userId,
+        type: 'taskCenter'
+    };
+
+    // Show ad
+    showAdOverlay('taskCenter');
+}
+
+// Abrir modal de código promocional
+function openPromoModal() {
+    const modal = document.getElementById('promo-modal');
+    modal.style.display = 'flex';
+    
+    // Clear and focus input
+    const input = document.getElementById('promo-code-input');
+    input.value = '';
+    setTimeout(() => input.focus(), 100);
+
+    // Re-initialize Lucide icons
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+
+    if (window.vibrateDevice) {
+        window.vibrateDevice([10]);
+    }
+
+    // Vibración de Telegram
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+}
+
+// Cerrar modal
+function closePromoModal() {
+    const modal = document.getElementById('promo-modal');
+    modal.style.display = 'none';
+
+    if (window.vibrateDevice) {
+        window.vibrateDevice([10]);
+    }
+
+    // Vibración de Telegram
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+}
+
+// Enviar código promocional
+async function submitPromoCode() {
+    const input = document.getElementById('promo-code-input');
+    const btn = document.getElementById('promo-submit-btn');
+    const code = input.value.trim().toUpperCase();
+
+    if (!code) {
+        if (window.showToast) {
+            window.showToast('Por favor ingresa un código', 'warning');
+        }
+        input.focus();
+        return;
+    }
+
+    // Disable button and show loading
+    btn.disabled = true;
+    btn.classList.add('loading');
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<span>Verificando...</span>';
+
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('user_id') || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id);
+
+        const response = await fetch('/api/promo/redeem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                code: code
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Success animation
+            const container = document.querySelector('.promo-modal-container');
+            container.classList.add('success');
+            
+            if (window.showToast) {
+                window.showToast(`🎉 ${data.message || '¡Código canjeado!'}`, 'success');
+            }
+            
+            // Vibración de éxito
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+
+            // Close modal and reload after delay
+            setTimeout(() => {
+                closePromoModal();
+                container.classList.remove('success');
+            }, 1000);
+            
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            if (window.showToast) {
+                window.showToast(data.error || data.message || 'Código inválido', 'error');
+            }
+
+            // Vibración de error
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+            }
+            
+            // Shake input on error
+            input.style.animation = 'shake 0.5s ease';
+            setTimeout(() => {
+                input.style.animation = '';
+                input.select();
+            }, 500);
+        }
+
+        if (window.vibrateDevice) {
+            window.vibrateDevice(data.success ? [10, 50, 10] : [100]);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        if (window.showToast) {
+            window.showToast('Error de conexión', 'error');
+        }
+    } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.innerHTML = originalContent;
+        
+        // Re-initialize icons
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }
+}
+
+// Cerrar modal al hacer clic fuera
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('promo-modal');
+    if (e.target === modal || e.target.classList.contains('promo-modal-overlay')) {
+        closePromoModal();
+    }
+});
+
+// Enter key to submit
+document.addEventListener('keydown', function(e) {
+    const modal = document.getElementById('promo-modal');
+    if (modal && modal.style.display === 'flex' && e.key === 'Enter') {
+        submitPromoCode();
+    }
+    if (modal && modal.style.display === 'flex' && e.key === 'Escape') {
+        closePromoModal();
+    }
+});
+
+// Add shake animation
+const shakeStyle = document.createElement('style');
+shakeStyle.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+`;
+document.head.appendChild(shakeStyle);
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    const splash = document.getElementById('splash-screen');
+
+    // Ocultar splash después de 1 segundo
+    setTimeout(() => {
+        splash.style.opacity = '0';
+        setTimeout(() => {
+            splash.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 300);
+    }, 1000);
+
+    // Inicializar iconos
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Iniciar actualización de balance
+    setTimeout(() => {
+        updateUnclaimedBalance();
+    }, 1500);
+});
+</script>
+{% endblock %}

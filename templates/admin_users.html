@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - Admin</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(25, 25, 35, 0.95);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --accent-primary: #6366f1;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .back-btn, .toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .back-btn:hover, .toggle-btn:hover {
+            background: var(--bg-secondary);
+        }
+
+        .toggle-btn.active {
+            background: var(--accent-success);
+            border-color: var(--accent-success);
+        }
+
+        .toggle-btn.inactive {
+            background: var(--accent-danger);
+            border-color: var(--accent-danger);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .stat-card.primary .value { color: var(--accent-primary); }
+        .stat-card.warning .value { color: var(--accent-warning); }
+        .stat-card.danger .value { color: var(--accent-danger); }
+
+        /* Search */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-box button {
+            background: var(--accent-primary);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .flash.success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--accent-success);
+            color: var(--accent-success);
+        }
+
+        .flash.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--accent-danger);
+            color: var(--accent-danger);
+        }
+
+        .flash.warning {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid var(--accent-warning);
+            color: var(--accent-warning);
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-success);
+        }
+
+        .badge-banned {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-danger);
+        }
+
+        /* Action Buttons */
+        .actions-cell {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .action-btn.edit {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--accent-primary);
+        }
+
+        .action-btn.ban {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-danger);
+        }
+
+        .action-btn.unban {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-success);
+        }
+
+        .action-btn.info {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--accent-primary);
+        }
+
+        .action-btn.warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-warning);
+        }
+
+        .action-btn:hover {
+            filter: brightness(1.2);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .pagination a, .pagination span {
+            padding: 10px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .pagination a:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .pagination .current {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .pagination .disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal.large {
+            max-width: 800px;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-warning);
+        }
+
+        .checkbox-group label {
+            font-size: 13px;
+            color: var(--accent-warning);
+            margin: 0;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--accent-primary);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-submit.danger {
+            background: var(--accent-danger);
+        }
+
+        .btn-submit.warning {
+            background: var(--accent-warning);
+        }
+
+        .btn-submit.success {
+            background: var(--accent-success);
+        }
+
+        /* Tabs in modal */
+        .modal-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .modal-tab {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .modal-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-tab.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .user-info-header {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .user-info-header h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .user-info-header p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* History Table in Modal */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .history-table th, .history-table td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-table th {
+            background: var(--bg-secondary);
+            font-size: 10px;
+        }
+
+        /* Related Accounts */
+        .related-account {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .related-account .info {
+            flex: 1;
+        }
+
+        .related-account .info h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .related-account .info p {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .relation-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .relation-badge.same_ip {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-warning);
+        }
+
+        .relation-badge.same_device {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-danger);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-tabs {
+                gap: 4px;
+            }
+
+            .modal-tab {
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>👥 Gestión de Usuarios</h1>
+            <div class="header-actions">
+                <button class="toggle-btn" id="autoBanToggle" onclick="toggleAutoBan()">
+                    🤖 Auto-Ban: <span id="autoBanStatus">...</span>
+                </button>
+                <a href="{{ url_for('admin_dashboard') }}" class="back-btn">← Dashboard</a>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <div class="value">{{ total }}</div>
+                <div class="label">Total Usuarios</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="value">{{ banned_count }}</div>
+                <div class="label">Baneados</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="value">{{ auto_banned_count }}</div>
+                <div class="label">Auto-Baneados</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">{{ total_pages }}</div>
+                <div class="label">Páginas</div>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Search -->
+        <form method="GET" class="search-box">
+            <input type="text" name="search" placeholder="Buscar por ID, username o nombre..." value="{{ search }}">
+            <button type="submit">🔍 Buscar</button>
+        </form>
+
+        <!-- Users Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Balance SE</th>
+                        <th>Balance DOGE</th>
+                        <th>PTS</th>
+                        <th>Refs</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.user_id }}</td>
+                        <td>
+                            <strong>{{ user.username or 'Sin username' }}</strong><br>
+                            <small style="color: var(--text-secondary);">{{ user.first_name or '' }}</small>
+                        </td>
+                        <td>{{ "%.4f"|format(user.se_balance or 0) }}</td>
+                        <td>{{ "%.4f"|format(user.doge_balance or 0) }}</td>
+                        <td>{{ user.pts_balance|default(0)|int }}</td>
+                        <td>{{ user.referral_count|default(0)|int }}</td>
+                        <td>
+                            {% if user.banned %}
+                            <span class="badge badge-banned">Baneado</span>
+                            {% else %}
+                            <span class="badge badge-active">Activo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn edit" onclick="openEditModal('{{ user.user_id }}', '{{ user.username or '' }}', '{{ user.first_name or '' }}', {{ user.se_balance or 0 }}, {{ user.doge_balance or 0 }}, {{ user.pts_balance|default(0) }}, {{ user.referral_count|default(0) }})">✏️</button>
+                                <button class="action-btn info" onclick="openHistoryModal('{{ user.user_id }}', '{{ user.username or user.first_name or user.user_id }}')" title="Historial">📊</button>
+                                <button class="action-btn warning" onclick="openRelatedModal('{{ user.user_id }}', '{{ user.username or user.first_name or user.user_id }}')" title="Cuentas Relacionadas">🔗</button>
+                                <button class="action-btn warning" onclick="clearUserIP('{{ user.user_id }}')" title="Limpiar IP">🧹</button>
+                                {% if user.banned %}
+                                <form action="{{ url_for('admin_unban_user', user_id=user.user_id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="action-btn unban" title="Desbanear">✅</button>
+                                </form>
+                                {% else %}
+                                <form action="{{ url_for('admin_ban_user', user_id=user.user_id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="action-btn ban" onclick="return confirm('¿Banear este usuario?')" title="Banear">🚫</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="?page=1{% if search %}&search={{ search }}{% endif %}">« Primera</a>
+            <a href="?page={{ page - 1 }}{% if search %}&search={{ search }}{% endif %}">‹ Anterior</a>
+            {% else %}
+            <span class="disabled">« Primera</span>
+            <span class="disabled">‹ Anterior</span>
+            {% endif %}
+
+            <span class="current">{{ page }} / {{ total_pages }}</span>
+
+            {% if page < total_pages %}
+            <a href="?page={{ page + 1 }}{% if search %}&search={{ search }}{% endif %}">Siguiente ›</a>
+            <a href="?page={{ total_pages }}{% if search %}&search={{ search }}{% endif %}">Última »</a>
+            {% else %}
+            <span class="disabled">Siguiente ›</span>
+            <span class="disabled">Última »</span>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>✏️ Editar Usuario</h2>
+                <button class="modal-close" onclick="closeModal('editModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- User Info Header -->
+                <div class="user-info-header">
+                    <h3 id="modalUsername">-</h3>
+                    <p>ID: <span id="modalUserId">-</span></p>
+                </div>
+
+                <!-- Tabs -->
+                <div class="modal-tabs">
+                    <button class="modal-tab active" onclick="switchTab(event, 'balance')">💰 Balance</button>
+                    <button class="modal-tab" onclick="switchTab(event, 'pts')">⭐ PTS</button>
+                    <button class="modal-tab" onclick="switchTab(event, 'referrals')">👥 Referidos</button>
+                </div>
+
+                <!-- Balance Tab -->
+                <div class="tab-panel active" id="tab-balance">
+                    <form id="balanceForm" method="POST">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Acción</label>
+                                <select name="action" id="balanceAction" onchange="updateBalanceUI()">
+                                    <option value="add">➕ Sumar</option>
+                                    <option value="subtract">➖ Restar</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Moneda</label>
+                                <select name="currency">
+                                    <option value="SE">SE</option>
+                                    <option value="DOGE">DOGE</option>
+                                    <option value="USDT">USDT</option>
+                                    <option value="TON">TON</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input type="number" name="amount" step="0.0001" min="0" required placeholder="0.0000">
+                        </div>
+                        <div class="form-group">
+                            <label>Razón</label>
+                            <input type="text" name="reason" placeholder="Ajuste manual admin">
+                        </div>
+                        
+                        <!-- Allow Negative (Deudas) -->
+                        <div id="debtOption" style="display: none;">
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="allow_negative" id="allowNegative">
+                                <label for="allowNegative">⚠️ Permitir saldo negativo (deuda)</label>
+                            </div>
+                            <p style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">
+                                Si activas esto, el usuario quedará con balance negativo aunque no tenga suficiente saldo.
+                            </p>
+                        </div>
+                        
+                        <button type="submit" class="btn-submit" id="balanceSubmitBtn">💰 Aplicar Balance</button>
+                    </form>
+                </div>
+
+                <!-- PTS Tab -->
+                <div class="tab-panel" id="tab-pts">
+                    <form id="ptsForm" method="POST">
+                        <div class="form-group">
+                            <label>Acción</label>
+                            <select name="action">
+                                <option value="add">➕ Sumar PTS</option>
+                                <option value="subtract">➖ Restar PTS</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad de PTS</label>
+                            <input type="number" name="amount" min="1" required placeholder="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Razón</label>
+                            <input type="text" name="reason" placeholder="Ajuste PTS admin">
+                        </div>
+                        <button type="submit" class="btn-submit warning">⭐ Aplicar PTS</button>
+                    </form>
+                </div>
+
+                <!-- Referrals Tab -->
+                <div class="tab-panel" id="tab-referrals">
+                    <form id="referralsForm" method="POST">
+                        <div class="form-group">
+                            <label>Acción</label>
+                            <select name="action">
+                                <option value="add">➕ Agregar Referidos (Fake)</option>
+                                <option value="subtract">➖ Quitar Referidos (Fake)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad de Referidos</label>
+                            <input type="number" name="amount" min="1" required placeholder="10">
+                        </div>
+                        <p style="font-size: 11px; color: var(--text-secondary); margin-top: -8px; margin-bottom: 16px;">
+                            Los referidos falsos tienen ID negativo y no afectan a usuarios reales.
+                        </p>
+                        <button type="submit" class="btn-submit success">👥 Aplicar Referidos</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal large">
+            <div class="modal-header">
+                <h2>📊 Historial de Usuario</h2>
+                <button class="modal-close" onclick="closeModal('historyModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="user-info-header">
+                    <h3 id="historyUsername">-</h3>
+                    <p>ID: <span id="historyUserId">-</span></p>
+                </div>
+                <div id="historyContent">
+                    <div class="loading">Cargando historial...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Accounts Modal -->
+    <div class="modal-overlay" id="relatedModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🔗 Cuentas Relacionadas</h2>
+                <button class="modal-close" onclick="closeModal('relatedModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="user-info-header">
+                    <h3 id="relatedUsername">-</h3>
+                    <p>ID: <span id="relatedUserId">-</span></p>
+                </div>
+                <div id="relatedContent">
+                    <div class="loading">Buscando cuentas relacionadas...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUserId = null;
+        let autoBanEnabled = false;
+
+        // Load auto-ban status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAutoBanStatus();
+        });
+
+        async function loadAutoBanStatus() {
+            try {
+                const res = await fetch('/api/admin/antifraud-config');
+                const data = await res.json();
+                if (data.success && data.config) {
+                    autoBanEnabled = data.config.auto_ban_enabled === 'true';
+                    updateAutoBanButton();
+                }
+            } catch (e) {
+                console.error('Error loading auto-ban status:', e);
+            }
+        }
+
+        function updateAutoBanButton() {
+            const btn = document.getElementById('autoBanToggle');
+            const status = document.getElementById('autoBanStatus');
+            
+            if (autoBanEnabled) {
+                btn.classList.remove('inactive');
+                btn.classList.add('active');
+                status.textContent = 'ON';
+            } else {
+                btn.classList.remove('active');
+                btn.classList.add('inactive');
+                status.textContent = 'OFF';
+            }
+        }
+
+        async function toggleAutoBan() {
+            try {
+                const newStatus = !autoBanEnabled;
+                const res = await fetch('/api/admin/antifraud-config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ auto_ban_enabled: newStatus })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    autoBanEnabled = newStatus;
+                    updateAutoBanButton();
+                    alert(`Auto-Ban ${newStatus ? 'ACTIVADO' : 'DESACTIVADO'}`);
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown'));
+                }
+            } catch (e) {
+                alert('Error al cambiar auto-ban');
+            }
+        }
+
+        async function clearUserIP(userId) {
+            if (!confirm('¿Limpiar historial de IP y dispositivo de este usuario?')) return;
+            
+            try {
+                const res = await fetch('/api/admin/clear-user-ip', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    alert('✅ IP y dispositivo limpiados');
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown'));
+                }
+            } catch (e) {
+                alert('Error al limpiar IP');
+            }
+        }
+
+        function openEditModal(userId, username, firstName, seBalance, dogeBalance, pts, referrals) {
+            currentUserId = userId;
+            
+            // Update header
+            document.getElementById('modalUsername').textContent = username || firstName || 'Usuario';
+            document.getElementById('modalUserId').textContent = userId;
+            
+            // Set form actions
+            document.getElementById('balanceForm').action = `/admin/users/balance/${userId}`;
+            document.getElementById('ptsForm').action = `/admin/users/pts/${userId}`;
+            document.getElementById('referralsForm').action = `/admin/users/referrals/${userId}`;
+            
+            // Reset to first tab
+            document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('.modal-tab').classList.add('active');
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('tab-balance').classList.add('active');
+            
+            // Show modal
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        async function openHistoryModal(userId, username) {
+            document.getElementById('historyUsername').textContent = username;
+            document.getElementById('historyUserId').textContent = userId;
+            document.getElementById('historyContent').innerHTML = '<div class="loading">Cargando historial...</div>';
+            document.getElementById('historyModal').classList.add('active');
+            
+            try {
+                const res = await fetch(`/api/admin/user-balance-history/${userId}`);
+                const data = await res.json();
+                
+                if (data.success && data.history && data.history.length > 0) {
+                    let html = `
+                        <div class="table-container" style="margin-top: 10px;">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Moneda</th>
+                                        <th>Cantidad</th>
+                                        <th>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    data.history.forEach(h => {
+                        const amount = parseFloat(h.amount || 0);
+                        const amountClass = amount >= 0 ? 'color: var(--accent-success)' : 'color: var(--accent-danger)';
+                        html += `
+                            <tr>
+                                <td>${formatDate(h.created_at)}</td>
+                                <td>${h.action || h.transaction_type || '-'}</td>
+                                <td>${(h.currency || 'SE').toUpperCase()}</td>
+                                <td style="${amountClass}">${amount >= 0 ? '+' : ''}${amount.toFixed(4)}</td>
+                                <td>${h.description || h.reason || '-'}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += '</tbody></table></div>';
+                    document.getElementById('historyContent').innerHTML = html;
+                } else {
+                    document.getElementById('historyContent').innerHTML = '<div class="empty-state">No hay historial disponible</div>';
+                }
+            } catch (e) {
+                document.getElementById('historyContent').innerHTML = '<div class="empty-state">Error al cargar historial</div>';
+            }
+        }
+
+        async function openRelatedModal(userId, username) {
+            document.getElementById('relatedUsername').textContent = username;
+            document.getElementById('relatedUserId').textContent = userId;
+            document.getElementById('relatedContent').innerHTML = '<div class="loading">Buscando cuentas relacionadas...</div>';
+            document.getElementById('relatedModal').classList.add('active');
+            
+            try {
+                const res = await fetch(`/api/admin/related-accounts/${userId}`);
+                const data = await res.json();
+                
+                if (data.success && data.accounts && data.accounts.length > 0) {
+                    let html = '';
+                    
+                    data.accounts.forEach(acc => {
+                        const statusBadge = acc.banned ? 
+                            '<span class="badge badge-banned">Baneado</span>' : 
+                            '<span class="badge badge-active">Activo</span>';
+                        
+                        html += `
+                            <div class="related-account">
+                                <div class="info">
+                                    <h4>${acc.username || acc.first_name || 'Usuario'} ${statusBadge}</h4>
+                                    <p>ID: ${acc.user_id} ${acc.ban_reason ? '• Razón: ' + acc.ban_reason : ''}</p>
+                                </div>
+                                <span class="relation-badge ${acc.relation}">${acc.relation === 'same_ip' ? '🌐 Misma IP' : '📱 Mismo Dispositivo'}</span>
+                            </div>
+                        `;
+                    });
+                    
+                    document.getElementById('relatedContent').innerHTML = html;
+                } else {
+                    document.getElementById('relatedContent').innerHTML = '<div class="empty-state">No se encontraron cuentas relacionadas</div>';
+                }
+            } catch (e) {
+                document.getElementById('relatedContent').innerHTML = '<div class="empty-state">Error al buscar cuentas</div>';
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            if (modalId === 'editModal') {
+                currentUserId = null;
+            }
+        }
+
+        function switchTab(event, tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.modal-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab panels
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        function updateBalanceUI() {
+            const action = document.getElementById('balanceAction').value;
+            const debtOption = document.getElementById('debtOption');
+            const submitBtn = document.getElementById('balanceSubmitBtn');
+            
+            if (action === 'subtract') {
+                debtOption.style.display = 'block';
+                submitBtn.textContent = '➖ Restar Balance';
+                submitBtn.classList.add('danger');
+                submitBtn.classList.remove('success');
+            } else {
+                debtOption.style.display = 'none';
+                document.getElementById('allowNegative').checked = false;
+                submitBtn.textContent = '➕ Sumar Balance';
+                submitBtn.classList.add('success');
+                submitBtn.classList.remove('danger');
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            try {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return dateStr;
+            }
+        }
+
+        // Close modals on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+            }
+        });
+    </script>
+</body>
+</html>

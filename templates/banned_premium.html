@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Account Restricted - SALLY-E</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-dark: #003D99;
+            --primary: #0066FF;
+            --primary-light: #3B82F6;
+            --accent: #FFB6C1;
+            --text-dark: #1a1a2e;
+            --text-light: #fff;
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Main Card */
+        .ban-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 35px 25px;
+            box-shadow: 
+                0 20px 60px rgba(0, 61, 153, 0.4),
+                0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Icon */
+        .status-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            box-shadow: 0 8px 25px rgba(0, 102, 255, 0.35);
+        }
+        
+        .status-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: white;
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        /* Title */
+        .ban-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+        
+        /* Subtitle */
+        .ban-subtitle {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+        
+        /* User Info Card */
+        .user-info {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 61, 153, 0.1);
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 22px;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .user-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+        
+        .user-id {
+            font-size: 12px;
+            color: #888;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Reason Box */
+        .reason-box {
+            background: linear-gradient(135deg, #fff8f8 0%, #fff0f3 100%);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .reason-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--primary);
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .reason-text {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.5;
+        }
+        
+        /* Ban Type Badge */
+        .ban-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+        
+        .ban-type-badge.automatic {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            color: white;
+        }
+        
+        .ban-type-badge.manual {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        /* Date Info */
+        .date-info {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 25px;
+        }
+        
+        .date-info span {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        /* Support Section */
+        .support-section {
+            background: #f9fafb;
+            border-radius: 14px;
+            padding: 18px;
+            margin-top: 5px;
+        }
+        
+        .support-text {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .support-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: white;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3);
+            width: 100%;
+        }
+        
+        .support-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 102, 255, 0.4);
+        }
+        
+        .support-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Footer */
+        .footer-note {
+            margin-top: 20px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+        }
+        
+        /* Responsive */
+        @media (max-width: 360px) {
+            .ban-card {
+                padding: 25px 18px;
+            }
+            
+            .ban-title {
+                font-size: 20px;
+            }
+            
+            .status-icon {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .status-icon svg {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="ban-card">
+            <!-- Status Icon -->
+            <div class="status-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                </svg>
+            </div>
+            
+            <!-- Title -->
+            <h1 class="ban-title">Account Restricted</h1>
+            <p class="ban-subtitle">Your account access has been limited due to a security review.</p>
+            
+            <!-- User Info -->
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{ (user.first_name or user.username or 'U')[0]|upper }}
+                </div>
+                <div class="user-name">{{ user.first_name or user.username or 'User' }}</div>
+                <div class="user-id">ID: {{ user.user_id }}</div>
+            </div>
+            
+            <!-- Ban Type Badge -->
+            {% if user.ban_type %}
+            <div class="ban-type-badge {{ user.ban_type }}">
+                {% if user.ban_type == 'automatic' %}
+                ⚡ Automatic Detection
+                {% else %}
+                ✋ Manual Review
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <!-- Reason Box -->
+            <div class="reason-box">
+                <div class="reason-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    Reason
+                </div>
+                <div class="reason-text">
+                    {{ user.ban_reason or 'Security policy violation detected.' }}
+                </div>
+            </div>
+            
+            <!-- Date Info -->
+            {% if user.ban_date %}
+            <div class="date-info">
+                Restricted on <span>{{ user.ban_date.strftime('%B %d, %Y') if user.ban_date else 'N/A' }}</span>
+            </div>
+            {% endif %}
+            
+            <!-- Support Section -->
+            <div class="support-section">
+                <p class="support-text">
+                    If you believe this is a mistake, please contact our support team for assistance.
+                </p>
+                <a href="{{ support_link or 'https://t.me/Soporte_Sally' }}" class="support-btn" target="_blank">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    </svg>
+                    Contact Support
+                </a>
+            </div>
+        </div>
+        
+        <p class="footer-note">SALLY-E Security System</p>
+    </div>
+    
+    <script>
+        // Initialize Telegram WebApp
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+            
+            // Set header color to match theme
+            tg.setHeaderColor('#003D99');
+            tg.setBackgroundColor('#003D99');
+        }
+    </script>
+</body>
+</html>

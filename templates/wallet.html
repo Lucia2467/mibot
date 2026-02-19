@@ -1,0 +1,1409 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Wallet{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- BOTÓN FLOTANTE DE REGLAS DE RETIRO -->
+    <button id="withdrawal-rules-button" onclick="openWithdrawalRulesModal()" style="position: fixed; top: 60px; right: 20px; width: 50px; height: 50px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(22, 163, 74, 0.25) 100%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9999; box-shadow: 0 8px 32px rgba(34, 197, 94, 0.3); transition: all 0.3s ease;">
+        <i data-lucide="book-open" style="width: 24px; height: 24px; color: #22c55e;"></i>
+    </button>
+    
+    <h1 class="page-title">
+        <i data-lucide="wallet"></i>
+        <span data-i18n="wallet_title">Wallet</span>
+    </h1>
+
+    <!-- Balance Hero -->
+    <div class="card balance-card card-highlight">
+        <div class="balance-label" data-i18n="available_balances">Available Balances</div>
+
+        <!-- S-E Balance -->
+        <div class="balance-amount" id="se-balance" style="margin-bottom: 15px; {% if user.se_balance < 0 %}color: #ef4444 !important;{% endif %}">{{ "%.2f"|format(user.se_balance) }}</div>
+        <div class="balance-currency" style="margin-bottom: 20px;" data-i18n="se_tokens">S-E Tokens</div>
+        
+        <!-- Alerta de deuda si hay saldo negativo -->
+        {% if user.se_balance < 0 or user.usdt_balance < 0 or user.doge_balance < 0 or user.ton_balance < 0 %}
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 12px; padding: 12px 16px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i data-lucide="alert-triangle" style="width: 20px; height: 20px; color: #ef4444;"></i>
+                <div>
+                    <div style="font-weight: 700; color: #ef4444; font-size: 0.9rem;" data-i18n="debt_warning">⚠️ Tienes deuda pendiente</div>
+                    <div style="font-size: 0.75rem; color: rgba(239, 68, 68, 0.8);" data-i18n="debt_warning_desc">Debes pagar tu deuda antes de poder retirar</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- USDT & DOGE & TON Balances -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-bottom: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <div style="text-align: center;">
+                <div style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 5px;">USDT</div>
+                <div style="font-size: 1.25rem; font-weight: 700; {% if user.usdt_balance < 0 %}color: #ef4444 !important;{% else %}color: #26A17B;{% endif %}" id="usdt-balance">{{ "%.4f"|format(user.usdt_balance|default(0)) }}</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 5px;">DOGE</div>
+                <div style="font-size: 1.25rem; font-weight: 700; {% if user.doge_balance < 0 %}color: #ef4444 !important;{% else %}color: #C9A635;{% endif %}" id="doge-balance">{{ "%.4f"|format(user.doge_balance|default(0)) }}</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 5px;">TON</div>
+                <div style="font-size: 1.25rem; font-weight: 700; {% if user.ton_balance < 0 %}color: #ef4444 !important;{% else %}color: #0098EA;{% endif %}" id="ton-balance">{{ "%.4f"|format(user.ton_balance|default(0)) }}</div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); position: relative; z-index: 1;">
+            <button class="btn btn-primary" onclick="openDepositModal()" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">
+                <i data-lucide="arrow-down-left"></i>
+                <span data-i18n="deposit">Deposit</span>
+            </button>
+            <button class="btn btn-primary" onclick="openWithdrawModal()">
+                <i data-lucide="arrow-up-right"></i>
+                <span data-i18n="withdraw">Withdraw</span>
+            </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-top: var(--space-3); position: relative; z-index: 1;">
+            <button class="btn btn-secondary" onclick="openSwapModal()">
+                <i data-lucide="repeat"></i>
+                <span data-i18n="swap">Swap</span>
+            </button>
+            <button class="btn btn-secondary" onclick="openLinkWalletModal()">
+                <i data-lucide="link"></i>
+                <span data-i18n="link">Link</span>
+            </button>
+        </div>
+
+        <div style="margin-top: var(--space-3); position: relative; z-index: 1;">
+            <a href="/historial?user_id={{ user_id }}" class="btn btn-secondary" style="width: 100%;">
+                <i data-lucide="clock"></i>
+                <span data-i18n="history">History</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_withdrawn | default(0) }}</div>
+            <div class="stat-label" data-i18n="withdrawn">Withdrawn</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ total_earned | default(0) }}</div>
+            <div class="stat-label" data-i18n="earned">Earned</div>
+        </div>
+    </div>
+
+    <!-- Wallet Status -->
+    {% if user.wallet_address or user.ton_wallet_address %}
+    <div class="card" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.2);">
+        <div style="display: flex; align-items: flex-start; gap: var(--space-4);">
+            <div style="flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(34, 197, 94, 0.2); border-radius: var(--radius-md);">
+                <i data-lucide="check-circle" style="width: 20px; height: 20px; color: #22c55e;"></i>
+            </div>
+            <div style="flex: 1;">
+                <div style="font-weight: 600; margin-bottom: var(--space-2);" data-i18n="wallet_linked">Wallets Linked</div>
+                {% if user.wallet_address %}
+                <div style="font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 5px;">
+                    <span style="color: #26A17B;">BEP20:</span>
+                    <span style="font-family: monospace; word-break: break-all;">{{ user.wallet_address[:10] }}...{{ user.wallet_address[-6:] }}</span>
+                </div>
+                {% endif %}
+                {% if user.ton_wallet_address %}
+                <div style="font-size: 0.75rem; color: var(--color-text-secondary);">
+                    <span style="color: #0098EA;">TON:</span>
+                    <span style="font-family: monospace; word-break: break-all;">{{ user.ton_wallet_address[:10] }}...{{ user.ton_wallet_address[-6:] }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Withdrawal Methods -->
+    <div class="card">
+        <h2 class="section-title" data-i18n="withdrawal_methods">Withdrawal Methods</h2>
+
+        <div class="item-list">
+            <div class="item" onclick="selectMethod('USDT')" style="cursor: pointer;">
+                <div class="item-icon" style="background: linear-gradient(135deg, #26A17B 0%, #1E8E6A 100%);">
+                    <i data-lucide="circle-dollar-sign"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">USDT (BEP20)</div>
+                    <div class="item-subtitle"><span data-i18n="minimum">Minimum</span>: 0.5 USDT</div>
+                </div>
+                <i data-lucide="chevron-right" style="width: 20px; height: 20px; color: var(--color-text-tertiary);"></i>
+            </div>
+
+            <div class="item" onclick="selectMethod('DOGE')" style="cursor: pointer;">
+                <div class="item-icon" style="background: linear-gradient(135deg, #C9A635 0%, #A88F2C 100%);">
+                    <i data-lucide="coins"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">Dogecoin (BEP20)</div>
+                    <div class="item-subtitle"><span data-i18n="minimum">Minimum</span>: 1 DOGE</div>
+                </div>
+                <i data-lucide="chevron-right" style="width: 20px; height: 20px; color: var(--color-text-tertiary);"></i>
+            </div>
+
+            <div class="item" onclick="selectMethod('TON')" style="cursor: pointer;">
+                <div class="item-icon" style="background: linear-gradient(135deg, #0098EA 0%, #0077B6 100%);">
+                    <i data-lucide="diamond"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">TON (TON Network)</div>
+                    <div class="item-subtitle"><span data-i18n="minimum">Minimum</span>: 0.1 TON</div>
+                </div>
+                <i data-lucide="chevron-right" style="width: 20px; height: 20px; color: var(--color-text-tertiary);"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    {% if recent_transactions %}
+    <div class="card">
+        <h2 class="section-title" data-i18n="recent_transactions">Recent Transactions</h2>
+
+        <div class="item-list">
+            {% for tx in recent_transactions %}
+            <div class="item">
+                <div class="item-icon">
+                    {% if tx.status == 'completed' %}
+                    <i data-lucide="check-circle" style="color: var(--color-success);"></i>
+                    {% elif tx.status == 'pending' %}
+                    <i data-lucide="clock" style="color: var(--color-warning);"></i>
+                    {% else %}
+                    <i data-lucide="x-circle" style="color: var(--color-error);"></i>
+                    {% endif %}
+                </div>
+                <div class="item-content">
+                    <div class="item-title">{{ tx.type | upper }}</div>
+                    <div class="item-subtitle">{{ tx.amount }} {{ tx.currency }}</div>
+                </div>
+                <div class="badge badge-{{ tx.status }}">{{ tx.status | capitalize }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Info Card -->
+    <div class="card" style="background: rgba(6, 182, 212, 0.05); border-color: rgba(6, 182, 212, 0.1);">
+        <div style="display: flex; align-items: flex-start; gap: var(--space-4);">
+            <div style="flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(6, 182, 212, 0.1); border-radius: var(--radius-md);">
+                <i data-lucide="shield-check" style="width: 20px; height: 20px; color: var(--color-info);"></i>
+            </div>
+            <div style="flex: 1;">
+                <div style="font-weight: 600; margin-bottom: var(--space-2);">🔒 <span data-i18n="secure_withdrawals">Secure Withdrawals</span></div>
+                <div style="font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.6;" data-i18n="withdrawals_info">
+                    All withdrawals are processed securely in 24-48 hours. Verify your address before confirming.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Swap Modal -->
+<div id="swap-modal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">💱 <span data-i18n="swap_title">Swap S-E</span></h3>
+            <button class="modal-close" onclick="closeSwapModal()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div style="background: rgba(6, 182, 212, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <div style="font-size: 0.875rem; color: var(--color-text-secondary); text-align: center;">
+                    <strong data-i18n="exchange_rates">Exchange Rates:</strong><br>
+                    1 S-E = 0.01 USDT<br>
+                    1 S-E = 0.06 DOGE<br>
+                    1 S-E = 0.005 TON
+                </div>
+            </div>
+
+            <form id="swap-form" onsubmit="submitSwap(event)">
+                <div class="input-group">
+                    <label class="input-label" data-i18n="convert_to">Convert to</label>
+                    <select class="input" id="swap-currency" required onchange="updateSwapPreview()">
+                        <option value="" data-i18n="select_currency">Select currency</option>
+                        <option value="USDT">USDT (1 S-E = 0.01 USDT)</option>
+                        <option value="DOGE">DOGE (1 S-E = 0.06 DOGE)</option>
+                        <option value="TON">TON (1 S-E = 0.005 TON)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" data-i18n="se_amount">S-E Amount</label>
+                    <input type="number" class="input" id="swap-amount" placeholder="0.00" step="0.01" min="1" required oninput="updateSwapPreview()">
+                    <small style="color: var(--color-text-tertiary); margin-top: 5px;"><span data-i18n="balance">Balance</span>: <span id="se-balance-swap">{{ "%.3f"|format(user.se_balance) }}</span> S-E</small>
+                </div>
+
+                <div id="swap-preview" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: none;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="color: var(--color-text-secondary);" data-i18n="you_will_receive">You will receive:</span>
+                        <span style="font-weight: 700; font-size: 1.25rem;" id="swap-receive-amount">0.000</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--color-text-tertiary); text-align: center;" data-i18n="instant_conversion">
+                        This conversion is instant
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" data-i18n="confirm_swap">
+                    Confirm Swap
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Link Wallet Modal -->
+<div id="link-wallet-modal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">🔗 <span data-i18n="link_wallet_title">Link Wallet</span></h3>
+            <button class="modal-close" onclick="closeLinkWalletModal()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!-- Tabs para seleccionar tipo de wallet -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button type="button" class="btn btn-secondary wallet-tab active" onclick="switchWalletTab('bep20')" id="tab-bep20" style="flex: 1;">
+                    BEP20
+                </button>
+                <button type="button" class="btn btn-secondary wallet-tab" onclick="switchWalletTab('ton')" id="tab-ton" style="flex: 1;">
+                    TON
+                </button>
+            </div>
+
+            <!-- BEP20 Tab Content -->
+            <div id="bep20-wallet-content">
+                {% if user.wallet_address %}
+                <div style="background: rgba(34, 197, 94, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <div style="font-size: 0.875rem; color: #22c55e; text-align: center; margin-bottom: 10px;">
+                        ✅ <span data-i18n="wallet_already_linked">BEP20 wallet linked</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--color-text-secondary); font-family: monospace; word-break: break-all; text-align: center;">
+                        {{ user.wallet_address }}
+                    </div>
+                </div>
+                {% else %}
+                <div style="background: rgba(234, 179, 8, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <div style="font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.6;">
+                        <strong>⚠️ <span data-i18n="important">Important</span>:</strong><br>
+                        <span data-i18n="link_wallet_warning">Link your BEP20 wallet (Binance Smart Chain) to receive USDT/DOGE withdrawals.</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                <form id="link-bep20-form" onsubmit="submitLinkWallet(event, 'bep20')">
+                    <div class="input-group">
+                        <label class="input-label" data-i18n="bep20_address">BEP20 Address</label>
+                        <input type="text" class="input" id="bep20-address-input" placeholder="0x..." required pattern="^0x[a-fA-F0-9]{40}$" value="{{ user.wallet_address|default('') }}">
+                        <small style="color: var(--color-text-tertiary); margin-top: 5px;" data-i18n="address_format">Must start with 0x and have 42 characters</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" data-i18n="link_wallet_btn">
+                        {{ 'Update BEP20 Address' if user.wallet_address else 'Link BEP20 Wallet' }}
+                    </button>
+                </form>
+            </div>
+
+            <!-- TON Tab Content -->
+            <div id="ton-wallet-content" style="display: none;">
+                {% if user.ton_wallet_address %}
+                <div style="background: rgba(34, 197, 94, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <div style="font-size: 0.875rem; color: #22c55e; text-align: center; margin-bottom: 10px;">
+                        ✅ TON wallet linked
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--color-text-secondary); font-family: monospace; word-break: break-all; text-align: center;">
+                        {{ user.ton_wallet_address }}
+                    </div>
+                    {% if user.ton_wallet_memo %}
+                    <div style="font-size: 0.75rem; color: #0098EA; text-align: center; margin-top: 8px;">
+                        💬 Memo: {{ user.ton_wallet_memo }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div style="background: rgba(0, 152, 234, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <div style="font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.6;">
+                        <strong>💎 TON Network:</strong><br>
+                        Link your TON wallet to receive TON withdrawals. Use Tonkeeper, TON Wallet, or any compatible wallet.
+                    </div>
+                </div>
+                {% endif %}
+
+                <form id="link-ton-form" onsubmit="submitLinkWallet(event, 'ton')">
+                    <div class="input-group">
+                        <label class="input-label">TON Address</label>
+                        <input type="text" class="input" id="ton-address-input" placeholder="EQ... or UQ..." required value="{{ user.ton_wallet_address|default('') }}">
+                        <small style="color: var(--color-text-tertiary); margin-top: 5px;">Format: EQ... or UQ... (48 characters)</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">
+                            💬 Memo / Tag
+                            <span style="color: var(--color-text-tertiary); font-weight: normal;">(Optional)</span>
+                        </label>
+                        <input type="text" class="input" id="ton-memo-input" placeholder="Memo or Tag (if required by exchange)" maxlength="120" value="{{ user.ton_wallet_memo|default('') }}">
+                        <small style="color: #eab308; margin-top: 5px; display: block;">
+                            ⚠️ Required for exchanges like Binance, OKX, etc. Leave empty for personal wallets.
+                        </small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" style="background: linear-gradient(135deg, #0098EA 0%, #0077B6 100%);">
+                        {{ 'Update TON Wallet' if user.ton_wallet_address else 'Link TON Wallet' }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Withdraw Modal -->
+<div id="withdraw-modal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title" data-i18n="request_withdrawal">Request Withdrawal</h3>
+            <button class="modal-close" onclick="closeWithdrawModal()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!-- Verificar direcciones vinculadas -->
+            <div id="withdraw-address-info" style="background: rgba(6, 182, 212, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <div style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 10px;">
+                    <strong>📍 <span data-i18n="linked_addresses">Linked Addresses</span>:</strong>
+                </div>
+                <div id="bep20-address-status" style="font-size: 0.75rem; margin-bottom: 5px;">
+                    <span style="color: {% if user.wallet_address %}#22c55e{% else %}#ef4444{% endif %};">
+                        {% if user.wallet_address %}✅{% else %}❌{% endif %}
+                    </span>
+                    BEP20:
+                    {% if user.wallet_address %}
+                    <span style="font-family: monospace;">{{ user.wallet_address[:6] }}...{{ user.wallet_address[-4:] }}</span>
+                    {% else %}
+                    <span style="color: #ef4444;" data-i18n="not_linked">Not linked</span>
+                    {% endif %}
+                </div>
+                <div id="ton-address-status" style="font-size: 0.75rem;">
+                    <span style="color: {% if user.ton_wallet_address %}#22c55e{% else %}#ef4444{% endif %};">
+                        {% if user.ton_wallet_address %}✅{% else %}❌{% endif %}
+                    </span>
+                    TON:
+                    {% if user.ton_wallet_address %}
+                    <span style="font-family: monospace;">{{ user.ton_wallet_address[:6] }}...{{ user.ton_wallet_address[-4:] }}</span>
+                    {% else %}
+                    <span style="color: #ef4444;" data-i18n="not_linked">Not linked</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <form id="withdraw-form" onsubmit="submitWithdraw(event)">
+                <div class="input-group">
+                    <label class="input-label" data-i18n="currency">Currency</label>
+                    <select class="input" id="withdraw-method" required onchange="updateWithdrawInfo()">
+                        <option value="" data-i18n="select_currency">Select currency</option>
+                        <option value="USDT">USDT (BEP20) - Min: 0.5 USDT</option>
+                        <option value="DOGE">Dogecoin (BEP20) - Min: 1 DOGE</option>
+                        <option value="TON">TON (TON Network) - Min: 0.1 TON</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" data-i18n="amount">Amount</label>
+                    <input type="number" class="input" id="withdraw-amount" placeholder="0.00" step="0.0001" min="0.0001" required>
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                        <small style="color: var(--color-text-tertiary);" data-i18n="available_balance">Available</small>
+                        <small style="color: var(--color-text-tertiary);" id="withdraw-available-balance">0.00</small>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="setMaxAmount()" style="margin-top: 10px; padding: 8px 16px; font-size: 0.8rem;">
+                        MAX
+                    </button>
+                </div>
+
+                <div id="withdraw-warning" style="background: rgba(234, 179, 8, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px; display: none;">
+                    <small style="color: #eab308;" id="withdraw-warning-text"></small>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="withdraw-submit-btn" data-i18n="confirm_withdrawal">
+                    Confirm Withdrawal
+                </button>
+
+                <p style="font-size: 0.75rem; color: var(--color-text-tertiary); text-align: center; margin-top: var(--space-4);" data-i18n="processing_time">
+                    Processing in 24-48 hours
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Deposit Modal -->
+<div id="deposit-modal" class="modal-overlay" style="display: none;">
+    <div class="modal" style="max-height: 90vh; overflow-y: auto;">
+        <div class="modal-header">
+            <h3 class="modal-title">💰 <span data-i18n="deposit_title">Deposit Funds</span></h3>
+            <button class="modal-close" onclick="closeDepositModal()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!-- Tabs para método de depósito -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button type="button" class="btn btn-secondary deposit-tab active" onclick="switchDepositTab('wallet')" id="tab-deposit-wallet" style="flex: 1;">
+                    🔗 Wallet
+                </button>
+                <button type="button" class="btn btn-secondary deposit-tab" onclick="switchDepositTab('binance')" id="tab-deposit-binance" style="flex: 1;">
+                    📱 Binance Pay
+                </button>
+            </div>
+
+            <!-- Wallet Tab Content -->
+            <div id="deposit-wallet-content">
+                <div style="background: linear-gradient(135deg, rgba(201, 166, 53, 0.1) 0%, rgba(201, 166, 53, 0.2) 100%); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(201, 166, 53, 0.3);">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <span style="font-size: 0.875rem; color: var(--color-text-secondary);" data-i18n="deposit_only">Only accepted:</span>
+                        <strong style="color: #C9A635; font-size: 1.1rem;"> DOGE</strong>
+                    </div>
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 10px;">
+                        <div style="font-size: 0.75rem; color: var(--color-text-tertiary); margin-bottom: 8px;" data-i18n="deposit_address">Deposit Address (DOGE)</div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <code id="wallet-deposit-address" style="flex: 1; font-size: 0.8rem; word-break: break-all; color: #C9A635;">Loading...</code>
+                            <button type="button" onclick="copyWalletAddress()" style="padding: 8px 12px; background: #C9A635; border: none; border-radius: 6px; cursor: pointer;">
+                                <i data-lucide="copy" style="width: 16px; height: 16px; color: white;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Binance Pay Tab Content -->
+            <div id="deposit-binance-content" style="display: none;">
+                <div style="background: linear-gradient(135deg, rgba(240, 185, 11, 0.1) 0%, rgba(240, 185, 11, 0.2) 100%); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(240, 185, 11, 0.3);">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <span style="font-size: 0.875rem; color: var(--color-text-secondary);" data-i18n="all_binance_coins">All Binance Pay supported coins</span>
+                    </div>
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 10px;">
+                        <div style="font-size: 0.75rem; color: var(--color-text-tertiary); margin-bottom: 8px;">Binance Pay ID</div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <code id="binance-pay-id" style="flex: 1; font-size: 1.1rem; color: #f0b90b;">Loading...</code>
+                            <button type="button" onclick="copyBinancePayId()" style="padding: 8px 12px; background: #f0b90b; border: none; border-radius: 6px; cursor: pointer;">
+                                <i data-lucide="copy" style="width: 16px; height: 16px; color: #000;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reglas de monto mínimo -->
+            <div style="background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(239, 68, 68, 0.2);">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 24px;">⚠️</span>
+                    <div>
+                        <strong style="color: #ef4444;" data-i18n="min_deposit_rule">Minimum deposit: 1 DOGE</strong>
+                        <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 5px;" data-i18n="min_deposit_warning">
+                            Deposits below 1 DOGE will be automatically rejected and cannot be processed.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de envío de comprobante -->
+            <form id="deposit-form" enctype="multipart/form-data" onsubmit="submitDeposit(event)">
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label class="input-label" data-i18n="deposit_amount">Amount</label>
+                    <input type="number" class="input" id="deposit-amount" placeholder="0.00" step="0.0001" min="0.0001" required>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label class="input-label" data-i18n="deposit_currency">Currency</label>
+                    <select class="input" id="deposit-currency" required onchange="updateCurrencyOptions()">
+                        <option value="DOGE">DOGE</option>
+                    </select>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label class="input-label" data-i18n="proof_screenshot">Proof Screenshot <span style="color: #ef4444;">*</span></label>
+                    <div style="border: 2px dashed rgba(255, 255, 255, 0.2); border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s;" 
+                         onclick="document.getElementById('deposit-proof').click()"
+                         id="proof-upload-area">
+                        <i data-lucide="upload-cloud" style="width: 40px; height: 40px; color: var(--color-text-tertiary); margin-bottom: 10px;"></i>
+                        <div style="color: var(--color-text-secondary); font-size: 0.875rem;" data-i18n="click_upload">Click to upload proof</div>
+                        <div style="color: var(--color-text-tertiary); font-size: 0.75rem; margin-top: 5px;">PNG, JPG, GIF - Max 5MB</div>
+                        <div id="proof-file-name" style="color: #22c55e; margin-top: 10px; display: none;"></div>
+                    </div>
+                    <input type="file" id="deposit-proof" accept="image/*" style="display: none;" onchange="handleProofUpload(this)" required>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label class="input-label">Hash / TXID <span style="color: var(--color-text-tertiary);" data-i18n="optional">(Optional)</span></label>
+                    <input type="text" class="input" id="deposit-txhash" placeholder="Transaction hash or TXID">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="deposit-submit-btn" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">
+                    <i data-lucide="send"></i>
+                    <span data-i18n="submit_deposit">Submit Deposit</span>
+                </button>
+
+                <p style="font-size: 0.75rem; color: var(--color-text-tertiary); text-align: center; margin-top: var(--space-4);" data-i18n="manual_review">
+                    Your deposit will be manually reviewed and credited within 24 hours.
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Deposit History Modal -->
+<div id="deposit-history-modal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">📋 <span data-i18n="deposit_history">Deposit History</span></h3>
+            <button class="modal-close" onclick="closeDepositHistoryModal()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="deposit-history-list" style="max-height: 400px; overflow-y: auto;">
+                <div style="text-align: center; padding: 30px; color: var(--color-text-tertiary);">
+                    <i data-lucide="loader-2" style="width: 40px; height: 40px; animation: spin 1s linear infinite;"></i>
+                    <p style="margin-top: 10px;" data-i18n="loading">Loading...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden input para guardar user_id -->
+<input type="hidden" id="current-user-id" value="{{ user.user_id }}">
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ============================================
+// OBTENER USER_ID
+// ============================================
+
+function getCurrentUserId() {
+    // Intentar obtener de varias fuentes
+    const hiddenInput = document.getElementById('current-user-id');
+    if (hiddenInput && hiddenInput.value) {
+        return hiddenInput.value;
+    }
+
+    // Intentar obtener de URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const userIdFromUrl = urlParams.get('user_id');
+    if (userIdFromUrl) {
+        return userIdFromUrl;
+    }
+
+    // Si nada funciona, mostrar error
+    console.error('No se pudo obtener user_id');
+    return null;
+}
+
+// ============================================
+// SWAP FUNCTIONS
+// ============================================
+
+const SWAP_RATES = {
+    'USDT': 0.01,  // 1 S-E = 0.01 USDT
+    'DOGE': 0.06,  // 1 S-E = 0.06 DOGE
+    'TON': 0.005   // 1 S-E = 0.005 TON
+};
+
+function openSwapModal() {
+    document.getElementById('swap-modal').style.display = 'flex';
+    updateSwapPreview();
+    lucide.createIcons();
+}
+
+function closeSwapModal() {
+    document.getElementById('swap-modal').style.display = 'none';
+    document.getElementById('swap-form').reset();
+    document.getElementById('swap-preview').style.display = 'none';
+}
+
+function updateSwapPreview() {
+    const currency = document.getElementById('swap-currency').value;
+    const amount = parseFloat(document.getElementById('swap-amount').value) || 0;
+
+    if (currency && amount > 0) {
+        const receiveAmount = amount * SWAP_RATES[currency];
+        document.getElementById('swap-receive-amount').textContent = receiveAmount.toFixed(currency === 'USDT' ? 2 : 2) + ' ' + currency;
+        document.getElementById('swap-preview').style.display = 'block';
+    } else {
+        document.getElementById('swap-preview').style.display = 'none';
+    }
+}
+
+async function submitSwap(event) {
+    event.preventDefault();
+
+    const userId = getCurrentUserId();
+    if (!userId) {
+        showToast(window.tt ? window.tt('toast_user_id_error') : 'Error: No se pudo obtener el ID de usuario', 'error');
+        return;
+    }
+
+    const currency = document.getElementById('swap-currency').value;
+    const seAmount = parseFloat(document.getElementById('swap-amount').value);
+    const currentBalance = parseFloat(document.getElementById('se-balance').textContent);
+
+    // Validaciones
+    if (seAmount < 0.01) {
+        showToast(window.tt ? window.tt('toast_min_amount', {amount: '1 S-E'}) : 'Cantidad mínima: 1 S-E', 'error');
+        return;
+    }
+
+    if (seAmount > currentBalance) {
+        showToast(window.tt ? window.tt('toast_insufficient_balance') : 'Balance S-E insuficiente', 'error');
+        return;
+    }
+
+    const receiveAmount = seAmount * SWAP_RATES[currency];
+
+    // Show ultra professional notification
+    if (window.showProcessingToast) {
+        const processingText = window.tt ? window.tt('toast_swap_processing') : 'Procesando...';
+        const successText = window.tt ? window.tt('toast_swap_success') : '¡Swap exitoso!';
+        window.showProcessingToast(
+            processingText,
+            `${successText} +${receiveAmount.toFixed(2)} ${currency}`,
+            null,
+            2000
+        );
+    }
+
+    try {
+        const response = await fetch(`/api/swap?user_id=${userId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                from_currency: 'SE',
+                to_currency: currency,
+                amount: seAmount,
+                receive_amount: receiveAmount
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            closeSwapModal();
+            setTimeout(() => location.reload(), 3500);
+        } else {
+            showToast(data.message || (window.tt ? window.tt('toast_swap_error') : 'Error al procesar swap'), 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+    }
+}
+
+// ============================================
+// LINK WALLET FUNCTIONS
+// ============================================
+
+function openLinkWalletModal() {
+    document.getElementById('link-wallet-modal').style.display = 'flex';
+    lucide.createIcons();
+}
+
+function closeLinkWalletModal() {
+    document.getElementById('link-wallet-modal').style.display = 'none';
+}
+
+function switchWalletTab(type) {
+    // Update tab buttons
+    document.querySelectorAll('.wallet-tab').forEach(tab => tab.classList.remove('active'));
+    document.getElementById('tab-' + type).classList.add('active');
+
+    // Show/hide content
+    if (type === 'bep20') {
+        document.getElementById('bep20-wallet-content').style.display = 'block';
+        document.getElementById('ton-wallet-content').style.display = 'none';
+    } else {
+        document.getElementById('bep20-wallet-content').style.display = 'none';
+        document.getElementById('ton-wallet-content').style.display = 'block';
+    }
+}
+
+async function submitLinkWallet(event, walletType) {
+    event.preventDefault();
+
+    const userId = getCurrentUserId();
+    if (!userId) {
+        showToast(window.tt ? window.tt('toast_user_id_error') : 'Error: No se pudo obtener el ID de usuario', 'error');
+        return;
+    }
+
+    let address;
+    let memo = '';
+
+    if (walletType === 'ton') {
+        address = document.getElementById('ton-address-input').value.trim();
+        memo = document.getElementById('ton-memo-input')?.value?.trim() || '';
+
+        // Validar formato TON
+        if (!address.match(/^[EUku0][QfF][A-Za-z0-9_-]{46}$/) && !address.match(/^-?[01]:[a-fA-F0-9]{64}$/)) {
+            showToast(window.tt ? window.tt('toast_invalid_ton_address') : 'Dirección TON inválida', 'error');
+            return;
+        }
+    } else {
+        address = document.getElementById('bep20-address-input').value.trim();
+        // Validar formato BEP20
+        if (!address.match(/^0x[a-fA-F0-9]{40}$/)) {
+            showToast(window.tt ? window.tt('toast_invalid_address') : 'Dirección BEP20 inválida', 'error');
+            return;
+        }
+    }
+
+    // Show processing notification
+    if (window.showProcessingToast) {
+        const processingText = window.tt ? window.tt('toast_link_wallet_processing') : 'Verificando...';
+        const successText = window.tt ? window.tt('toast_link_wallet_success') : '¡Wallet vinculada!';
+        window.showProcessingToast(processingText, successText, null, 2000);
+    }
+
+    try {
+        const requestBody = {
+            user_id: userId,
+            wallet_address: address,
+            wallet_type: walletType
+        };
+
+        // Include memo for TON wallets
+        if (walletType === 'ton' && memo) {
+            requestBody.memo = memo;
+        }
+
+        const response = await fetch(`/api/wallet/link?user_id=${userId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            closeLinkWalletModal();
+            setTimeout(() => location.reload(), 2000);
+        } else {
+            showToast(data.error || (window.tt ? window.tt('toast_link_wallet_error') : 'Error al vincular wallet'), 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+    }
+}
+
+// ============================================
+// WITHDRAW FUNCTIONS
+// ============================================
+
+// Balances stored for quick access
+const userBalances = {
+    'USDT': parseFloat('{{ user.usdt_balance|default(0) }}'),
+    'DOGE': parseFloat('{{ user.doge_balance|default(0) }}'),
+    'TON': parseFloat('{{ user.ton_balance|default(0) }}'),
+    'SE': parseFloat('{{ user.se_balance|default(0) }}')
+};
+
+// Linked addresses
+const linkedAddresses = {
+    'bep20': '{{ user.wallet_address|default("") }}',
+    'ton': '{{ user.ton_wallet_address|default("") }}'
+};
+
+function openWithdrawModal() {
+    document.getElementById('withdraw-modal').style.display = 'flex';
+    updateWithdrawInfo();
+    lucide.createIcons();
+}
+
+function closeWithdrawModal() {
+    document.getElementById('withdraw-modal').style.display = 'none';
+    document.getElementById('withdraw-form').reset();
+}
+
+function selectMethod(method) {
+    document.getElementById('withdraw-method').value = method;
+    openWithdrawModal();
+    updateWithdrawInfo();
+}
+
+function updateWithdrawInfo() {
+    const method = document.getElementById('withdraw-method').value;
+    const warningDiv = document.getElementById('withdraw-warning');
+    const warningText = document.getElementById('withdraw-warning-text');
+    const submitBtn = document.getElementById('withdraw-submit-btn');
+    const availableSpan = document.getElementById('withdraw-available-balance');
+
+    if (!method) {
+        availableSpan.textContent = '0.00';
+        warningDiv.style.display = 'none';
+        return;
+    }
+
+    // Update available balance
+    const balance = userBalances[method] || 0;
+    availableSpan.textContent = balance.toFixed(4) + ' ' + method;
+
+    // Check if address is linked
+    const needsTon = method === 'TON';
+    const addressLinked = needsTon ? linkedAddresses.ton : linkedAddresses.bep20;
+
+    if (!addressLinked) {
+        warningDiv.style.display = 'block';
+        if (needsTon) {
+            warningText.textContent = '⚠️ You need to link a TON wallet first. Go to "Link" section.';
+        } else {
+            warningText.textContent = '⚠️ You need to link a BEP20 wallet first. Go to "Link" section.';
+        }
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.5';
+    } else {
+        warningDiv.style.display = 'none';
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+    }
+}
+
+function setMaxAmount() {
+    const method = document.getElementById('withdraw-method').value;
+    if (!method) {
+        showToast(window.tt ? window.tt('select_currency_first') : 'Selecciona una moneda primero', 'warning');
+        return;
+    }
+
+    const balance = userBalances[method] || 0;
+    document.getElementById('withdraw-amount').value = balance.toFixed(4);
+}
+
+async function submitWithdraw(event) {
+    event.preventDefault();
+
+    const userId = getCurrentUserId();
+    if (!userId) {
+        showToast(window.tt ? window.tt('toast_user_id_error') : 'Error: No se pudo obtener el ID de usuario', 'error');
+        return;
+    }
+
+    const method = document.getElementById('withdraw-method').value;
+    const amount = parseFloat(document.getElementById('withdraw-amount').value);
+
+    // Validar moneda seleccionada
+    if (!method) {
+        showToast(window.tt ? window.tt('select_currency') : 'Selecciona una moneda', 'error');
+        return;
+    }
+
+    // Mínimos de retiro
+    const minAmounts = { USDT: 0.5, DOGE: 0.3, TON: 0.02 };
+    if (amount < minAmounts[method]) {
+        showToast(window.tt ? window.tt('toast_min_amount', {amount: `${minAmounts[method]} ${method}`}) : `Mínimo para ${method}: ${minAmounts[method]}`, 'error');
+        return;
+    }
+
+    // Validar balance
+    const balance = userBalances[method] || 0;
+    if (amount > balance) {
+        showToast(window.tt ? window.tt('toast_insufficient_balance') : 'Balance insuficiente', 'error');
+        return;
+    }
+
+    // Verificar dirección vinculada
+    const needsTon = method === 'TON';
+    const addressLinked = needsTon ? linkedAddresses.ton : linkedAddresses.bep20;
+
+    if (!addressLinked) {
+        showToast(needsTon ? 'Link your TON wallet first' : 'Link your BEP20 wallet first', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/wallet/withdraw?user_id=${userId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                currency: method,
+                amount: amount
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showToast(window.tt ? window.tt('toast_withdraw_success') : '¡Retiro solicitado con éxito!', 'success');
+            closeWithdrawModal();
+            setTimeout(() => location.reload(), 2000);
+        } else {
+            showToast(data.error || (window.tt ? window.tt('toast_withdraw_error') : 'Error al procesar'), 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+    }
+}
+
+// ============================================
+// DEPOSIT FUNCTIONS
+// ============================================
+
+// Configuración de depósito (se carga dinámicamente)
+let depositConfig = {
+    wallet_address: '',
+    binance_pay_id: '',
+    min_deposit: 1,
+    wallet_currencies: ['DOGE'],
+    binance_currencies: ['DOGE', 'USDT', 'BNB', 'BTC', 'ETH']
+};
+
+// Método actual seleccionado
+let currentDepositMethod = 'wallet';
+
+// Cargar configuración de depósito
+async function loadDepositConfig() {
+    try {
+        const response = await fetch('/api/deposit/config');
+        const data = await response.json();
+        if (data.success) {
+            depositConfig = data.config;
+            document.getElementById('wallet-deposit-address').textContent = depositConfig.wallet_address;
+            document.getElementById('binance-pay-id').textContent = depositConfig.binance_pay_id;
+            updateCurrencyOptions();
+        }
+    } catch (error) {
+        console.error('Error loading deposit config:', error);
+    }
+}
+
+function openDepositModal() {
+    loadDepositConfig();
+    document.getElementById('deposit-modal').style.display = 'flex';
+    lucide.createIcons();
+}
+
+function closeDepositModal() {
+    document.getElementById('deposit-modal').style.display = 'none';
+    document.getElementById('deposit-form').reset();
+    document.getElementById('proof-file-name').style.display = 'none';
+    document.getElementById('proof-upload-area').style.borderColor = 'rgba(255, 255, 255, 0.2)';
+}
+
+function switchDepositTab(method) {
+    currentDepositMethod = method;
+    
+    // Update tab styles
+    document.querySelectorAll('.deposit-tab').forEach(tab => tab.classList.remove('active'));
+    document.getElementById('tab-deposit-' + method).classList.add('active');
+    
+    // Show/hide content
+    document.getElementById('deposit-wallet-content').style.display = method === 'wallet' ? 'block' : 'none';
+    document.getElementById('deposit-binance-content').style.display = method === 'binance' ? 'block' : 'none';
+    
+    // Update currency options
+    updateCurrencyOptions();
+}
+
+function updateCurrencyOptions() {
+    const select = document.getElementById('deposit-currency');
+    const currencies = currentDepositMethod === 'wallet' ? depositConfig.wallet_currencies : depositConfig.binance_currencies;
+    
+    select.innerHTML = '';
+    currencies.forEach(currency => {
+        const option = document.createElement('option');
+        option.value = currency;
+        option.textContent = currency;
+        select.appendChild(option);
+    });
+}
+
+function copyWalletAddress() {
+    const address = document.getElementById('wallet-deposit-address').textContent;
+    navigator.clipboard.writeText(address).then(() => {
+        showToast(window.tt ? window.tt('address_copied') : 'Dirección copiada', 'success');
+    }).catch(() => {
+        showToast('Error al copiar', 'error');
+    });
+}
+
+function copyBinancePayId() {
+    const payId = document.getElementById('binance-pay-id').textContent;
+    navigator.clipboard.writeText(payId).then(() => {
+        showToast(window.tt ? window.tt('binance_id_copied') : 'Binance Pay ID copiado', 'success');
+    }).catch(() => {
+        showToast('Error al copiar', 'error');
+    });
+}
+
+function handleProofUpload(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        
+        if (file.size > maxSize) {
+            showToast(window.tt ? window.tt('file_too_large') : 'Archivo muy grande. Máximo 5MB', 'error');
+            input.value = '';
+            return;
+        }
+        
+        document.getElementById('proof-file-name').textContent = '✅ ' + file.name;
+        document.getElementById('proof-file-name').style.display = 'block';
+        document.getElementById('proof-upload-area').style.borderColor = '#22c55e';
+    }
+}
+
+async function submitDeposit(event) {
+    event.preventDefault();
+    
+    const userId = getCurrentUserId();
+    if (!userId) {
+        showToast(window.tt ? window.tt('toast_user_id_error') : 'Error: No se pudo obtener el ID de usuario', 'error');
+        return;
+    }
+    
+    const amount = parseFloat(document.getElementById('deposit-amount').value);
+    const currency = document.getElementById('deposit-currency').value;
+    const proofFile = document.getElementById('deposit-proof').files[0];
+    const txHash = document.getElementById('deposit-txhash').value.trim();
+    
+    // Validaciones
+    if (!amount || amount <= 0) {
+        showToast(window.tt ? window.tt('invalid_amount') : 'Ingresa un monto válido', 'error');
+        return;
+    }
+    
+    if (amount < depositConfig.min_deposit) {
+        showToast(window.tt ? window.tt('min_deposit_error') : `El monto mínimo de depósito es ${depositConfig.min_deposit} DOGE`, 'error');
+        return;
+    }
+    
+    if (!proofFile) {
+        showToast(window.tt ? window.tt('proof_required') : 'El comprobante de pago es obligatorio', 'error');
+        return;
+    }
+    
+    // Mostrar loading
+    const submitBtn = document.getElementById('deposit-submit-btn');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i data-lucide="loader-2" style="animation: spin 1s linear infinite;"></i> Enviando...';
+    submitBtn.disabled = true;
+    
+    try {
+        const formData = new FormData();
+        formData.append('user_id', userId);
+        formData.append('amount', amount);
+        formData.append('currency', currency);
+        formData.append('method', currentDepositMethod);
+        formData.append('proof_image', proofFile);
+        formData.append('tx_hash', txHash);
+        
+        const response = await fetch('/api/deposit/submit', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast(window.tt ? window.tt('deposit_submitted') : '¡Depósito enviado! Será revisado en breve.', 'success');
+            closeDepositModal();
+        } else {
+            showToast(data.error || (window.tt ? window.tt('deposit_error') : 'Error al procesar el depósito'), 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        lucide.createIcons();
+    }
+}
+
+// Deposit History
+function openDepositHistoryModal() {
+    document.getElementById('deposit-history-modal').style.display = 'flex';
+    loadDepositHistory();
+    lucide.createIcons();
+}
+
+function closeDepositHistoryModal() {
+    document.getElementById('deposit-history-modal').style.display = 'none';
+}
+
+async function loadDepositHistory() {
+    const userId = getCurrentUserId();
+    const container = document.getElementById('deposit-history-list');
+    
+    try {
+        const response = await fetch(`/api/deposit/history?user_id=${userId}`);
+        const data = await response.json();
+        
+        if (data.success && data.deposits.length > 0) {
+            container.innerHTML = data.deposits.map(dep => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; margin-bottom: 10px;">
+                    <div>
+                        <div style="font-weight: 600;">${dep.amount.toFixed(4)} ${dep.currency}</div>
+                        <div style="font-size: 0.75rem; color: var(--color-text-tertiary);">
+                            ${dep.method === 'wallet' ? '🔗 Wallet' : '📱 Binance Pay'} • ${new Date(dep.created_at).toLocaleDateString()}
+                        </div>
+                    </div>
+                    <div style="padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+                        ${dep.status === 'approved' ? 'background: rgba(34, 197, 94, 0.2); color: #22c55e;' : 
+                          dep.status === 'pending' ? 'background: rgba(234, 179, 8, 0.2); color: #eab308;' :
+                          'background: rgba(239, 68, 68, 0.2); color: #ef4444;'}">
+                        ${dep.status_text}
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 30px; color: var(--color-text-tertiary);">
+                    <i data-lucide="inbox" style="width: 40px; height: 40px;"></i>
+                    <p style="margin-top: 10px;" data-i18n="no_deposits">No deposits yet</p>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+    } catch (error) {
+        console.error('Error loading deposit history:', error);
+        container.innerHTML = '<div style="text-align: center; padding: 30px; color: #ef4444;">Error loading history</div>';
+    }
+}
+
+// ============================================
+// HELPERS - Usa el showToast global de main.js
+// ============================================
+
+// Close modals on overlay click
+['swap-modal', 'link-wallet-modal', 'withdraw-modal', 'deposit-modal', 'deposit-history-modal'].forEach(modalId => {
+    document.getElementById(modalId)?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            if (modalId === 'swap-modal') closeSwapModal();
+            else if (modalId === 'link-wallet-modal') closeLinkWalletModal();
+            else if (modalId === 'withdraw-modal') closeWithdrawModal();
+            else if (modalId === 'deposit-modal') closeDepositModal();
+            else if (modalId === 'deposit-history-modal') closeDepositHistoryModal();
+        }
+    });
+});
+
+// Initialize Lucide icons
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+});
+
+// Funciones para el modal de reglas de retiro
+function openWithdrawalRulesModal() {
+    const modal = document.getElementById('withdrawal-rules-modal');
+    modal.style.display = 'flex';
+    translateModalElements(modal);
+    if(window.Telegram?.WebApp?.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+}
+
+function closeWithdrawalRulesModal() {
+    const modal = document.getElementById('withdrawal-rules-modal');
+    modal.style.display = 'none';
+    if(window.Telegram?.WebApp?.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+}
+
+function translateModalElements(modal) {
+    if (typeof t !== 'function') return;
+    modal.querySelectorAll('[data-i18n]').forEach(elem => {
+        const key = elem.getAttribute('data-i18n');
+        const translated = t(key);
+        if (translated && translated !== key) {
+            elem.innerHTML = translated;
+        }
+    });
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// Add keyframe animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideUp {
+        from { transform: translate(-50%, 100px); opacity: 0; }
+        to { transform: translate(-50%, 0); opacity: 1; }
+    }
+    @keyframes slideDown {
+        from { transform: translate(-50%, 0); opacity: 1; }
+        to { transform: translate(-50%, 100px); opacity: 0; }
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    #withdrawal-rules-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 40px rgba(34, 197, 94, 0.4);
+    }
+    #withdrawal-rules-modal::-webkit-scrollbar {
+        width: 8px;
+    }
+    #withdrawal-rules-modal::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+    }
+    #withdrawal-rules-modal::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        border-radius: 4px;
+    }
+`;
+document.head.appendChild(style);
+</script>
+
+<!-- MODAL DE REGLAS DE RETIRO -->
+<div id="withdrawal-rules-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.95); z-index: 10000; overflow-y: auto; padding: 20px; align-items: flex-start; justify-content: center;">
+    <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.15) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 2px solid rgba(34, 197, 94, 0.3); border-radius: 20px; padding: 24px; max-width: 600px; width: 100%; margin: 20px auto; position: relative;">
+        
+        <!-- Botón cerrar -->
+        <button onclick="closeWithdrawalRulesModal()" style="position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; background: rgba(34, 197, 94, 0.2); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;">
+            <i data-lucide="x" style="width: 20px; height: 20px; color: #22c55e;"></i>
+        </button>
+
+        <!-- Encabezado -->
+        <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid rgba(34, 197, 94, 0.2);">
+            <div style="font-size: 48px; margin-bottom: 12px;">💼</div>
+            <h2 style="font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;" data-i18n="withdrawal_rules_title"></h2>
+            <p style="font-size: 0.85rem; color: var(--color-text-tertiary); margin: 8px 0 0;" data-i18n="withdrawal_rules_subtitle"></p>
+        </div>
+
+        <!-- Contenido de las reglas -->
+        <div style="color: var(--color-text-primary); line-height: 1.7; font-size: 0.9rem;">
+            <p style="margin: 0 0 16px; color: var(--color-text-secondary);" data-i18n="withdrawal_rules_intro"></p>
+            
+            <p style="margin: 0 0 16px; color: var(--color-text-secondary); font-weight: 600;" data-i18n="withdrawal_rules_acceptance"></p>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #22c55e; margin: 24px 0 12px;" data-i18n="withdrawal_rules_1_title"></h3>
+            <ul style="margin: 0 0 16px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 8px;" data-i18n="withdrawal_rules_1_1"></li>
+                <li style="margin-bottom: 8px;">
+                    <span data-i18n="withdrawal_rules_1_2"></span>
+                    <ul style="margin: 8px 0 0; padding-left: 20px;">
+                        <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_1_2_1"></li>
+                        <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_1_2_2"></li>
+                        <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_1_2_3"></li>
+                    </ul>
+                </li>
+                <li style="margin-bottom: 8px;" data-i18n="withdrawal_rules_1_3"></li>
+            </ul>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #22c55e; margin: 24px 0 12px;" data-i18n="withdrawal_rules_2_title"></h3>
+            <ul style="margin: 0 0 16px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 8px;">
+                    <span data-i18n="withdrawal_rules_2_1"></span>
+                    <ul style="margin: 8px 0 0; padding-left: 20px;">
+                        <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_2_1_1"></li>
+                        <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_2_1_2"></li>
+                        <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_2_1_3"></li>
+                    </ul>
+                </li>
+                <li style="margin-bottom: 8px;">
+                    <span data-i18n="withdrawal_rules_2_2"></span>
+                    <ul style="margin: 8px 0 0; padding-left: 20px;">
+                        <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_2_2_1"></li>
+                        <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_2_2_2"></li>
+                        <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_2_2_3"></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #22c55e; margin: 24px 0 12px;" data-i18n="withdrawal_rules_3_title"></h3>
+            <p style="margin: 0 0 8px; color: var(--color-text-secondary);" data-i18n="withdrawal_rules_3_intro"></p>
+            <ul style="margin: 0 0 12px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_3_1"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_3_2"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_3_3"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_3_4"></li>
+            </ul>
+            <p style="margin: 0 0 16px; color: var(--color-text-secondary);" data-i18n="withdrawal_rules_3_conclusion"></p>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #22c55e; margin: 24px 0 12px;" data-i18n="withdrawal_rules_4_title"></h3>
+            <p style="margin: 0 0 8px; color: var(--color-text-secondary);" data-i18n="withdrawal_rules_4_intro"></p>
+            <ul style="margin: 0 0 12px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_4_1"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_4_2"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_4_3"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_4_4"></li>
+            </ul>
+            <p style="margin: 0 0 8px; color: var(--color-text-secondary); font-weight: 600;" data-i18n="withdrawal_rules_4_action"></p>
+            <ul style="margin: 0 0 12px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_4_action_1"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_4_action_2"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_4_action_3"></li>
+            </ul>
+            <p style="margin: 0 0 16px; color: var(--color-text-secondary);" data-i18n="withdrawal_rules_4_conclusion"></p>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #22c55e; margin: 24px 0 12px;" data-i18n="withdrawal_rules_5_title"></h3>
+            <ul style="margin: 0 0 16px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 8px;" data-i18n="withdrawal_rules_5_1"></li>
+                <li style="margin-bottom: 8px;">
+                    <span data-i18n="withdrawal_rules_5_2"></span>
+                    <ul style="margin: 8px 0 0; padding-left: 20px;">
+                        <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_5_2_1"></li>
+                        <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_5_2_2"></li>
+                        <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_5_2_3"></li>
+                    </ul>
+                </li>
+                <li style="margin-bottom: 8px;" data-i18n="withdrawal_rules_5_3"></li>
+            </ul>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #22c55e; margin: 24px 0 12px;" data-i18n="withdrawal_rules_6_title"></h3>
+            <p style="margin: 0 0 8px; color: var(--color-text-secondary);" data-i18n="withdrawal_rules_6_intro"></p>
+            <ul style="margin: 0 0 12px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_6_1"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_6_2"></li>
+            </ul>
+            <p style="margin: 0 0 8px; color: var(--color-text-secondary); font-weight: 600;" data-i18n="withdrawal_rules_6_disclaimer"></p>
+            <ul style="margin: 0 0 12px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_6_disclaimer_1"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_6_disclaimer_2"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_6_disclaimer_3"></li>
+            </ul>
+            <p style="margin: 0 0 16px; color: var(--color-text-secondary); font-weight: 600;" data-i18n="withdrawal_rules_6_conclusion"></p>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #22c55e; margin: 24px 0 12px;" data-i18n="withdrawal_rules_7_title"></h3>
+            <p style="margin: 0 0 8px; color: var(--color-text-secondary);" data-i18n="withdrawal_rules_7_intro"></p>
+            <ul style="margin: 0 0 16px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_7_1"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_7_2"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_7_3"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_7_4"></li>
+            </ul>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #22c55e; margin: 24px 0 12px;" data-i18n="withdrawal_rules_8_title"></h3>
+            <p style="margin: 0 0 8px; color: var(--color-text-secondary);" data-i18n="withdrawal_rules_8_intro"></p>
+            <ul style="margin: 0 0 16px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_8_1"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_8_2"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_8_3"></li>
+                <li style="margin-bottom: 6px;" data-i18n="withdrawal_rules_8_4"></li>
+            </ul>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #22c55e; margin: 24px 0 12px;" data-i18n="withdrawal_rules_9_title"></h3>
+            <ul style="margin: 0 0 16px; padding-left: 20px; color: var(--color-text-secondary);">
+                <li style="margin-bottom: 8px;" data-i18n="withdrawal_rules_9_1"></li>
+                <li style="margin-bottom: 8px;" data-i18n="withdrawal_rules_9_2"></li>
+                <li style="margin-bottom: 8px;" data-i18n="withdrawal_rules_9_3"></li>
+            </ul>
+        </div>
+
+        <!-- Botón cerrar al final -->
+        <button onclick="closeWithdrawalRulesModal()" style="width: 100%; padding: 14px; margin-top: 24px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); border: none; border-radius: 12px; color: white; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3); transition: all 0.3s ease;" data-i18n="withdrawal_rules_understood">
+        </button>
+    </div>
+</div>
+
+{% endblock %}

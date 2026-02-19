@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Configuration - SALLY-E Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .admin-container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+        }
+        
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .admin-header h1 { 
+            color: #003D99; 
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+        
+        .nav-btn:hover { 
+            transform: translateY(-2px); 
+        }
+        
+        .content-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #003D99;
+            margin: 30px 0 20px 0;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title:first-child { 
+            margin-top: 0; 
+        }
+        
+        .section-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #0066FF;
+        }
+        
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .config-item {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            transition: border-color 0.2s;
+        }
+        
+        .config-item:hover {
+            border-color: #0066FF;
+        }
+        
+        .config-item label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .config-item .required {
+            color: #dc3545;
+        }
+        
+        .config-item input, 
+        .config-item select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .config-item input:focus, 
+        .config-item select:focus {
+            outline: none;
+            border-color: #0066FF;
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+        }
+        
+        .config-item small { 
+            color: #888; 
+            font-size: 12px; 
+            display: block; 
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        
+        .config-item .unit {
+            position: relative;
+        }
+        
+        .config-item .unit input {
+            padding-right: 60px;
+        }
+        
+        .config-item .unit-label {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            transition: border-color 0.2s;
+        }
+        
+        .checkbox-item:hover {
+            border-color: #0066FF;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            accent-color: #0066FF;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        
+        .checkbox-item .info { 
+            flex: 1; 
+        }
+        
+        .checkbox-item .info label {
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .checkbox-item .info small { 
+            color: #888; 
+            font-size: 12px; 
+            display: block;
+            line-height: 1.4;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-submit:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 102, 255, 0.3);
+        }
+        
+        .alert {
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .alert-success { 
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 1px solid #28a745;
+            color: #155724; 
+        }
+        
+        .alert-error { 
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 1px solid #dc3545;
+            color: #721c24; 
+        }
+        
+        .alert-icon {
+            font-size: 20px;
+        }
+        
+        .current-values {
+            background: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 30px;
+        }
+        
+        .current-values h4 {
+            color: #0c5460;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .current-values ul {
+            list-style: none;
+            font-size: 13px;
+            color: #0c5460;
+        }
+        
+        .current-values li {
+            padding: 5px 0;
+            border-bottom: 1px solid #d1ecf1;
+        }
+        
+        .current-values li:last-child {
+            border-bottom: none;
+        }
+        
+        .current-values strong {
+            color: #003D99;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>
+                <span>⚙️</span>
+                System Configuration
+            </h1>
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">← Back to Dashboard</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <span class="alert-icon">{% if category == 'success' %}✅{% else %}❌{% endif %}</span>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="content-container">
+            <form method="POST" action="{{ url_for('admin_config') }}">
+                
+                <!-- Mining Configuration -->
+                <div class="section-title">
+                    <span>⛏️</span> Mining Configuration
+                </div>
+                <div class="section-description">
+                    Configure the base mining rate and global multiplier for all users.
+                </div>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Base Mining Rate <span class="required">*</span></label>
+                        <div class="unit">
+                            <input type="number" 
+                                   name="base_mining_rate" 
+                                   step="0.0001" 
+                                   min="0" 
+                                   value="{{ config.base_mining_rate or '1.0' }}"
+                                   required>
+                            <span class="unit-label">S-E/hr</span>
+                        </div>
+                        <small>Base amount of S-E tokens mined per hour by each user.</small>
+                    </div>
+                    <div class="config-item">
+                        <label>Global Mining Power <span class="required">*</span></label>
+                        <div class="unit">
+                            <input type="number" 
+                                   name="global_mining_power" 
+                                   step="0.1" 
+                                   min="0.1" 
+                                   value="{{ config.global_mining_power or '1.0' }}"
+                                   required>
+                            <span class="unit-label">×</span>
+                        </div>
+                        <small>Global multiplier applied to all users' mining rate.</small>
+                    </div>
+                </div>
+
+                <!-- Referral System -->
+                <div class="section-title">
+                    <span>👥</span> Referral System
+                </div>
+                <div class="section-description">
+                    Configure bonuses and commissions for the referral program.
+                </div>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Referral Commission <span class="required">*</span></label>
+                        <div class="unit">
+                            <input type="number" 
+                                   name="referral_commission" 
+                                   step="0.1" 
+                                   min="0" 
+                                   max="100" 
+                                   value="{{ (config.referral_commission|float * 100) if config.referral_commission else '5' }}"
+                                   required>
+                            <span class="unit-label">%</span>
+                        </div>
+                        <small>Percentage of referred user's earnings paid to the referrer.</small>
+                    </div>
+                    <div class="config-item">
+                        <label>Referral Bonus (One-time) <span class="required">*</span></label>
+                        <div class="unit">
+                            <input type="number" 
+                                   name="referral_bonus" 
+                                   step="0.0001" 
+                                   min="0" 
+                                   value="{{ config.referral_bonus or '1.0' }}"
+                                   required>
+                            <span class="unit-label">S-E</span>
+                        </div>
+                        <small>One-time bonus paid when a new referral is validated.</small>
+                    </div>
+                </div>
+
+                <!-- Withdrawal Configuration -->
+                <div class="section-title">
+                    <span>💸</span> Withdrawal Settings
+                </div>
+                <div class="section-description">
+                    Set minimum withdrawal amounts for each currency. Users must reach these minimums to request a withdrawal.
+                </div>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Minimum S-E Withdrawal <span class="required">*</span></label>
+                        <div class="unit">
+                            <input type="number" 
+                                   name="min_withdrawal_se" 
+                                   step="0.01" 
+                                   min="0" 
+                                   value="{{ config.min_withdrawal_se or config.min_withdrawal or '100' }}"
+                                   required>
+                            <span class="unit-label">S-E</span>
+                        </div>
+                        <small>Minimum amount of S-E tokens required to withdraw.</small>
+                    </div>
+                    <div class="config-item" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-color: #4caf50;">
+                        <label>Minimum USDT Withdrawal <span class="required">*</span></label>
+                        <div class="unit">
+                            <input type="number" 
+                                   name="min_withdrawal_usdt" 
+                                   step="0.01" 
+                                   min="0" 
+                                   value="{{ config.min_withdrawal_usdt or '0.5' }}"
+                                   required>
+                            <span class="unit-label">USDT</span>
+                        </div>
+                        <small>Minimum amount of USDT required to withdraw.</small>
+                    </div>
+                    <div class="config-item" style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border-color: #ffc107;">
+                        <label>Minimum DOGE Withdrawal <span class="required">*</span></label>
+                        <div class="unit">
+                            <input type="number" 
+                                   name="min_withdrawal_doge" 
+                                   step="0.01" 
+                                   min="0" 
+                                   value="{{ config.min_withdrawal_doge or '0.3' }}"
+                                   required>
+                            <span class="unit-label">DOGE</span>
+                        </div>
+                        <small>Minimum amount of DOGE required to withdraw.</small>
+                    </div>
+                    <div class="config-item" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-color: #0098EA;">
+                        <label>Minimum TON Withdrawal <span class="required">*</span></label>
+                        <div class="unit">
+                            <input type="number" 
+                                   name="min_withdrawal_ton" 
+                                   step="0.01" 
+                                   min="0" 
+                                   value="{{ config.min_withdrawal_ton or '0.1' }}"
+                                   required>
+                            <span class="unit-label">TON</span>
+                        </div>
+                        <small>Minimum amount of TON required to withdraw.</small>
+                    </div>
+                </div>
+
+                <!-- Exchange Rates -->
+                <div class="section-title">
+                    <span>💱</span> Exchange Rates
+                </div>
+                <div class="section-description">
+                    Configure conversion rates for S-E tokens to other currencies.
+                </div>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>S-E to USDT Rate</label>
+                        <div class="unit">
+                            <input type="number" 
+                                   name="se_to_usdt_rate" 
+                                   step="0.0001" 
+                                   min="0" 
+                                   value="{{ config.se_to_usdt_rate or '0.01' }}">
+                            <span class="unit-label">USDT</span>
+                        </div>
+                        <small>How much 1 S-E is worth in USDT.</small>
+                    </div>
+                    <div class="config-item">
+                        <label>S-E to DOGE Rate</label>
+                        <div class="unit">
+                            <input type="number" 
+                                   name="se_to_doge_rate" 
+                                   step="0.0001" 
+                                   min="0" 
+                                   value="{{ config.se_to_doge_rate or '0.06' }}">
+                            <span class="unit-label">DOGE</span>
+                        </div>
+                        <small>How much 1 S-E is worth in DOGE.</small>
+                    </div>
+                    <div class="config-item" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-color: #0098EA;">
+                        <label>S-E to TON Rate</label>
+                        <div class="unit">
+                            <input type="number" 
+                                   name="se_to_ton_rate" 
+                                   step="0.0001" 
+                                   min="0" 
+                                   value="{{ config.se_to_ton_rate or '0.005' }}">
+                            <span class="unit-label">TON</span>
+                        </div>
+                        <small>How much 1 S-E is worth in TON.</small>
+                    </div>
+                </div>
+
+                <!-- Withdrawal Settings Mode -->
+                <div class="section-title">
+                    <span>💸</span> Withdrawal Processing Mode
+                </div>
+                <div class="section-description">
+                    Choose how withdrawal requests are processed. Manual mode requires admin approval, automatic mode processes instantly.
+                </div>
+                <div class="config-grid">
+                    <div class="config-item" style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-color: #ff9800;">
+                        <label>Withdrawal Mode</label>
+                        <select name="withdrawal_mode" style="width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px;">
+                            <option value="manual" {% if config.withdrawal_mode == 'manual' or not config.withdrawal_mode %}selected{% endif %}>✋ Manual (Admin Approval)</option>
+                            <option value="auto" {% if config.withdrawal_mode == 'auto' %}selected{% endif %}>🤖 Automatic (Instant)</option>
+                        </select>
+                        <small>Manual: You must approve each withdrawal. Automatic: Withdrawals are processed instantly (requires wallet integration).</small>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="section-title">
+                    <span>🔒</span> Security Settings
+                </div>
+                <div class="section-description">
+                    Configure automatic security features to prevent abuse.
+                </div>
+                <div class="config-grid">
+                    <div class="checkbox-item">
+                        <input type="checkbox" 
+                               name="auto_ban_duplicate_ip" 
+                               id="auto_ban" 
+                               value="true" 
+                               {% if config.auto_ban_duplicate_ip == 'true' or config.auto_ban_duplicate_ip == True %}checked{% endif %}>
+                        <div class="info">
+                            <label for="auto_ban">Auto-Ban Duplicate IPs</label>
+                            <small>Automatically ban accounts when multiple users are detected from the same IP address. This helps prevent multi-accounting.</small>
+                        </div>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" 
+                               name="show_promo_fab" 
+                               id="show_promo" 
+                               value="true"
+                               {% if config.show_promo_fab == 'true' or config.show_promo_fab == True %}checked{% endif %}>
+                        <div class="info">
+                            <label for="show_promo">Show Promo Code Button</label>
+                            <small>Display the floating promo code button in the user interface for redeeming promotional codes.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Telegram Channel -->
+                <div class="section-title">
+                    <span>📱</span> Telegram Settings
+                </div>
+                <div class="section-description">
+                    Configure required Telegram channel membership for users.
+                </div>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Required Channel ID</label>
+                        <input type="text" 
+                               name="required_channel_id" 
+                               value="{{ config.required_channel_id or '' }}" 
+                               placeholder="@channel or -100123456789">
+                        <small>Users must be members of this channel to use the app. Leave empty to disable.</small>
+                    </div>
+                    <div class="config-item">
+                        <label>Channel Display Name</label>
+                        <input type="text" 
+                               name="channel_name" 
+                               value="{{ config.channel_name or '' }}" 
+                               placeholder="My Telegram Channel">
+                        <small>The name shown to users when asking them to join the channel.</small>
+                    </div>
+                </div>
+
+                <!-- Admin Password -->
+                <div class="section-title">
+                    <span>🔐</span> Admin Access
+                </div>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Admin Password</label>
+                        <input type="password" 
+                               name="admin_password" 
+                               value="{{ config.admin_password or '' }}" 
+                               placeholder="Enter new password to change">
+                        <small>Leave empty to keep current password. Enter a new value to change it.</small>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <span>💾</span>
+                    Save Configuration
+                </button>
+
+                <!-- Current Values Summary -->
+                <div class="current-values">
+                    <h4>📋 Current Configuration Summary</h4>
+                    <ul>
+                        <li>Mining Rate: <strong>{{ config.base_mining_rate or '1.0' }} S-E/hr</strong> × <strong>{{ config.global_mining_power or '1.0' }}</strong> global power</li>
+                        <li>Referral Bonus: <strong>{{ config.referral_bonus or '1.0' }} S-E</strong> + <strong>{{ (config.referral_commission|float * 100) if config.referral_commission else '5' }}%</strong> commission</li>
+                        <li>Min Withdrawal: S-E: <strong>{{ config.min_withdrawal_se or config.min_withdrawal or '100' }}</strong> | USDT: <strong>{{ config.min_withdrawal_usdt or '0.5' }}</strong> | DOGE: <strong>{{ config.min_withdrawal_doge or '0.3' }}</strong> | TON: <strong>{{ config.min_withdrawal_ton or '0.1' }}</strong></li>
+                        <li>Swap Rates: USDT: <strong>{{ config.se_to_usdt_rate or '0.01' }}</strong> | DOGE: <strong>{{ config.se_to_doge_rate or '0.06' }}</strong> | TON: <strong>{{ config.se_to_ton_rate or '0.005' }}</strong></li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Show confirmation when leaving page with unsaved changes
+        let formChanged = false;
+        
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('change', () => {
+                formChanged = true;
+            });
+        });
+        
+        window.addEventListener('beforeunload', (e) => {
+            if (formChanged) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+        
+        document.querySelector('form').addEventListener('submit', () => {
+            formChanged = false;
+        });
+    </script>
+</body>
+</html>

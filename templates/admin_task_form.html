@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Editar' if task else 'Crear' }} Tarea - SALLY-E Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .admin-container { max-width: 800px; margin: 0 auto; }
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        .admin-header h1 { color: #003D99; font-size: 24px; }
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+        .nav-btn:hover { transform: translateY(-2px); }
+        .content-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #0066FF;
+        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        .form-group small { color: #999; font-size: 12px; margin-top: 5px; display: block; }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #0066FF;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn-submit:hover { transform: translateY(-2px); }
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .alert-error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .alert-success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        /* Sección de verificación de canal */
+        .channel-section {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .channel-section.active {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+        .channel-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .channel-section-title .icon {
+            font-size: 20px;
+        }
+        .channel-note {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #856404;
+        }
+        .channel-note strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>{{ '✏️ Editar' if task else '➕ Crear' }} Tarea</h1>
+            <a href="{{ url_for('admin_tasks') }}" class="nav-btn">← Volver</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="content-container">
+            <form method="POST" action="{{ url_for('admin_task_edit', task_id=task.task_id) if task else url_for('admin_task_create') }}">
+                <div class="form-group">
+                    <label>Título de la Tarea</label>
+                    <input type="text" name="title" value="{{ task.title if task else '' }}" required placeholder="Ej: Unirse al canal de Telegram">
+                </div>
+
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea name="description" placeholder="Describe la tarea que debe completar el usuario">{{ task.description if task else '' }}</textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo de Tarea</label>
+                        <select name="type">
+                            <option value="telegram" {% if task and task.task_type == 'telegram' %}selected{% endif %}>📱 Telegram</option>
+                            <option value="social" {% if task and task.task_type == 'social' %}selected{% endif %}>🐦 Red Social</option>
+                            <option value="external" {% if task and task.task_type == 'external' %}selected{% endif %}>🌐 Sitio Externo</option>
+                            <option value="link" {% if task and task.task_type == 'link' %}selected{% endif %}>🔗 Enlace</option>
+                            <option value="other" {% if task and task.task_type == 'other' %}selected{% endif %}>📋 Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Recompensa (S-E)</label>
+                        <input type="number" name="reward" step="0.0001" min="0" value="{{ task.reward if task else '0.1' }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>URL de la Tarea</label>
+                    <input type="url" name="url" value="{{ task.url if task else '' }}" placeholder="https://t.me/tu_canal">
+                    <small>Enlace donde el usuario debe ir para completar la tarea</small>
+                </div>
+
+                <!-- NUEVA SECCIÓN: Verificación de Canal de Telegram -->
+                <div class="channel-section {% if task and task.requires_channel_join %}active{% endif %}" id="channelSection">
+                    <div class="channel-section-title">
+                        <span class="icon">📢</span>
+                        Verificación de Canal de Telegram
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="requires_channel_join" id="requires_channel_join" 
+                                   {% if task and task.requires_channel_join %}checked{% endif %}
+                                   onchange="toggleChannelSection()">
+                            <label for="requires_channel_join" style="margin-bottom: 0; font-weight: normal;">
+                                Requiere unirse a un canal de Telegram
+                            </label>
+                        </div>
+                        <small>Si está activado, el sistema verificará que el usuario sea miembro del canal antes de dar la recompensa</small>
+                    </div>
+                    
+                    <div class="form-group" id="channelUsernameGroup" style="{% if not task or not task.requires_channel_join %}display: none;{% endif %}">
+                        <label>Username del Canal</label>
+                        <input type="text" name="channel_username" id="channel_username" 
+                               value="{{ task.channel_username if task else '' }}" 
+                               placeholder="ejemplo_canal (sin @)">
+                        <small>Ingresa el username del canal SIN el símbolo @. Ejemplo: si el canal es @mi_canal, ingresa solo "mi_canal"</small>
+                    </div>
+                    
+                    <div class="channel-note" id="channelNote" style="{% if not task or not task.requires_channel_join %}display: none;{% endif %}">
+                        <strong>⚠️ Importante:</strong>
+                        <ul style="margin-left: 20px; margin-top: 5px;">
+                            <li>El bot debe ser administrador del canal para poder verificar membresías</li>
+                            <li>El canal debe ser público o el bot debe tener acceso</li>
+                            <li>Si la verificación falla, el usuario NO recibirá la recompensa</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- FIN SECCIÓN DE VERIFICACIÓN -->
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Máximo de Completaciones</label>
+                        <input type="number" name="max_completions" min="0" value="{{ task.max_completions if task else '' }}" placeholder="Vacío = ilimitado">
+                        <small>0 o vacío = ilimitado</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Orden de Prioridad</label>
+                        <input type="number" name="priority" min="0" value="{{ task.priority if task else '0' }}">
+                        <small>Mayor número = aparece primero</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="active" id="active" value="true" {% if not task or task.active %}checked{% endif %}>
+                        <label for="active" style="margin-bottom: 0;">Tarea Activa</label>
+                    </div>
+                    <small>Solo las tareas activas son visibles para los usuarios</small>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    {{ '💾 Guardar Cambios' if task else '➕ Crear Tarea' }}
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleChannelSection() {
+            const checkbox = document.getElementById('requires_channel_join');
+            const usernameGroup = document.getElementById('channelUsernameGroup');
+            const channelNote = document.getElementById('channelNote');
+            const section = document.getElementById('channelSection');
+            
+            if (checkbox.checked) {
+                usernameGroup.style.display = 'block';
+                channelNote.style.display = 'block';
+                section.classList.add('active');
+            } else {
+                usernameGroup.style.display = 'none';
+                channelNote.style.display = 'none';
+                section.classList.remove('active');
+            }
+        }
+        
+        // Limpiar el @ si el usuario lo ingresa
+        document.getElementById('channel_username').addEventListener('input', function(e) {
+            let value = e.target.value;
+            if (value.startsWith('@')) {
+                e.target.value = value.substring(1);
+            }
+        });
+    </script>
+</body>
+</html>
