@@ -24,7 +24,7 @@ def init_database():
     )
     """)
 
-    # Columnas que podrían faltar
+    # Agregar columnas faltantes si la tabla ya existía
     user_columns = [
         "first_name VARCHAR(255)",
         "last_name VARCHAR(255)",
@@ -47,12 +47,17 @@ def init_database():
     execute_query("""
     CREATE TABLE IF NOT EXISTS config (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        key_name VARCHAR(255) UNIQUE,
+        config_key VARCHAR(255) UNIQUE,
         config_value TEXT
     )
     """)
 
-    # Si antes existía como "value"
+    # Por si antes existía diferente
+    try:
+        execute_query("ALTER TABLE config ADD COLUMN config_key VARCHAR(255) UNIQUE")
+    except:
+        pass
+
     try:
         execute_query("ALTER TABLE config ADD COLUMN config_value TEXT")
     except:
