@@ -24,7 +24,7 @@ def init_database():
     )
     """)
 
-    # Agregar columnas faltantes si la tabla ya existía
+    # Forzar columnas faltantes
     user_columns = [
         "first_name VARCHAR(255)",
         "last_name VARCHAR(255)",
@@ -40,7 +40,7 @@ def init_database():
     for column in user_columns:
         try:
             execute_query(f"ALTER TABLE users ADD COLUMN {column}")
-        except:
+        except Exception:
             pass
 
     # ================= CONFIG =================
@@ -52,9 +52,8 @@ def init_database():
     )
     """)
 
-    # Por si antes existía diferente
     try:
-        execute_query("ALTER TABLE config ADD COLUMN config_key VARCHAR(255) UNIQUE")
+        execute_query("ALTER TABLE config ADD COLUMN config_key VARCHAR(255)")
     except:
         pass
 
@@ -83,7 +82,19 @@ def init_database():
     )
     """)
 
-    print("Base de datos completamente verificada.")
+    # ================= PROMO CODES =================
+    execute_query("""
+    CREATE TABLE IF NOT EXISTS promo_codes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        code VARCHAR(100) UNIQUE,
+        reward DECIMAL(18,8) DEFAULT 0,
+        max_uses INT DEFAULT 1,
+        uses INT DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    print("Base de datos COMPLETAMENTE lista.")
 
 
 if __name__ == "__main__":
