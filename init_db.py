@@ -4,7 +4,6 @@ from db import execute_query
 def init_database():
     print("Creando tablas...")
 
-    # ===== TABLA USERS =====
     execute_query("""
     CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -12,23 +11,29 @@ def init_database():
         username VARCHAR(255),
         first_name VARCHAR(255),
         last_name VARCHAR(255),
+        referrer BIGINT NULL,
+        pending_referrer BIGINT NULL,
+        banned BOOLEAN DEFAULT FALSE,
         balance DECIMAL(18,8) DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """)
 
     # 🔥 Si la tabla ya existía sin estas columnas
-    try:
-        execute_query("ALTER TABLE users ADD COLUMN first_name VARCHAR(255)")
-    except:
-        pass
+    columns_to_add = [
+        "first_name VARCHAR(255)",
+        "last_name VARCHAR(255)",
+        "referrer BIGINT NULL",
+        "pending_referrer BIGINT NULL",
+        "banned BOOLEAN DEFAULT FALSE"
+    ]
 
-    try:
-        execute_query("ALTER TABLE users ADD COLUMN last_name VARCHAR(255)")
-    except:
-        pass
+    for column in columns_to_add:
+        try:
+            execute_query(f"ALTER TABLE users ADD COLUMN {column}")
+        except:
+            pass
 
-    # ===== TABLA CONFIG =====
     execute_query("""
     CREATE TABLE IF NOT EXISTS config (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -37,7 +42,6 @@ def init_database():
     )
     """)
 
-    # ===== TABLA STATS =====
     execute_query("""
     CREATE TABLE IF NOT EXISTS stats (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -47,7 +51,7 @@ def init_database():
     )
     """)
 
-    print("Tablas creadas correctamente.")
+    print("Tablas verificadas correctamente.")
 
 
 if __name__ == "__main__":
