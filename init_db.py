@@ -2,8 +2,9 @@ from db import execute_query
 
 
 def init_database():
-    print("Creando tablas...")
+    print("Inicializando base de datos...")
 
+    # ===== USERS =====
     execute_query("""
     CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -13,35 +14,41 @@ def init_database():
         last_name VARCHAR(255),
         referrer BIGINT NULL,
         pending_referrer BIGINT NULL,
-        banned BOOLEAN DEFAULT FALSE,
         balance DECIMAL(18,8) DEFAULT 0,
+        banned BOOLEAN DEFAULT FALSE,
+        ban_reason TEXT NULL,
+        last_ip VARCHAR(100) NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """)
 
-    # 🔥 Si la tabla ya existía sin estas columnas
-    columns_to_add = [
+    # Agregar columnas faltantes si la tabla ya existía
+    columns = [
         "first_name VARCHAR(255)",
         "last_name VARCHAR(255)",
         "referrer BIGINT NULL",
         "pending_referrer BIGINT NULL",
-        "banned BOOLEAN DEFAULT FALSE"
+        "banned BOOLEAN DEFAULT FALSE",
+        "ban_reason TEXT NULL",
+        "last_ip VARCHAR(100) NULL"
     ]
 
-    for column in columns_to_add:
+    for column in columns:
         try:
             execute_query(f"ALTER TABLE users ADD COLUMN {column}")
         except:
             pass
 
+    # ===== CONFIG =====
     execute_query("""
     CREATE TABLE IF NOT EXISTS config (
         id INT AUTO_INCREMENT PRIMARY KEY,
         key_name VARCHAR(255) UNIQUE,
-        value TEXT
+        config_value TEXT
     )
     """)
 
+    # ===== STATS =====
     execute_query("""
     CREATE TABLE IF NOT EXISTS stats (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -51,7 +58,17 @@ def init_database():
     )
     """)
 
-    print("Tablas verificadas correctamente.")
+    # ===== USER IPS =====
+    execute_query("""
+    CREATE TABLE IF NOT EXISTS user_ips (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id BIGINT,
+        ip_address VARCHAR(100),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    print("Base de datos verificada correctamente.")
 
 
 if __name__ == "__main__":
