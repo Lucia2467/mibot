@@ -8,7 +8,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Cont
 load_dotenv()
 
 # Configuration
-BOT_TOKEN = os.environ.get('BOT_TOKEN', '')
+BOT_TOKEN = os.environ.get('8502419815:AAEAypf5_8qqAw-nC9hqwFBIEiHdQJxALnE', '')
 WEBAPP_URL = os.environ.get('https://mibot-production.up.railway.app')
 BOT_USERNAME = os.environ.get('BOT_USERNAME', 'SallyEbot')
 OFFICIAL_CHANNEL = os.environ.get('OFFICIAL_CHANNEL', '@SallyE_Comunity')
