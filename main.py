@@ -9,7 +9,7 @@ load_dotenv()
 
 # Configuration
 BOT_TOKEN = os.environ.get('BOT_TOKEN', '')
-WEBAPP_URL = os.environ.get('WEBAPP_URL', 'https://isaax23.pythonanywhere.com')
+WEBAPP_URL = os.environ.get('WEBAPP_URL')
 BOT_USERNAME = os.environ.get('BOT_USERNAME', 'SallyEbot')
 OFFICIAL_CHANNEL = os.environ.get('OFFICIAL_CHANNEL', '@SallyE_Comunity')
 SUPPORT_GROUP = os.environ.get('SUPPORT_GROUP', 'https://t.me/Soporte_Sally')
