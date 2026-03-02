@@ -36,7 +36,7 @@
 .hamburger-line {
     width: 22px;
     height: 2px;
-    background: linear-gradient(135deg, #0066FF, #0052CC);
+    background: linear-gradient(135deg, #4B5563, #374151);
     border-radius: 2px;
     transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
@@ -58,7 +58,7 @@
 .sidebar-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(17, 24, 39, 0.5);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     z-index: 999;
@@ -79,10 +79,10 @@
     bottom: 0;
     width: 280px;
     max-width: 85vw;
-    background: rgba(3, 3, 8, 0.98);
+    background: rgba(245, 246, 250, 0.98);
     backdrop-filter: blur(40px);
     -webkit-backdrop-filter: blur(40px);
-    border-right: 1px solid rgba(0, 102, 255, 0.15);
+    border-right: 1px solid rgba(107, 114, 128, 0.15);
     z-index: 1000;
     transform: translateX(-100%);
     transition: transform 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
@@ -119,7 +119,7 @@
 }
 
 .sidebar-avatar-placeholder {
-    background: linear-gradient(135deg, #0066FF, #0052CC);
+    background: linear-gradient(135deg, #4B5563, #374151);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -154,7 +154,7 @@
 .sidebar-user-name {
     font-size: 20px;
     font-weight: 700;
-    color: #FFFFFF;
+    color: #111827;
     margin-bottom: 4px;
     line-height: 1.2;
 }
@@ -199,20 +199,20 @@
     top: 0;
     bottom: 0;
     width: 3px;
-    background: linear-gradient(135deg, #0066FF, #0052CC);
+    background: linear-gradient(135deg, #4B5563, #374151);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
 .sidebar-nav-item:hover {
     background: rgba(255, 255, 255, 0.05);
-    color: #FFFFFF;
+    color: #111827;
     transform: translateX(4px);
 }
 
 .sidebar-nav-item.active {
-    background: rgba(0, 102, 255, 0.1);
-    color: #FFFFFF;
+    background: rgba(107, 114, 128, 0.08);
+    color: #111827;
 }
 
 .sidebar-nav-item.active::before {
@@ -255,12 +255,12 @@
     background: linear-gradient(135deg, rgba(0, 102, 255, 0.06), rgba(0, 82, 204, 0.06));
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 102, 255, 0.2);
+    border: 1px solid rgba(107, 114, 128, 0.2);
     border-radius: 24px;
     padding: 32px 24px;
     margin-bottom: 24px;
     text-align: center;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 102, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 40px rgba(107, 114, 128, 0.10);
     position: relative;
     overflow: hidden;
 }
@@ -272,7 +272,7 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(0, 102, 255, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(107, 114, 128, 0.10) 0%, transparent 70%);
     animation: pulse 8s ease-in-out infinite;
 }
 
@@ -295,8 +295,8 @@
 .balance-amount-premium {
     font-size: 48px;
     font-weight: 800;
-    color: #FFFFFF;
-    -webkit-text-fill-color: #FFFFFF;
+    color: #111827;
+    -webkit-text-fill-color: #111827;
     text-shadow: 0 0 30px rgba(0, 102, 255, 0.5);
     margin-bottom: 4px;
     letter-spacing: -0.02em;
@@ -334,7 +334,7 @@
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 12px;
-    color: #FFFFFF;
+    color: #111827;
     text-decoration: none;
     font-size: 14px;
     font-weight: 600;
@@ -345,7 +345,7 @@
 .action-pill:hover {
     background: rgba(255, 255, 255, 0.12);
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 102, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(107, 114, 128, 0.15);
 }
 
 .action-pill:active {
@@ -396,13 +396,13 @@
 .stat-icon-premium i {
     width: 20px;
     height: 20px;
-    color: #0066FF;
+    color: #374151;
 }
 
 .stat-value-premium {
     font-size: 24px;
     font-weight: 800;
-    color: #FFFFFF;
+    color: #111827;
     margin-bottom: 4px;
     line-height: 1;
 }
@@ -430,7 +430,7 @@
 /* Mining Card Special */
 .mining-card-premium {
     background: linear-gradient(135deg, rgba(0, 102, 255, 0.05), rgba(0, 82, 204, 0.05));
-    border-color: rgba(0, 102, 255, 0.2);
+    border-color: rgba(107, 114, 128, 0.15);
 }
 
 .card-header-premium {
@@ -443,7 +443,7 @@
 .card-title-premium {
     font-size: 20px;
     font-weight: 700;
-    color: #FFFFFF;
+    color: #111827;
     margin-bottom: 4px;
 }
 
@@ -467,7 +467,7 @@
 .card-icon-premium {
     width: 24px;
     height: 24px;
-    color: #0066FF;
+    color: #374151;
 }
 
 /* Mining Amount */
@@ -479,7 +479,7 @@
 .mining-amount-premium {
     font-size: 40px;
     font-weight: 800;
-    background: linear-gradient(135deg, #0066FF, #0052CC);
+    background: linear-gradient(135deg, #4B5563, #374151);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -553,9 +553,9 @@
 }
 
 .btn-primary-premium {
-    background: linear-gradient(135deg, #0066FF, #0052CC);
-    color: #FFFFFF;
-    box-shadow: 0 4px 20px rgba(0, 102, 255, 0.3);
+    background: linear-gradient(135deg, #4B5563, #374151);
+    color: #111827;
+    box-shadow: 0 4px 20px rgba(107, 114, 128, 0.2);
 }
 
 .btn-primary-premium:hover {
@@ -569,7 +569,7 @@
 
 .btn-secondary-premium {
     background: rgba(255, 255, 255, 0.08);
-    color: #FFFFFF;
+    color: #111827;
     border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
@@ -593,7 +593,7 @@
 .section-title-premium {
     font-size: 18px;
     font-weight: 700;
-    color: #FFFFFF;
+    color: #111827;
     margin-bottom: 20px;
 }
 
@@ -637,13 +637,13 @@
 .quick-icon-premium i {
     width: 28px;
     height: 28px;
-    color: #0066FF;
+    color: #374151;
 }
 
 .quick-label-premium {
     font-size: 14px;
     font-weight: 600;
-    color: #FFFFFF;
+    color: #111827;
 }
 
 /* ==================== ACTIVITY LIST ==================== */
@@ -701,7 +701,7 @@
 .activity-title-premium {
     font-size: 15px;
     font-weight: 600;
-    color: #FFFFFF;
+    color: #111827;
     margin-bottom: 2px;
 }
 
@@ -757,7 +757,7 @@
 .tip-title-premium {
     font-size: 16px;
     font-weight: 700;
-    color: #FFFFFF;
+    color: #111827;
     margin-bottom: 8px;
 }
 
@@ -771,7 +771,7 @@
 .splash-screen {
     position: fixed;
     inset: 0;
-    background: #000000;
+    background: #F0F2F5;
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -790,7 +790,7 @@
 .splash-logo {
     font-size: 48px;
     font-weight: 900;
-    background: linear-gradient(135deg, #0066FF, #0052CC, #00D4FF);
+    background: linear-gradient(135deg, #4B5563, #0052CC, #00D4FF);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -860,7 +860,7 @@
 .promo-modal-title {
     font-size: 22px;
     font-weight: 700;
-    color: #FFFFFF;
+    color: #111827;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -918,7 +918,7 @@
     border-radius: 14px;
     font-size: 16px;
     font-weight: 600;
-    color: #FFFFFF;
+    color: #111827;
     text-transform: uppercase;
     letter-spacing: 2px;
     text-align: center;
@@ -928,8 +928,8 @@
 .promo-input:focus {
     outline: none;
     background: rgba(255, 255, 255, 0.08);
-    border-color: #0066FF;
-    box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+    border-color: #374151;
+    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
 }
 
 .promo-input::placeholder {
