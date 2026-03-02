@@ -1,90 +1,99 @@
-/* ==================== PREMIUM AZUL GRADIENT - ULTRA PRO EDITION ==================== */
-/* Diseño Premium inspirado en Binance, Crypto.com, Coinbase */
+/* ==================== PREMIUM WHITE EDITORIAL — ULTRA PRO ==================== */
+/* Inspirado en Stripe, Linear, Vercel — Blanco refinado con carácter real     */
 
-/* ==================== VARIABLES PREMIUM AZUL ==================== */
+/* ==================== VARIABLES PREMIUM ==================== */
 :root {
-    /* Colores base - Negro profundo */
-    --color-void: #F0F2F5;
-    --color-bg-primary: #F5F6FA;
-    --color-bg-secondary: #ECEEF4;
-    --color-bg-tertiary: #E4E7EF;
+    /* ── Fondos: blancos puros con profundidad real ── */
+    --color-void: #F0F2F7;
+    --color-bg-primary: #F4F6FB;
+    --color-bg-secondary: #EBEEF6;
+    --color-bg-tertiary: #E1E5F0;
     --color-bg-elevated: #FFFFFF;
-    --color-bg-overlay: rgba(245, 246, 250, 0.97);
+    --color-bg-overlay: rgba(244, 246, 251, 0.97);
 
-    /* Gradientes Premium Azul */
+    /* ── Acento primario: índigo profundo — el alma del tema ── */
+    --accent: #4F46E5;
+    --accent-light: #6366F1;
+    --accent-pale: rgba(79, 70, 229, 0.08);
+    --accent-glow: rgba(79, 70, 229, 0.22);
+
+    /* ── Gradientes con carácter ── */
     --gradient-primary: linear-gradient(135deg,
-        #6B7280 0%,
-        #4B5563 25%,
-        #9CA3AF 50%,
-        #374151 75%,
-        #6B7280 100%);
+        #4F46E5 0%,
+        #6366F1 30%,
+        #818CF8 60%,
+        #4F46E5 100%);
     --gradient-secondary: linear-gradient(135deg,
-        #D1D5DB 0%,
-        #6B7280 50%,
-        #374151 100%);
+        #1E1B4B 0%,
+        #312E81 50%,
+        #4338CA 100%);
     --gradient-cyber: linear-gradient(135deg,
-        rgba(156, 163, 175, 0.12) 0%,
-        rgba(107, 114, 128, 0.10) 25%,
-        rgba(209, 213, 219, 0.12) 50%,
-        rgba(75, 85, 99, 0.10) 75%,
-        rgba(156, 163, 175, 0.12) 100%);
+        rgba(79, 70, 229, 0.06) 0%,
+        rgba(99, 102, 241, 0.04) 25%,
+        rgba(129, 140, 248, 0.06) 50%,
+        rgba(67, 56, 202, 0.04) 75%,
+        rgba(79, 70, 229, 0.06) 100%);
     --gradient-holographic: linear-gradient(90deg,
-        #6B7280, #9CA3AF, #D1D5DB, #9CA3AF, #6B7280, #9CA3AF);
+        #4F46E5, #818CF8, #C7D2FE, #818CF8, #4F46E5, #818CF8);
 
-    /* Mesh gradient Premium Azul */
+    /* ── Mesh de fondo: sutil y profundo ── */
     --gradient-mesh:
-        radial-gradient(circle at 20% 30%, rgba(156, 163, 175, 0.12) 0%, transparent 40%),
-        radial-gradient(circle at 80% 20%, rgba(107, 114, 128, 0.10) 0%, transparent 40%),
-        radial-gradient(circle at 40% 70%, rgba(209, 213, 219, 0.12) 0%, transparent 40%),
-        radial-gradient(circle at 70% 80%, rgba(75, 85, 99, 0.10) 0%, transparent 40%),
-        radial-gradient(circle at 50% 50%, rgba(156, 163, 175, 0.08) 0%, transparent 50%);
+        radial-gradient(ellipse at 15% 25%, rgba(79, 70, 229, 0.07) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 15%, rgba(129, 140, 248, 0.06) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 75%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 75% 85%, rgba(67, 56, 202, 0.05) 0%, transparent 40%),
+        linear-gradient(180deg, rgba(244, 246, 251, 0) 0%, rgba(235, 238, 246, 0.4) 100%);
 
-    /* Colores de acento Premium Azul */
-    --color-neon-pink: #6B7280;
-    --color-neon-purple: #4B5563;
-    --color-neon-cyan: #9CA3AF;
-    --color-neon-blue: #374151;
-    --color-neon-orange: #6B7280;
-    
-    /* Colores adicionales azul */
-    --color-blue-primary: #4B5563;
-    --color-blue-secondary: #374151;
-    --color-blue-light: #9CA3AF;
-    --color-blue-dark: #1F2937;
-    --color-blue-electric: #6B7280;
-    --color-blue-cyan: #D1D5DB;
+    /* ── Variables "neon" — ahora son tonos índigo ── */
+    --color-neon-pink: #6366F1;
+    --color-neon-purple: #4F46E5;
+    --color-neon-cyan: #818CF8;
+    --color-neon-blue: #4338CA;
+    --color-neon-orange: #7C3AED;
 
-    /* Estados mejorados */
-    --color-success: #00FF88;
-    --color-warning: #FFB800;
-    --color-error: #FF3366;
-    --color-info: #00D4FF;
+    /* ── Sistema azul-índigo ── */
+    --color-blue-primary: #4F46E5;
+    --color-blue-secondary: #4338CA;
+    --color-blue-light: #818CF8;
+    --color-blue-dark: #1E1B4B;
+    --color-blue-electric: #6366F1;
+    --color-blue-cyan: #C7D2FE;
 
-    /* Textos con máximo contraste - BLANCOS */
-    --color-text-primary: #111827;
+    /* ── Estados con vida propia ── */
+    --color-success: #059669;
+    --color-warning: #D97706;
+    --color-error: #DC2626;
+    --color-info: #2563EB;
+
+    /* ── Texto: jerarquía clara y legible ── */
+    --color-text-primary: #0F0F1A;
     --color-text-secondary: #374151;
     --color-text-tertiary: #6B7280;
     --color-text-muted: #9CA3AF;
 
-    /* Sistema de sombras con glow azul */
-    --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.07);
-    --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.09);
-    --shadow-strong: 0 16px 48px rgba(0, 0, 0, 0.10);
-    --shadow-ultra: 0 24px 64px rgba(0, 0, 0, 0.12);
-    --shadow-blue-glow: 0 0 30px rgba(107, 114, 128, 0.18);
-    --shadow-blue-intense: 0 0 50px rgba(107, 114, 128, 0.22);
+    /* ── Sombras: profundidad sin pesadez ── */
+    --shadow-subtle:  0 1px 3px rgba(15, 15, 26, 0.06), 0 1px 2px rgba(15, 15, 26, 0.04);
+    --shadow-medium:  0 4px 16px rgba(15, 15, 26, 0.08), 0 2px 6px rgba(15, 15, 26, 0.05);
+    --shadow-strong:  0 10px 30px rgba(15, 15, 26, 0.10), 0 4px 10px rgba(15, 15, 26, 0.06);
+    --shadow-ultra:   0 20px 50px rgba(15, 15, 26, 0.12), 0 8px 16px rgba(15, 15, 26, 0.07);
+    --shadow-blue-glow:    0 0 24px rgba(79, 70, 229, 0.20);
+    --shadow-blue-intense: 0 0 48px rgba(79, 70, 229, 0.28);
 
-    /* Borders premium azul */
-    --border-gradient-blue: 1px solid transparent;
-    --border-glow: 1px solid rgba(107, 114, 128, 0.2);
+    /* ── Borders ── */
+    --border-gradient-blue: 1px solid rgba(79, 70, 229, 0.15);
+    --border-glow: 1px solid rgba(79, 70, 229, 0.18);
 
-    /* Glassmorphism Premium Azul */
-    --glass-ultra: rgba(255, 255, 255, 0.80);
-    --glass-strong: rgba(255, 255, 255, 0.95);
-    --glass-border: 1px solid rgba(107, 114, 128, 0.15);
-    --glass-highlight: rgba(255, 255, 255, 0.70);
+    /* ── Glass: blanco brillante ── */
+    --glass-ultra:     rgba(255, 255, 255, 0.78);
+    --glass-strong:    rgba(255, 255, 255, 0.95);
+    --glass-border:    1px solid rgba(255, 255, 255, 0.80);
+    --glass-highlight: rgba(255, 255, 255, 0.60);
 
-    /* Spacing perfecto (8px base) */
+    /* ── Card border ── */
+    --card-border: 1px solid rgba(15, 15, 26, 0.08);
+    --card-border-accent: 1px solid rgba(79, 70, 229, 0.15);
+
+    /* ── Spacing (base 8px) ── */
     --space-1: 0.2rem;
     --space-2: 0.4rem;
     --space-3: 0.6rem;
@@ -95,11 +104,11 @@
     --space-10: 2.4rem;
     --space-12: 3.2rem;
 
-    /* Border radius system */
-    --radius-sm: 0.4rem;
-    --radius-md: 0.7rem;
-    --radius-lg: 1rem;
-    --radius-xl: 1.2rem;
+    /* ── Radios ── */
+    --radius-sm:  0.4rem;
+    --radius-md:  0.7rem;
+    --radius-lg:  1rem;
+    --radius-xl:  1.2rem;
     --radius-2xl: 1.6rem;
     --radius-full: 9999px;
 }
@@ -128,7 +137,7 @@ body {
     position: relative;
 }
 
-/* ==================== FONDO ESTÁTICO ==================== */
+/* ==================== FONDO CON TEXTURA ==================== */
 body::before {
     content: '';
     position: fixed;
@@ -146,16 +155,19 @@ body::after {
     opacity: 1;
 }
 
-/* Efecto de partículas flotantes */
+/* Capa de puntos finos — textura premium */
 .particle-layer {
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
     overflow: hidden;
+    background-image: radial-gradient(circle, rgba(79, 70, 229, 0.08) 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.5;
 }
 
-/* ==================== LAYOUT ULTRA PRO ==================== */
+/* ==================== LAYOUT ==================== */
 .app-shell {
     min-height: 100vh;
     display: flex;
@@ -168,7 +180,6 @@ body::after {
     padding-bottom: calc(90px + env(safe-area-inset-bottom));
 }
 
-/* Padding-top solo cuando hay header */
 .has-top-header .main-content {
     padding-top: calc(64px + env(safe-area-inset-top, 0));
 }
@@ -179,7 +190,7 @@ body::after {
     padding: var(--space-6) var(--space-4);
 }
 
-/* ==================== NAVEGACIÓN ULTRA PREMIUM ==================== */
+/* ==================== NAVEGACIÓN ==================== */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -192,16 +203,16 @@ body::after {
 .nav-inner {
     max-width: 680px;
     margin: 0 auto;
-    background: var(--glass-ultra);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: var(--glass-border);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(15, 15, 26, 0.08);
     border-radius: var(--radius-2xl);
     padding: 0.3rem !important;
     box-shadow:
-        var(--shadow-ultra),
-        inset 0 1px 1px var(--glass-highlight),
-        0 0 0 1px rgba(0, 0, 0, 0.1);
+        0 -1px 0 rgba(255, 255, 255, 0.8) inset,
+        var(--shadow-strong),
+        0 0 0 1px rgba(255, 255, 255, 0.6);
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 0.05rem !important;
@@ -209,16 +220,17 @@ body::after {
     overflow: hidden;
 }
 
+/* Línea superior con acento índigo */
 .nav-inner::before {
     content: '';
     position: absolute;
-    top: -2px;
+    top: 0;
     left: 0;
     right: 0;
     height: 2px;
     background: var(--gradient-holographic);
     background-size: 200% 100%;
-    opacity: 0.8;
+    opacity: 0.7;
 }
 
 .nav-item {
@@ -234,6 +246,7 @@ body::after {
     color: var(--color-text-tertiary);
     cursor: pointer;
     overflow: hidden;
+    transition: color 0.2s ease;
 }
 
 .nav-item::before {
@@ -244,10 +257,11 @@ body::after {
     background: var(--gradient-primary);
     background-size: 200% 200%;
     opacity: 0;
+    transition: opacity 0.2s ease;
 }
 
 .nav-item.active {
-    color: var(--color-text-primary);
+    color: white;
 }
 
 .nav-item.active::before {
@@ -262,8 +276,8 @@ body::after {
     background: var(--gradient-primary);
     background-size: 200% 200%;
     z-index: -1;
-    filter: blur(12px);
-    opacity: 0.6;
+    filter: blur(10px);
+    opacity: 0.45;
 }
 
 .nav-icon {
@@ -285,16 +299,15 @@ body::after {
 
 .nav-item:not(.active) .nav-icon svg,
 .nav-item:not(.active) .nav-icon i {
-    color: var(--color-neon-cyan);
-    stroke: var(--color-neon-cyan);
-    filter: none;
+    color: var(--color-text-tertiary);
+    stroke: var(--color-text-tertiary);
 }
 
 .nav-item.active .nav-icon svg,
 .nav-item.active .nav-icon i {
     color: white;
     stroke: white;
-    filter: drop-shadow(0 0 6px rgba(55, 65, 81, 0.5));
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
 }
 
 .nav-label {
@@ -306,7 +319,7 @@ body::after {
     text-transform: uppercase;
 }
 
-/* ==================== TIPOGRAFÍA ULTRA PREMIUM ==================== */
+/* ==================== TIPOGRAFÍA ==================== */
 .page-title {
     font-size: 2rem;
     font-weight: 900;
@@ -318,7 +331,6 @@ body::after {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-shadow: 0 0 40px rgba(0, 102, 255, 0.3);
 }
 
 .section-title {
@@ -334,20 +346,20 @@ body::after {
     font-size: 0.73rem;
 }
 
-/* ==================== CARDS ULTRA PRO ==================== */
+/* ==================== CARDS ==================== */
 .card {
     position: relative;
-    background: var(--glass-ultra);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: var(--glass-border);
+    background: var(--color-bg-elevated);
+    border: var(--card-border);
     border-radius: var(--radius-2xl);
     padding: var(--space-6);
     margin-bottom: var(--space-5);
-    box-shadow: var(--shadow-strong);
+    box-shadow: var(--shadow-medium);
     overflow: hidden;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
+/* Línea superior índigo — marca de identidad */
 .card::before {
     content: '';
     position: absolute;
@@ -357,27 +369,28 @@ body::after {
     height: 2px;
     background: var(--gradient-holographic);
     background-size: 200% 100%;
-    opacity: 0.6;
+    opacity: 0.55;
 }
 
 .card::after {
     content: '';
     position: absolute;
-    inset: -2px;
-    border-radius: var(--radius-2xl);
-    background: var(--gradient-cyber);
-    z-index: -1;
-    opacity: 0;
-    filter: blur(20px);
+    inset: 0;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.015) 0%, transparent 60%);
+    pointer-events: none;
 }
 
-/* Balance Card ULTRA */
+/* Balance Card */
 .balance-card {
     text-align: center;
     padding: var(--space-8) var(--space-6);
-    background: var(--glass-strong);
+    background: linear-gradient(160deg, #FFFFFF 0%, #F8F7FF 100%);
     position: relative;
     overflow: hidden;
+    border: var(--card-border-accent);
+    box-shadow:
+        var(--shadow-strong),
+        0 0 0 1px rgba(79, 70, 229, 0.06);
 }
 
 .balance-card::before {
@@ -386,7 +399,8 @@ body::after {
 }
 
 .balance-card::after {
-    opacity: 0.4;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(79, 70, 229, 0.06) 0%, transparent 60%);
 }
 
 .balance-label {
@@ -394,7 +408,7 @@ body::after {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: var(--color-text-secondary);
+    color: var(--color-text-tertiary);
     margin-bottom: var(--space-3);
 }
 
@@ -403,26 +417,25 @@ body::after {
     font-weight: 900;
     letter-spacing: -0.04em;
     line-height: 1;
-    color: #111827 !important;
+    color: #0F0F1A !important;
     margin-bottom: var(--space-2);
     text-shadow: none !important;
     filter: none !important;
     background: none !important;
     -webkit-background-clip: unset !important;
-    -webkit-text-fill-color: #111827 !important;
+    -webkit-text-fill-color: #0F0F1A !important;
     background-clip: unset !important;
 }
 
 .balance-currency {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--color-neon-cyan);
+    color: var(--accent);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    text-shadow: 0 0 20px rgba(0, 245, 255, 0.6);
 }
 
-/* Stats Grid ULTRA */
+/* Stats Grid */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -432,14 +445,13 @@ body::after {
 
 .stat-card {
     position: relative;
-    background: var(--glass-ultra);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: var(--glass-border);
+    background: var(--color-bg-elevated);
+    border: var(--card-border);
     border-radius: var(--radius-xl);
     padding: var(--space-5) var(--space-4);
     text-align: center;
     overflow: hidden;
+    box-shadow: var(--shadow-subtle);
 }
 
 .stat-card::before {
@@ -449,15 +461,15 @@ body::after {
     left: 0;
     right: 0;
     height: 2px;
-    background: var(--gradient-secondary);
+    background: var(--gradient-primary);
     background-size: 200% 100%;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
 .stat-value {
     font-size: 1.6rem;
     font-weight: 900;
-    background: linear-gradient(135deg, #374151 0%, #6B7280 100%);
+    background: linear-gradient(135deg, #1E1B4B 0%, #4F46E5 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -470,10 +482,10 @@ body::after {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--color-text-secondary);
+    color: var(--color-text-tertiary);
 }
 
-/* ==================== BOTONES ULTRA PRO ==================== */
+/* ==================== BOTONES ==================== */
 .btn {
     position: relative;
     display: inline-flex;
@@ -490,7 +502,10 @@ body::after {
     overflow: hidden;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+
+.btn:active { transform: scale(0.98); }
 
 .btn::before {
     content: '';
@@ -500,26 +515,31 @@ body::after {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #374151 0%, #4B5563 50%, #6B7280 100%);
+    background: var(--gradient-primary);
     background-size: 200% 200%;
     color: white;
-    box-shadow: 0 4px 16px rgba(55, 65, 81, 0.25);
+    box-shadow:
+        0 4px 14px rgba(79, 70, 229, 0.35),
+        0 1px 0 rgba(255, 255, 255, 0.15) inset;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
 }
 
 .btn-primary::before {
     background: linear-gradient(135deg,
-        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0.15) 0%,
         transparent 50%,
-        rgba(255, 255, 255, 0.2) 100%);
-    background-size: 200% 100%;
-    opacity: 0;
+        rgba(255, 255, 255, 0.10) 100%);
+    opacity: 1;
 }
 
 .btn-secondary {
-    background: var(--glass-ultra);
-    border: var(--glass-border);
+    background: var(--color-bg-elevated);
+    border: var(--card-border);
     color: var(--color-text-primary);
-    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-subtle);
 }
 
 .btn-lg {
@@ -527,16 +547,14 @@ body::after {
     font-size: 0.92rem;
 }
 
-.btn-block {
-    width: 100%;
-}
+.btn-block { width: 100%; }
 
 .btn-sm {
     padding: var(--space-2) var(--space-4);
     font-size: 0.875rem;
 }
 
-/* ==================== ITEM LIST ULTRA ==================== */
+/* ==================== ITEM LIST ==================== */
 .item-list {
     display: flex;
     flex-direction: column;
@@ -548,9 +566,11 @@ body::after {
     align-items: center;
     gap: var(--space-4);
     padding: var(--space-4);
-    background: var(--glass-ultra);
-    border: var(--glass-border);
+    background: var(--color-bg-elevated);
+    border: var(--card-border);
     border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-subtle);
+    transition: box-shadow 0.15s ease;
 }
 
 .item-icon {
@@ -560,9 +580,9 @@ body::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--gradient-cyber);
+    background: var(--accent-pale);
     border-radius: var(--radius-md);
-    color: var(--color-neon-cyan);
+    color: var(--accent);
 }
 
 .item-icon i {
@@ -587,11 +607,9 @@ body::after {
     color: var(--color-text-tertiary);
 }
 
-.item-action {
-    flex-shrink: 0;
-}
+.item-action { flex-shrink: 0; }
 
-/* ==================== BADGES ULTRA ==================== */
+/* ==================== BADGES ==================== */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -605,42 +623,38 @@ body::after {
 }
 
 .badge-success {
-    background: rgba(0, 255, 136, 0.15);
+    background: rgba(5, 150, 105, 0.10);
     color: var(--color-success);
-    border: 1px solid rgba(0, 255, 136, 0.3);
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+    border: 1px solid rgba(5, 150, 105, 0.22);
 }
 
 .badge-warning {
-    background: rgba(255, 184, 0, 0.15);
+    background: rgba(217, 119, 6, 0.10);
     color: var(--color-warning);
-    border: 1px solid rgba(255, 184, 0, 0.3);
-    box-shadow: 0 0 20px rgba(255, 184, 0, 0.2);
+    border: 1px solid rgba(217, 119, 6, 0.22);
 }
 
 .badge-error {
-    background: rgba(255, 51, 102, 0.15);
+    background: rgba(220, 38, 38, 0.10);
     color: var(--color-error);
-    border: 1px solid rgba(255, 51, 102, 0.3);
-    box-shadow: 0 0 20px rgba(255, 51, 102, 0.2);
+    border: 1px solid rgba(220, 38, 38, 0.22);
 }
 
 .badge-primary {
-    background: rgba(156, 163, 175, 0.12);
-    color: var(--color-neon-pink);
-    border: 1px solid rgba(107, 114, 128, 0.25);
-    box-shadow: 0 0 12px rgba(107, 114, 128, 0.15);
+    background: rgba(79, 70, 229, 0.10);
+    color: var(--accent);
+    border: 1px solid rgba(79, 70, 229, 0.22);
 }
 
-/* ==================== PROGRESS BAR ULTRA ==================== */
+/* ==================== PROGRESS BAR ==================== */
 .progress {
     width: 100%;
-    height: 12px;
-    background: var(--color-bg-elevated);
+    height: 10px;
+    background: var(--color-bg-secondary);
     border-radius: var(--radius-full);
     overflow: hidden;
     position: relative;
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 1px 3px rgba(15, 15, 26, 0.08);
 }
 
 .progress-bar {
@@ -650,9 +664,7 @@ body::after {
     border-radius: var(--radius-full);
     position: relative;
     overflow: hidden;
-    box-shadow:
-        0 0 8px rgba(107, 114, 128, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 8px rgba(79, 70, 229, 0.30);
 }
 
 .progress-bar::after {
@@ -661,14 +673,12 @@ body::after {
     inset: 0;
     background: linear-gradient(90deg,
         transparent 0%,
-        rgba(255, 255, 255, 0.4) 50%,
+        rgba(255, 255, 255, 0.35) 50%,
         transparent 100%);
 }
 
-/* ==================== INPUTS ULTRA PRO ==================== */
-.input-group {
-    margin-bottom: var(--space-5);
-}
+/* ==================== INPUTS ==================== */
+.input-group { margin-bottom: var(--space-5); }
 
 .input-label {
     display: block;
@@ -683,34 +693,32 @@ body::after {
 .input {
     width: 100%;
     padding: var(--space-4) var(--space-5);
-    background: var(--glass-ultra);
-    border: var(--glass-border);
+    background: var(--color-bg-elevated);
+    border: var(--card-border);
     border-radius: var(--radius-lg);
     color: var(--color-text-primary);
     font-size: 1rem;
     font-weight: 500;
-    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-subtle);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .input:focus {
     outline: none;
-    background: var(--glass-strong);
-    border-color: var(--color-neon-purple);
+    border-color: var(--accent);
     box-shadow:
-        0 0 0 3px rgba(0, 82, 204, 0.2),
-        0 0 30px rgba(0, 82, 204, 0.3);
+        0 0 0 3px rgba(79, 70, 229, 0.12),
+        var(--shadow-subtle);
 }
 
-.input::placeholder {
-    color: var(--color-text-muted);
-}
+.input::placeholder { color: var(--color-text-muted); }
 
-/* ==================== MODAL ULTRA PRO ==================== */
+/* ==================== MODAL ==================== */
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(17, 24, 39, 0.6);
-    backdrop-filter: blur(20px);
+    background: rgba(15, 15, 26, 0.45);
+    backdrop-filter: blur(12px);
     z-index: 2000;
     display: flex;
     align-items: center;
@@ -719,20 +727,19 @@ body::after {
 }
 
 .modal {
-    background: var(--glass-strong);
-    border: var(--glass-border);
+    background: var(--color-bg-elevated);
+    border: var(--card-border);
     border-radius: var(--radius-2xl);
     max-width: 500px;
     width: 100%;
     max-height: 90vh;
     overflow: hidden;
     box-shadow: var(--shadow-ultra);
-    backdrop-filter: blur(20px);
 }
 
 .modal-header {
     padding: var(--space-6);
-    border-bottom: var(--glass-border);
+    border-bottom: var(--card-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -750,19 +757,22 @@ body::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--glass-ultra);
-    border: var(--glass-border);
+    background: var(--color-bg-secondary);
+    border: var(--card-border);
     border-radius: var(--radius-md);
     color: var(--color-text-secondary);
     cursor: pointer;
+    transition: background 0.15s ease;
 }
+
+.modal-close:hover { background: var(--color-bg-tertiary); }
 
 .modal-body {
     padding: var(--space-6);
     overflow-y: auto;
 }
 
-/* ==================== TOAST ULTRA ==================== */
+/* ==================== TOAST ==================== */
 .toast-container {
     position: fixed;
     top: var(--space-4);
@@ -775,16 +785,11 @@ body::after {
 }
 
 .toast {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: none;
+    background: var(--color-bg-elevated);
+    border: var(--card-border);
     border-radius: var(--radius-lg);
     padding: var(--space-3);
-    box-shadow:
-        0 8px 32px 0 rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-        0 2px 12px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow-strong);
     font-size: 0.8125rem;
     position: relative;
     overflow: hidden;
@@ -797,91 +802,32 @@ body::after {
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(0, 255, 136, 0.8) 50%,
-        transparent 100%);
-    opacity: 0.6;
-}
-
-.toast-success {
-    box-shadow:
-        0 8px 32px 0 rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-        0 4px 16px rgba(0,0,0,0.10);
+    background: linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%);
 }
 
 .toast-success::before {
-    background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(0, 255, 136, 1) 50%,
-        transparent 100%);
-}
-
-.toast-error {
-    box-shadow:
-        0 8px 32px 0 rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-        0 4px 16px rgba(220,38,38,0.15);
+    background: linear-gradient(90deg, transparent 0%, var(--color-success) 50%, transparent 100%);
 }
 
 .toast-error::before {
-    background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(255, 51, 102, 1) 50%,
-        transparent 100%);
-}
-
-.toast-warning {
-    box-shadow:
-        0 8px 32px 0 rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-        0 4px 16px rgba(217,119,6,0.15);
+    background: linear-gradient(90deg, transparent 0%, var(--color-error) 50%, transparent 100%);
 }
 
 .toast-warning::before {
-    background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(255, 184, 0, 1) 50%,
-        transparent 100%);
-}
-
-.toast-info {
-    box-shadow:
-        0 8px 32px 0 rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-        0 4px 16px rgba(37,99,235,0.15);
+    background: linear-gradient(90deg, transparent 0%, var(--color-warning) 50%, transparent 100%);
 }
 
 .toast-info::before {
-    background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(0, 212, 255, 1) 50%,
-        transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, var(--color-info) 50%, transparent 100%);
 }
 
-/* ==================== RESPONSIVE ULTRA ==================== */
+/* ==================== RESPONSIVE ==================== */
 @media (max-width: 480px) {
-    .container {
-        padding: var(--space-5) var(--space-3);
-    }
-
-    .page-title {
-        font-size: 2rem;
-        margin-bottom: var(--space-6);
-    }
-
-    .balance-amount {
-        font-size: 2.2rem !important;
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .nav-label {
-        font-size: 0.48rem !important;
-    }
+    .container { padding: var(--space-5) var(--space-3); }
+    .page-title { font-size: 2rem; margin-bottom: var(--space-6); }
+    .balance-amount { font-size: 2.2rem !important; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .nav-label { font-size: 0.48rem !important; }
 }
 
 /* ==================== UTILITIES ==================== */
@@ -896,39 +842,46 @@ body::after {
 .mt-4 { margin-top: var(--space-4); }
 .mt-6 { margin-top: var(--space-6); }
 
-/* ==================== SCROLLBAR ULTRA ==================== */
-::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
+/* ==================== SCROLLBAR ==================== */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-    background: rgba(107, 114, 128, 0.35);
+    background: rgba(79, 70, 229, 0.20);
     border-radius: var(--radius-full);
     border: 2px solid transparent;
 }
+::-webkit-scrollbar-thumb:hover { background: rgba(79, 70, 229, 0.35); }
 
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(75, 85, 99, 0.55);
-}
-
-/* ==================== SPLASH SCREEN ULTRA PRO ==================== */
+/* ==================== SPLASH SCREEN ==================== */
 .splash-screen {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #F5F6FA 0%, #ECEEF4 50%, #E4E7EF 100%);
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(160deg, #FAFBFF 0%, #F0F2FF 50%, #EAEDf8 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 99999;
     overflow: hidden;
+}
+
+.splash-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(79, 70, 229, 0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+.splash-screen::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(79, 70, 229, 0.10) 0%, transparent 65%);
 }
 
 .splash-content {
@@ -937,7 +890,6 @@ body::after {
     z-index: 2;
 }
 
-/* Logo estático */
 .splash-logo {
     position: relative;
     width: 160px;
@@ -947,79 +899,53 @@ body::after {
 
 .logo-circle {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 120px;
-    height: 120px;
+    width: 120px; height: 120px;
     background: var(--gradient-primary);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow:
-        0 0 30px rgba(107, 114, 128, 0.25),
-        0 0 60px rgba(156, 163, 175, 0.15),
-        inset 0 0 40px rgba(255, 255, 255, 0.1);
+        0 0 0 8px rgba(79, 70, 229, 0.08),
+        0 0 40px rgba(79, 70, 229, 0.22),
+        0 16px 40px rgba(79, 70, 229, 0.18);
 }
 
 .logo-inner {
-    width: 100px;
-    height: 100px;
-    background: rgba(245, 246, 250, 0.95);
+    width: 100px; height: 100px;
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--accent);
 }
 
 .logo-inner i {
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+    filter: drop-shadow(0 0 12px rgba(79, 70, 229, 0.4));
 }
 
-/* Anillos estáticos */
 .logo-rings {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
 }
 
 .ring {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 50%; left: 50%;
     border-radius: 50%;
-    border: 2px solid transparent;
-    border-top-color: rgba(107, 114, 128, 0.5);
-    border-right-color: rgba(156, 163, 175, 0.3);
+    border: 1.5px solid transparent;
+    border-top-color: rgba(79, 70, 229, 0.40);
+    border-right-color: rgba(129, 140, 248, 0.25);
 }
 
-.ring-1 {
-    width: 140px;
-    height: 140px;
-    margin: -70px 0 0 -70px;
-}
+.ring-1 { width: 140px; height: 140px; margin: -70px 0 0 -70px; }
+.ring-2 { width: 160px; height: 160px; margin: -80px 0 0 -80px; border-top-color: rgba(99, 102, 241, 0.35); }
+.ring-3 { width: 180px; height: 180px; margin: -90px 0 0 -90px; border-top-color: rgba(129, 140, 248, 0.25); }
 
-.ring-2 {
-    width: 160px;
-    height: 160px;
-    margin: -80px 0 0 -80px;
-    border-top-color: rgba(75, 85, 99, 0.5);
-    border-right-color: rgba(107, 114, 128, 0.3);
-}
-
-.ring-3 {
-    width: 180px;
-    height: 180px;
-    margin: -90px 0 0 -90px;
-    border-top-color: rgba(156, 163, 175, 0.5);
-    border-right-color: rgba(107, 114, 128, 0.3);
-}
-
-/* Título */
 .splash-title {
     font-size: 3.5rem;
     font-weight: 900;
@@ -1030,7 +956,6 @@ body::after {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-shadow: 0 0 80px rgba(0, 102, 255, 0.8);
 }
 
 .splash-subtitle {
@@ -1038,45 +963,37 @@ body::after {
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--color-text-secondary);
+    color: var(--color-text-tertiary);
     margin-bottom: 3rem;
-    opacity: 1;
 }
 
-/* Barra de progreso */
 .splash-progress {
     position: relative;
     width: 280px;
     height: 4px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(79, 70, 229, 0.08);
     border-radius: 10px;
     margin: 0 auto 2rem;
     overflow: hidden;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .progress-bar-splash {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     height: 100%;
     width: 0%;
     background: var(--gradient-primary);
     background-size: 200% 100%;
     border-radius: 10px;
+    box-shadow: 0 0 10px rgba(79, 70, 229, 0.40);
 }
 
 .progress-glow {
     position: absolute;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-    background: radial-gradient(circle, rgba(107, 114, 128, 0.2) 0%, transparent 70%);
-    opacity: 0.3;
+    top: -10px; left: -10px; right: -10px; bottom: -10px;
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, transparent 70%);
 }
 
-/* Texto de estado */
 .splash-status {
     display: flex;
     align-items: center;
@@ -1088,196 +1005,109 @@ body::after {
 .status-text {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-text-secondary);
+    color: var(--color-text-tertiary);
 }
 
-.status-dots {
-    display: flex;
-    gap: 0.25rem;
-}
+.status-dots { display: flex; gap: 0.25rem; }
 
 .status-dots .dot {
-    width: 4px;
-    height: 4px;
-    background: var(--color-neon-pink);
+    width: 4px; height: 4px;
+    background: var(--accent);
     border-radius: 50%;
+    opacity: 0.6;
 }
 
-/* Partículas estáticas */
 .splash-particles {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     overflow: hidden;
     z-index: 1;
 }
 
 .particle {
     position: absolute;
-    width: 4px;
-    height: 4px;
-    background: var(--color-neon-pink);
+    width: 4px; height: 4px;
     border-radius: 50%;
-    opacity: 0.3;
-    box-shadow: 0 0 10px currentColor;
+    opacity: 0.25;
 }
 
-.particle:nth-child(1) {
-    left: 10%;
-    background: var(--color-neon-pink);
-}
+.particle:nth-child(1)  { left: 10%; background: var(--accent); }
+.particle:nth-child(2)  { left: 20%; background: #818CF8; }
+.particle:nth-child(3)  { left: 30%; background: #6366F1; }
+.particle:nth-child(4)  { left: 50%; background: var(--accent); }
+.particle:nth-child(5)  { left: 60%; background: #7C3AED; }
+.particle:nth-child(6)  { left: 70%; background: #4F46E5; }
+.particle:nth-child(7)  { left: 80%; background: #818CF8; }
+.particle:nth-child(8)  { left: 90%; background: #6366F1; }
 
-.particle:nth-child(2) {
-    left: 20%;
-    background: var(--color-neon-purple);
-}
-
-.particle:nth-child(3) {
-    left: 30%;
-    background: var(--color-neon-cyan);
-}
-
-.particle:nth-child(4) {
-    left: 50%;
-    background: var(--color-neon-blue);
-}
-
-.particle:nth-child(5) {
-    left: 60%;
-    background: var(--color-neon-orange);
-}
-
-.particle:nth-child(6) {
-    left: 70%;
-    background: var(--color-neon-pink);
-}
-
-.particle:nth-child(7) {
-    left: 80%;
-    background: var(--color-neon-cyan);
-}
-
-.particle:nth-child(8) {
-    left: 90%;
-    background: var(--color-neon-purple);
-}
-
-/* Responsive splash */
 @media (max-width: 768px) {
-    .splash-title {
-        font-size: 2.5rem;
-    }
-
-    .splash-subtitle {
-        font-size: 0.875rem;
-    }
-
-    .splash-progress {
-        width: 240px;
-    }
-
-    .logo-circle {
-        width: 100px;
-        height: 100px;
-    }
-
-    .logo-inner {
-        width: 80px;
-        height: 80px;
-    }
-
-    .logo-inner i {
-        width: 48px !important;
-        height: 48px !important;
-    }
+    .splash-title { font-size: 2.5rem; }
+    .splash-subtitle { font-size: 0.875rem; }
+    .splash-progress { width: 240px; }
+    .logo-circle { width: 100px; height: 100px; }
+    .logo-inner { width: 80px; height: 80px; }
+    .logo-inner i { width: 48px !important; height: 48px !important; }
 }
 
-/* Estilo para imagen de logo personalizada en splash */
 .splash-logo-image {
-    width: 80px;
-    height: 80px;
+    width: 80px; height: 80px;
     object-fit: contain;
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+    filter: drop-shadow(0 0 16px rgba(79, 70, 229, 0.35));
 }
 
 @media (max-width: 768px) {
-    .splash-logo-image {
-        width: 60px;
-        height: 60px;
-    }
+    .splash-logo-image { width: 60px; height: 60px; }
 }
 
-/* ==================== MEJORAS RESPONSIVE AÑADIDAS ==================== */
-/* ===== TABLET (≥ 640px) ===== */
+/* ==================== RESPONSIVE EXTRA ==================== */
 @media (min-width: 640px) {
     .container { max-width: 768px; }
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
     .btn { width: auto; }
 }
 
-/* ===== DESKTOP (≥ 1024px) ===== */
 @media (min-width: 1024px) {
     .container { max-width: 1024px; }
     .stats-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* ===== GRIDS RESPONSIVE ===== */
 .grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
-@media (min-width: 640px) { .grid-sm-2 { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 640px)  { .grid-sm-2 { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1024px) {
     .grid-lg-3 { grid-template-columns: repeat(3, 1fr); }
     .grid-lg-4 { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* ===== PODIO RANKING ===== */
 .podium-container { display: grid; grid-template-columns: 1fr; gap: var(--space-4); }
 @media (min-width: 640px) {
     .podium-container { grid-template-columns: 1fr 1.2fr 1fr; align-items: end; }
 }
 
-/* ==================== TOP HEADER - USER PROFILE ==================== */
+/* ==================== TOP HEADER ==================== */
 .app-top-header {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     z-index: 1001;
     height: 64px;
     padding-top: env(safe-area-inset-top, 0);
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.92) 0%,
-        rgba(255, 255, 255, 0.96) 100%
-    );
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(107, 114, 128, 0.15);
+    background: rgba(255, 255, 255, 0.90);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(15, 15, 26, 0.07);
     display: flex;
     align-items: center;
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.07);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.8), var(--shadow-subtle);
 }
 
 .app-top-header::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(107, 114, 128, 0.3),
-        rgba(156, 163, 175, 0.3),
-        transparent
-    );
-    opacity: 0.6;
+    background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.25), rgba(129, 140, 248, 0.25), transparent);
+    opacity: 0.8;
 }
 
-/* Contenedor interno del header */
 .header-inner {
     width: 100%;
     max-width: 680px;
@@ -1289,34 +1119,26 @@ body::after {
     height: 64px;
 }
 
-/* Contenedor del avatar */
 .header-avatar-container {
     position: relative;
     flex-shrink: 0;
 }
 
-/* Avatar del usuario */
 .header-avatar {
-    width: 40px;
-    height: 40px;
+    width: 40px; height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    background: var(--glass-ultra);
+    background: var(--color-bg-secondary);
     border: 2px solid transparent;
-    background-image: linear-gradient(var(--color-bg-secondary), var(--color-bg-secondary)),
+    background-image: linear-gradient(var(--color-bg-elevated), var(--color-bg-elevated)),
                       var(--gradient-primary);
     background-origin: border-box;
     background-clip: padding-box, border-box;
-    box-shadow:
-        0 0 0 2px var(--color-bg-primary),
-        0 4px 12px rgba(0, 0, 0, 0.3),
-        0 0 12px rgba(107, 114, 128, 0.12);
+    box-shadow: 0 0 0 2px var(--color-bg-primary), var(--shadow-medium);
 }
 
-/* Avatar placeholder cuando no hay foto */
 .header-avatar-placeholder {
-    width: 40px;
-    height: 40px;
+    width: 40px; height: 40px;
     border-radius: 50%;
     background: var(--gradient-primary);
     background-size: 200% 200%;
@@ -1328,26 +1150,19 @@ body::after {
     color: white;
     text-transform: uppercase;
     letter-spacing: -0.02em;
-    box-shadow:
-        0 0 0 2px var(--color-bg-primary),
-        0 4px 12px rgba(0, 0, 0, 0.3),
-        0 0 12px rgba(107, 114, 128, 0.15);
+    box-shadow: 0 0 0 2px var(--color-bg-primary), var(--shadow-medium);
 }
 
-/* Indicador de estado online */
 .header-avatar-status {
     position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 12px;
-    height: 12px;
+    bottom: 0; right: 0;
+    width: 12px; height: 12px;
     background: var(--color-success);
     border-radius: 50%;
     border: 2px solid var(--color-bg-primary);
-    box-shadow: 0 0 6px rgba(22, 163, 74, 0.4);
+    box-shadow: 0 0 6px rgba(5, 150, 105, 0.4);
 }
 
-/* Información del usuario */
 .header-user-info {
     flex: 1;
     min-width: 0;
@@ -1357,7 +1172,6 @@ body::after {
     gap: 2px;
 }
 
-/* Nombre del usuario */
 .header-user-name {
     font-size: 0.95rem;
     font-weight: 700;
@@ -1369,7 +1183,6 @@ body::after {
     letter-spacing: -0.01em;
 }
 
-/* ID del usuario */
 .header-user-id {
     font-size: 0.72rem;
     font-weight: 500;
@@ -1380,7 +1193,6 @@ body::after {
     letter-spacing: 0.02em;
 }
 
-/* Logo en el header (opcional, a la derecha) */
 .header-logo {
     margin-left: auto;
     display: flex;
@@ -1389,10 +1201,9 @@ body::after {
 }
 
 .header-logo-img {
-    width: 28px;
-    height: 28px;
+    width: 28px; height: 28px;
     object-fit: contain;
-    filter: drop-shadow(0 0 4px rgba(107, 114, 128, 0.2));
+    filter: drop-shadow(0 0 4px rgba(79, 70, 229, 0.25));
 }
 
 .header-logo-text {
@@ -1406,49 +1217,20 @@ body::after {
     background-clip: text;
 }
 
-/* Ajustar posición del botón de soporte cuando hay header */
 .has-top-header .support-fab {
     top: calc(80px + env(safe-area-inset-top, 0));
 }
 
-/* ===== Responsive del header ===== */
 @media (max-width: 480px) {
-    .app-top-header {
-        height: 60px;
-    }
-
-    .header-inner {
-        height: 60px;
-        padding: 0 var(--space-3);
-    }
-
+    .app-top-header { height: 60px; }
+    .header-inner { height: 60px; padding: 0 var(--space-3); }
     .header-avatar,
-    .header-avatar-placeholder {
-        width: 36px;
-        height: 36px;
-    }
-
-    .header-avatar-placeholder {
-        font-size: 0.875rem;
-    }
-
-    .header-user-name {
-        font-size: 0.875rem;
-    }
-
-    .header-user-id {
-        font-size: 0.68rem;
-    }
-
-    .has-top-header .main-content {
-        padding-top: calc(60px + env(safe-area-inset-top, 0));
-    }
-
-    .has-top-header .support-fab {
-        top: calc(76px + env(safe-area-inset-top, 0));
-    }
+    .header-avatar-placeholder { width: 36px; height: 36px; }
+    .header-avatar-placeholder { font-size: 0.875rem; }
+    .header-user-name { font-size: 0.875rem; }
+    .header-user-id { font-size: 0.68rem; }
+    .has-top-header .main-content { padding-top: calc(60px + env(safe-area-inset-top, 0)); }
+    .has-top-header .support-fab { top: calc(76px + env(safe-area-inset-top, 0)); }
 }
 
-.header-avatar-loading {
-    opacity: 0.7;
-}
+.header-avatar-loading { opacity: 0.7; }
