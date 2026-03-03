@@ -19,7 +19,7 @@
             <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: var(--space-2); background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
                 GigaPub
             </h1>
-            <p style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.6); line-height: 1.6;" data-i18n="ad_reward_description_gigapub">
+            <p style="font-size: 0.9375rem; color: rgba(0, 20, 60, 0.6); line-height: 1.6;" data-i18n="ad_reward_description_gigapub">
                 Ver anuncio • Ganar 0.002 DOGE + 5 PTS
             </p>
             <!-- Recompensa clara visible -->
@@ -40,7 +40,7 @@
                     </div>
                     <div>
                         <div style="font-weight: 600; font-size: 0.9375rem; color: white;" data-i18n="ads_today">Anuncios Hoy</div>
-                        <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="max_12_per_day">Máximo 12 por día</div>
+                        <div style="font-size: 0.8125rem; color: rgba(0, 0, 0, 0.5);" data-i18n="max_12_per_day">Máximo 12 por día</div>
                     </div>
                 </div>
                 <div style="text-align: right;">
@@ -59,7 +59,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-3); background: rgba(156, 39, 176, 0.05); border-radius: 12px; border: 1px solid rgba(156, 39, 176, 0.1);">
                 <div style="display: flex; align-items: center; gap: var(--space-2);">
                     <i data-lucide="coins" style="width: 18px; height: 18px; color: #9C27B0;"></i>
-                    <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7);" data-i18n="earned_today">Ganado hoy</span>
+                    <span style="font-size: 0.875rem; color: rgba(0, 20, 60, 0.7);" data-i18n="earned_today">Ganado hoy</span>
                 </div>
                 <div id="giga-earned-amount" style="font-weight: 700; font-size: 1rem; color: #9C27B0;">
                     {{ "%.3f"|format(progress.total_earned) }} DOGE
@@ -73,7 +73,7 @@
         <div style="text-align: center;">
             <!-- Reward per view -->
             <div style="margin-bottom: var(--space-4);">
-                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);" data-i18n="reward_per_ad">Recompensa por anuncio</div>
+                <div style="font-size: 0.8125rem; color: rgba(0, 0, 0, 0.5); margin-bottom: var(--space-1);" data-i18n="reward_per_ad">Recompensa por anuncio</div>
                 <div style="font-weight: 700; font-size: 1.5rem; color: #9C27B0;">
                     +{{ config.reward_per_ad }} DOGE + 5 PTS
                 </div>
@@ -83,7 +83,7 @@
             <button id="giga-watch-btn"
                     onclick="startGigaPub()"
                     {% if progress.completed %}disabled{% endif %}
-                    style="width: 100%; padding: var(--space-4); border-radius: 14px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; {% if progress.completed %}background: rgba(156, 39, 176, 0.15); color: rgba(255, 255, 255, 0.5);{% else %}background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%); color: #fff;{% endif %}">
+                    style="width: 100%; padding: var(--space-4); border-radius: 14px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; {% if progress.completed %}background: rgba(156, 39, 176, 0.15); color: rgba(0, 0, 0, 0.5);{% else %}background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%); color: #fff;{% endif %}">
                 {% if progress.completed %}
                     <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
@@ -111,7 +111,7 @@
     <!-- Timer Card (Hidden by default, shows during ad) -->
     <div id="giga-timer-card" class="card" style="display: none; background: linear-gradient(135deg, rgba(156, 39, 176, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(156, 39, 176, 0.3); margin-top: var(--space-4);">
         <div style="text-align: center;">
-            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-2);" data-i18n="keep_ad_open">
+            <div style="font-size: 0.875rem; color: rgba(0, 20, 60, 0.6); margin-bottom: var(--space-2);" data-i18n="keep_ad_open">
                 Mantén el anuncio abierto
             </div>
             <div id="giga-timer-display" style="font-weight: 800; font-size: 2.5rem; color: #9C27B0;">
@@ -137,7 +137,7 @@
                 <div style="font-weight: 600; font-size: 0.9375rem; color: white; margin-bottom: var(--space-1);" data-i18n="total_reward">
                     Recompensa Total
                 </div>
-                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="complete_12_ads">
+                <div style="font-size: 0.8125rem; color: rgba(0, 0, 0, 0.5);" data-i18n="complete_12_ads">
                     Completa los 12 anuncios para ganar <span style="color: #9C27B0; font-weight: 600;">hasta 0.024 DOGE</span>
                 </div>
             </div>
@@ -153,15 +153,15 @@
         <div style="display: flex; flex-direction: column; gap: var(--space-3);">
             <div style="display: flex; align-items: center; gap: var(--space-3);">
                 <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(156, 39, 176, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #9C27B0;">1</div>
-                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);" data-i18n="step_1_watch">Presiona "Ver Anuncio" para iniciar</span>
+                <span style="font-size: 0.8125rem; color: rgba(0, 20, 60, 0.6);" data-i18n="step_1_watch">Presiona "Ver Anuncio" para iniciar</span>
             </div>
             <div style="display: flex; align-items: center; gap: var(--space-3);">
                 <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(156, 39, 176, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #9C27B0;">2</div>
-                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);" data-i18n="step_2_wait">Mira el anuncio completo (mínimo 15 segundos)</span>
+                <span style="font-size: 0.8125rem; color: rgba(0, 20, 60, 0.6);" data-i18n="step_2_wait">Mira el anuncio completo (mínimo 15 segundos)</span>
             </div>
             <div style="display: flex; align-items: center; gap: var(--space-3);">
                 <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(156, 39, 176, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #9C27B0;">3</div>
-                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);" data-i18n="step_3_reward">¡Recibe tu recompensa automáticamente!</span>
+                <span style="font-size: 0.8125rem; color: rgba(0, 20, 60, 0.6);" data-i18n="step_3_reward">¡Recibe tu recompensa automáticamente!</span>
             </div>
         </div>
     </div>
@@ -631,7 +631,7 @@ function showGigaNotification(type, message) {
     const subtitle = document.createElement('div');
     subtitle.style.cssText = `
         font-size: 0.9375rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(0, 0, 0, 0.5);
         font-weight: 500;
         margin-bottom: 20px;
     `;
