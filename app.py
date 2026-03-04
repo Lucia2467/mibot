@@ -6349,6 +6349,65 @@ def explore_link_center():
                          show_support_button=True)
 
 
+
+# ============================================
+# MONITOR TON DEPOSITS — background thread
+# ============================================
+
+def _ton_deposit_monitor():
+    import time, re
+    logger.info("🔍 Monitor TON Deposits iniciado")
+    WALLET = os.environ.get("TON_WALLET_ADDRESS", "UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3")
+    last_lt = None
+    while True:
+        try:
+            from ton_deposit_system import check_incoming_transactions, credit_ton_balance
+            from database import execute_query, get_cursor
+            txs = check_incoming_transactions(WALLET, since_lt=last_lt, limit=20)
+            for tx in txs:
+                tx_hash = tx.get("hash")
+                memo    = (tx.get("message") or "").strip()
+                amount  = float(tx.get("value", 0))
+                lt      = tx.get("lt")
+                if lt and (last_lt is None or int(lt) > int(last_lt)):
+                    last_lt = lt
+                if not tx_hash or not memo or amount <= 0:
+                    continue
+                if not re.match(r"^DEP\d{8}$", memo):
+                    continue
+                # Ya procesada?
+                with get_cursor() as cursor:
+                    cursor.execute("SELECT id FROM ton_deposits WHERE tx_hash=%s AND status='confirmed'", (tx_hash,))
+                    if cursor.fetchone():
+                        continue
+                # Buscar usuario
+                memo_digits = memo[3:]
+                with get_cursor() as cursor:
+                    cursor.execute("SELECT user_id FROM users WHERE RIGHT(CAST(user_id AS CHAR),8)=%s LIMIT 1", (memo_digits,))
+                    row = cursor.fetchone()
+                if not row:
+                    logger.warning(f"Sin usuario para memo: {memo}")
+                    continue
+                user_id = row["user_id"]
+                deposit_id = f"AUTO_{tx_hash[:16]}"
+                execute_query("""
+                    INSERT IGNORE INTO ton_deposits
+                    (deposit_id,user_id,wallet_origin,wallet_destination,amount,status,tx_hash,lt,credited_at,updated_at)
+                    VALUES (%s,%s,%s,%s,%s,'confirmed',%s,%s,NOW(),NOW())
+                """, (deposit_id, str(user_id), tx.get("source",""), WALLET, amount, tx_hash, lt))
+                if credit_ton_balance(user_id, amount, deposit_id):
+                    logger.info(f"✅ Depósito auto: {amount} TON → user {user_id}")
+                else:
+                    logger.error(f"❌ Error acreditando: user {user_id}")
+        except Exception as e:
+            logger.error(f"Error monitor TON: {e}")
+        time.sleep(30)
+
+# Arrancar monitor al importar el módulo (Railway/gunicorn)
+import threading as _threading
+_ton_thread = _threading.Thread(target=_ton_deposit_monitor, daemon=True, name="TON-Monitor")
+_ton_thread.start()
+
 # ============== MAIN ==============
 
 if __name__ == '__main__':
