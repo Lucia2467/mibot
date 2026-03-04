@@ -562,111 +562,296 @@
   </div>
 </div>
 
-<!-- ===== WITHDRAWAL PROCESSING OVERLAY ===== -->
-<div id="withdrawal-overlay" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);align-items:center;justify-content:center;flex-direction:column;">
+<!-- ===== WITHDRAWAL PREMIUM OVERLAY ===== -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <!-- PHASE 1: Processing -->
-  <div id="wd-phase-processing" style="text-align:center;padding:40px 28px;max-width:340px;width:90%;animation:wd-fade-in 0.5s ease both;">
+<div id="withdrawal-overlay" style="display:none;position:fixed;inset:0;z-index:99998;align-items:center;justify-content:center;">
 
-    <!-- Animated coin orb -->
-    <div style="position:relative;width:120px;height:120px;margin:0 auto 28px;">
-      <!-- Outer spinning ring -->
-      <div style="position:absolute;inset:0;border-radius:50%;border:3px solid transparent;border-top-color:#22d97a;border-right-color:rgba(34,217,122,0.3);animation:wd-spin 1.2s linear infinite;"></div>
-      <!-- Middle spinning ring (opposite) -->
-      <div style="position:absolute;inset:8px;border-radius:50%;border:2px solid transparent;border-bottom-color:#0098EA;border-left-color:rgba(0,152,234,0.3);animation:wd-spin-rev 1.8s linear infinite;"></div>
-      <!-- Inner glow -->
-      <div style="position:absolute;inset:18px;border-radius:50%;background:radial-gradient(circle,rgba(34,217,122,0.2),rgba(0,152,234,0.1));animation:wd-pulse-glow 2s ease-in-out infinite;display:flex;align-items:center;justify-content:center;">
-        <span style="font-size:2.4rem;animation:wd-coin-float 2s ease-in-out infinite;">💸</span>
-      </div>
-      <!-- Orbit particles -->
-      <div style="position:absolute;inset:0;animation:wd-spin 3s linear infinite;">
-        <div style="position:absolute;top:2px;left:50%;width:6px;height:6px;background:#22d97a;border-radius:50%;transform:translateX(-50%);box-shadow:0 0 8px #22d97a;"></div>
-      </div>
-      <div style="position:absolute;inset:0;animation:wd-spin-rev 4s linear infinite;">
-        <div style="position:absolute;bottom:4px;left:50%;width:4px;height:4px;background:#0098EA;border-radius:50%;transform:translateX(-50%);box-shadow:0 0 6px #0098EA;"></div>
-      </div>
-    </div>
+  <!-- Deep layered background -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(20,40,30,0.98),rgba(4,8,12,0.99));backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);"></div>
 
-    <!-- Greeting message -->
-    <div id="wd-greeting" style="font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-0.02em;animation:wd-text-glow 3s ease-in-out infinite;">
-      Ok <span id="wd-username" style="color:#22d97a;"></span> 👋
-    </div>
-    <div style="font-size:0.9rem;color:rgba(255,255,255,0.55);margin-bottom:24px;line-height:1.5;">
-      Déjame procesar tu retiro...
-    </div>
+  <!-- Ambient light blobs -->
+  <div style="position:absolute;width:600px;height:600px;top:-180px;left:50%;transform:translateX(-50%);background:radial-gradient(circle,rgba(34,217,122,0.07) 0%,transparent 65%);pointer-events:none;animation:wd-breathe 5s ease-in-out infinite;"></div>
+  <div style="position:absolute;width:400px;height:400px;bottom:-100px;left:-60px;background:radial-gradient(circle,rgba(0,152,234,0.06) 0%,transparent 70%);pointer-events:none;animation:wd-breathe 7s 2s ease-in-out infinite;"></div>
+  <div style="position:absolute;width:300px;height:300px;bottom:-80px;right:-40px;background:radial-gradient(circle,rgba(34,217,122,0.05) 0%,transparent 70%);pointer-events:none;animation:wd-breathe 6s 1s ease-in-out infinite;"></div>
 
-    <!-- Amount badge -->
-    <div id="wd-amount-badge" style="display:inline-block;background:linear-gradient(135deg,rgba(34,217,122,0.15),rgba(0,152,234,0.1));border:1px solid rgba(34,217,122,0.25);border-radius:50px;padding:10px 24px;margin-bottom:28px;">
-      <span id="wd-overlay-amount" style="font-size:1.5rem;font-weight:900;color:#22d97a;letter-spacing:-0.02em;"></span>
-    </div>
+  <!-- Grid overlay subtle -->
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(34,217,122,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(34,217,122,0.025) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);"></div>
 
-    <!-- Progress steps -->
-    <div style="width:100%;max-width:260px;margin:0 auto;">
-      <div class="wd-step" id="wd-step-1" style="display:flex;align-items:center;gap:12px;margin-bottom:12px;opacity:0;animation:wd-step-in 0.4s 0.3s ease both;">
-        <div class="wd-step-icon" style="width:28px;height:28px;border-radius:50%;background:rgba(34,217,122,0.15);border:1.5px solid rgba(34,217,122,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.75rem;">⏳</div>
-        <span style="font-size:0.8rem;color:rgba(255,255,255,0.5);text-align:left;">Verificando saldo...</span>
-      </div>
-      <div class="wd-step" id="wd-step-2" style="display:flex;align-items:center;gap:12px;margin-bottom:12px;opacity:0;">
-        <div class="wd-step-icon" style="width:28px;height:28px;border-radius:50%;background:rgba(34,217,122,0.15);border:1.5px solid rgba(34,217,122,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.75rem;">🔐</div>
-        <span style="font-size:0.8rem;color:rgba(255,255,255,0.5);text-align:left;">Validando seguridad...</span>
-      </div>
-      <div class="wd-step" id="wd-step-3" style="display:flex;align-items:center;gap:12px;opacity:0;">
-        <div class="wd-step-icon" style="width:28px;height:28px;border-radius:50%;background:rgba(34,217,122,0.15);border:1.5px solid rgba(34,217,122,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.75rem;">📡</div>
-        <span style="font-size:0.8rem;color:rgba(255,255,255,0.5);text-align:left;">Enviando a la red...</span>
-      </div>
-    </div>
+  <!-- Floating micro-particles -->
+  <div class="wd-particle" style="--x:20%;--y:80%;--d:12s;--s:3px;"></div>
+  <div class="wd-particle" style="--x:80%;--y:70%;--d:9s;--s:2px;animation-delay:-3s;"></div>
+  <div class="wd-particle" style="--x:50%;--y:90%;--d:14s;--s:4px;animation-delay:-6s;"></div>
+  <div class="wd-particle" style="--x:10%;--y:50%;--d:11s;--s:2px;animation-delay:-1s;"></div>
+  <div class="wd-particle" style="--x:90%;--y:40%;--d:13s;--s:3px;animation-delay:-8s;"></div>
+  <div class="wd-particle" style="--x:35%;--y:15%;--d:10s;--s:2px;animation-delay:-4s;"></div>
 
-    <!-- Progress bar -->
-    <div style="width:100%;max-width:260px;margin:20px auto 0;background:rgba(255,255,255,0.07);border-radius:50px;height:4px;overflow:hidden;">
-      <div id="wd-progress-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#22d97a,#0098EA);border-radius:50px;transition:width 0.5s ease;box-shadow:0 0 10px rgba(34,217,122,0.5);"></div>
+  <!-- ============================
+       PHASE 1: PROCESSING
+  ============================= -->
+  <div id="wd-phase-processing" style="position:relative;z-index:1;text-align:center;width:90%;max-width:360px;animation:wd-entry 0.65s cubic-bezier(0.22,1,0.36,1) both;">
+
+    <!-- Glassmorphism card -->
+    <div style="background:linear-gradient(160deg,rgba(255,255,255,0.055) 0%,rgba(255,255,255,0.02) 100%);border:1px solid rgba(255,255,255,0.08);border-radius:28px;padding:36px 28px 32px;box-shadow:0 40px 120px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.08),0 0 0 1px rgba(34,217,122,0.06);">
+
+      <!-- Orb system -->
+      <div style="position:relative;width:128px;height:128px;margin:0 auto 30px;">
+        <!-- Deep glow halo -->
+        <div style="position:absolute;inset:-24px;background:radial-gradient(circle,rgba(34,217,122,0.18) 0%,transparent 65%);border-radius:50%;animation:wd-breathe 3s ease-in-out infinite;"></div>
+        <!-- Track ring -->
+        <div style="position:absolute;inset:0;border-radius:50%;border:1px solid rgba(34,217,122,0.12);"></div>
+        <!-- Spinner ring primary -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;animation:wd-spin 2.4s linear infinite;" viewBox="0 0 128 128">
+          <circle cx="64" cy="64" r="60" fill="none" stroke="url(#wd-grad-arc)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="210 168"/>
+          <defs>
+            <linearGradient id="wd-grad-arc" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#22d97a" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#22d97a" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <!-- Spinner ring secondary -->
+        <svg style="position:absolute;inset:10px;width:calc(100% - 20px);height:calc(100% - 20px);animation:wd-spin-rev 3.6s linear infinite;" viewBox="0 0 108 108">
+          <circle cx="54" cy="54" r="50" fill="none" stroke="url(#wd-grad-arc2)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="120 194"/>
+          <defs>
+            <linearGradient id="wd-grad-arc2" x1="100%" y1="100%" x2="0%" y2="0%">
+              <stop offset="0%" stop-color="#0098EA" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#0098EA" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <!-- Inner orb -->
+        <div style="position:absolute;inset:20px;border-radius:50%;background:linear-gradient(145deg,rgba(34,217,122,0.15),rgba(4,16,10,0.9));border:1px solid rgba(34,217,122,0.2);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 2px 12px rgba(34,217,122,0.1),0 0 30px rgba(34,217,122,0.1);">
+          <!-- Send arrow SVG icon — no emojis -->
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" style="animation:wd-icon-pulse 2.5s ease-in-out infinite;">
+            <path d="M22 2L11 13" stroke="#22d97a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#22d97a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="rgba(34,217,122,0.08)"/>
+          </svg>
+        </div>
+        <!-- Orbit dot -->
+        <div style="position:absolute;inset:0;animation:wd-spin 4s linear infinite;">
+          <div style="position:absolute;top:3px;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#22d97a;border-radius:50%;box-shadow:0 0 10px #22d97a,0 0 20px rgba(34,217,122,0.5);"></div>
+        </div>
+        <div style="position:absolute;inset:0;animation:wd-spin-rev 6s linear infinite;">
+          <div style="position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:3px;height:3px;background:#0098EA;border-radius:50%;box-shadow:0 0 8px #0098EA;"></div>
+        </div>
+      </div>
+
+      <!-- Greeting -->
+      <div style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:-0.03em;margin-bottom:5px;line-height:1.2;">
+        <span id="wd-greeting-ok" style="color:rgba(255,255,255,0.5);font-weight:400;">Ok</span>
+        &nbsp;<span id="wd-username" style="color:#22d97a;text-shadow:0 0 24px rgba(34,217,122,0.45);"></span>
+      </div>
+      <div id="wd-processing-label" style="font-family:'Outfit',sans-serif;font-size:0.85rem;font-weight:400;color:rgba(255,255,255,0.38);margin-bottom:22px;letter-spacing:0.01em;"></div>
+
+      <!-- Amount display -->
+      <div style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(34,217,122,0.1),rgba(0,152,234,0.06));border:1px solid rgba(34,217,122,0.18);border-radius:14px;padding:10px 20px;margin-bottom:28px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="#22d97a" stroke-width="1.8"/>
+          <path d="M12 6v6l4 2" stroke="#22d97a" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span id="wd-overlay-amount" style="font-family:'DM Mono',monospace;font-size:1.35rem;font-weight:500;color:#22d97a;letter-spacing:0.02em;"></span>
+      </div>
+
+      <!-- Steps -->
+      <div style="display:flex;flex-direction:column;gap:10px;text-align:left;">
+
+        <div id="wd-step-1" class="wd-step-row" style="opacity:0;transform:translateX(-8px);">
+          <div class="wd-step-pill">
+            <div class="wd-step-dot" id="wd-dot-1">
+              <svg class="wd-dot-spinner" width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="rgba(34,217,122,0.3)" stroke-width="1.4"/><circle cx="7" cy="7" r="5.5" fill="none" stroke="#22d97a" stroke-width="1.4" stroke-dasharray="12 22" stroke-linecap="round"/></svg>
+            </div>
+            <div class="wd-step-bar-wrap"><div class="wd-step-track"><div class="wd-step-fill" id="wd-fill-1"></div></div></div>
+            <!-- Balance icon -->
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;opacity:0.5;">
+              <rect x="2" y="5" width="20" height="14" rx="3" stroke="#22d97a" stroke-width="1.6"/>
+              <path d="M2 10h20" stroke="#22d97a" stroke-width="1.6"/>
+            </svg>
+            <span id="wd-label-step-1" class="wd-step-label"></span>
+          </div>
+        </div>
+
+        <div id="wd-step-2" class="wd-step-row" style="opacity:0;transform:translateX(-8px);">
+          <div class="wd-step-pill">
+            <div class="wd-step-dot" id="wd-dot-2">
+              <svg class="wd-dot-spinner" width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="rgba(34,217,122,0.3)" stroke-width="1.4"/><circle cx="7" cy="7" r="5.5" fill="none" stroke="#22d97a" stroke-width="1.4" stroke-dasharray="12 22" stroke-linecap="round"/></svg>
+            </div>
+            <div class="wd-step-bar-wrap"><div class="wd-step-track"><div class="wd-step-fill" id="wd-fill-2"></div></div></div>
+            <!-- Shield icon -->
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;opacity:0.5;">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#22d97a" stroke-width="1.6" stroke-linejoin="round"/>
+            </svg>
+            <span id="wd-label-step-2" class="wd-step-label"></span>
+          </div>
+        </div>
+
+        <div id="wd-step-3" class="wd-step-row" style="opacity:0;transform:translateX(-8px);">
+          <div class="wd-step-pill">
+            <div class="wd-step-dot" id="wd-dot-3">
+              <svg class="wd-dot-spinner" width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="rgba(34,217,122,0.3)" stroke-width="1.4"/><circle cx="7" cy="7" r="5.5" fill="none" stroke="#22d97a" stroke-width="1.4" stroke-dasharray="12 22" stroke-linecap="round"/></svg>
+            </div>
+            <div class="wd-step-bar-wrap"><div class="wd-step-track"><div class="wd-step-fill" id="wd-fill-3"></div></div></div>
+            <!-- Network icon -->
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;opacity:0.5;">
+              <circle cx="12" cy="5" r="2.5" stroke="#22d97a" stroke-width="1.6"/>
+              <circle cx="5" cy="19" r="2.5" stroke="#22d97a" stroke-width="1.6"/>
+              <circle cx="19" cy="19" r="2.5" stroke="#22d97a" stroke-width="1.6"/>
+              <path d="M12 7.5v4M12 11.5l-5 5M12 11.5l5 5" stroke="#22d97a" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <span id="wd-label-step-3" class="wd-step-label"></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Master progress bar -->
+      <div style="margin-top:22px;height:2px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
+        <div id="wd-master-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#22d97a,#0098EA,#22d97a);background-size:200% 100%;animation:wd-bar-shimmer 2s linear infinite;border-radius:4px;transition:width 0.8s cubic-bezier(0.4,0,0.2,1);box-shadow:0 0 8px rgba(34,217,122,0.6);"></div>
+      </div>
+
     </div>
   </div>
 
-  <!-- PHASE 2: Success -->
-  <div id="wd-phase-success" style="display:none;text-align:center;padding:40px 28px;max-width:340px;width:90%;">
+  <!-- ============================
+       PHASE 2: SUCCESS
+  ============================= -->
+  <div id="wd-phase-success" style="display:none;position:relative;z-index:1;text-align:center;width:90%;max-width:360px;">
 
-    <!-- Success icon with burst -->
-    <div style="position:relative;width:120px;height:120px;margin:0 auto 28px;">
-      <!-- Burst rings -->
-      <div id="wd-burst-1" style="position:absolute;inset:-10px;border-radius:50%;border:2px solid rgba(34,217,122,0.6);opacity:0;animation:wd-burst 0.8s 0.1s ease-out both;"></div>
-      <div id="wd-burst-2" style="position:absolute;inset:-22px;border-radius:50%;border:1.5px solid rgba(34,217,122,0.35);opacity:0;animation:wd-burst 0.8s 0.25s ease-out both;"></div>
-      <div id="wd-burst-3" style="position:absolute;inset:-36px;border-radius:50%;border:1px solid rgba(34,217,122,0.15);opacity:0;animation:wd-burst 0.8s 0.4s ease-out both;"></div>
-      <!-- Main circle -->
-      <div style="position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(34,217,122,0.25),rgba(16,185,129,0.1));animation:wd-success-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;border:2px solid rgba(34,217,122,0.4);">
-        <div style="position:absolute;inset:6px;border-radius:50%;background:linear-gradient(135deg,#0d1a12,#0a1f15);display:flex;align-items:center;justify-content:center;">
-          <span style="font-size:2.8rem;animation:wd-emoji-pop 0.5s 0.15s cubic-bezier(0.34,1.56,0.64,1) both;display:block;opacity:0;">✅</span>
+    <!-- Confetti particles (injected by JS) -->
+    <div id="wd-confetti-container" style="position:absolute;inset:-60px;pointer-events:none;overflow:hidden;border-radius:40px;"></div>
+
+    <div style="background:linear-gradient(160deg,rgba(255,255,255,0.055) 0%,rgba(255,255,255,0.02) 100%);border:1px solid rgba(255,255,255,0.08);border-radius:28px;padding:38px 28px 32px;box-shadow:0 40px 120px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.1),0 0 0 1px rgba(34,217,122,0.08);position:relative;overflow:hidden;">
+
+      <!-- Top green shimmer line -->
+      <div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(34,217,122,0.6),transparent);animation:wd-shimmer-line 3s ease-in-out infinite;"></div>
+
+      <!-- Success orb -->
+      <div style="position:relative;width:116px;height:116px;margin:0 auto 28px;">
+        <!-- Burst rings -->
+        <div style="position:absolute;inset:-8px;border-radius:50%;border:1.5px solid rgba(34,217,122,0.5);animation:wd-burst-ring 1s 0.1s cubic-bezier(0,0,0.2,1) both;opacity:0;"></div>
+        <div style="position:absolute;inset:-20px;border-radius:50%;border:1px solid rgba(34,217,122,0.28);animation:wd-burst-ring 1s 0.22s cubic-bezier(0,0,0.2,1) both;opacity:0;"></div>
+        <div style="position:absolute;inset:-34px;border-radius:50%;border:0.5px solid rgba(34,217,122,0.12);animation:wd-burst-ring 1s 0.36s cubic-bezier(0,0,0.2,1) both;opacity:0;"></div>
+        <!-- Steady glow -->
+        <div style="position:absolute;inset:-16px;border-radius:50%;background:radial-gradient(circle,rgba(34,217,122,0.2) 0%,transparent 70%);animation:wd-breathe 3s ease-in-out infinite;"></div>
+        <!-- Main disc -->
+        <div style="position:absolute;inset:0;border-radius:50%;background:linear-gradient(145deg,rgba(34,217,122,0.22),rgba(16,60,36,0.6));border:1.5px solid rgba(34,217,122,0.35);box-shadow:0 8px 40px rgba(34,217,122,0.25),inset 0 1px 0 rgba(255,255,255,0.1);animation:wd-disc-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) both;display:flex;align-items:center;justify-content:center;">
+          <!-- Animated SVG checkmark -->
+          <svg id="wd-check-svg" width="44" height="44" viewBox="0 0 44 44" fill="none" style="animation:wd-icon-entry 0.4s 0.2s ease both;opacity:0;">
+            <circle cx="22" cy="22" r="20" fill="rgba(34,217,122,0.12)"/>
+            <polyline id="wd-check-poly" points="13,22 19,28 31,16" stroke="#22d97a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"
+              style="stroke-dasharray:30;stroke-dashoffset:30;animation:wd-draw-check 0.5s 0.35s cubic-bezier(0.4,0,0.2,1) forwards;"/>
+          </svg>
         </div>
+        <!-- Scatter dots -->
+        <div style="position:absolute;inset:0;animation:wd-spin 12s linear infinite;">
+          <div style="position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:#22d97a;box-shadow:0 0 8px #22d97a;animation:wd-breathe 2s ease-in-out infinite;"></div>
+        </div>
+        <div style="position:absolute;inset:0;animation:wd-spin-rev 8s linear infinite;">
+          <div style="position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:#0098EA;box-shadow:0 0 6px #0098EA;"></div>
+        </div>
+        <!-- Corner accent diamonds -->
+        <div style="position:absolute;top:-6px;right:8px;width:6px;height:6px;background:linear-gradient(135deg,#22d97a,#0098EA);transform:rotate(45deg);opacity:0;animation:wd-diamond 0.5s 0.5s ease both;box-shadow:0 0 12px #22d97a;"></div>
+        <div style="position:absolute;bottom:0px;left:4px;width:4px;height:4px;background:#22d97a;transform:rotate(45deg);opacity:0;animation:wd-diamond 0.5s 0.65s ease both;box-shadow:0 0 8px #22d97a;"></div>
+        <div style="position:absolute;top:8px;left:-6px;width:3px;height:3px;background:#0098EA;transform:rotate(45deg);opacity:0;animation:wd-diamond 0.5s 0.8s ease both;box-shadow:0 0 6px #0098EA;"></div>
       </div>
-      <!-- Sparkle particles -->
-      <div style="position:absolute;top:-5px;right:-5px;width:12px;height:12px;animation:wd-sparkle 0.6s 0.3s ease both;opacity:0;">✨</div>
-      <div style="position:absolute;bottom:-5px;left:-5px;width:12px;height:12px;animation:wd-sparkle 0.6s 0.45s ease both;opacity:0;">⭐</div>
-      <div style="position:absolute;top:5px;left:-15px;width:10px;height:10px;animation:wd-sparkle 0.6s 0.6s ease both;opacity:0;font-size:0.8rem;">💫</div>
+
+      <!-- Success text -->
+      <div id="wd-success-title" style="font-family:'Outfit',sans-serif;font-size:1.65rem;font-weight:800;color:#fff;letter-spacing:-0.04em;margin-bottom:6px;opacity:0;animation:wd-rise 0.45s 0.25s ease both;"></div>
+      <div id="wd-success-amount-display" style="font-family:'DM Mono',monospace;font-size:2.3rem;font-weight:500;color:#22d97a;letter-spacing:0.01em;margin-bottom:8px;opacity:0;animation:wd-rise 0.45s 0.38s ease both;text-shadow:0 0 32px rgba(34,217,122,0.4);"></div>
+
+      <!-- Sent label with arrow icon -->
+      <div style="display:inline-flex;align-items:center;gap:6px;opacity:0;animation:wd-rise 0.45s 0.5s ease both;" id="wd-sent-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+          <path d="M5 12h14M14 6l6 6-6 6" stroke="rgba(255,255,255,0.35)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="wd-success-sent" style="font-family:'Outfit',sans-serif;font-size:0.82rem;color:rgba(255,255,255,0.35);font-weight:400;"></span>
+      </div>
+
+      <!-- ETA chip -->
+      <div style="margin:14px auto 28px;display:inline-flex;align-items:center;gap:7px;background:rgba(0,152,234,0.08);border:1px solid rgba(0,152,234,0.2);border-radius:50px;padding:6px 16px;opacity:0;animation:wd-rise 0.45s 0.62s ease both;" id="wd-eta-chip">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="#0098EA" stroke-width="1.8"/>
+          <path d="M12 7v5l3 3" stroke="#0098EA" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span id="wd-success-eta" style="font-family:'Outfit',sans-serif;font-size:0.75rem;color:rgba(0,152,234,0.8);font-weight:500;letter-spacing:0.01em;"></span>
+      </div>
+
+      <!-- CTA Button -->
+      <button onclick="closeWithdrawalOverlay()" id="wd-cta-btn"
+        style="width:100%;padding:15px 20px;background:linear-gradient(135deg,#22d97a 0%,#17b864 50%,#22d97a 100%);background-size:200% 100%;background-position:100% 0;border:none;border-radius:16px;color:#031a0b;font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;letter-spacing:0.01em;box-shadow:0 8px 32px rgba(34,217,122,0.28),inset 0 1px 0 rgba(255,255,255,0.3);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);opacity:0;animation:wd-rise 0.45s 0.75s ease both;position:relative;overflow:hidden;"
+        onmouseover="this.style.backgroundPosition='0% 0';this.style.boxShadow='0 12px 48px rgba(34,217,122,0.4),inset 0 1px 0 rgba(255,255,255,0.35)';this.style.transform='translateY(-1px)'"
+        onmouseout="this.style.backgroundPosition='100% 0';this.style.boxShadow='0 8px 32px rgba(34,217,122,0.28),inset 0 1px 0 rgba(255,255,255,0.3)';this.style.transform='translateY(0)'"
+        onmousedown="this.style.transform='translateY(0) scale(0.98)'"
+        onmouseup="this.style.transform='translateY(-1px) scale(1)'">
+        <!-- Inner shine sweep -->
+        <div style="position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);transform:skewX(-20deg);animation:wd-btn-shine 4s 1.5s ease infinite;pointer-events:none;"></div>
+        <span id="wd-view-balance-text"></span>
+      </button>
+
     </div>
-
-    <div style="font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:-0.03em;margin-bottom:8px;animation:wd-success-text 0.4s 0.2s ease both;opacity:0;">¡Retiro Procesado!</div>
-    <div id="wd-success-amount" style="font-size:2.4rem;font-weight:900;color:#22d97a;letter-spacing:-0.02em;margin-bottom:6px;animation:wd-success-text 0.4s 0.35s ease both;opacity:0;"></div>
-    <div style="font-size:0.82rem;color:rgba(255,255,255,0.38);margin-bottom:8px;animation:wd-success-text 0.4s 0.45s ease both;opacity:0;">en camino a tu wallet 🚀</div>
-    <div style="font-size:0.75rem;color:rgba(255,255,255,0.25);margin-bottom:32px;animation:wd-success-text 0.4s 0.5s ease both;opacity:0;">Procesamiento: 24-48 horas</div>
-
-    <button onclick="closeWithdrawalOverlay()" style="width:100%;padding:16px;background:linear-gradient(135deg,#22d97a,#16a34a);border:none;border-radius:16px;color:#061a0c;font-weight:800;font-size:1rem;cursor:pointer;letter-spacing:0.01em;box-shadow:0 8px 32px rgba(34,217,122,0.35);animation:wd-success-text 0.4s 0.6s ease both;opacity:0;transition:transform 0.15s,box-shadow 0.15s;" onmouseover="this.style.transform='scale(1.02)';this.style.boxShadow='0 12px 40px rgba(34,217,122,0.45)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 8px 32px rgba(34,217,122,0.35)'">
-      Ver Balance
-    </button>
   </div>
 </div>
 
 <style>
-@keyframes wd-fade-in{from{opacity:0;transform:scale(0.9) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
-@keyframes wd-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes wd-spin-rev{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
-@keyframes wd-pulse-glow{0%,100%{opacity:0.7;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
-@keyframes wd-coin-float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-4px) rotate(8deg)}}
-@keyframes wd-text-glow{0%,100%{text-shadow:none}50%{text-shadow:0 0 20px rgba(34,217,122,0.4)}}
-@keyframes wd-step-in{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
-@keyframes wd-success-pop{from{opacity:0;transform:scale(0.6)}to{opacity:1;transform:scale(1)}}
-@keyframes wd-emoji-pop{from{opacity:0;transform:scale(0) rotate(-30deg)}to{opacity:1;transform:scale(1) rotate(0deg)}}
-@keyframes wd-burst{0%{opacity:1;transform:scale(0.8)}100%{opacity:0;transform:scale(1.5)}}
-@keyframes wd-sparkle{0%{opacity:0;transform:scale(0) rotate(-30deg)}60%{opacity:1;transform:scale(1.3) rotate(10deg)}100%{opacity:0;transform:scale(0.8) rotate(20deg)}}
-@keyframes wd-success-text{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* Overlay animations */
+@keyframes wd-breathe    { 0%,100%{opacity:0.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
+@keyframes wd-entry      { from{opacity:0;transform:scale(0.88) translateY(24px)} to{opacity:1;transform:scale(1) translateY(0)} }
+@keyframes wd-spin       { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes wd-spin-rev   { from{transform:rotate(0deg)} to{transform:rotate(-360deg)} }
+@keyframes wd-icon-pulse { 0%,100%{opacity:0.7;filter:drop-shadow(0 0 4px rgba(34,217,122,0.3))} 50%{opacity:1;filter:drop-shadow(0 0 12px rgba(34,217,122,0.7))} }
+@keyframes wd-bar-shimmer{ from{background-position:200% 0} to{background-position:-200% 0} }
+@keyframes wd-step-reveal{ from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+@keyframes wd-fill-grow  { from{width:0%} to{width:100%} }
+@keyframes wd-disc-pop   { from{opacity:0;transform:scale(0.5) rotate(-15deg)} to{opacity:1;transform:scale(1) rotate(0deg)} }
+@keyframes wd-burst-ring { 0%{opacity:1;transform:scale(0.7)} 100%{opacity:0;transform:scale(1.6)} }
+@keyframes wd-icon-entry { from{opacity:0;transform:scale(0.4) rotate(-20deg)} to{opacity:1;transform:scale(1) rotate(0deg)} }
+@keyframes wd-draw-check { to{stroke-dashoffset:0} }
+@keyframes wd-diamond    { 0%{opacity:0;transform:rotate(45deg) scale(0)} 70%{opacity:1;transform:rotate(45deg) scale(1.3)} 100%{opacity:1;transform:rotate(45deg) scale(1)} }
+@keyframes wd-rise       { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes wd-shimmer-line{ 0%,100%{opacity:0.4;transform:scaleX(0.6)} 50%{opacity:1;transform:scaleX(1)} }
+@keyframes wd-btn-shine  { 0%,100%{left:-100%} 50%{left:150%} }
+@keyframes wd-confetti   { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(-120px) rotate(var(--cr));opacity:0} }
+@keyframes wd-particle-rise { 0%{transform:translate(var(--x),var(--y)) scale(0);opacity:0.8} 100%{transform:translate(var(--x),calc(var(--y) - 300px)) scale(1);opacity:0} }
+
+/* Particle floaters */
+.wd-particle {
+  position:absolute;
+  width:var(--s);height:var(--s);
+  background:#22d97a;
+  border-radius:50%;
+  box-shadow:0 0 6px #22d97a;
+  animation:wd-particle-rise var(--d) ease-in-out infinite;
+  left:var(--x);top:var(--y);
+}
+
+/* Step rows */
+.wd-step-row { transition: opacity 0.4s ease, transform 0.4s ease; }
+.wd-step-pill {
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;padding:10px 14px;
+}
+.wd-step-dot {
+  width:20px;height:20px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.wd-dot-spinner { animation:wd-spin 1.5s linear infinite; }
+.wd-step-done .wd-dot-spinner { display:none; }
+.wd-step-done .wd-dot-check { display:flex !important; }
+.wd-dot-check {
+  display:none;width:20px;height:20px;
+  background:rgba(34,217,122,0.15);
+  border:1px solid rgba(34,217,122,0.4);
+  border-radius:50%;align-items:center;justify-content:center;
+}
+.wd-step-bar-wrap { flex:1; }
+.wd-step-track { height:2px;background:rgba(255,255,255,0.07);border-radius:4px;overflow:hidden; }
+.wd-step-fill  { height:100%;width:0%;background:linear-gradient(90deg,#22d97a,#0098EA);border-radius:4px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1); }
+.wd-step-label { font-family:'Outfit',sans-serif;font-size:0.78rem;font-weight:500;color:rgba(255,255,255,0.38);white-space:nowrap; }
+.wd-step-done .wd-step-label { color:rgba(34,217,122,0.75); }
+.wd-step-done .wd-step-fill  { width:100% !important; }
 </style>
 
 <!-- SUCCESS OVERLAY — centered fullscreen -->
@@ -983,79 +1168,148 @@ function closeWithdrawModal() {
 }
 
 // ============================================
-// WITHDRAWAL ANIMATED OVERLAY
+// WITHDRAWAL PREMIUM OVERLAY
 // ============================================
+function _wdt(key, fallback) {
+    return (window.tt ? window.tt(key) : null) || fallback;
+}
+
 function showWithdrawalOverlay(amount, currency) {
-    const overlay = document.getElementById('withdrawal-overlay');
-    const phaseProcessing = document.getElementById('wd-phase-processing');
-    const phaseSuccess = document.getElementById('wd-phase-success');
+    const overlay     = document.getElementById('withdrawal-overlay');
+    const phaseProc   = document.getElementById('wd-phase-processing');
+    const phaseSucc   = document.getElementById('wd-phase-success');
 
-    // Get user first name from template
-    const firstName = "{{ user.first_name | default('amigo') | e }}";
-    document.getElementById('wd-username').textContent = firstName;
-    document.getElementById('wd-overlay-amount').textContent = `${parseFloat(amount).toFixed(4)} ${currency}`;
-    document.getElementById('wd-success-amount').textContent = `${parseFloat(amount).toFixed(4)} ${currency}`;
+    // Populate translations
+    const firstName = "{{ user.first_name | default('') | e }}";
+    document.getElementById('wd-greeting-ok').textContent    = _wdt('wd_greeting_ok','Ok');
+    document.getElementById('wd-username').textContent        = firstName;
+    document.getElementById('wd-processing-label').textContent= _wdt('wd_processing_label','Let me process that...');
+    document.getElementById('wd-label-step-1').textContent   = _wdt('wd_step_balance','Verifying balance');
+    document.getElementById('wd-label-step-2').textContent   = _wdt('wd_step_security','Security validation');
+    document.getElementById('wd-label-step-3').textContent   = _wdt('wd_step_network','Broadcasting to network');
+    document.getElementById('wd-success-title').textContent  = _wdt('wd_success_title','Withdrawal Processed!');
+    document.getElementById('wd-success-sent').textContent   = _wdt('wd_success_sent','En route to your wallet');
+    document.getElementById('wd-success-eta').textContent    = _wdt('wd_success_eta','Processing time: 24–48 hours');
+    document.getElementById('wd-view-balance-text').textContent = _wdt('wd_view_balance','View Balance');
 
-    // Reset states
-    phaseProcessing.style.display = 'block';
-    phaseProcessing.style.animation = 'wd-fade-in 0.5s ease both';
-    phaseSuccess.style.display = 'none';
-    document.getElementById('wd-progress-bar').style.width = '0%';
-    ['wd-step-1','wd-step-2','wd-step-3'].forEach(id => {
-        document.getElementById(id).style.opacity = '0';
-        document.getElementById(id).style.animation = '';
+    const fmt = parseFloat(amount).toFixed(4) + ' ' + currency;
+    document.getElementById('wd-overlay-amount').textContent         = fmt;
+    document.getElementById('wd-success-amount-display').textContent = fmt;
+
+    // Reset phases
+    phaseProc.style.cssText  += ';display:block;opacity:1;';
+    phaseProc.style.animation = 'wd-entry 0.65s cubic-bezier(0.22,1,0.36,1) both';
+    phaseSucc.style.display   = 'none';
+    document.getElementById('wd-master-bar').style.width = '0%';
+
+    // Reset steps
+    ['1','2','3'].forEach(n => {
+        const row = document.getElementById('wd-step-' + n);
+        row.style.opacity   = '0';
+        row.style.transform = 'translateX(-8px)';
+        row.classList.remove('wd-step-done');
+        document.getElementById('wd-fill-' + n).style.width = '0%';
+        const dot = document.getElementById('wd-dot-' + n);
+        const check = dot.querySelector('.wd-dot-check');
+        if (check) check.remove();
+        const spinner = dot.querySelector('.wd-dot-spinner');
+        if (spinner) spinner.style.display = '';
     });
 
     // Show overlay
-    overlay.style.display = 'flex';
+    overlay.style.display   = 'flex';
+    overlay.style.opacity   = '0';
+    overlay.style.transition = 'opacity 0.4s ease';
+    requestAnimationFrame(() => { overlay.style.opacity = '1'; });
 
-    // Step-by-step animation timeline
+    // Timeline
     const steps = [
-        { id: 'wd-step-1', delay: 400,  progress: 30 },
-        { id: 'wd-step-2', delay: 3000, progress: 65 },
-        { id: 'wd-step-3', delay: 6500, progress: 90 },
+        { id:'1', delay: 500,  progress: 30  },
+        { id:'2', delay: 3500, progress: 62  },
+        { id:'3', delay: 7000, progress: 90  },
     ];
     steps.forEach(({ id, delay, progress }) => {
         setTimeout(() => {
-            const el = document.getElementById(id);
-            el.style.animation = 'wd-step-in 0.4s ease both';
-            el.style.opacity = '1';
-            // Mark icon as done
-            const icon = el.querySelector('.wd-step-icon');
-            if (icon) icon.textContent = '✅';
-            const span = el.querySelector('span');
-            if (span) span.style.color = 'rgba(255,255,255,0.75)';
-            document.getElementById('wd-progress-bar').style.width = progress + '%';
+            const row  = document.getElementById('wd-step-' + id);
+            const fill = document.getElementById('wd-fill-' + id);
+            const dot  = document.getElementById('wd-dot-' + id);
+            // Reveal row
+            row.style.transition  = 'opacity 0.4s ease, transform 0.4s ease';
+            row.style.opacity     = '1';
+            row.style.transform   = 'translateX(0)';
+            // Fill progress bar
+            requestAnimationFrame(() => { fill.style.width = '100%'; });
+            // Mark as done after bar completes
+            setTimeout(() => {
+                row.classList.add('wd-step-done');
+                const sp = dot.querySelector('.wd-dot-spinner');
+                if (sp) sp.style.display = 'none';
+                const ch = document.createElement('div');
+                ch.className = 'wd-dot-check';
+                ch.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#22d97a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                dot.appendChild(ch);
+            }, 1300);
+            document.getElementById('wd-master-bar').style.width = progress + '%';
         }, delay);
     });
 
-    // Progress to 100% and transition to success
+    // Complete → success
     setTimeout(() => {
-        document.getElementById('wd-progress-bar').style.width = '100%';
-    }, 9000);
+        document.getElementById('wd-master-bar').style.width = '100%';
+    }, 9400);
+    setTimeout(() => _transitionToSuccess(phaseProc, phaseSucc), 10200);
+}
 
+function _transitionToSuccess(phaseProc, phaseSucc) {
+    phaseProc.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+    phaseProc.style.opacity    = '0';
+    phaseProc.style.transform  = 'scale(0.96) translateY(-8px)';
     setTimeout(() => {
-        // Fade out processing
-        phaseProcessing.style.animation = 'none';
-        phaseProcessing.style.opacity = '0';
-        phaseProcessing.style.transition = 'opacity 0.4s ease';
-        setTimeout(() => {
-            phaseProcessing.style.display = 'none';
-            phaseSuccess.style.display = 'block';
-        }, 400);
-    }, 10000);
+        phaseProc.style.display = 'none';
+        phaseSucc.style.display = 'block';
+        phaseSucc.style.animation = 'wd-entry 0.55s cubic-bezier(0.22,1,0.36,1) both';
+        _launchConfetti();
+    }, 370);
+}
+
+function _launchConfetti() {
+    const container = document.getElementById('wd-confetti-container');
+    if (!container) return;
+    const colors = ['#22d97a','#0098EA','#fff','#a3f7c8','#60ccff','#17b864'];
+    for (let i = 0; i < 38; i++) {
+        const el = document.createElement('div');
+        const c  = colors[Math.floor(Math.random() * colors.length)];
+        const w  = Math.random() * 6 + 3;
+        const h  = Math.random() * 10 + 4;
+        const x  = Math.random() * 100;
+        const y  = 85 + Math.random() * 15;
+        const rot = (Math.random() - 0.5) * 720;
+        const dur = 1.2 + Math.random() * 0.8;
+        el.style.cssText = `
+            position:absolute;
+            width:${w}px;height:${h}px;
+            background:${c};
+            border-radius:${Math.random() > 0.5 ? '50%' : '2px'};
+            left:${x}%;top:${y}%;
+            --cr:${rot}deg;
+            box-shadow:0 0 4px ${c};
+            animation:wd-confetti ${dur}s ${Math.random() * 0.5}s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+        `;
+        container.appendChild(el);
+        setTimeout(() => el.remove(), (dur + 0.6) * 1000);
+    }
 }
 
 function closeWithdrawalOverlay() {
     const overlay = document.getElementById('withdrawal-overlay');
-    overlay.style.opacity = '0';
     overlay.style.transition = 'opacity 0.4s ease';
+    overlay.style.opacity    = '0';
     setTimeout(() => {
-        overlay.style.display = 'none';
-        overlay.style.opacity = '';
+        overlay.style.display    = 'none';
+        overlay.style.opacity    = '';
         overlay.style.transition = '';
         location.reload();
-    }, 400);
+    }, 420);
 }
 
 function selectMethod(method) {
