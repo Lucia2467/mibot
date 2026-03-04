@@ -804,7 +804,100 @@
 @keyframes wd-shimmer-line{ 0%,100%{opacity:0.3;transform:scaleX(0.4)} 50%{opacity:1;transform:scaleX(1)} }
 @keyframes wd-btn-sweep   { 0%,100%{transform:skewX(-20deg) translateX(-120%)} 50%{transform:skewX(-20deg) translateX(220%)} }
 @keyframes wd-confetti    { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(-130px) rotate(var(--cr,360deg));opacity:0} }
+/* ── Pending state ── */
+@keyframes wd-clock-tick  { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+@keyframes wd-pend-pulse  { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.12)} }
+@keyframes wd-pend-ring   { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.06)} }
+@keyframes wd-pend-dot    { 0%,100%{opacity:0.3} 50%{opacity:1} }
+@keyframes wd-shimmer-amber { 0%,100%{opacity:0.25;transform:scaleX(0.3)} 50%{opacity:0.9;transform:scaleX(1)} }
+.wd-card-pending {
+  position:relative;
+  background:linear-gradient(148deg,rgba(245,158,11,0.06) 0%,rgba(255,255,255,0.015) 100%);
+  border:1px solid rgba(245,158,11,0.15);
+  border-radius:24px;
+  padding:28px 24px 26px;
+  box-shadow:0 48px 120px rgba(0,0,0,0.7),inset 0 1px 0 rgba(245,158,11,0.08),0 0 0 1px rgba(245,158,11,0.04);
+  text-align:center;
+}
 </style>
+
+  <!-- ── PHASE 3 : PENDING ── -->
+  <div id="wd-phase-pending" style="display:none;position:relative;z-index:2;width:92%;max-width:350px;">
+    <div class="wd-card-pending" style="overflow:hidden;">
+
+      <!-- Amber shimmer line top -->
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(245,158,11,0.7) 50%,transparent 100%);border-radius:2px 2px 0 0;animation:wd-shimmer-amber 3s ease-in-out infinite;"></div>
+
+      <!-- Status pill -->
+      <div style="display:flex;justify-content:center;margin-bottom:20px;">
+        <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);border-radius:40px;padding:6px 16px;">
+          <div style="width:5px;height:5px;border-radius:50%;background:#f59e0b;box-shadow:0 0 8px #f59e0b;animation:wd-pend-dot 1.4s ease-in-out infinite;"></div>
+          <span id="wd-pend-status-label" style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:rgba(245,158,11,0.85);letter-spacing:0.08em;text-transform:uppercase;"></span>
+        </div>
+      </div>
+
+      <!-- Clock orb -->
+      <div style="position:relative;width:116px;height:116px;margin:0 auto 24px;">
+        <!-- Ambient glow -->
+        <div style="position:absolute;inset:-18px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,0.14) 0%,transparent 65%);animation:wd-pend-pulse 3s ease-in-out infinite;"></div>
+        <!-- Pulsing ring -->
+        <div style="position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(245,158,11,0.25);animation:wd-pend-ring 2.5s ease-in-out infinite;"></div>
+        <div style="position:absolute;inset:-14px;border-radius:50%;border:0.5px solid rgba(245,158,11,0.1);animation:wd-pend-ring 2.5s 0.4s ease-in-out infinite;"></div>
+        <!-- Outer arc spinning slow -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;animation:wd-spin 8s linear infinite;" viewBox="0 0 116 116" fill="none">
+          <defs>
+            <linearGradient id="g-amber" x1="0" y1="0" x2="116" y2="116" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.9"/>
+              <stop offset="70%" stop-color="#f59e0b" stop-opacity="0.1"/>
+              <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <circle cx="58" cy="58" r="55" stroke="url(#g-amber)" stroke-width="1.5" stroke-dasharray="130 215" stroke-linecap="round"/>
+        </svg>
+        <!-- Main disc -->
+        <div style="position:absolute;inset:14px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(245,158,11,0.2),rgba(3,12,7,0.92));border:1px solid rgba(245,158,11,0.3);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 20px rgba(245,158,11,0.07),0 0 30px rgba(245,158,11,0.1);">
+          <!-- Clock SVG -->
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="#f59e0b" stroke-width="1.6" opacity="0.7"/>
+            <line id="wd-clock-hand-m" x1="12" y1="12" x2="12" y2="6" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" style="transform-origin:12px 12px;animation:wd-clock-tick 6s linear infinite;"/>
+            <line x1="12" y1="12" x2="15.5" y2="13.5" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+            <circle cx="12" cy="12" r="1.5" fill="#f59e0b"/>
+          </svg>
+        </div>
+        <!-- Accent dots -->
+        <div style="position:absolute;top:-3px;right:14px;width:5px;height:5px;background:#f59e0b;transform:rotate(45deg);box-shadow:0 0 10px #f59e0b;opacity:0;animation:wd-gem 0.5s 0.4s ease both;"></div>
+        <div style="position:absolute;bottom:4px;left:8px;width:4px;height:4px;background:rgba(245,158,11,0.7);transform:rotate(45deg);box-shadow:0 0 8px #f59e0b;opacity:0;animation:wd-gem 0.5s 0.58s ease both;"></div>
+      </div>
+
+      <!-- Text -->
+      <div id="wd-pend-title" style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-0.04em;margin-bottom:5px;opacity:0;animation:wd-rise 0.4s 0.2s ease both;"></div>
+      <div id="wd-pend-amount" style="font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:400;color:#f59e0b;letter-spacing:0.02em;margin-bottom:12px;opacity:0;animation:wd-rise 0.4s 0.32s ease both;text-shadow:0 0 36px rgba(245,158,11,0.4);"></div>
+      <div id="wd-pend-desc" style="font-family:'Syne',sans-serif;font-size:0.82rem;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:22px;opacity:0;animation:wd-rise 0.4s 0.44s ease both;max-width:260px;margin-left:auto;margin-right:auto;"></div>
+
+      <!-- Info row -->
+      <div style="display:flex;align-items:stretch;gap:1px;margin-bottom:22px;opacity:0;animation:wd-rise 0.4s 0.5s ease both;" id="wd-pend-info-row">
+        <div style="flex:1;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.12);border-radius:10px 0 0 10px;padding:10px 8px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:rgba(245,158,11,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;" id="wd-pend-ref-label"></div>
+          <div id="wd-pend-elapsed-val" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:#f59e0b;font-weight:500;"></div>
+        </div>
+        <div style="flex:1;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.12);border-left:none;border-radius:0 10px 10px 0;padding:10px 8px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:rgba(245,158,11,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;" id="wd-pend-eta-label"></div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:rgba(255,255,255,0.55);font-weight:500;" id="wd-pend-eta-val"></div>
+        </div>
+      </div>
+
+      <!-- CTA amber -->
+      <button onclick="closeWithdrawalOverlay()"
+        style="width:100%;padding:15px;background:linear-gradient(135deg,rgba(245,158,11,0.9),rgba(217,119,6,0.9));border:none;border-radius:14px;color:#1a0f00;font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;letter-spacing:0.02em;box-shadow:0 0 0 1px rgba(245,158,11,0.3),0 10px 36px rgba(245,158,11,0.2),inset 0 1px 0 rgba(255,255,255,0.22);opacity:0;animation:wd-rise 0.4s 0.62s ease both;position:relative;overflow:hidden;transition:box-shadow 0.25s,transform 0.18s;"
+        onmouseover="this.style.boxShadow='0 0 0 1px rgba(245,158,11,0.5),0 16px 48px rgba(245,158,11,0.32),inset 0 1px 0 rgba(255,255,255,0.28)';this.style.transform='translateY(-1px)'"
+        onmouseout="this.style.boxShadow='0 0 0 1px rgba(245,158,11,0.3),0 10px 36px rgba(245,158,11,0.2),inset 0 1px 0 rgba(255,255,255,0.22)';this.style.transform='translateY(0)'"
+        onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='translateY(-1px)'">
+        <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.14),transparent);transform:skewX(-20deg) translateX(-120%);animation:wd-btn-sweep 4s 1.2s ease-in-out infinite;pointer-events:none;"></div>
+        <span id="wd-pend-btn-text"></span>
+      </button>
+
+    </div>
+  </div>
 
 
 <!-- SUCCESS OVERLAY — centered fullscreen -->
@@ -1180,10 +1273,11 @@ function _wdInitCanvas() {
     draw();
 }
 
-function showWithdrawalOverlay(amount, currency) {
+function showWithdrawalOverlay(amount, currency, autoSuccess) {
     const overlay   = document.getElementById('withdrawal-overlay');
     const phaseProc = document.getElementById('wd-phase-processing');
     const phaseSucc = document.getElementById('wd-phase-success');
+    const phasePend = document.getElementById('wd-phase-pending');
 
     // ── Translations ──
     const firstName = "{{ user.first_name | default('') | e }}";
@@ -1205,6 +1299,7 @@ function showWithdrawalOverlay(amount, currency) {
     phaseProc.style.display   = 'block';
     phaseProc.style.animation = 'wd-entry 0.6s cubic-bezier(0.22,1,0.36,1) both';
     phaseSucc.style.display   = 'none';
+    if(phasePend) phasePend.style.display = 'none';
     document.getElementById('wd-master-bar').style.width   = '0%';
     document.getElementById('wd-bar-head').style.left      = '0%';
     document.getElementById('wd-live-timer').textContent   = '0.0s';
@@ -1270,7 +1365,11 @@ function showWithdrawalOverlay(amount, currency) {
     setTimeout(() => {
         clearInterval(_wdTimerInterval);
         _wdElapsedSec = (performance.now()-_wdStartTime)/1000;
-        _wdTransitionSuccess(phaseProc, phaseSucc);
+        if (autoSuccess) {
+            _wdTransitionSuccess(phaseProc, phaseSucc);
+        } else {
+            _wdTransitionPending(phaseProc, phasePend, amount, currency);
+        }
     }, 10300);
 }
 
@@ -1286,6 +1385,30 @@ function _wdTransitionSuccess(phaseProc, phaseSucc) {
         const elEl = document.getElementById('wd-elapsed-display');
         if(elEl) elEl.textContent = _wdElapsedSec.toFixed(1)+'s';
         _wdConfetti();
+    }, 320);
+}
+
+function _wdTransitionPending(phaseProc, phasePend, amount, currency) {
+    if(!phasePend) return;
+    phaseProc.style.transition='opacity 0.3s ease,transform 0.3s ease';
+    phaseProc.style.opacity='0';
+    phaseProc.style.transform='scale(0.95) translateY(-10px)';
+    setTimeout(() => {
+        phaseProc.style.display='none';
+        phasePend.style.display='block';
+        phasePend.style.animation='wd-entry 0.55s cubic-bezier(0.22,1,0.36,1) both';
+        // Populate pending content
+        const fmt = parseFloat(amount).toFixed(4)+' '+currency;
+        const el = id => document.getElementById(id);
+        if(el('wd-pend-status-label')) el('wd-pend-status-label').textContent = _wdt('wd_pend_status','IN QUEUE');
+        if(el('wd-pend-title'))        el('wd-pend-title').textContent        = _wdt('wd_pend_title','Request Queued');
+        if(el('wd-pend-amount'))       el('wd-pend-amount').textContent       = fmt;
+        if(el('wd-pend-desc'))         el('wd-pend-desc').textContent         = _wdt('wd_pend_desc','Your withdrawal is in the queue and will be processed by our team shortly.');
+        if(el('wd-pend-ref-label'))    el('wd-pend-ref-label').textContent    = _wdt('wd_pend_processed_in','PROCESSED IN');
+        if(el('wd-pend-elapsed-val'))  el('wd-pend-elapsed-val').textContent  = _wdElapsedSec.toFixed(1)+'s';
+        if(el('wd-pend-eta-label'))    el('wd-pend-eta-label').textContent    = _wdt('wd_pend_eta_label','ESTIMATED');
+        if(el('wd-pend-eta-val'))      el('wd-pend-eta-val').textContent      = _wdt('wd_pend_eta_val','24 – 48 h');
+        if(el('wd-pend-btn-text'))     el('wd-pend-btn-text').textContent     = _wdt('wd_view_balance','View Balance');
     }, 320);
 }
 
@@ -1424,7 +1547,7 @@ async function submitWithdraw(event) {
 
         if (data.success) {
             closeWithdrawModal();
-            showWithdrawalOverlay(amount, method);
+            showWithdrawalOverlay(amount, method, data.auto_success === true);
         } else {
             showToast(data.error || (window.tt ? window.tt('toast_withdraw_error') : 'Error al procesar'), 'error');
         }
