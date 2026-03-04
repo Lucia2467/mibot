@@ -441,117 +441,77 @@
     </div>
 </div>
 
-<!-- Deposit Modal -->
+<!-- TON Deposit Modal (Automático) -->
 <div id="deposit-modal" class="modal-overlay" style="display: none;">
     <div class="modal" style="max-height: 90vh; overflow-y: auto;">
         <div class="modal-header">
-            <h3 class="modal-title">💰 <span data-i18n="deposit_title">Deposit Funds</span></h3>
+            <h3 class="modal-title">💎 Depositar TON</h3>
             <button class="modal-close" onclick="closeDepositModal()">
                 <i data-lucide="x"></i>
             </button>
         </div>
         <div class="modal-body">
-            <!-- Tabs para método de depósito -->
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <button type="button" class="btn btn-secondary deposit-tab active" onclick="switchDepositTab('wallet')" id="tab-deposit-wallet" style="flex: 1;">
-                    🔗 Wallet
-                </button>
-                <button type="button" class="btn btn-secondary deposit-tab" onclick="switchDepositTab('binance')" id="tab-deposit-binance" style="flex: 1;">
-                    📱 Binance Pay
-                </button>
-            </div>
 
-            <!-- Wallet Tab Content -->
-            <div id="deposit-wallet-content">
-                <div style="background: linear-gradient(135deg, rgba(201, 166, 53, 0.1) 0%, rgba(201, 166, 53, 0.2) 100%); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(201, 166, 53, 0.3);">
-                    <div style="text-align: center; margin-bottom: 15px;">
-                        <span style="font-size: 0.875rem; color: var(--color-text-secondary);" data-i18n="deposit_only">Only accepted:</span>
-                        <strong style="color: #C9A635; font-size: 1.1rem;"> DOGE</strong>
-                    </div>
-                    <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 10px;">
-                        <div style="font-size: 0.75rem; color: var(--color-text-tertiary); margin-bottom: 8px;" data-i18n="deposit_address">Deposit Address (DOGE)</div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <code id="wallet-deposit-address" style="flex: 1; font-size: 0.8rem; word-break: break-all; color: #C9A635;">Loading...</code>
-                            <button type="button" onclick="copyWalletAddress()" style="padding: 8px 12px; background: #C9A635; border: none; border-radius: 6px; cursor: pointer;">
-                                <i data-lucide="copy" style="width: 16px; height: 16px; color: white;"></i>
-                            </button>
-                        </div>
-                    </div>
+            <!-- Info automático -->
+            <div style="background: linear-gradient(135deg, rgba(0,152,234,0.15) 0%, rgba(0,119,182,0.15) 100%); border: 1px solid rgba(0,152,234,0.35); border-radius: 14px; padding: 14px 16px; margin-bottom: 18px; display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 22px;">⚡</span>
+                <div>
+                    <div style="font-weight: 700; color: #0098EA; font-size: 0.9rem;">Depósito Automático</div>
+                    <div style="font-size: 0.78rem; color: var(--color-text-secondary); margin-top: 2px;">El saldo se acredita automáticamente al detectar tu transacción en la blockchain TON.</div>
                 </div>
             </div>
 
-            <!-- Binance Pay Tab Content -->
-            <div id="deposit-binance-content" style="display: none;">
-                <div style="background: linear-gradient(135deg, rgba(240, 185, 11, 0.1) 0%, rgba(240, 185, 11, 0.2) 100%); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(240, 185, 11, 0.3);">
-                    <div style="text-align: center; margin-bottom: 15px;">
-                        <span style="font-size: 0.875rem; color: var(--color-text-secondary);" data-i18n="all_binance_coins">All Binance Pay supported coins</span>
-                    </div>
-                    <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 10px;">
-                        <div style="font-size: 0.75rem; color: var(--color-text-tertiary); margin-bottom: 8px;">Binance Pay ID</div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <code id="binance-pay-id" style="flex: 1; font-size: 1.1rem; color: #f0b90b;">Loading...</code>
-                            <button type="button" onclick="copyBinancePayId()" style="padding: 8px 12px; background: #f0b90b; border: none; border-radius: 6px; cursor: pointer;">
-                                <i data-lucide="copy" style="width: 16px; height: 16px; color: #000;"></i>
-                            </button>
-                        </div>
-                    </div>
+            <!-- QR Code -->
+            <div style="text-align: center; margin-bottom: 18px;">
+                <div style="display: inline-block; background: white; padding: 14px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,152,234,0.25);">
+                    <canvas id="ton-qr-canvas" width="180" height="180"></canvas>
                 </div>
+                <div style="font-size: 0.75rem; color: var(--color-text-tertiary); margin-top: 8px;">Escanea con Tonkeeper, TON Wallet u otra app TON</div>
             </div>
 
-            <!-- Reglas de monto mínimo -->
-            <div style="background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(239, 68, 68, 0.2);">
+            <!-- Dirección TON -->
+            <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(0,152,234,0.25); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
+                <div style="font-size: 0.72rem; color: #0098EA; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.05em;">💎 DIRECCIÓN TON</div>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 24px;">⚠️</span>
-                    <div>
-                        <strong style="color: #ef4444;" data-i18n="min_deposit_rule">Minimum deposit: 1 DOGE</strong>
-                        <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 5px;" data-i18n="min_deposit_warning">
-                            Deposits below 1 DOGE will be automatically rejected and cannot be processed.
-                        </div>
-                    </div>
+                    <code id="ton-deposit-address" style="flex: 1; font-size: 0.78rem; word-break: break-all; color: #e2e8f0; line-height: 1.5;">Cargando...</code>
+                    <button type="button" onclick="copyTonDepositAddress()" style="flex-shrink: 0; padding: 8px 12px; background: linear-gradient(135deg, #0098EA, #0077B6); border: none; border-radius: 8px; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
+                        <i data-lucide="copy" style="width: 16px; height: 16px; color: white;"></i>
+                    </button>
                 </div>
             </div>
 
-            <!-- Formulario de envío de comprobante -->
-            <form id="deposit-form" enctype="multipart/form-data" onsubmit="submitDeposit(event)">
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label class="input-label" data-i18n="deposit_amount">Amount</label>
-                    <input type="number" class="input" id="deposit-amount" placeholder="0.00" step="0.0001" min="0.0001" required>
+            <!-- Memo / Tag -->
+            <div id="ton-memo-section" style="background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.35); border-radius: 12px; padding: 14px; margin-bottom: 18px;">
+                <div style="font-size: 0.72rem; color: #eab308; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.05em;">💬 MEMO / COMENTARIO <span style="color: #ef4444; font-weight: 700;">*OBLIGATORIO*</span></div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <code id="ton-deposit-memo" style="flex: 1; font-size: 1rem; font-weight: 700; color: #fbbf24; letter-spacing: 0.08em;">Cargando...</code>
+                    <button type="button" onclick="copyTonDepositMemo()" style="flex-shrink: 0; padding: 8px 12px; background: linear-gradient(135deg, #eab308, #ca8a04); border: none; border-radius: 8px; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
+                        <i data-lucide="copy" style="width: 16px; height: 16px; color: white;"></i>
+                    </button>
                 </div>
-
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label class="input-label" data-i18n="deposit_currency">Currency</label>
-                    <select class="input" id="deposit-currency" required onchange="updateCurrencyOptions()">
-                        <option value="DOGE">DOGE</option>
-                    </select>
+                <div style="font-size: 0.75rem; color: rgba(234,179,8,0.85); margin-top: 8px;">
+                    ⚠️ Debes incluir este memo exacto en tu transferencia. Sin memo el depósito <strong>NO se acreditará</strong>.
                 </div>
+            </div>
 
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label class="input-label" data-i18n="proof_screenshot">Proof Screenshot <span style="color: #ef4444;">*</span></label>
-                    <div style="border: 2px dashed rgba(255, 255, 255, 0.2); border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s;" 
-                         onclick="document.getElementById('deposit-proof').click()"
-                         id="proof-upload-area">
-                        <i data-lucide="upload-cloud" style="width: 40px; height: 40px; color: var(--color-text-tertiary); margin-bottom: 10px;"></i>
-                        <div style="color: var(--color-text-secondary); font-size: 0.875rem;" data-i18n="click_upload">Click to upload proof</div>
-                        <div style="color: var(--color-text-tertiary); font-size: 0.75rem; margin-top: 5px;">PNG, JPG, GIF - Max 5MB</div>
-                        <div id="proof-file-name" style="color: #22c55e; margin-top: 10px; display: none;"></div>
-                    </div>
-                    <input type="file" id="deposit-proof" accept="image/*" style="display: none;" onchange="handleProofUpload(this)" required>
+            <!-- Mínimo -->
+            <div style="background: rgba(0,152,234,0.07); border: 1px solid rgba(0,152,234,0.2); border-radius: 10px; padding: 12px 14px; margin-bottom: 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.82rem; color: var(--color-text-secondary);">Depósito mínimo</span>
+                    <strong style="color: #0098EA;">0.1 TON</strong>
                 </div>
-
-                <div class="input-group" style="margin-bottom: 20px;">
-                    <label class="input-label">Hash / TXID <span style="color: var(--color-text-tertiary);" data-i18n="optional">(Optional)</span></label>
-                    <input type="text" class="input" id="deposit-txhash" placeholder="Transaction hash or TXID">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                    <span style="font-size: 0.82rem; color: var(--color-text-secondary);">Acreditación</span>
+                    <strong style="color: #22c55e;">Automática ⚡</strong>
                 </div>
+            </div>
 
-                <button type="submit" class="btn btn-primary btn-block" id="deposit-submit-btn" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">
-                    <i data-lucide="send"></i>
-                    <span data-i18n="submit_deposit">Submit Deposit</span>
-                </button>
+            <!-- Historial depósitos -->
+            <button type="button" onclick="openDepositHistoryModal()" class="btn btn-secondary" style="width: 100%; margin-bottom: 8px;">
+                <i data-lucide="clock"></i>
+                Ver historial de depósitos
+            </button>
 
-                <p style="font-size: 0.75rem; color: var(--color-text-tertiary); text-align: center; margin-top: var(--space-4);" data-i18n="manual_review">
-                    Your deposit will be manually reviewed and credited within 24 hours.
-                </p>
-            </form>
         </div>
     </div>
 </div>
@@ -560,7 +520,7 @@
 <div id="deposit-history-modal" class="modal-overlay" style="display: none;">
     <div class="modal">
         <div class="modal-header">
-            <h3 class="modal-title">📋 <span data-i18n="deposit_history">Deposit History</span></h3>
+            <h3 class="modal-title">📋 Historial de Depósitos TON</h3>
             <button class="modal-close" onclick="closeDepositHistoryModal()">
                 <i data-lucide="x"></i>
             </button>
@@ -569,7 +529,7 @@
             <div id="deposit-history-list" style="max-height: 400px; overflow-y: auto;">
                 <div style="text-align: center; padding: 30px; color: var(--color-text-tertiary);">
                     <i data-lucide="loader-2" style="width: 40px; height: 40px; animation: spin 1s linear infinite;"></i>
-                    <p style="margin-top: 10px;" data-i18n="loading">Loading...</p>
+                    <p style="margin-top: 10px;">Cargando...</p>
                 </div>
             </div>
         </div>
@@ -953,182 +913,111 @@ async function submitWithdraw(event) {
 }
 
 // ============================================
-// DEPOSIT FUNCTIONS
+// DEPOSIT TON AUTOMÁTICO
 // ============================================
 
-// Configuración de depósito (se carga dinámicamente)
-let depositConfig = {
-    wallet_address: '',
-    binance_pay_id: '',
-    min_deposit: 1,
-    wallet_currencies: ['DOGE'],
-    binance_currencies: ['DOGE', 'USDT', 'BNB', 'BTC', 'ETH']
-};
+let _tonDepositAddress = '';
+let _tonDepositMemo = '';
 
-// Método actual seleccionado
-let currentDepositMethod = 'wallet';
+// Genera el memo único del usuario (basado en su user_id)
+function generateUserMemo(userId) {
+    // Memo fijo legible: "DEP" + últimos 8 dígitos del userId
+    const uid = String(userId).replace(/\D/g, '');
+    return 'DEP' + uid.slice(-8).padStart(8, '0');
+}
 
-// Cargar configuración de depósito
-async function loadDepositConfig() {
+// Dibuja el QR en el canvas usando una librería simple
+function drawQRCode(canvas, text) {
+    // Usamos la API de QR pública (solo lectura, no se envía dato sensible)
+    // En realidad generamos el QR con QRCode.js si está disponible,
+    // si no, usamos un img tag con la API de Google Charts (sin datos privados)
+    const img = new Image();
+    const encoded = encodeURIComponent(text);
+    img.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encoded}&bgcolor=ffffff&color=000000&margin=6`;
+    img.onload = () => {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, 180, 180);
+    };
+    img.onerror = () => {
+        // Fallback: mostrar texto si no carga el QR
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(0, 0, 180, 180);
+        ctx.fillStyle = '#0098EA';
+        ctx.font = '12px monospace';
+        ctx.fillText('QR no disponible', 10, 90);
+    };
+}
+
+async function loadTonDepositInfo() {
+    const userId = getCurrentUserId();
+    if (!userId) return;
+
     try {
-        const response = await fetch('/api/deposit/config');
+        // Obtener dirección TON del sistema
+        const response = await fetch('/api/ton/deposit/config');
         const data = await response.json();
-        if (data.success) {
-            depositConfig = data.config;
-            document.getElementById('wallet-deposit-address').textContent = depositConfig.wallet_address;
-            document.getElementById('binance-pay-id').textContent = depositConfig.binance_pay_id;
-            updateCurrencyOptions();
+
+        let address = '';
+        if (data.success && data.deposit_address) {
+            address = data.deposit_address;
+        } else if (data.wallet_address) {
+            address = data.wallet_address;
+        }
+
+        const memo = generateUserMemo(userId);
+        _tonDepositAddress = address;
+        _tonDepositMemo = memo;
+
+        // Actualizar UI
+        const addrEl = document.getElementById('ton-deposit-address');
+        const memoEl = document.getElementById('ton-deposit-memo');
+        if (addrEl) addrEl.textContent = address || 'No configurado';
+        if (memoEl) memoEl.textContent = memo;
+
+        // Generar QR con dirección + memo (formato ton:// )
+        const canvas = document.getElementById('ton-qr-canvas');
+        if (canvas && address) {
+            const qrData = `ton://transfer/${address}?text=${memo}`;
+            drawQRCode(canvas, qrData);
         }
     } catch (error) {
-        console.error('Error loading deposit config:', error);
+        console.error('Error cargando info depósito TON:', error);
+        const addrEl = document.getElementById('ton-deposit-address');
+        if (addrEl) addrEl.textContent = 'Error al cargar';
     }
 }
 
 function openDepositModal() {
-    loadDepositConfig();
     document.getElementById('deposit-modal').style.display = 'flex';
     lucide.createIcons();
+    loadTonDepositInfo();
 }
 
 function closeDepositModal() {
     document.getElementById('deposit-modal').style.display = 'none';
-    document.getElementById('deposit-form').reset();
-    document.getElementById('proof-file-name').style.display = 'none';
-    document.getElementById('proof-upload-area').style.borderColor = 'rgba(255, 255, 255, 0.2)';
 }
 
-function switchDepositTab(method) {
-    currentDepositMethod = method;
-    
-    // Update tab styles
-    document.querySelectorAll('.deposit-tab').forEach(tab => tab.classList.remove('active'));
-    document.getElementById('tab-deposit-' + method).classList.add('active');
-    
-    // Show/hide content
-    document.getElementById('deposit-wallet-content').style.display = method === 'wallet' ? 'block' : 'none';
-    document.getElementById('deposit-binance-content').style.display = method === 'binance' ? 'block' : 'none';
-    
-    // Update currency options
-    updateCurrencyOptions();
-}
-
-function updateCurrencyOptions() {
-    const select = document.getElementById('deposit-currency');
-    const currencies = currentDepositMethod === 'wallet' ? depositConfig.wallet_currencies : depositConfig.binance_currencies;
-    
-    select.innerHTML = '';
-    currencies.forEach(currency => {
-        const option = document.createElement('option');
-        option.value = currency;
-        option.textContent = currency;
-        select.appendChild(option);
-    });
-}
-
-function copyWalletAddress() {
-    const address = document.getElementById('wallet-deposit-address').textContent;
+function copyTonDepositAddress() {
+    const address = _tonDepositAddress || document.getElementById('ton-deposit-address').textContent;
     navigator.clipboard.writeText(address).then(() => {
-        showToast(window.tt ? window.tt('address_copied') : 'Dirección copiada', 'success');
+        showToast('Dirección TON copiada ✅', 'success');
     }).catch(() => {
         showToast('Error al copiar', 'error');
     });
 }
 
-function copyBinancePayId() {
-    const payId = document.getElementById('binance-pay-id').textContent;
-    navigator.clipboard.writeText(payId).then(() => {
-        showToast(window.tt ? window.tt('binance_id_copied') : 'Binance Pay ID copiado', 'success');
+function copyTonDepositMemo() {
+    const memo = _tonDepositMemo || document.getElementById('ton-deposit-memo').textContent;
+    navigator.clipboard.writeText(memo).then(() => {
+        showToast('Memo copiado ✅ — Recuerda incluirlo en tu transferencia', 'success');
     }).catch(() => {
         showToast('Error al copiar', 'error');
     });
 }
 
-function handleProofUpload(input) {
-    if (input.files && input.files[0]) {
-        const file = input.files[0];
-        const maxSize = 5 * 1024 * 1024; // 5MB
-        
-        if (file.size > maxSize) {
-            showToast(window.tt ? window.tt('file_too_large') : 'Archivo muy grande. Máximo 5MB', 'error');
-            input.value = '';
-            return;
-        }
-        
-        document.getElementById('proof-file-name').textContent = '✅ ' + file.name;
-        document.getElementById('proof-file-name').style.display = 'block';
-        document.getElementById('proof-upload-area').style.borderColor = '#22c55e';
-    }
-}
-
-async function submitDeposit(event) {
-    event.preventDefault();
-    
-    const userId = getCurrentUserId();
-    if (!userId) {
-        showToast(window.tt ? window.tt('toast_user_id_error') : 'Error: No se pudo obtener el ID de usuario', 'error');
-        return;
-    }
-    
-    const amount = parseFloat(document.getElementById('deposit-amount').value);
-    const currency = document.getElementById('deposit-currency').value;
-    const proofFile = document.getElementById('deposit-proof').files[0];
-    const txHash = document.getElementById('deposit-txhash').value.trim();
-    
-    // Validaciones
-    if (!amount || amount <= 0) {
-        showToast(window.tt ? window.tt('invalid_amount') : 'Ingresa un monto válido', 'error');
-        return;
-    }
-    
-    if (amount < depositConfig.min_deposit) {
-        showToast(window.tt ? window.tt('min_deposit_error') : `El monto mínimo de depósito es ${depositConfig.min_deposit} DOGE`, 'error');
-        return;
-    }
-    
-    if (!proofFile) {
-        showToast(window.tt ? window.tt('proof_required') : 'El comprobante de pago es obligatorio', 'error');
-        return;
-    }
-    
-    // Mostrar loading
-    const submitBtn = document.getElementById('deposit-submit-btn');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i data-lucide="loader-2" style="animation: spin 1s linear infinite;"></i> Enviando...';
-    submitBtn.disabled = true;
-    
-    try {
-        const formData = new FormData();
-        formData.append('user_id', userId);
-        formData.append('amount', amount);
-        formData.append('currency', currency);
-        formData.append('method', currentDepositMethod);
-        formData.append('proof_image', proofFile);
-        formData.append('tx_hash', txHash);
-        
-        const response = await fetch('/api/deposit/submit', {
-            method: 'POST',
-            body: formData
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast(window.tt ? window.tt('deposit_submitted') : '¡Depósito enviado! Será revisado en breve.', 'success');
-            closeDepositModal();
-        } else {
-            showToast(data.error || (window.tt ? window.tt('deposit_error') : 'Error al procesar el depósito'), 'error');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
-    } finally {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-        lucide.createIcons();
-    }
-}
-
-// Deposit History
+// Deposit History (TON)
 function openDepositHistoryModal() {
     document.getElementById('deposit-history-modal').style.display = 'flex';
     loadDepositHistory();
@@ -1142,40 +1031,59 @@ function closeDepositHistoryModal() {
 async function loadDepositHistory() {
     const userId = getCurrentUserId();
     const container = document.getElementById('deposit-history-list');
-    
+
     try {
-        const response = await fetch(`/api/deposit/history?user_id=${userId}`);
-        const data = await response.json();
-        
-        if (data.success && data.deposits.length > 0) {
-            container.innerHTML = data.deposits.map(dep => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; margin-bottom: 10px;">
-                    <div>
-                        <div style="font-weight: 600;">${dep.amount.toFixed(4)} ${dep.currency}</div>
-                        <div style="font-size: 0.75rem; color: var(--color-text-tertiary);">
-                            ${dep.method === 'wallet' ? '🔗 Wallet' : '📱 Binance Pay'} • ${new Date(dep.created_at).toLocaleDateString()}
+        // Intentar endpoint TON primero, luego el genérico
+        let data = null;
+        try {
+            const r1 = await fetch(`/api/ton/deposit/history?user_id=${userId}`);
+            data = await r1.json();
+        } catch(e) {
+            const r2 = await fetch(`/api/deposit/history?user_id=${userId}`);
+            data = await r2.json();
+        }
+
+        const deposits = data.deposits || data.data || [];
+
+        if (data.success && deposits.length > 0) {
+            container.innerHTML = deposits.map(dep => {
+                const amount = typeof dep.amount === 'number' ? dep.amount.toFixed(4) : dep.amount;
+                const currency = dep.currency || 'TON';
+                const statusColors = {
+                    confirmed: 'background: rgba(34,197,94,0.2); color: #22c55e;',
+                    approved: 'background: rgba(34,197,94,0.2); color: #22c55e;',
+                    pending: 'background: rgba(234,179,8,0.2); color: #eab308;',
+                    confirming: 'background: rgba(0,152,234,0.2); color: #0098EA;',
+                    failed: 'background: rgba(239,68,68,0.2); color: #ef4444;',
+                    rejected: 'background: rgba(239,68,68,0.2); color: #ef4444;'
+                };
+                const sc = statusColors[dep.status] || statusColors.pending;
+                const dateStr = dep.created_at ? new Date(dep.created_at).toLocaleDateString() : '';
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; background: rgba(255,255,255,0.04); border-radius: 10px; margin-bottom: 10px;">
+                        <div>
+                            <div style="font-weight: 700; color: #0098EA;">💎 ${amount} ${currency}</div>
+                            <div style="font-size: 0.75rem; color: var(--color-text-tertiary); margin-top: 3px;">⚡ Auto • ${dateStr}</div>
+                            ${dep.tx_hash ? `<div style="font-size: 0.68rem; color: var(--color-text-tertiary); font-family: monospace; margin-top: 2px;">${dep.tx_hash.slice(0,12)}...</div>` : ''}
+                        </div>
+                        <div style="padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; ${sc}">
+                            ${dep.status_text || dep.status}
                         </div>
                     </div>
-                    <div style="padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
-                        ${dep.status === 'approved' ? 'background: rgba(34, 197, 94, 0.2); color: #22c55e;' : 
-                          dep.status === 'pending' ? 'background: rgba(234, 179, 8, 0.2); color: #eab308;' :
-                          'background: rgba(239, 68, 68, 0.2); color: #ef4444;'}">
-                        ${dep.status_text}
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         } else {
             container.innerHTML = `
                 <div style="text-align: center; padding: 30px; color: var(--color-text-tertiary);">
                     <i data-lucide="inbox" style="width: 40px; height: 40px;"></i>
-                    <p style="margin-top: 10px;" data-i18n="no_deposits">No deposits yet</p>
+                    <p style="margin-top: 10px;">Sin depósitos aún</p>
                 </div>
             `;
             lucide.createIcons();
         }
     } catch (error) {
-        console.error('Error loading deposit history:', error);
-        container.innerHTML = '<div style="text-align: center; padding: 30px; color: #ef4444;">Error loading history</div>';
+        console.error('Error cargando historial:', error);
+        container.innerHTML = '<div style="text-align: center; padding: 30px; color: #ef4444;">Error al cargar historial</div>';
     }
 }
 
