@@ -959,14 +959,14 @@ var TON_MEMO = (function(){
     // Fallback: calcular desde user.user_id
     var uid = "{{ user.user_id|default('') }}";
     var digs = uid.replace(/[^0-9]/g, "");
-    if (digs.length > 0) return "DEP" + digs.slice(-8).padStart(8,"0");
+    if (digs.length > 0) return "TONU" + digs.slice(-8).padStart(8,"0");
     // Ultimo fallback: leer del DOM
     var inp = document.getElementById("current-user-id");
     if (inp && inp.value) {
         var d2 = inp.value.replace(/[^0-9]/g,"");
-        if (d2) return "DEP" + d2.slice(-8).padStart(8,"0");
+        if (d2) return "TONU" + d2.slice(-8).padStart(8,"0");
     }
-    return "DEP00000000";
+    return "TONU00000001";
 })();
 var _tonDepositId = null;
 var _tonPollTimer = null;
@@ -983,9 +983,9 @@ function buildMemo() {
         var p = new URLSearchParams(window.location.search);
         uid = p.get("user_id") || "";
     }
-    if (!uid) return "DEP00000000";
+    if (!uid) return "TONU00000001";
     var digits = uid.replace(/\D/g, "");
-    return "DEP" + (digits.slice(-8) || "00000000").padStart(8, "0");
+    return "TONU" + (digits.slice(-8) || "00000001").padStart(8, "0");
 }
 
 // ── QR ──
@@ -1041,17 +1041,14 @@ function startTonPolling(depositId) {
         fetch("/api/ton/deposit/status/" + _tonDepositId)
         .then(function(r){ return r.json(); })
         .then(function(d) {
-            if (d.success && d.deposit) {
-                var s = d.deposit.status;
-                if (s === "confirmed" || s === "credited") {
-                    clearInterval(_tonPollTimer);
-                    var success = elD("ton-step-success");
-                    var waiting = elD("ton-waiting-box");
-                    if (waiting) waiting.style.display = "none";
-                    if (success) success.style.display = "block";
-                    var msg = elD("ton-success-msg");
-                    if (msg) msg.textContent = "✅ " + (d.deposit.amount || "") + " TON acreditados en tu cuenta.";
-                }
+            if (d.success && (d.status === "credited" || d.status === "confirmed")) {
+                clearInterval(_tonPollTimer);
+                var success = elD("ton-step-success");
+                var waiting = elD("ton-waiting-box");
+                if (waiting) waiting.style.display = "none";
+                if (success) success.style.display = "block";
+                var msg = elD("ton-success-msg");
+                if (msg) msg.textContent = "✅ " + (d.ton_amount || "") + " TON acreditados en tu cuenta.";
             }
         }).catch(function(){});
     }, 8000);
@@ -1066,12 +1063,6 @@ function openDepositModal() {
 
     // Memo: Jinja primero, JS como fallback
     if (!TON_MEMO || TON_MEMO === "") TON_MEMO = buildMemo();
-    if (!TON_MEMO || TON_MEMO === "") {
-        // Fallback absoluto desde el hidden input
-        var uid = (elD("current-user-id") || {}).value || "";
-        var digs = uid.replace(/[^0-9]/g, "");
-        TON_MEMO = "DEP" + (digs.slice(-8) || "00000000").padStart(8, "0");
-    }
 
     // Poner dirección y memo en UI
     var addrEl = elD("ton-dep-address");
@@ -1079,25 +1070,32 @@ function openDepositModal() {
     if (addrEl) addrEl.textContent = TON_ADDR;
     if (memoEl) memoEl.textContent = TON_MEMO;
 
-    // Mostrar contenido (siempre habilitado porque tenemos dirección hardcodeada)
+    // Mostrar/ocultar según si hay wallet configurada
     var notEnabled = elD("ton-not-enabled");
     var depContent = elD("ton-deposit-content");
-    if (notEnabled) notEnabled.style.display = "none";
-    if (depContent) depContent.style.display = "block";
+    if (TON_ADDR && TON_ADDR.length > 10) {
+        if (notEnabled) notEnabled.style.display = "none";
+        if (depContent) depContent.style.display = "block";
+    } else {
+        if (notEnabled) notEnabled.style.display = "block";
+        if (depContent) depContent.style.display = "none";
+        return;
+    }
 
     // QR
     _qrDone = false;
     loadQRLib(makeQR);
 
-    // Crear depósito para polling
+    // Obtener deposit_id para polling (usa el nuevo endpoint GET)
     var userId = (elD("current-user-id") || {}).value || new URLSearchParams(window.location.search).get("user_id") || "";
     if (userId) {
-        fetch("/api/ton/deposit/create", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ user_id: userId, amount: 0, wallet_origin: "pending" })
-        }).then(function(r){ return r.json(); }).then(function(d){
+        fetch("/api/ton/deposit/address?user_id=" + userId)
+        .then(function(r){ return r.json(); })
+        .then(function(d){
             if (d.success && d.deposit_id) startTonPolling(d.deposit_id);
+            // Actualizar dirección y memo si vienen del backend
+            if (d.deposit_address && addrEl) addrEl.textContent = d.deposit_address;
+            if (d.memo && memoEl) { TON_MEMO = d.memo; memoEl.textContent = d.memo; _qrDone = false; makeQR(); }
         }).catch(function(){});
     }
 }
@@ -1131,20 +1129,21 @@ function loadDepositHistory() {
         var deps = data.deposits || [];
         if (data.success && deps.length > 0) {
             container.innerHTML = deps.map(function(dep) {
-                var amt = typeof dep.amount === "number" ? dep.amount.toFixed(4) : dep.amount;
-                var colors = {
-                    confirmed:  "background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.25);",
-                    pending:    "background:rgba(234,179,8,0.12);color:#fbbf24;border:1px solid rgba(234,179,8,0.25);",
-                    confirming: "background:rgba(0,152,234,0.12);color:#38bdf8;border:1px solid rgba(0,152,234,0.25);",
-                    failed:     "background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25);"
+                var amt = typeof dep.ton_amount === "number" ? dep.ton_amount.toFixed(4) : (dep.ton_amount || "0.0000");
+                var statusColors = {
+                    credited:  "background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.25);",
+                    confirmed: "background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.25);",
+                    pending:   "background:rgba(234,179,8,0.12);color:#fbbf24;border:1px solid rgba(234,179,8,0.25);",
+                    failed:    "background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25);"
                 };
-                var sc = colors[dep.status] || "background:rgba(255,255,255,0.06);color:#94a3b8;";
+                var sc = statusColors[dep.status] || "background:rgba(255,255,255,0.06);color:#94a3b8;";
                 var dt = dep.created_at ? new Date(dep.created_at).toLocaleDateString("es-ES",{day:"2-digit",month:"short"}) : "";
+                var statusLabel = dep.status === "credited" ? "Acreditado" : dep.status === "pending" ? "Pendiente" : dep.status === "failed" ? "Fallido" : dep.status;
                 return "<div style='display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(0,152,234,0.05);border:1px solid rgba(0,152,234,0.1);border-radius:12px;margin-bottom:8px;'>"
                     + "<div><div style='font-weight:700;color:#38bdf8;'>💎 " + amt + " TON</div>"
                     + "<div style='font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:3px;'>⚡ Auto · " + dt + "</div>"
                     + (dep.tx_hash ? "<div style='font-size:0.65rem;color:rgba(255,255,255,0.2);font-family:monospace;'>" + dep.tx_hash.slice(0,14) + "...</div>" : "")
-                    + "</div><span style='padding:4px 10px;border-radius:20px;font-size:0.68rem;font-weight:700;" + sc + "'>" + (dep.status_text || dep.status) + "</span></div>";
+                    + "</div><span style='padding:4px 10px;border-radius:20px;font-size:0.68rem;font-weight:700;" + sc + "'>" + statusLabel + "</span></div>";
             }).join("");
         } else {
             container.innerHTML = "<div style='text-align:center;padding:40px;color:rgba(255,255,255,0.25);'><div style='font-size:2rem;margin-bottom:10px;'>📭</div><div>Sin depósitos aún</div></div>";
