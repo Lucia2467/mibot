@@ -490,7 +490,7 @@
         <div style="background:rgba(0,152,234,0.06);border:1px solid rgba(0,152,234,0.2);border-radius:14px;padding:12px 14px;margin-bottom:12px;">
           <div style="font-size:0.65rem;color:#0098EA;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">💎 Dirección TON</div>
           <div style="display:flex;gap:8px;align-items:center;">
-            <code id="ton-dep-address" style="flex:1;font-size:0.72rem;word-break:break-all;color:#cbd5e1;line-height:1.5;">Cargando...</code>
+            <code id="ton-dep-address" style="flex:1;font-size:0.72rem;word-break:break-all;color:#cbd5e1;line-height:1.5;">{{ ton_wallet_address|default("No configurado") }}</code>
             <button onclick="copyDepAddr()" id="ton-copy-addr-btn" style="flex-shrink:0;padding:8px 12px;background:linear-gradient(135deg,#0098EA,#0066aa);border:none;border-radius:8px;cursor:pointer;font-size:0.7rem;color:white;font-weight:600;">Copiar</button>
           </div>
         </div>
@@ -505,7 +505,7 @@
             </div>
             <button onclick="copyDepMemo()" id="ton-copy-memo-btn" style="padding:6px 12px;background:linear-gradient(135deg,#eab308,#ca8a04);border:none;border-radius:8px;cursor:pointer;font-size:0.7rem;color:white;font-weight:700;">Copiar</button>
           </div>
-          <code id="ton-dep-memo" style="display:block;font-size:1.25rem;font-weight:800;color:#fbbf24;letter-spacing:0.12em;text-align:center;padding:6px 0;">Cargando...</code>
+          <code id="ton-dep-memo" style="display:block;font-size:1.25rem;font-weight:800;color:#fbbf24;letter-spacing:0.12em;text-align:center;padding:6px 0;">{{ user_deposit_memo|default("---") }}</code>
           <div style="font-size:0.7rem;color:#ef4444;margin-top:8px;line-height:1.4;">
             ⚠️ Sin este memo tu depósito <strong>NO será acreditado</strong>.
           </div>
@@ -947,8 +947,8 @@ async function submitWithdraw(event) {
 
 var _tonDepositId  = null;
 var _tonPollTimer  = null;
-var _TON_ADDRESS   = '';
-var _TON_MEMO      = '';
+var _TON_ADDRESS   = "{{ ton_wallet_address|default('') }}";
+var _TON_MEMO      = "{{ user_deposit_memo|default('') }}";
 var _qrGenerated   = false;
 
 function el(id) { return document.getElementById(id); }
@@ -1034,48 +1034,32 @@ async function startTonPolling(depositId) {
     }, 8000);
 }
 
-async function loadTonDepositData() {
-    try {
-        var r = await fetch('/api/ton/deposit/config');
-        var d = await r.json();
-        var address = d.deposit_wallet || d.deposit_address || d.wallet_address || '';
-        _TON_ADDRESS = address;
+function loadTonDepositData() {
+    // Datos inyectados por Jinja desde app.py — sin fetch
+    _TON_ADDRESS = "{{ ton_wallet_address|default('') }}";
+    _TON_MEMO    = "{{ user_deposit_memo|default('') }}";
 
-        // Memo: generado desde user_id
-        var userId = getCurrentUserId();
-        if (userId) {
-            var digits = String(userId).replace(/\D/g,'');
-            _TON_MEMO = 'DEP' + (digits.slice(-8) || '00000000').padStart(8,'0');
-        }
+    if (el('ton-dep-address')) el('ton-dep-address').textContent = _TON_ADDRESS || 'No configurado';
+    if (el('ton-dep-memo'))    el('ton-dep-memo').textContent    = _TON_MEMO    || '---';
 
-        // Actualizar UI
-        if (el('ton-dep-address')) el('ton-dep-address').textContent = address || 'No configurado';
-        if (el('ton-dep-memo'))    el('ton-dep-memo').textContent    = _TON_MEMO;
+    var notEnabled = el('ton-not-enabled');
+    var depContent = el('ton-deposit-content');
 
-        var notEnabled = el('ton-not-enabled');
-        var content    = el('ton-deposit-content');
-        if (!address) {
-            if (notEnabled) notEnabled.style.display = 'block';
-            if (content)    content.style.display    = 'none';
-        } else {
-            if (notEnabled) notEnabled.style.display = 'none';
-            if (content)    content.style.display    = 'block';
-            loadQRLib(generateTonQR);
-        }
-
-        // Polling
-        if (address) {
-            fetch('/api/ton/deposit/create', {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({ user_id: getCurrentUserId(), amount: 0, wallet_origin: 'pending' })
-            }).then(function(res){ return res.json(); }).then(function(dd){
-                if (dd.success && dd.deposit_id) startTonPolling(dd.deposit_id);
-            }).catch(function(){});
-        }
-    } catch(e) {
-        console.error('Error cargando datos depósito TON:', e);
-        if (el('ton-dep-address')) el('ton-dep-address').textContent = 'Error al cargar';
+    if (!_TON_ADDRESS) {
+        if (notEnabled) notEnabled.style.display = 'block';
+        if (depContent) depContent.style.display = 'none';
+    } else {
+        if (notEnabled) notEnabled.style.display = 'none';
+        if (depContent) depContent.style.display = 'block';
+        loadQRLib(generateTonQR);
+        // Polling automático
+        fetch('/api/ton/deposit/create', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ user_id: getCurrentUserId(), amount: 0, wallet_origin: 'pending' })
+        }).then(function(r){ return r.json(); }).then(function(d){
+            if (d.success && d.deposit_id) startTonPolling(d.deposit_id);
+        }).catch(function(){});
     }
 }
 
