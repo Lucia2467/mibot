@@ -623,12 +623,11 @@
         </div>
       </div>
 
-      <!-- Greeting text -->
-      <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:#fff;letter-spacing:-0.04em;margin-bottom:4px;line-height:1.1;">
-        <span id="wd-greeting-ok" style="font-weight:400;color:rgba(255,255,255,0.38);"></span>
-        <span id="wd-username" style="color:#22d97a;text-shadow:0 0 28px rgba(34,217,122,0.5);"></span>
+      <!-- Greeting text — one natural sentence -->
+      <div style="font-family:'Syne',sans-serif;font-size:1.45rem;font-weight:700;color:#fff;letter-spacing:-0.03em;margin-bottom:6px;line-height:1.25;">
+        <span id="wd-greeting-ok" style="font-weight:400;color:rgba(255,255,255,0.42);"></span><span id="wd-username" style="color:#22d97a;text-shadow:0 0 28px rgba(34,217,122,0.5);"></span><span id="wd-greeting-comma" style="font-weight:400;color:rgba(255,255,255,0.28);">,</span>
       </div>
-      <div id="wd-processing-label" style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:rgba(255,255,255,0.3);letter-spacing:0.04em;margin-bottom:20px;"></div>
+      <div id="wd-processing-label" style="font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:-0.01em;margin-bottom:20px;"></div>
 
       <!-- Amount badge -->
       <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(34,217,122,0.2);border-radius:10px;padding:9px 18px;margin-bottom:24px;background:rgba(34,217,122,0.05);">
@@ -1188,9 +1187,9 @@ function showWithdrawalOverlay(amount, currency) {
 
     // ── Translations ──
     const firstName = "{{ user.first_name | default('') | e }}";
-    document.getElementById('wd-greeting-ok').textContent       = _wdt('wd_greeting_ok','Ok') + ' ';
+    document.getElementById('wd-greeting-ok').textContent       = _wdt('wd_greeting_ok','Ok') + '\u00A0';
     document.getElementById('wd-username').textContent           = firstName;
-    document.getElementById('wd-processing-label').textContent  = _wdt('wd_processing_label','let me process this...');
+    document.getElementById('wd-processing-label').textContent  = _wdt('wd_processing_label','déjame procesar esto');
     document.getElementById('wd-label-step-1').textContent      = _wdt('wd_step_balance','Verifying balance');
     document.getElementById('wd-label-step-2').textContent      = _wdt('wd_step_security','Security validation');
     document.getElementById('wd-label-step-3').textContent      = _wdt('wd_step_network','Broadcasting to network');
