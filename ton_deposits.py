@@ -44,7 +44,7 @@ def _memo_for(user_id) -> str:
 # ── inicialización de tabla ────────────────────────────────────────────────────
 
 def init_ton_deposits_table():
-    """Crea tabla + columnas + config por defecto. Se ejecuta al importar."""
+    """Crea tabla + migra columnas faltantes. Se ejecuta al importar."""
 
     try:
         execute_query("""
@@ -69,9 +69,30 @@ def init_ton_deposits_table():
     except Exception as e:
         logger.warning(f"ton_deposits CREATE TABLE: {e}")
 
-    # NO usamos ALTER TABLE porque Railway MySQL no soporta IF NOT EXISTS en ALTER
-    # El memo se calcula deterministicamente desde user_id, no necesita columna extra
+    # Agregar columnas faltantes en tablas existentes.
+    # Railway MySQL no soporta IF NOT EXISTS en ALTER TABLE,
+    # así que intentamos cada ALTER y capturamos el error 1060 (columna ya existe).
+    migrations = [
+        "ALTER TABLE ton_deposits ADD COLUMN memo            VARCHAR(50)   DEFAULT NULL",
+        "ALTER TABLE ton_deposits ADD COLUMN ton_amount      DECIMAL(20,9) NOT NULL DEFAULT 0",
+        "ALTER TABLE ton_deposits ADD COLUMN ton_wallet_from VARCHAR(100)  NOT NULL DEFAULT ''",
+        "ALTER TABLE ton_deposits ADD COLUMN ton_tx_hash     VARCHAR(200)  DEFAULT NULL",
+        "ALTER TABLE ton_deposits ADD COLUMN credited_at     DATETIME      DEFAULT NULL",
+        "ALTER TABLE ton_deposits ADD COLUMN admin_note      TEXT          DEFAULT NULL",
+    ]
+    for sql in migrations:
+        try:
+            execute_query(sql)
+            col = sql.split("ADD COLUMN")[1].strip().split()[0]
+            logger.info(f"✅ Migración: columna '{col}' agregada")
+        except Exception as e:
+            err = str(e)
+            if "1060" in err or "Duplicate column" in err:
+                pass  # columna ya existe, ignorar
+            else:
+                logger.warning(f"Migración ALTER: {e}")
 
+    # Config por defecto
     for key, val in [
         ("ton_wallet_address",   ""),
         ("ton_min_deposit",      "0.1"),
