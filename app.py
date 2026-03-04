@@ -1036,10 +1036,10 @@ def wallet():
     min_doge = float(get_config('min_withdrawal_doge', 0.3))
 
     # TON deposit variables
-    # En Railway: variables vienen del dashboard de entorno
-    ton_wallet_address = os.environ.get('TON_WALLET_ADDRESS', '').strip()
+    # Dirección TON fija de depósitos
+    ton_wallet_address = os.environ.get('TON_WALLET_ADDRESS', 'UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3').strip() or 'UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3'
     ton_min = float(os.environ.get('MIN_DEPOSIT_TON', '0.1'))
-    ton_enabled = bool(ton_wallet_address)
+    ton_enabled = True  # Siempre habilitado
 
     # Memo unico por usuario basado en su user_id
     uid_str = str(user_id)
