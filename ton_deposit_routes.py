@@ -32,43 +32,43 @@ def get_deposit_config_endpoint():
 @ton_deposit_bp.route('/api/ton/deposit/create', methods=['POST'])
 def create_deposit_endpoint():
     """
-    Crea una intención de depósito.
-    
-    Body JSON:
-    {
-        "user_id": "123456",
-        "amount": 1.5,
-        "wallet_origin": "EQ..."
-    }
+    Crea una sesión de depósito para polling.
+    No requiere amount ni wallet_origin — el monto lo determina la blockchain.
+    Body JSON: { "user_id": "123456" }
     """
     try:
-        from ton_deposit_system import create_deposit_intent
-        
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'success': False, 'error': 'Datos requeridos'}), 400
-        
-        user_id = data.get('user_id') or request.args.get('user_id')
-        amount = data.get('amount')
-        wallet_origin = data.get('wallet_origin')
-        
+        import os, hashlib, time
+        from database import execute_query
+
+        data = request.get_json() or {}
+        user_id = str(data.get('user_id') or request.args.get('user_id') or '')
+
         if not user_id:
             return jsonify({'success': False, 'error': 'user_id requerido'}), 400
-        
-        if not amount:
-            return jsonify({'success': False, 'error': 'amount requerido'}), 400
-        
-        if not wallet_origin:
-            return jsonify({'success': False, 'error': 'wallet_origin requerido'}), 400
-        
-        result = create_deposit_intent(user_id, amount, wallet_origin)
-        
-        if result.get('success'):
-            return jsonify(result)
-        else:
-            return jsonify(result), 400
-            
+
+        WALLET = os.environ.get('TON_WALLET_ADDRESS', 'UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3')
+
+        # Generar deposit_id único para esta sesión de espera
+        raw = f"{user_id}:{int(time.time()*1000)}"
+        deposit_id = "SES_" + hashlib.sha256(raw.encode()).hexdigest()[:20]
+
+        # Registrar sesión pendiente (amount=0 es placeholder)
+        try:
+            execute_query("""
+                INSERT IGNORE INTO ton_deposits
+                (deposit_id, user_id, wallet_origin, wallet_destination, amount, status)
+                VALUES (%s, %s, 'pending', %s, 0, 'pending')
+            """, (deposit_id, user_id, WALLET))
+        except Exception as db_err:
+            logger.warning(f"No se pudo crear sesión depósito: {db_err}")
+
+        return jsonify({
+            'success': True,
+            'deposit_id': deposit_id,
+            'wallet_destination': WALLET,
+            'status': 'pending'
+        })
+
     except Exception as e:
         logger.error(f"Error creando depósito: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500

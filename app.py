@@ -6355,58 +6355,124 @@ def explore_link_center():
 # ============================================
 
 def _ton_deposit_monitor():
-    import time, re
-    logger.info("🔍 Monitor TON Deposits iniciado")
-    WALLET = os.environ.get("TON_WALLET_ADDRESS", "UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3")
-    last_lt = None
+    import time, re, requests
+    from decimal import Decimal
+
+    logger.info("🔍 TON Monitor arrancado")
+
+    WALLET  = "UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3"
+    API_URL = os.environ.get("TON_API_URL", "https://toncenter.com/api/v2")
+    API_KEY = os.environ.get("TON_API_KEY", "")
+    seen    = set()   # hashes ya procesados en memoria
+
+    def nano(n):
+        return float(Decimal(str(n)) / Decimal("1000000000"))
+
+    def hdrs():
+        h = {"Content-Type": "application/json"}
+        if API_KEY:
+            h["X-API-Key"] = API_KEY
+        return h
+
+    # Pre-cargar hashes ya confirmados para no reprocesar al arrancar
+    try:
+        from database import get_cursor
+        with get_cursor() as cur:
+            cur.execute("SELECT tx_hash FROM ton_deposits WHERE tx_hash IS NOT NULL AND status='confirmed'")
+            for r in cur.fetchall():
+                seen.add(r["tx_hash"] if isinstance(r, dict) else r[0])
+        logger.info(f"🔍 TON Monitor: {len(seen)} txs ya procesadas en DB")
+    except Exception as e:
+        logger.warning(f"TON Monitor pre-load: {e}")
+
     while True:
         try:
-            from ton_deposit_system import check_incoming_transactions, credit_ton_balance
-            from database import execute_query, get_cursor
-            txs = check_incoming_transactions(WALLET, since_lt=last_lt, limit=20)
-            for tx in txs:
-                tx_hash = tx.get("hash")
-                memo    = (tx.get("message") or "").strip()
-                amount  = float(tx.get("value", 0))
-                lt      = tx.get("lt")
-                if lt and (last_lt is None or int(lt) > int(last_lt)):
-                    last_lt = lt
-                if not tx_hash or not memo or amount <= 0:
-                    continue
-                if not re.match(r"^DEP\d{8}$", memo):
-                    continue
-                # Ya procesada?
-                with get_cursor() as cursor:
-                    cursor.execute("SELECT id FROM ton_deposits WHERE tx_hash=%s AND status='confirmed'", (tx_hash,))
-                    if cursor.fetchone():
+            resp = requests.get(
+                f"{API_URL}/getTransactions",
+                params={"address": WALLET, "limit": 30, "archival": "true"},
+                headers=hdrs(), timeout=20
+            )
+
+            if resp.status_code == 200 and resp.json().get("ok"):
+                txs = resp.json().get("result", [])
+
+                for tx in txs:
+                    in_msg = tx.get("in_msg", {})
+                    if not in_msg or int(in_msg.get("value", 0)) <= 0:
                         continue
-                # Buscar usuario
-                memo_digits = memo[3:]
-                with get_cursor() as cursor:
-                    cursor.execute("SELECT user_id FROM users WHERE RIGHT(CAST(user_id AS CHAR),8)=%s LIMIT 1", (memo_digits,))
-                    row = cursor.fetchone()
-                if not row:
-                    logger.warning(f"Sin usuario para memo: {memo}")
-                    continue
-                user_id = row["user_id"]
-                deposit_id = f"AUTO_{tx_hash[:16]}"
-                execute_query("""
-                    INSERT IGNORE INTO ton_deposits
-                    (deposit_id,user_id,wallet_origin,wallet_destination,amount,status,tx_hash,lt,credited_at,updated_at)
-                    VALUES (%s,%s,%s,%s,%s,'confirmed',%s,%s,NOW(),NOW())
-                """, (deposit_id, str(user_id), tx.get("source",""), WALLET, amount, tx_hash, lt))
-                if credit_ton_balance(user_id, amount, deposit_id):
-                    logger.info(f"✅ Depósito auto: {amount} TON → user {user_id}")
-                else:
-                    logger.error(f"❌ Error acreditando: user {user_id}")
+
+                    tx_id   = tx.get("transaction_id", {})
+                    tx_hash = tx_id.get("hash", "")
+                    lt      = str(tx_id.get("lt", ""))
+                    amount  = nano(int(in_msg.get("value", 0)))
+                    memo    = (in_msg.get("message") or "").strip()
+                    source  = in_msg.get("source", "")
+
+                    if not tx_hash or tx_hash in seen:
+                        continue
+
+                    # Validar formato memo: DEP + exactamente 8 dígitos
+                    if not re.match(r"^DEP[0-9]{8}$", memo):
+                        seen.add(tx_hash)   # ignorar para no revisar de nuevo
+                        continue
+
+                    suffix = memo[3:]   # 8 dígitos
+
+                    from database import get_cursor, execute_query, update_balance
+                    
+                    # Buscar usuario
+                    user_id = None
+                    with get_cursor() as cur:
+                        cur.execute(
+                            "SELECT user_id FROM users WHERE user_id LIKE %s LIMIT 1",
+                            (f"%{suffix}",)
+                        )
+                        row = cur.fetchone()
+                        if row:
+                            user_id = row["user_id"] if isinstance(row, dict) else row[0]
+
+                    if not user_id:
+                        logger.warning(f"⚠️  Memo {memo} sin usuario (sufijo {suffix})")
+                        seen.add(tx_hash)
+                        continue
+
+                    # Doble check en DB
+                    with get_cursor() as cur:
+                        cur.execute("SELECT id FROM ton_deposits WHERE tx_hash=%s", (tx_hash,))
+                        if cur.fetchone():
+                            seen.add(tx_hash)
+                            continue
+
+                    # Registrar y acreditar
+                    dep_id = f"AUTO_{tx_hash[:20]}"
+                    try:
+                        execute_query("""
+                            INSERT IGNORE INTO ton_deposits
+                            (deposit_id, user_id, wallet_origin, wallet_destination,
+                             amount, status, tx_hash, lt, credited_at, updated_at)
+                            VALUES (%s,%s,%s,%s,%s,'confirmed',%s,%s,NOW(),NOW())
+                        """, (dep_id, str(user_id), source, WALLET, amount, tx_hash, lt))
+
+                        ok = update_balance(str(user_id), "ton", amount, "add",
+                                           f"Deposito TON: {amount} TON | tx {tx_hash[:12]}")
+                        if ok:
+                            logger.info(f"✅ {amount} TON → user {user_id} | memo {memo} | tx {tx_hash[:16]}")
+                        else:
+                            logger.error(f"❌ Fallo acreditando {amount} TON → user {user_id}")
+
+                        seen.add(tx_hash)
+
+                    except Exception as e:
+                        logger.error(f"Error acreditando {tx_hash}: {e}")
+
         except Exception as e:
-            logger.error(f"Error monitor TON: {e}")
+            logger.error(f"TON Monitor error: {e}")
+
         time.sleep(30)
 
-# Arrancar monitor al importar el módulo (Railway/gunicorn)
-import threading as _threading
-_ton_thread = _threading.Thread(target=_ton_deposit_monitor, daemon=True, name="TON-Monitor")
-_ton_thread.start()
+
+import threading as _th
+_th.Thread(target=_ton_deposit_monitor, daemon=True, name="TON-Monitor").start()
 
 # ============== MAIN ==============
 
