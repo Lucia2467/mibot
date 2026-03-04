@@ -505,7 +505,7 @@
             </div>
             <button onclick="copyDepMemo()" id="ton-copy-memo-btn" style="padding:6px 12px;background:linear-gradient(135deg,#eab308,#ca8a04);border:none;border-radius:8px;cursor:pointer;font-size:0.7rem;color:white;font-weight:700;">Copiar</button>
           </div>
-          <code id="ton-dep-memo" style="display:block;font-size:1.25rem;font-weight:800;color:#fbbf24;letter-spacing:0.12em;text-align:center;padding:6px 0;">{{ user_deposit_memo|default("---") }}</code>
+          <code id="ton-dep-memo" style="display:block;font-size:1.25rem;font-weight:800;color:#fbbf24;letter-spacing:0.12em;text-align:center;padding:6px 0;">{{ user_deposit_memo if user_deposit_memo else "DEP" ~ (user.user_id|string)[-8:].zfill(8) }}</code>
           <div style="font-size:0.7rem;color:#ef4444;margin-top:8px;line-height:1.4;">
             ⚠️ Sin este memo tu depósito <strong>NO será acreditado</strong>.
           </div>
@@ -945,192 +945,220 @@ async function submitWithdraw(event) {
 // DEPOSIT TON — QR + POLLING AUTOMÁTICO
 // ============================================
 
-var _tonDepositId  = null;
-var _tonPollTimer  = null;
-var _TON_ADDRESS   = "{{ ton_wallet_address|default('UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3') }}" || "UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3";
-var _TON_MEMO      = "{{ user_deposit_memo|default('') }}";
-var _qrGenerated   = false;
+// Dirección fija — funciona con o sin variable de entorno
+var TON_ADDR = "UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3";
+// Si Jinja inyecta una dirección diferente, usarla
+(function(){
+  var jinjaAddr = "{{ ton_wallet_address|default('') }}".trim();
+  if (jinjaAddr && jinjaAddr.length > 10) TON_ADDR = jinjaAddr;
+})();
 
-function el(id) { return document.getElementById(id); }
+var TON_MEMO = (function(){
+    var m = "{{ user_deposit_memo|default('') }}";
+    if (m && m !== "" && m !== "---") return m;
+    // Fallback: calcular desde user.user_id
+    var uid = "{{ user.user_id|default('') }}";
+    var digs = uid.replace(/[^0-9]/g, "");
+    if (digs.length > 0) return "DEP" + digs.slice(-8).padStart(8,"0");
+    // Ultimo fallback: leer del DOM
+    var inp = document.getElementById("current-user-id");
+    if (inp && inp.value) {
+        var d2 = inp.value.replace(/[^0-9]/g,"");
+        if (d2) return "DEP" + d2.slice(-8).padStart(8,"0");
+    }
+    return "DEP00000000";
+})();
+var _tonDepositId = null;
+var _tonPollTimer = null;
+var _qrDone = false;
 
-function showDepStep(name) {
-    var waiting = el('ton-waiting-box');
-    var success = el('ton-step-success');
-    if (waiting) waiting.style.display = (name === 'waiting') ? 'block' : 'none';
-    if (success) success.style.display = (name === 'success') ? 'block' : 'none';
+function elD(id) { return document.getElementById(id); }
+
+// ── Generar memo desde user_id ──
+function buildMemo() {
+    var uid = "";
+    var inp = elD("current-user-id");
+    if (inp) uid = inp.value || "";
+    if (!uid) {
+        var p = new URLSearchParams(window.location.search);
+        uid = p.get("user_id") || "";
+    }
+    if (!uid) return "DEP00000000";
+    var digits = uid.replace(/\D/g, "");
+    return "DEP" + (digits.slice(-8) || "00000000").padStart(8, "0");
 }
 
-function generateTonQR() {
-    if (_qrGenerated || !_TON_ADDRESS) return;
-    var container = el('ton-qr-container');
+// ── QR ──
+function makeQR() {
+    if (_qrDone) return;
+    var container = elD("ton-qr-container");
     if (!container) return;
-
-    var tonUri = 'ton://transfer/' + _TON_ADDRESS + '?text=' + encodeURIComponent(_TON_MEMO);
-
-    // Limpiar canvas anterior
-    var oldCanvas = el('ton-qr-canvas');
-    if (oldCanvas) oldCanvas.remove();
-    // Limpiar img anterior generado por QRCode.js
-    var oldImg = container.querySelector('img');
-    if (oldImg) oldImg.remove();
-
+    // Limpiar
+    container.innerHTML = "";
+    var uri = "ton://transfer/" + TON_ADDR + "?text=" + encodeURIComponent(TON_MEMO);
     try {
         new QRCode(container, {
-            text: tonUri,
-            width: 160, height: 160,
-            colorDark: '#000000', colorLight: '#ffffff',
+            text: uri, width: 160, height: 160,
+            colorDark: "#000000", colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.M
         });
-        _qrGenerated = true;
+        _qrDone = true;
     } catch(e) {
-        container.innerHTML = '<div style="width:160px;height:160px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;font-size:10px;color:#333;text-align:center;padding:8px;">QR no disponible</div>';
+        container.innerHTML = '<div style="width:160px;height:160px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:11px;color:#333;text-align:center;padding:10px;">Abre Tonkeeper y envía a la dirección de abajo</div>';
     }
 }
 
-function loadQRLib(callback) {
-    if (typeof QRCode !== 'undefined') { callback(); return; }
-    var s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-    s.onload = callback;
-    s.onerror = function() { console.warn('QRCode lib failed to load'); callback(); };
+function loadQRLib(cb) {
+    if (typeof QRCode !== "undefined") { cb(); return; }
+    var s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+    s.onload = cb; s.onerror = cb;
     document.head.appendChild(s);
 }
 
+// ── Copiar ──
 function copyDepAddr() {
-    if (!_TON_ADDRESS) return;
-    navigator.clipboard.writeText(_TON_ADDRESS).then(function() {
-        var btn = el('ton-copy-addr-btn');
-        if (btn) { var orig = btn.textContent; btn.textContent = '✓ OK'; setTimeout(function(){ btn.textContent = orig; }, 2000); }
-        showToast('✅ Dirección TON copiada', 'success');
-    }).catch(function(){ showToast('Error al copiar', 'error'); });
+    navigator.clipboard.writeText(TON_ADDR).then(function() {
+        var b = elD("ton-copy-addr-btn");
+        if (b) { var o = b.textContent; b.textContent = "✓ OK"; setTimeout(function(){ b.textContent = o; }, 2000); }
+        if (typeof showToast === "function") showToast("✅ Dirección copiada", "success");
+    });
 }
 
 function copyDepMemo() {
-    if (!_TON_MEMO) return;
-    navigator.clipboard.writeText(_TON_MEMO).then(function() {
-        var btn = el('ton-copy-memo-btn');
-        if (btn) { var orig = btn.textContent; btn.textContent = '✓ OK'; setTimeout(function(){ btn.textContent = orig; }, 2000); }
-        showToast('✅ Memo copiado — inclúyelo en tu transferencia', 'success');
-    }).catch(function(){ showToast('Error al copiar', 'error'); });
+    navigator.clipboard.writeText(TON_MEMO).then(function() {
+        var b = elD("ton-copy-memo-btn");
+        if (b) { var o = b.textContent; b.textContent = "✓ OK"; setTimeout(function(){ b.textContent = o; }, 2000); }
+        if (typeof showToast === "function") showToast("✅ Memo copiado — inclúyelo en la transferencia", "success");
+    });
 }
 
-async function startTonPolling(depositId) {
+// ── Polling ──
+function startTonPolling(depositId) {
     _tonDepositId = depositId;
     if (_tonPollTimer) clearInterval(_tonPollTimer);
-    _tonPollTimer = setInterval(async function() {
-        try {
-            var r = await fetch('/api/ton/deposit/status/' + _tonDepositId);
-            var d = await r.json();
+    _tonPollTimer = setInterval(function() {
+        fetch("/api/ton/deposit/status/" + _tonDepositId)
+        .then(function(r){ return r.json(); })
+        .then(function(d) {
             if (d.success && d.deposit) {
-                var status = d.deposit.status;
-                if (status === 'confirmed' || status === 'credited') {
+                var s = d.deposit.status;
+                if (s === "confirmed" || s === "credited") {
                     clearInterval(_tonPollTimer);
-                    showDepStep('success');
-                                        var msg = '✅ ' + (d.deposit.amount || '') + ' TON recibidos. Acreditado en tu cuenta.';
-                    if (el('ton-success-msg')) el('ton-success-msg').textContent = msg;
+                    var success = elD("ton-step-success");
+                    var waiting = elD("ton-waiting-box");
+                    if (waiting) waiting.style.display = "none";
+                    if (success) success.style.display = "block";
+                    var msg = elD("ton-success-msg");
+                    if (msg) msg.textContent = "✅ " + (d.deposit.amount || "") + " TON acreditados en tu cuenta.";
                 }
             }
-        } catch(e) {}
+        }).catch(function(){});
     }, 8000);
 }
 
-function loadTonDepositData() {
-    // Datos inyectados por Jinja desde app.py — sin fetch
-    _TON_ADDRESS = "{{ ton_wallet_address|default('') }}";
-    _TON_MEMO    = "{{ user_deposit_memo|default('') }}";
+// ── Abrir modal ──
+function openDepositModal() {
+    var modal = elD("deposit-modal");
+    if (!modal) return;
+    modal.style.display = "flex";
+    if (typeof lucide !== "undefined") lucide.createIcons();
 
-    if (el('ton-dep-address')) el('ton-dep-address').textContent = _TON_ADDRESS || 'No configurado';
-    if (el('ton-dep-memo'))    el('ton-dep-memo').textContent    = _TON_MEMO    || '---';
+    // Memo: Jinja primero, JS como fallback
+    if (!TON_MEMO || TON_MEMO === "") TON_MEMO = buildMemo();
+    if (!TON_MEMO || TON_MEMO === "") {
+        // Fallback absoluto desde el hidden input
+        var uid = (elD("current-user-id") || {}).value || "";
+        var digs = uid.replace(/[^0-9]/g, "");
+        TON_MEMO = "DEP" + (digs.slice(-8) || "00000000").padStart(8, "0");
+    }
 
-    var notEnabled = el('ton-not-enabled');
-    var depContent = el('ton-deposit-content');
+    // Poner dirección y memo en UI
+    var addrEl = elD("ton-dep-address");
+    var memoEl = elD("ton-dep-memo");
+    if (addrEl) addrEl.textContent = TON_ADDR;
+    if (memoEl) memoEl.textContent = TON_MEMO;
 
-    // Fallback a dirección hardcodeada si Jinja no la pasa
-    if (!_TON_ADDRESS) _TON_ADDRESS = "UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3";
+    // Mostrar contenido (siempre habilitado porque tenemos dirección hardcodeada)
+    var notEnabled = elD("ton-not-enabled");
+    var depContent = elD("ton-deposit-content");
+    if (notEnabled) notEnabled.style.display = "none";
+    if (depContent) depContent.style.display = "block";
 
-    if (el('ton-dep-address')) el('ton-dep-address').textContent = _TON_ADDRESS;
+    // QR
+    _qrDone = false;
+    loadQRLib(makeQR);
 
-    if (!_TON_ADDRESS) {
-        if (notEnabled) notEnabled.style.display = 'block';
-        if (depContent) depContent.style.display = 'none';
-    } else {
-        if (notEnabled) notEnabled.style.display = 'none';
-        if (depContent) depContent.style.display = 'block';
-        loadQRLib(generateTonQR);
-        // Polling automático
-        fetch('/api/ton/deposit/create', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ user_id: getCurrentUserId(), amount: 0, wallet_origin: 'pending' })
+    // Crear depósito para polling
+    var userId = (elD("current-user-id") || {}).value || new URLSearchParams(window.location.search).get("user_id") || "";
+    if (userId) {
+        fetch("/api/ton/deposit/create", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ user_id: userId, amount: 0, wallet_origin: "pending" })
         }).then(function(r){ return r.json(); }).then(function(d){
             if (d.success && d.deposit_id) startTonPolling(d.deposit_id);
         }).catch(function(){});
     }
 }
 
-function openDepositModal() {
-    var modal = el('deposit-modal');
-    if (!modal) { console.error('deposit-modal not found'); return; }
-    modal.style.display = 'flex';
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-    showDepStep('waiting');
-    loadTonDepositData();
-}
-
 function closeDepositModal() {
-    var modal = el('deposit-modal');
-    if (modal) modal.style.display = 'none';
+    var modal = elD("deposit-modal");
+    if (modal) modal.style.display = "none";
     if (_tonPollTimer) { clearInterval(_tonPollTimer); _tonPollTimer = null; }
 }
 
-// Deposit History
+// ── Historial ──
 function openDepositHistoryModal() {
-    var m = el('deposit-history-modal');
-    if (m) m.style.display = 'flex';
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+    var m = elD("deposit-history-modal");
+    if (m) m.style.display = "flex";
+    if (typeof lucide !== "undefined") lucide.createIcons();
     loadDepositHistory();
 }
 
 function closeDepositHistoryModal() {
-    var m = el('deposit-history-modal');
-    if (m) m.style.display = 'none';
+    var m = elD("deposit-history-modal");
+    if (m) m.style.display = "none";
 }
 
-async function loadDepositHistory() {
-    var userId = getCurrentUserId();
-    var container = el('deposit-history-list');
-    if (!container) return;
-    try {
-        var r = await fetch('/api/ton/deposit/history?user_id=' + userId);
-        var data = await r.json();
-        var deposits = data.deposits || [];
-        if (data.success && deposits.length > 0) {
-            container.innerHTML = deposits.map(function(dep) {
-                var amount = typeof dep.amount === 'number' ? dep.amount.toFixed(4) : dep.amount;
-                var sc = ({
-                    confirmed: 'background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.25);',
-                    pending:   'background:rgba(234,179,8,0.12);color:#fbbf24;border:1px solid rgba(234,179,8,0.25);',
-                    confirming:'background:rgba(0,152,234,0.12);color:#38bdf8;border:1px solid rgba(0,152,234,0.25);',
-                    failed:    'background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25);'
-                })[dep.status] || 'background:rgba(255,255,255,0.06);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);';
-                var dateStr = dep.created_at ? new Date(dep.created_at).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}) : '';
-                return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(0,152,234,0.05);border:1px solid rgba(0,152,234,0.1);border-radius:12px;margin-bottom:8px;">'
-                    + '<div><div style="font-weight:700;color:#38bdf8;">💎 ' + amount + ' TON</div>'
-                    + '<div style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:3px;">⚡ Auto · ' + dateStr + '</div>'
-                    + (dep.tx_hash ? '<div style="font-size:0.65rem;color:rgba(255,255,255,0.2);font-family:monospace;margin-top:2px;">' + dep.tx_hash.slice(0,14) + '...</div>' : '')
-                    + '</div><span style="padding:4px 10px;border-radius:20px;font-size:0.68rem;font-weight:700;' + sc + '">'
-                    + (dep.status_text || dep.status) + '</span></div>';
-            }).join('');
+function loadDepositHistory() {
+    var userId = (elD("current-user-id") || {}).value || new URLSearchParams(window.location.search).get("user_id") || "";
+    var container = elD("deposit-history-list");
+    if (!container || !userId) return;
+    fetch("/api/ton/deposit/history?user_id=" + userId)
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+        var deps = data.deposits || [];
+        if (data.success && deps.length > 0) {
+            container.innerHTML = deps.map(function(dep) {
+                var amt = typeof dep.amount === "number" ? dep.amount.toFixed(4) : dep.amount;
+                var colors = {
+                    confirmed:  "background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.25);",
+                    pending:    "background:rgba(234,179,8,0.12);color:#fbbf24;border:1px solid rgba(234,179,8,0.25);",
+                    confirming: "background:rgba(0,152,234,0.12);color:#38bdf8;border:1px solid rgba(0,152,234,0.25);",
+                    failed:     "background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25);"
+                };
+                var sc = colors[dep.status] || "background:rgba(255,255,255,0.06);color:#94a3b8;";
+                var dt = dep.created_at ? new Date(dep.created_at).toLocaleDateString("es-ES",{day:"2-digit",month:"short"}) : "";
+                return "<div style='display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(0,152,234,0.05);border:1px solid rgba(0,152,234,0.1);border-radius:12px;margin-bottom:8px;'>"
+                    + "<div><div style='font-weight:700;color:#38bdf8;'>💎 " + amt + " TON</div>"
+                    + "<div style='font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:3px;'>⚡ Auto · " + dt + "</div>"
+                    + (dep.tx_hash ? "<div style='font-size:0.65rem;color:rgba(255,255,255,0.2);font-family:monospace;'>" + dep.tx_hash.slice(0,14) + "...</div>" : "")
+                    + "</div><span style='padding:4px 10px;border-radius:20px;font-size:0.68rem;font-weight:700;" + sc + "'>" + (dep.status_text || dep.status) + "</span></div>";
+            }).join("");
         } else {
-            container.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.25);"><div style="font-size:2rem;margin-bottom:10px;">📭</div><div style="font-size:0.85rem;">Sin depósitos aún</div></div>';
+            container.innerHTML = "<div style='text-align:center;padding:40px;color:rgba(255,255,255,0.25);'><div style='font-size:2rem;margin-bottom:10px;'>📭</div><div>Sin depósitos aún</div></div>";
         }
-    } catch(e) {
-        container.innerHTML = '<div style="text-align:center;padding:30px;color:#ef4444;font-size:0.85rem;">Error al cargar</div>';
-    }
+    }).catch(function() {
+        container.innerHTML = "<div style='text-align:center;padding:30px;color:#ef4444;'>Error al cargar</div>";
+    });
 }
 
 // ============================================
 // HELPERS - Usa el showToast global de main.js
+// ============================================
+
+
 // ============================================
 
 
