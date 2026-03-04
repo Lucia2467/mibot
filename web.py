@@ -1037,13 +1037,17 @@ def wallet():
     min_usdt = float(get_config('min_withdrawal_usdt', 0.5))
     min_doge = float(get_config('min_withdrawal_doge', 0.3))
 
-    # Memo único por usuario para depósitos TON (mismo algoritmo que el frontend)
-    _uid = str(user.get('user_id') or user.get('telegram_id') or user_id or '0')
-    _digits = ''.join(c for c in _uid if c.isdigit())
-    user_deposit_memo = 'DEP' + _digits[-8:].zfill(8) if _digits else 'DEP00000001'
+    # Memo único del usuario para depósitos TON
+    try:
+        from ton_deposits import get_or_create_user_memo
+        user_deposit_memo = get_or_create_user_memo(user_id)
+    except Exception:
+        digits = ''.join(c for c in str(user_id) if c.isdigit())
+        user_deposit_memo = 'TONU' + digits[-8:].zfill(8) if digits else 'TONU00000001'
 
-    ton_wallet_address = os.environ.get('TON_WALLET_ADDRESS', 'UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3').strip()
-    ton_min = float(os.environ.get('MIN_DEPOSIT_TON', '0.1'))
+    ton_wallet_address = get_config('ton_wallet_address', '')
+    ton_min = float(get_config('ton_min_deposit', '0.1'))
+    ton_enabled = get_config('ton_deposits_enabled', '1') == '1' and bool(ton_wallet_address)
 
     return render_template('wallet.html',
                          user=user,
@@ -1056,7 +1060,7 @@ def wallet():
                          user_deposit_memo=user_deposit_memo,
                          ton_wallet_address=ton_wallet_address,
                          ton_min=ton_min,
-                         ton_enabled=True)
+                         ton_enabled=ton_enabled)
 
 @app.route('/historial')
 def historial():
@@ -6253,37 +6257,13 @@ except Exception as e:
     logger.error(f"❌ Error registering mining machine routes: {e}")
 
 
-# ============== MANUAL DEPOSITS SYSTEM ==============
+# ============== TON DEPOSIT SYSTEM ==============
 try:
-    from manual_deposit_routes import register_manual_deposits
-    register_manual_deposits(app)
-    logger.info("✅ Manual Deposits system loaded successfully")
-    MANUAL_DEPOSITS_AVAILABLE = True
-except ImportError as e:
-    logger.warning(f"⚠️ Manual Deposits system not available: {e}")
-    MANUAL_DEPOSITS_AVAILABLE = False
+    from ton_deposit_routes import register_ton_deposit_routes
+    register_ton_deposit_routes(app)
+    logger.info("✅ TON Deposit system loaded successfully")
 except Exception as e:
-    logger.error(f"❌ Error loading Manual Deposits system: {e}")
-    MANUAL_DEPOSITS_AVAILABLE = False
-
-
-# ============== DOGE BEP20 AUTO DEPOSIT SYSTEM ==============
-try:
-    from deposit_routes import register_deposit_routes as register_doge_deposit_routes
-    register_doge_deposit_routes(app)
-    logger.info("✅ DOGE BEP20 Auto Deposit routes loaded successfully")
-except ImportError as e:
-    logger.warning(f"⚠️ DOGE BEP20 deposit routes not available: {e}")
-except Exception as e:
-    logger.error(f"❌ Error loading DOGE BEP20 deposit routes: {e}")
-
-# ============== DOGE DEPOSIT BACKGROUND SCANNER ==============
-try:
-    from deposit_scheduler import start_deposit_scheduler
-    start_deposit_scheduler()
-    logger.info("✅ DOGE deposit background scanner started")
-except Exception as e:
-    logger.error(f"❌ Error starting deposit scheduler: {e}")
+    logger.error(f"❌ Error loading TON Deposit system: {e}")
 
 
 # ============== USER TASKS PROMOTION SYSTEM ==============

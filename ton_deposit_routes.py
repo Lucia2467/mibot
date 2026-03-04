@@ -1,240 +1,219 @@
 """
-ton_deposit_routes.py - Rutas API para depósitos TON
-Se registra en app.py
+ton_deposit_routes.py  –  Rutas Flask para depósitos TON
+=========================================================
+Endpoints:
+  GET  /api/ton/deposit/address        → devuelve wallet + memo + deposit_id
+  GET  /api/ton/deposit/status/<id>    → polling (escanea blockchain en cada llamada)
+  GET  /api/ton/deposit/history        → historial del usuario
+  POST /admin/ton/deposit/approve      → aprobación manual (admin)
+  POST /admin/ton/deposit/reject       → rechazo manual (admin)
 """
 
-from flask import Blueprint, request, jsonify
 import logging
+from flask import Blueprint, request, jsonify, session
+from functools import wraps
+
+from ton_deposits import (
+    get_or_create_user_memo,
+    create_pending_deposit,
+    get_deposit,
+    get_user_deposits,
+    get_pending_deposits,
+    credit_deposit,
+    _scan_and_credit,
+)
+from database import get_user, get_config
 
 logger = logging.getLogger(__name__)
 
-# Blueprint para rutas de depósito
-ton_deposit_bp = Blueprint('ton_deposit', __name__)
+ton_deposit_bp = Blueprint("ton_deposit", __name__)
 
-# ============================================
-# API ENDPOINTS
-# ============================================
 
-@ton_deposit_bp.route('/api/ton/deposit/config', methods=['GET'])
-def get_deposit_config_endpoint():
-    """Obtiene configuración de depósitos"""
-    try:
-        from ton_deposit_system import get_deposit_config
-        config = get_deposit_config()
-        return jsonify({
-            'success': True,
-            **config
-        })
-    except Exception as e:
-        logger.error(f"Error en config: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
+# ── Decoradores ────────────────────────────────────────────────────────────────
 
-@ton_deposit_bp.route('/api/ton/deposit/create', methods=['POST'])
-def create_deposit_endpoint():
-    """
-    Crea una sesión de depósito para polling.
-    No requiere amount ni wallet_origin — el monto lo determina la blockchain.
-    Body JSON: { "user_id": "123456" }
-    """
-    try:
-        import os, hashlib, time
-        from database import execute_query
+def _get_user_id():
+    from flask import request
+    return (
+        request.args.get("user_id")
+        or (request.get_json(silent=True) or {}).get("user_id")
+        or request.form.get("user_id")
+    )
 
-        data = request.get_json() or {}
-        user_id = str(data.get('user_id') or request.args.get('user_id') or '')
 
+def require_user(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        user_id = _get_user_id()
         if not user_id:
-            return jsonify({'success': False, 'error': 'user_id requerido'}), 400
+            return jsonify({"success": False, "error": "user_id requerido"}), 400
+        user = get_user(user_id)
+        if not user:
+            return jsonify({"success": False, "error": "Usuario no encontrado"}), 404
+        return f(user, *args, **kwargs)
+    return wrapper
 
-        WALLET = os.environ.get('TON_WALLET_ADDRESS', 'UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3')
 
-        # Generar deposit_id único para esta sesión de espera
-        raw = f"{user_id}:{int(time.time()*1000)}"
-        deposit_id = "SES_" + hashlib.sha256(raw.encode()).hexdigest()[:20]
+def require_admin(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if not session.get("admin_logged_in"):
+            return jsonify({"success": False, "error": "No autorizado"}), 401
+        return f(*args, **kwargs)
+    return wrapper
 
-        # Registrar sesión pendiente (amount=0 es placeholder)
-        try:
-            execute_query("""
-                INSERT IGNORE INTO ton_deposits
-                (deposit_id, user_id, wallet_origin, wallet_destination, amount, status)
-                VALUES (%s, %s, 'pending', %s, 0, 'pending')
-            """, (deposit_id, user_id, WALLET))
-        except Exception as db_err:
-            logger.warning(f"No se pudo crear sesión depósito: {db_err}")
 
-        return jsonify({
-            'success': True,
-            'deposit_id': deposit_id,
-            'wallet_destination': WALLET,
-            'status': 'pending'
-        })
+# ── Rutas de usuario ───────────────────────────────────────────────────────────
 
-    except Exception as e:
-        logger.error(f"Error creando depósito: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@ton_deposit_bp.route('/api/ton/deposit/confirm', methods=['POST'])
-def confirm_deposit_endpoint():
+@ton_deposit_bp.route("/api/ton/deposit/address")
+@require_user
+def api_ton_deposit_address(user):
     """
-    Confirma un depósito con hash de transacción.
-    Verifica en blockchain antes de acreditar.
-    
-    Body JSON:
-    {
-        "deposit_id": "abc123...",
-        "tx_hash": "xyz789...",
-        "user_id": "123456"  (opcional, para verificación)
-    }
+    Devuelve la dirección de depósito del bot y el memo único del usuario.
+    Crea (o reutiliza) un registro pending en ton_deposits.
     """
-    try:
-        from ton_deposit_system import confirm_deposit
-        
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'success': False, 'error': 'Datos requeridos'}), 400
-        
-        deposit_id = data.get('deposit_id')
-        tx_hash = data.get('tx_hash')
-        user_id = data.get('user_id') or request.args.get('user_id')
-        
-        if not deposit_id:
-            return jsonify({'success': False, 'error': 'deposit_id requerido'}), 400
-        
-        if not tx_hash:
-            return jsonify({'success': False, 'error': 'tx_hash requerido'}), 400
-        
-        result = confirm_deposit(deposit_id, tx_hash, user_id)
-        
-        if result.get('success'):
-            return jsonify(result)
-        else:
-            return jsonify(result), 400
-            
-    except Exception as e:
-        logger.error(f"Error confirmando depósito: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
+    if get_config("ton_deposits_enabled", "1") != "1":
+        return jsonify({"success": False, "error": "Depósitos TON deshabilitados"}), 503
 
-@ton_deposit_bp.route('/api/ton/deposit/status/<deposit_id>', methods=['GET'])
-def get_deposit_status_endpoint(deposit_id):
-    """Obtiene estado de un depósito"""
+    ton_wallet = get_config("ton_wallet_address", "")
+    if not ton_wallet or not ton_wallet.startswith(("EQ", "UQ", "kQ", "0Q")):
+        return jsonify({"success": False, "error": "Wallet TON no configurada"}), 503
+
+    user_id  = str(user["user_id"])
+    memo     = get_or_create_user_memo(user_id)
+    ton_min  = float(get_config("ton_min_deposit", "0.1"))
+
+    # Reutilizar pending existente si lo hay
+    existing = None
     try:
-        from ton_deposit_system import get_deposit
-        
-        user_id = request.args.get('user_id')
-        deposit = get_deposit(deposit_id)
-        
-        if not deposit:
-            return jsonify({'success': False, 'error': 'Depósito no encontrado'}), 404
-        
-        # Verificar pertenencia si se proporciona user_id
-        if user_id and str(deposit['user_id']) != str(user_id):
-            return jsonify({'success': False, 'error': 'No autorizado'}), 403
-        
-        return jsonify({
-            'success': True,
-            'deposit': {
-                'deposit_id': deposit['deposit_id'],
-                'amount': float(deposit['amount']),
-                'status': deposit['status'],
-                'wallet_destination': deposit['wallet_destination'],
-                'tx_hash': deposit.get('tx_hash'),
-                'created_at': str(deposit['created_at']) if deposit.get('created_at') else None,
-                'credited_at': str(deposit['credited_at']) if deposit.get('credited_at') else None
-            }
+        from db import get_cursor
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT deposit_id FROM ton_deposits
+                WHERE user_id=%s AND status='pending'
+                ORDER BY created_at DESC LIMIT 1
+            """, (user_id,))
+            row = cursor.fetchone()
+            if row:
+                existing = row["deposit_id"] if isinstance(row, dict) else row[0]
+    except Exception:
+        pass
+
+    deposit_id = existing or create_pending_deposit(user_id, memo)
+
+    return jsonify({
+        "success":         True,
+        "deposit_address": ton_wallet,
+        "memo":            memo,
+        "deposit_id":      deposit_id,
+        "min_deposit":     ton_min,
+        "network":         "TON Mainnet",
+    })
+
+
+@ton_deposit_bp.route("/api/ton/deposit/status/<deposit_id>")
+@require_user
+def api_ton_deposit_status(user, deposit_id):
+    """
+    Polling: el frontend llama esto cada 8 s.
+    En cada llamada se escanea Toncenter buscando el pago del usuario.
+    """
+    user_id = str(user["user_id"])
+
+    dep = get_deposit(deposit_id)
+    if not dep or str(dep.get("user_id", "")) != user_id:
+        return jsonify({"status": "not_found"})
+
+    # Si sigue pending → escanear blockchain
+    if dep["status"] == "pending":
+        _scan_and_credit(user_id, deposit_id)
+        dep = get_deposit(deposit_id)   # re-leer tras posible actualización
+
+    return jsonify({
+        "success":    True,
+        "status":     dep["status"] if dep else "not_found",
+        "ton_amount": float(dep.get("ton_amount") or 0) if dep else 0,
+    })
+
+
+@ton_deposit_bp.route("/api/ton/deposit/history")
+@require_user
+def api_ton_deposit_history(user):
+    """Historial de depósitos del usuario."""
+    deposits = get_user_deposits(str(user["user_id"]), limit=20)
+    result = []
+    for d in deposits:
+        result.append({
+            "deposit_id":  d.get("deposit_id"),
+            "ton_amount":  float(d.get("ton_amount") or 0),
+            "status":      d.get("status"),
+            "tx_hash":     d.get("ton_tx_hash"),
+            "created_at":  str(d["created_at"]) if d.get("created_at") else None,
+            "credited_at": str(d["credited_at"]) if d.get("credited_at") else None,
         })
-        
-    except Exception as e:
-        logger.error(f"Error obteniendo estado: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@ton_deposit_bp.route('/api/ton/deposit/history', methods=['GET'])
-def get_deposit_history_endpoint():
-    """Obtiene historial de depósitos del usuario"""
-    try:
-        from ton_deposit_system import get_user_deposits
-        
-        user_id = request.args.get('user_id')
-        
-        if not user_id:
-            return jsonify({'success': False, 'error': 'user_id requerido'}), 400
-        
-        status = request.args.get('status')  # opcional: pending, confirmed, failed
-        limit = int(request.args.get('limit', 20))
-        
-        deposits = get_user_deposits(user_id, status=status, limit=limit)
-        
-        # Formatear para respuesta
-        formatted = []
-        for d in deposits:
-            formatted.append({
-                'deposit_id': d['deposit_id'],
-                'amount': float(d['amount']),
-                'status': d['status'],
-                'tx_hash': d.get('tx_hash'),
-                'created_at': str(d['created_at']) if d.get('created_at') else None,
-                'credited_at': str(d['credited_at']) if d.get('credited_at') else None
-            })
-        
-        return jsonify({
-            'success': True,
-            'deposits': formatted,
-            'count': len(formatted)
-        })
-        
-    except Exception as e:
-        logger.error(f"Error obteniendo historial: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@ton_deposit_bp.route('/api/ton/deposit/cancel', methods=['POST'])
-def cancel_deposit_endpoint():
-    """Cancela un depósito pendiente"""
-    try:
-        from ton_deposit_system import cancel_deposit
-        
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'success': False, 'error': 'Datos requeridos'}), 400
-        
-        deposit_id = data.get('deposit_id')
-        user_id = data.get('user_id') or request.args.get('user_id')
-        
-        if not deposit_id:
-            return jsonify({'success': False, 'error': 'deposit_id requerido'}), 400
-        
-        result = cancel_deposit(deposit_id, user_id)
-        
-        if result.get('success'):
-            return jsonify(result)
-        else:
-            return jsonify(result), 400
-            
-    except Exception as e:
-        logger.error(f"Error cancelando depósito: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@ton_deposit_bp.route('/api/ton/deposit/stats', methods=['GET'])
-def get_deposit_stats_endpoint():
-    """Obtiene estadísticas de depósitos"""
-    try:
-        from ton_deposit_system import get_deposit_stats
-        
-        user_id = request.args.get('user_id')
-        
-        stats = get_deposit_stats(user_id)
-        
-        return jsonify({
-            'success': True,
-            **stats
-        })
-        
-    except Exception as e:
-        logger.error(f"Error obteniendo stats: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
+    return jsonify({"success": True, "deposits": result})
 
 
-def register_deposit_routes(app):
-    """Registra las rutas de depósito en la aplicación Flask"""
+# ── Rutas de admin ─────────────────────────────────────────────────────────────
+
+@ton_deposit_bp.route("/admin/ton/deposit/approve", methods=["POST"])
+@require_admin
+def admin_approve_deposit():
+    """Aprobar depósito manualmente."""
+    data       = request.get_json(silent=True) or request.form
+    deposit_id = data.get("deposit_id")
+    tx_hash    = data.get("tx_hash", "manual")
+    ton_amount = float(data.get("ton_amount", 0))
+
+    if not deposit_id:
+        return jsonify({"success": False, "error": "deposit_id requerido"}), 400
+
+    dep = get_deposit(deposit_id)
+    if not dep:
+        return jsonify({"success": False, "error": "Depósito no encontrado"}), 404
+
+    if dep["status"] == "credited":
+        return jsonify({"success": False, "error": "Ya acreditado"}), 400
+
+    amount = ton_amount or float(dep.get("ton_amount") or 0)
+    if amount <= 0:
+        return jsonify({"success": False, "error": "Monto inválido"}), 400
+
+    ok = credit_deposit(deposit_id, amount, tx_hash, "admin_manual")
+    return jsonify({"success": ok})
+
+
+@ton_deposit_bp.route("/admin/ton/deposit/reject", methods=["POST"])
+@require_admin
+def admin_reject_deposit():
+    """Rechazar depósito."""
+    data       = request.get_json(silent=True) or request.form
+    deposit_id = data.get("deposit_id")
+    note       = data.get("note", "")
+
+    if not deposit_id:
+        return jsonify({"success": False, "error": "deposit_id requerido"}), 400
+
+    from db import execute_query
+    execute_query(
+        "UPDATE ton_deposits SET status='failed', admin_note=%s WHERE deposit_id=%s",
+        (note, deposit_id)
+    )
+    return jsonify({"success": True})
+
+
+@ton_deposit_bp.route("/admin/ton/deposits")
+@require_admin
+def admin_ton_deposits():
+    """Lista todos los depósitos pendientes para el panel admin."""
+    pending = get_pending_deposits()
+    return jsonify({"success": True, "deposits": [
+        {k: (str(v) if hasattr(v, "isoformat") else v) for k, v in (d.items() if isinstance(d, dict) else {}.items())}
+        for d in pending
+    ]})
+
+
+# ── Registro del blueprint ─────────────────────────────────────────────────────
+
+def register_ton_deposit_routes(app):
     app.register_blueprint(ton_deposit_bp)
-    logger.info("✅ Rutas de depósito TON registradas")
+    logger.info("✅ TON deposit routes registered")
