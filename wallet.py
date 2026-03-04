@@ -188,12 +188,11 @@ def create_withdrawal_request(user_id, currency, amount, wallet_address=None):
     if mode == 'automatic':
         # Try automatic processing based on currency
         if currency == 'TON':
-            # Use TON payment system for TON
+            # Pago automático TON usando ton_wallet.py (tonutils)
             try:
-                from ton_payments_system import process_ton_payment
-                # Note: TON uses its own payment table, not withdrawals table
-                # This is handled separately in ton_payment_routes.py
-                pass
+                from ton_payments_system import process_ton_withdrawal_auto
+                process_ton_withdrawal_auto(withdrawal_id)
+                # Si falla queda como 'failed' con balance devuelto automáticamente
             except ImportError:
                 pass
         else:

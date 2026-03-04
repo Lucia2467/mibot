@@ -18,11 +18,11 @@ except ImportError:
     print("Warning: payments.py not available - BEP20 auto_pay will use manual mode")
 
 try:
-    from ton_payments import send_ton, validate_address as validate_ton, get_wallet_info as get_ton_wallet_info, is_ton_configured
+    from ton_payments_system import send_ton_payment, validate_ton_address as _validate_ton_addr, is_ton_configured, get_system_wallet_info as get_ton_wallet_info
     TON_PAYMENTS_AVAILABLE = True
 except ImportError:
     TON_PAYMENTS_AVAILABLE = False
-    print("Warning: ton_payments.py not available - TON auto_pay will use manual mode")
+    print("Warning: ton_payments_system.py not available - TON auto_pay will use manual mode")
 
 def process_withdrawal(withdrawal_id):
     """
@@ -113,69 +113,49 @@ def process_bep20_withdrawal(withdrawal):
         return False, f"Error inesperado: {error_msg}"
 
 def process_ton_withdrawal(withdrawal):
-    """Procesa un retiro TON"""
+    """Procesa un retiro TON usando ton_wallet.py (tonutils + ToncenterClient)."""
     if not TON_PAYMENTS_AVAILABLE or not is_ton_configured():
-        return False, "Sistema de pagos TON no disponible - requiere aprobación manual"
-    
+        return False, "Sistema de pagos TON no configurado - requiere aprobación manual"
+
     withdrawal_id = withdrawal['withdrawal_id']
-    
-    # Validate wallet address
-    if not validate_ton(withdrawal['wallet_address']):
-        update_withdrawal(withdrawal_id, 
-                         status='failed',
-                         error_message='Dirección TON inválida')
-        # Return balance
-        update_balance(withdrawal['user_id'],
-                      'ton',
-                      withdrawal['amount'],
-                      'add',
-                      f'TON Withdrawal failed refund: {withdrawal["amount"]} TON')
-        return False, "Dirección TON inválida"
-    
-    # Mark as processing
+    address = withdrawal['wallet_address']
+
+    # Validar dirección
+    valid, err = _validate_ton_addr(address)
+    if not valid:
+        update_withdrawal(withdrawal_id, status='failed', error_message=f'Dirección TON inválida: {err}')
+        update_balance(withdrawal['user_id'], 'ton', withdrawal['amount'], 'add',
+                       f'TON Withdrawal failed refund: {withdrawal["amount"]} TON')
+        return False, f"Dirección TON inválida: {err}"
+
+    # Marcar como procesando
     update_withdrawal(withdrawal_id, status='processing')
-    
+
     try:
-        # Attempt to send TON
         memo = f"SALLY-E Withdrawal {withdrawal_id}"
-        success, result = send_ton(
-            to_address=withdrawal['wallet_address'],
+        success, tx_hash, error = send_ton_payment(
+            to_address=address,
             amount=float(withdrawal['amount']),
-            memo=memo
+            memo=memo,
         )
-        
+
         if success:
-            # Update to completed with tx hash
             update_withdrawal(withdrawal_id,
-                            status='completed',
-                            tx_hash=result,
-                            processed_at=datetime.now())
-            return True, f"TON enviado. TX: {result}"
+                              status='completed',
+                              tx_hash=tx_hash,
+                              processed_at=datetime.now())
+            return True, f"TON enviado. TX: {tx_hash}"
         else:
-            # Payment failed
-            update_withdrawal(withdrawal_id,
-                            status='failed',
-                            error_message=result)
-            # Return balance to user
-            update_balance(withdrawal['user_id'],
-                          'ton',
-                          withdrawal['amount'],
-                          'add',
-                          f'TON Withdrawal failed refund: {withdrawal["amount"]} TON')
-            return False, f"Error en el pago TON: {result}"
-            
+            update_withdrawal(withdrawal_id, status='failed', error_message=error)
+            update_balance(withdrawal['user_id'], 'ton', withdrawal['amount'], 'add',
+                           f'TON Withdrawal failed refund: {withdrawal["amount"]} TON')
+            return False, f"Error en el pago TON: {error}"
+
     except Exception as e:
-        # Handle unexpected errors
         error_msg = str(e)
-        update_withdrawal(withdrawal_id,
-                         status='failed',
-                         error_message=error_msg)
-        # Return balance
-        update_balance(withdrawal['user_id'],
-                      'ton',
-                      withdrawal['amount'],
-                      'add',
-                      f'TON Withdrawal error refund: {withdrawal["amount"]} TON')
+        update_withdrawal(withdrawal_id, status='failed', error_message=error_msg)
+        update_balance(withdrawal['user_id'], 'ton', withdrawal['amount'], 'add',
+                       f'TON Withdrawal error refund: {withdrawal["amount"]} TON')
         return False, f"Error inesperado: {error_msg}"
 
 def process_all_pending():

@@ -113,6 +113,9 @@ except ImportError as e:
     MINING_MACHINE_AVAILABLE = False
     logger.warning(f"⚠️ Mining machine system not available: {e}")
 
+# TON payments availability flag (set later at bottom during blueprint registration)
+TON_PAYMENTS_AVAILABLE = False
+
 # Import auto payment system
 try:
     from auto_pay import (
@@ -161,36 +164,16 @@ if BAN_SYSTEM_AVAILABLE:
 
 # ============== TELEGRAM WEB LOGIN SYSTEM ==============
 try:
-    import database as db_module
-    from telegram_web_auth import (
-        register_telegram_web_auth_routes,
-        get_authenticated_user_id,
-        web_login_required,
-        validate_miniapp_init_data,
-        TelegramAuthError
-    )
-    register_telegram_web_auth_routes(app, db_module)
-    TELEGRAM_WEB_AUTH_AVAILABLE = True
+    from telegram_web_login import register_telegram_web_login
+    register_telegram_web_login(app)
+    TELEGRAM_WEB_LOGIN_AVAILABLE = True
     logger.info("✅ Telegram Web Login system loaded successfully")
 except ImportError as e:
-    TELEGRAM_WEB_AUTH_AVAILABLE = False
+    TELEGRAM_WEB_LOGIN_AVAILABLE = False
     logger.warning(f"⚠️ Telegram Web Login not available: {e}")
 except Exception as e:
-    TELEGRAM_WEB_AUTH_AVAILABLE = False
+    TELEGRAM_WEB_LOGIN_AVAILABLE = False
     logger.error(f"❌ Error loading Telegram Web Login: {e}")
-
-# ============== APP DOWNLOAD ROUTES ==============
-try:
-    from app_download_routes import register_download_routes
-    register_download_routes(app)
-    APP_DOWNLOAD_ROUTES_AVAILABLE = True
-    logger.info("✅ App download routes registered successfully")
-except ImportError as e:
-    APP_DOWNLOAD_ROUTES_AVAILABLE = False
-    logger.warning(f"⚠️ App download routes not available: {e}")
-except Exception as e:
-    APP_DOWNLOAD_ROUTES_AVAILABLE = False
-    logger.error(f"❌ Error loading app download routes: {e}")
 
 # ============== VPN/PROXY DETECTION SYSTEM ==============
 try:
@@ -417,20 +400,6 @@ def check_channel_or_redirect(user_id):
 
 def get_user_id():
     """Extract user_id from request - MEJORADO para múltiples fuentes incluyendo sesión web"""
-    user_id = None
-    
-    # 1. Primero verificar sesión web de Telegram (más segura)
-    if TELEGRAM_WEB_AUTH_AVAILABLE:
-        user_id = get_authenticated_user_id()
-        if user_id:
-            return str(user_id)
-    
-    # 2. Verificar sesión Flask tradicional
-    user_id = session.get('telegram_id')
-    if user_id:
-        return str(user_id)
-    
-    # 3. Query parameters (compatibilidad MiniApp)
     user_id = request.args.get('user_id') or request.args.get('userId')
 
     if not user_id:
@@ -445,6 +414,11 @@ def get_user_id():
 
     if not user_id:
         user_id = request.headers.get('X-User-Id') or request.headers.get('X-Telegram-User-Id')
+    
+    # NUEVO: Verificar sesión web de Telegram Login
+    if not user_id:
+        if session.get('web_logged_in') and session.get('telegram_id'):
+            user_id = session.get('telegram_id')
 
     return str(user_id) if user_id else None
 
@@ -3924,7 +3898,8 @@ def admin_dashboard():
                          stats=stats,
                          total_users=total_users,
                          banned_users=banned_users,
-                         pending_withdrawals=pending_withdrawals)
+                         pending_withdrawals=pending_withdrawals,
+                         ton_payments_available=TON_PAYMENTS_AVAILABLE)
 
 
 @app.route('/admin/competition')
