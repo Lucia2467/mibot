@@ -1026,8 +1026,7 @@ async function startTonPolling(depositId) {
                 if (status === 'confirmed' || status === 'credited') {
                     clearInterval(_tonPollTimer);
                     showDepStep('success');
-                    var msg = '✅ ' + (d.deposit.amount || '') + ' TON recibidos
-Acreditado en tu cuenta.';
+                                        var msg = '✅ ' + (d.deposit.amount || '') + ' TON recibidos. Acreditado en tu cuenta.';
                     if (el('ton-success-msg')) el('ton-success-msg').textContent = msg;
                 }
             }
