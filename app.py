@@ -6084,22 +6084,22 @@ except ImportError as e:
 
 
 # ============== MÓDULO DE TON PAYMENTS ==============
-# Sistema de pagos en TON con panel de administración completo
-# Soporta pagos automáticos y manuales
-
 try:
     from ton_payment_routes import register_ton_routes
-
-    # Registrar las rutas de TON
     register_ton_routes(app)
-
     logger.info("✅ Módulo de TON Payments cargado correctamente")
-    logger.info("   Panel admin: /admin/ton-payments")
-    logger.info("   API endpoints: /api/ton/*")
     TON_PAYMENTS_AVAILABLE = True
 except ImportError as e:
     logger.warning(f"⚠️ Módulo de TON Payments no disponible: {e}")
     TON_PAYMENTS_AVAILABLE = False
+
+# ============== MÓDULO DE TON DEPOSITS ==============
+try:
+    from ton_deposit_routes import register_deposit_routes
+    register_deposit_routes(app)
+    logger.info("✅ Rutas de depósito TON registradas (/api/ton/deposit/*)")
+except ImportError as e:
+    logger.warning(f"⚠️ ton_deposit_routes no disponible: {e}")
 
 
 # ============== MÓDULO DE ADSGRAM BOOST ==============
