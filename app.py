@@ -1041,10 +1041,10 @@ def wallet():
     ton_min = float(os.environ.get('MIN_DEPOSIT_TON', '0.1'))
     ton_enabled = True  # Siempre habilitado
 
-    # Memo unico por usuario basado en su user_id
-    uid_str = str(user_id)
-    digits = ''.join(c for c in uid_str if c.isdigit())
-    user_deposit_memo = 'DEP' + digits[-8:].zfill(8) if digits else 'DEP' + str(abs(hash(uid_str)))[:8]
+    # Memo unico por usuario - usar user.user_id que siempre existe
+    _uid = str(user.get('user_id') or user.get('telegram_id') or user_id or '0')
+    _digits = ''.join(c for c in _uid if c.isdigit())
+    user_deposit_memo = 'DEP' + _digits[-8:].zfill(8) if _digits else 'DEP00000001'
 
     return render_template('wallet.html',
                          user=user,
