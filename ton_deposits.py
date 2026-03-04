@@ -79,6 +79,10 @@ def init_ton_deposits_table():
         "ALTER TABLE ton_deposits ADD COLUMN ton_tx_hash     VARCHAR(200)  DEFAULT NULL",
         "ALTER TABLE ton_deposits ADD COLUMN credited_at     DATETIME      DEFAULT NULL",
         "ALTER TABLE ton_deposits ADD COLUMN admin_note      TEXT          DEFAULT NULL",
+        # Arreglar columnas viejas que pueden ser NOT NULL sin default
+        "ALTER TABLE ton_deposits MODIFY COLUMN wallet_origin VARCHAR(100) NOT NULL DEFAULT ''",
+        "ALTER TABLE ton_deposits MODIFY COLUMN ton_amount    DECIMAL(20,9) NOT NULL DEFAULT 0",
+        "ALTER TABLE ton_deposits MODIFY COLUMN ton_wallet_from VARCHAR(100) NOT NULL DEFAULT ''",
     ]
     for sql in migrations:
         try:
@@ -123,10 +127,20 @@ def get_or_create_user_memo(user_id) -> str:
 
 def create_pending_deposit(user_id, memo) -> str:
     deposit_id = "TOND-" + uuid.uuid4().hex[:8].upper()
-    execute_query("""
-        INSERT INTO ton_deposits (deposit_id, user_id, memo, status)
-        VALUES (%s, %s, %s, 'pending')
-    """, (deposit_id, str(user_id), memo))
+    try:
+        execute_query("""
+            INSERT INTO ton_deposits (deposit_id, user_id, memo, status, ton_amount, ton_wallet_from)
+            VALUES (%s, %s, %s, 'pending', 0, '')
+        """, (deposit_id, str(user_id), memo))
+    except Exception as e:
+        # Tabla vieja puede tener wallet_origin NOT NULL — intentar con esa columna
+        if "wallet_origin" in str(e):
+            execute_query("""
+                INSERT INTO ton_deposits (deposit_id, user_id, memo, status, ton_amount, ton_wallet_from, wallet_origin)
+                VALUES (%s, %s, %s, 'pending', 0, '', '')
+            """, (deposit_id, str(user_id), memo))
+        else:
+            raise
     return deposit_id
 
 
