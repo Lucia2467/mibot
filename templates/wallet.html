@@ -1037,8 +1037,9 @@ function copyDepMemo() {
 function startTonPolling(depositId) {
     _tonDepositId = depositId;
     if (_tonPollTimer) clearInterval(_tonPollTimer);
+    var userId = (elD("current-user-id") || {}).value || new URLSearchParams(window.location.search).get("user_id") || "";
     _tonPollTimer = setInterval(function() {
-        fetch("/api/ton/deposit/status/" + _tonDepositId)
+        fetch("/api/ton/deposit/status/" + _tonDepositId + "?user_id=" + userId)
         .then(function(r){ return r.json(); })
         .then(function(d) {
             if (d.success && (d.status === "credited" || d.status === "confirmed")) {
