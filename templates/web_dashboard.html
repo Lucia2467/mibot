@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover">
+    <title>Dashboard | SALLY-E</title>
+    
+    <meta name="theme-color" content="#0B0B0F">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <style>
+        /* ============================================
+           PREMIUM DASHBOARD STYLES
+           ============================================ */
+        
+        :root {
+            --primary: #3B82F6;
+            --primary-light: #60A5FA;
+            --primary-dark: #2563EB;
+            --accent-cyan: #22D3EE;
+            --accent-purple: #A855F7;
+            --accent-green: #22C55E;
+            --accent-yellow: #F59E0B;
+            --accent-red: #EF4444;
+            
+            --bg-dark: #0B0B0F;
+            --bg-card: rgba(15, 23, 42, 0.95);
+            --bg-card-hover: rgba(30, 41, 59, 0.95);
+            
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            
+            --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            --gradient-card: linear-gradient(145deg, rgba(59, 130, 246, 0.1) 0%, rgba(15, 23, 42, 0.95) 100%);
+            
+            --shadow-glow: 0 0 40px rgba(59, 130, 246, 0.2);
+            --shadow-card: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+            --border-glow: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+        
+        /* Background */
+        .bg-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+        }
+        
+        .bg-orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: -100px;
+            right: -100px;
+        }
+        
+        .bg-orb-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-purple);
+            bottom: -50px;
+            left: -50px;
+        }
+        
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            margin-bottom: 24px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+            overflow: hidden;
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .user-details h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .user-details p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--accent-red);
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+        
+        .logout-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Balance Cards */
+        .balance-section {
+            margin-bottom: 24px;
+        }
+        
+        .main-balance-card {
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            padding: 28px 24px;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .main-balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .balance-label {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+        
+        .balance-value {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+        
+        .balance-value .currency {
+            font-size: 18px;
+            font-weight: 500;
+            opacity: 0.8;
+            margin-left: 8px;
+        }
+        
+        .secondary-balances {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .balance-card {
+            background: var(--gradient-card);
+            border: var(--border-glow);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .balance-card .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        
+        .balance-card .icon.doge {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+        
+        .balance-card .icon.pts {
+            background: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%);
+        }
+        
+        .balance-card .icon svg {
+            width: 22px;
+            height: 22px;
+            color: white;
+        }
+        
+        .balance-card .label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        
+        .balance-card .value {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        /* Stats Grid */
+        .stats-section {
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: var(--border-glow);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .stat-icon.mining { background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(34, 211, 238, 0.05)); }
+        .stat-icon.refs { background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05)); }
+        .stat-icon.power { background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05)); }
+        .stat-icon.tasks { background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.05)); }
+        
+        .stat-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+        
+        .stat-icon.mining svg { color: var(--accent-cyan); }
+        .stat-icon.refs svg { color: var(--accent-green); }
+        .stat-icon.power svg { color: var(--accent-yellow); }
+        .stat-icon.tasks svg { color: var(--accent-purple); }
+        
+        .stat-info .label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .stat-info .value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        /* Quick Actions */
+        .actions-section {
+            margin-bottom: 24px;
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .action-btn {
+            background: var(--bg-card);
+            border: var(--border-glow);
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .action-btn .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .action-btn .icon svg {
+            width: 26px;
+            height: 26px;
+        }
+        
+        .action-btn.miniapp .icon {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .action-btn.wallet .icon {
+            background: linear-gradient(135deg, var(--accent-green), #16A34A);
+            color: white;
+        }
+        
+        .action-btn.tasks .icon {
+            background: linear-gradient(135deg, var(--accent-purple), #7C3AED);
+            color: white;
+        }
+        
+        .action-btn.ranking .icon {
+            background: linear-gradient(135deg, var(--accent-yellow), #D97706);
+            color: white;
+        }
+        
+        .action-btn .label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* Referral Section */
+        .referral-section {
+            background: var(--gradient-card);
+            border: var(--border-glow);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .referral-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .referral-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .referral-stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .ref-stat {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 10px;
+        }
+        
+        .ref-stat .num {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+        
+        .ref-stat .label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .referral-link-box {
+            background: var(--bg-dark);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .referral-link-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            outline: none;
+        }
+        
+        .copy-btn {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .copy-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        /* Connection Status */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 400px) {
+            .container { padding: 16px; }
+            .balance-value { font-size: 28px; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="bg-effects">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+    </div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="user-info">
+                <div class="user-avatar">
+                    {% if telegram_user.photo_url %}
+                        <img src="{{ telegram_user.photo_url }}" alt="Avatar" onerror="this.style.display='none'; this.parentElement.textContent='{{ (user.first_name or 'U')[0] }}';">
+                    {% else %}
+                        {{ (user.first_name or 'U')[0] }}
+                    {% endif %}
+                </div>
+                <div class="user-details">
+                    <h2>{{ user.first_name or 'Usuario' }}</h2>
+                    <p>@{{ user.username or user.user_id }}</p>
+                </div>
+            </div>
+            <a href="{{ url_for('web_auth.web_logout') }}" class="logout-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Salir
+            </a>
+        </header>
+        
+        <!-- Balance Section -->
+        <section class="balance-section">
+            <div class="main-balance-card">
+                <div class="balance-label">Balance S-E</div>
+                <div class="balance-value">
+                    {{ "%.4f"|format(user.se_balance or 0) }}
+                    <span class="currency">S-E</span>
+                </div>
+            </div>
+            
+            <div class="secondary-balances">
+                <div class="balance-card">
+                    <div class="icon doge">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                    </div>
+                    <div class="label">DOGE Balance</div>
+                    <div class="value">{{ "%.4f"|format(user.doge_balance or 0) }}</div>
+                </div>
+                <div class="balance-card">
+                    <div class="icon pts">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                    </div>
+                    <div class="label">Total Minado</div>
+                    <div class="value">{{ "%.2f"|format(user.total_mined or 0) }}</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Stats -->
+        <section class="stats-section">
+            <h3 class="section-title">Estadísticas</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon mining">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="label">Nivel de Minería</div>
+                        <div class="value">{{ user.mining_level or 1 }}</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon refs">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="label">Referidos</div>
+                        <div class="value">{{ user.referral_count or 0 }}</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon power">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="label">Mining Power</div>
+                        <div class="value">{{ "%.2f"|format(user.mining_power or 1) }}x</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon tasks">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="label">Tareas</div>
+                        <div class="value">{{ (user.completed_tasks or [])|length }}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Quick Actions -->
+        <section class="actions-section">
+            <h3 class="section-title">Acciones Rápidas</h3>
+            <div class="actions-grid">
+                <a href="https://t.me/SallyEbot/app?startapp={{ user.user_id }}" class="action-btn miniapp" target="_blank">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                            <line x1="12" y1="18" x2="12.01" y2="18"/>
+                        </svg>
+                    </div>
+                    <span class="label">Abrir MiniApp</span>
+                </a>
+                <a href="/?user_id={{ user.user_id }}" class="action-btn wallet">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                            <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                    </div>
+                    <span class="label">Wallet</span>
+                </a>
+                <a href="/tasks?user_id={{ user.user_id }}" class="action-btn tasks">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 11l3 3L22 4"/>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                        </svg>
+                    </div>
+                    <span class="label">Tareas</span>
+                </a>
+                <a href="/ranking?user_id={{ user.user_id }}" class="action-btn ranking">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+                            <polyline points="16 7 22 7 22 13"/>
+                        </svg>
+                    </div>
+                    <span class="label">Ranking</span>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Referral Section -->
+        <section class="referral-section">
+            <div class="referral-header">
+                <h3>Sistema de Referidos</h3>
+            </div>
+            <div class="referral-stats">
+                <div class="ref-stat">
+                    <div class="num">{{ referral_stats.validated }}</div>
+                    <div class="label">Validados</div>
+                </div>
+                <div class="ref-stat">
+                    <div class="num">{{ referral_stats.pending }}</div>
+                    <div class="label">Pendientes</div>
+                </div>
+                <div class="ref-stat">
+                    <div class="num">{{ referral_stats.total }}</div>
+                    <div class="label">Total</div>
+                </div>
+            </div>
+            <div class="referral-link-box">
+                <input type="text" id="refLink" value="https://t.me/SallyEbot?start={{ user.user_id }}" readonly>
+                <button class="copy-btn" onclick="copyRefLink()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    Copiar
+                </button>
+            </div>
+        </section>
+        
+        <!-- Connection Status -->
+        <div class="connection-status">
+            <span class="status-dot"></span>
+            Conectado con Telegram
+        </div>
+    </div>
+    
+    <script>
+        // Inicializar iconos
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+        
+        // Copiar link de referido
+        function copyRefLink() {
+            const input = document.getElementById('refLink');
+            input.select();
+            document.execCommand('copy');
+            
+            const btn = document.querySelector('.copy-btn');
+            btn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Copiado
+            `;
+            
+            setTimeout(() => {
+                btn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    Copiar
+                `;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

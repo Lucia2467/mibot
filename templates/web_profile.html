@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil | SALLY-E</title>
+    <meta name="theme-color" content="#0B0B0F">
+    
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #3B82F6;
+            --primary-light: #60A5FA;
+            --accent-cyan: #22D3EE;
+            --accent-green: #22C55E;
+            --accent-purple: #A855F7;
+            --accent-yellow: #F59E0B;
+            --accent-red: #EF4444;
+            
+            --bg-dark: #0B0B0F;
+            --bg-card: rgba(15, 23, 42, 0.95);
+            
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            
+            --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            --border-glow: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: var(--border-glow);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        /* Profile Card */
+        .profile-card {
+            background: var(--bg-card);
+            border: var(--border-glow);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 600;
+            margin: 0 auto 16px;
+            overflow: hidden;
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .profile-username {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        
+        .profile-id {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--primary-light);
+        }
+        
+        /* Info Cards */
+        .info-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        
+        .info-card {
+            background: var(--bg-card);
+            border: var(--border-glow);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        
+        .info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .info-label svg {
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+        }
+        
+        .info-value {
+            font-weight: 500;
+        }
+        
+        .info-value.balance {
+            color: var(--accent-green);
+        }
+        
+        /* History */
+        .history-section h3 {
+            margin-bottom: 12px;
+        }
+        
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .history-item {
+            background: var(--bg-card);
+            border: var(--border-glow);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .history-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .history-icon.earn { background: rgba(34, 197, 94, 0.1); color: var(--accent-green); }
+        .history-icon.spend { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); }
+        .history-icon.mining { background: rgba(34, 211, 238, 0.1); color: var(--accent-cyan); }
+        
+        .history-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .history-info {
+            flex: 1;
+        }
+        
+        .history-action {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .history-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .history-amount {
+            font-weight: 600;
+        }
+        
+        .history-amount.positive { color: var(--accent-green); }
+        .history-amount.negative { color: var(--accent-red); }
+        
+        .empty-history {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <a href="{{ url_for('web_auth.web_dashboard') }}" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+            </a>
+            <h1>Mi Perfil</h1>
+        </header>
+        
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="avatar">
+                {% if telegram_user.photo_url %}
+                    <img src="{{ telegram_user.photo_url }}" alt="Avatar">
+                {% else %}
+                    {{ (user.first_name or 'U')[0] }}
+                {% endif %}
+            </div>
+            <h2 class="profile-name">{{ user.first_name or 'Usuario' }} {{ user.last_name or '' }}</h2>
+            <p class="profile-username">@{{ user.username or 'sin_username' }}</p>
+            <span class="profile-id">ID: {{ user.user_id }}</span>
+        </div>
+        
+        <!-- Account Info -->
+        <section class="info-section">
+            <h3 class="section-title">Información de Cuenta</h3>
+            <div class="info-card">
+                <div class="info-row">
+                    <span class="info-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                        Balance S-E
+                    </span>
+                    <span class="info-value balance">{{ "%.4f"|format(user.se_balance or 0) }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        Balance DOGE
+                    </span>
+                    <span class="info-value balance">{{ "%.4f"|format(user.doge_balance or 0) }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                        Mining Power
+                    </span>
+                    <span class="info-value">{{ "%.2f"|format(user.mining_power or 1) }}x</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Miembro desde
+                    </span>
+                    <span class="info-value">{{ user.created_at[:10] if user.created_at else 'N/A' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                            <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                        Wallet
+                    </span>
+                    <span class="info-value">{{ (user.wallet_address[:8] + '...' + user.wallet_address[-6:]) if user.wallet_address else 'No vinculada' }}</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Recent Activity -->
+        <section class="history-section">
+            <h3 class="section-title">Actividad Reciente</h3>
+            
+            {% if history %}
+            <div class="history-list">
+                {% for item in history %}
+                <div class="history-item">
+                    <div class="history-icon {% if item.amount > 0 %}earn{% elif 'mining' in item.action.lower() %}mining{% else %}spend{% endif %}">
+                        {% if item.amount > 0 %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <polyline points="19 12 12 5 5 12"/>
+                        </svg>
+                        {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="19" x2="12" y2="5"/>
+                            <polyline points="5 12 12 19 19 12"/>
+                        </svg>
+                        {% endif %}
+                    </div>
+                    <div class="history-info">
+                        <div class="history-action">{{ item.action or 'Transacción' }}</div>
+                        <div class="history-date">{{ item.created_at[:16] if item.created_at else '' }}</div>
+                    </div>
+                    <div class="history-amount {% if item.amount > 0 %}positive{% else %}negative{% endif %}">
+                        {% if item.amount > 0 %}+{% endif %}{{ "%.4f"|format(item.amount or 0) }} {{ item.currency or 'S-E' }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-history">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; opacity: 0.5;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <p>No hay actividad reciente</p>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+    
+    <script>
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
