@@ -505,7 +505,43 @@ def get_user_unified_transactions(user_id, currency=None, tx_type=None, limit=50
                     transactions.append(tx)
             except Exception as e:
                 print(f"[transactions] Tabla ton_payments no disponible: {e}")
-        
+
+            # 4. Obtener depósitos TON confirmados (ton_deposits)
+            try:
+                cursor.execute("""
+                    SELECT
+                        id,
+                        user_id,
+                        'TON' as currency,
+                        amount,
+                        'deposit' as tx_type,
+                        CONCAT('TON Deposit - ', deposit_id) as description,
+                        NULL as balance_before,
+                        NULL as balance_after,
+                        COALESCE(credited_at, created_at) as created_at,
+                        tx_hash,
+                        wallet_destination as wallet_address,
+                        status,
+                        'ton_deposits' as source
+                    FROM ton_deposits
+                    WHERE user_id = %s AND status = 'confirmed'
+                    ORDER BY created_at DESC
+                    LIMIT 100
+                """, (user_id,))
+
+                for row in cursor.fetchall():
+                    tx = dict(row) if isinstance(row, dict) else {
+                        'id': row[0], 'user_id': row[1], 'currency': row[2],
+                        'amount': row[3], 'tx_type': row[4], 'description': row[5],
+                        'balance_before': row[6], 'balance_after': row[7],
+                        'created_at': row[8], 'tx_hash': row[9],
+                        'wallet_address': row[10], 'status': row[11], 'source': row[12]
+                    }
+                    tx['currency'] = 'TON'
+                    transactions.append(tx)
+            except Exception as e:
+                print(f"[transactions] Tabla ton_deposits no disponible: {e}")
+
         # Filtrar por moneda si se especifica
         if currency:
             currency = currency.upper()

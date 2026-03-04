@@ -1037,6 +1037,14 @@ def wallet():
     min_usdt = float(get_config('min_withdrawal_usdt', 0.5))
     min_doge = float(get_config('min_withdrawal_doge', 0.3))
 
+    # Memo único por usuario para depósitos TON (mismo algoritmo que el frontend)
+    _uid = str(user.get('user_id') or user.get('telegram_id') or user_id or '0')
+    _digits = ''.join(c for c in _uid if c.isdigit())
+    user_deposit_memo = 'DEP' + _digits[-8:].zfill(8) if _digits else 'DEP00000001'
+
+    ton_wallet_address = os.environ.get('TON_WALLET_ADDRESS', 'UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3').strip()
+    ton_min = float(os.environ.get('MIN_DEPOSIT_TON', '0.1'))
+
     return render_template('wallet.html',
                          user=user,
                          se_to_usdt=se_to_usdt,
@@ -1044,7 +1052,11 @@ def wallet():
                          min_usdt=min_usdt,
                          min_doge=min_doge,
                          user_id=user_id,
-                         show_support_button=True)
+                         show_support_button=True,
+                         user_deposit_memo=user_deposit_memo,
+                         ton_wallet_address=ton_wallet_address,
+                         ton_min=ton_min,
+                         ton_enabled=True)
 
 @app.route('/historial')
 def historial():

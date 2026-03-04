@@ -624,3 +624,121 @@ def get_deposit_config():
         'enabled': bool(DEPOSIT_WALLET_ADDRESS),
         'network': 'mainnet' if 'mainnet' in TON_API_URL.lower() or 'toncenter' in TON_API_URL.lower() else 'testnet'
     }
+
+
+# ============================================
+# AUTO-SCAN: detecta pagos TON por memo
+# ============================================
+
+def _memo_for_user_id(user_id: str) -> str:
+    """Genera el memo esperado para un user_id (igual que el frontend)."""
+    digits = ''.join(c for c in str(user_id) if c.isdigit())
+    return 'DEP' + digits[-8:].zfill(8) if digits else 'DEP00000001'
+
+
+def scan_pending_ton_deposits():
+    """
+    Escanea la wallet de depósitos TON buscando transacciones entrantes.
+    Empareja por memo con sesiones pendientes y las acredita automáticamente.
+    Devuelve la cantidad de depósitos acreditados.
+    """
+    if not DEPOSIT_WALLET_ADDRESS:
+        return 0
+
+    try:
+        # Obtener transacciones entrantes recientes (últimas 50)
+        incoming = check_incoming_transactions(DEPOSIT_WALLET_ADDRESS, limit=50)
+        if not incoming:
+            return 0
+
+        credited_count = 0
+
+        # Construir mapa memo→user_id de sesiones pendientes
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT deposit_id, user_id, tx_hash
+                FROM ton_deposits
+                WHERE status IN ('pending', 'confirming')
+            """)
+            pending = cursor.fetchall()
+
+        if not pending:
+            return 0
+
+        memo_map = {}  # memo -> (deposit_id, user_id)
+        for row in pending:
+            r = dict(row) if hasattr(row, 'keys') else {
+                'deposit_id': row[0], 'user_id': row[1], 'tx_hash': row[2]
+            }
+            memo_map[_memo_for_user_id(r['user_id'])] = r
+
+        # También construir set de tx_hash ya procesados para evitar doble crédito
+        with get_cursor() as cursor:
+            cursor.execute("SELECT tx_hash FROM ton_deposits WHERE status = 'confirmed' AND tx_hash IS NOT NULL")
+            processed_hashes = {r['tx_hash'] if isinstance(r, dict) else r[0] for r in cursor.fetchall()}
+
+        for tx in incoming:
+            tx_hash = tx.get('hash')
+            if not tx_hash or tx_hash in processed_hashes:
+                continue
+
+            memo = (tx.get('message') or '').strip()
+            amount = float(tx.get('value', 0))
+
+            if amount <= 0:
+                continue
+
+            # Buscar sesión pendiente que coincida con el memo
+            match = memo_map.get(memo)
+            if not match:
+                # Intentar sin importar mayúsculas/minúsculas
+                memo_upper = memo.upper()
+                match = next((v for k, v in memo_map.items() if k.upper() == memo_upper), None)
+
+            if not match:
+                logger.info(f"TON scan: tx {tx_hash[:12]}… memo='{memo}' sin sesión pendiente, ignorado")
+                continue
+
+            deposit_id = match['deposit_id']
+            user_id = match['user_id']
+
+            # Validar mínimo
+            if amount < MIN_DEPOSIT_TON:
+                logger.warning(f"TON scan: depósito {amount} TON menor al mínimo {MIN_DEPOSIT_TON}, ignorado")
+                continue
+
+            # Actualizar registro con tx_hash y monto real
+            try:
+                execute_query("""
+                    UPDATE ton_deposits
+                    SET tx_hash = %s, amount = %s, status = 'confirming', updated_at = NOW()
+                    WHERE deposit_id = %s
+                """, (tx_hash, amount, deposit_id))
+
+                success = credit_ton_balance(user_id, amount, deposit_id)
+
+                if success:
+                    execute_query("""
+                        UPDATE ton_deposits
+                        SET status = 'confirmed', credited_at = NOW(), updated_at = NOW()
+                        WHERE deposit_id = %s
+                    """, (deposit_id,))
+                    processed_hashes.add(tx_hash)
+                    credited_count += 1
+                    logger.info(f"✅ TON auto-credited: {amount} TON → user {user_id} (tx {tx_hash[:16]}…)")
+                else:
+                    execute_query("""
+                        UPDATE ton_deposits
+                        SET status = 'pending', error_message = 'Error acreditando saldo', updated_at = NOW()
+                        WHERE deposit_id = %s
+                    """, (deposit_id,))
+
+            except Exception as e:
+                logger.error(f"Error acreditando depósito TON {deposit_id}: {e}")
+
+        return credited_count
+
+    except Exception as e:
+        logger.error(f"Error en scan_pending_ton_deposits: {e}")
+        import traceback; traceback.print_exc()
+        return 0
