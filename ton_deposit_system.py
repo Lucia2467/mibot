@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 # ============================================
 
 # Wallet receptora de depósitos (configurable via .env)
-DEPOSIT_WALLET_ADDRESS = os.environ.get('TON_DEPOSIT_WALLET', os.environ.get('TON_WALLET_ADDRESS', ''))
+DEPOSIT_WALLET_ADDRESS = os.environ.get('TON_DEPOSIT_WALLET') or os.environ.get('TON_WALLET_ADDRESS') or ''
 
 # API de TON
 TON_API_URL = os.environ.get('TON_API_URL', 'https://toncenter.com/api/v2')

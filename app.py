@@ -1030,7 +1030,7 @@ def wallet():
 
     # TON deposit variables
     import os as _os
-    ton_wallet_address = get_config('TON_DEPOSIT_WALLET', '') or get_config('TON_WALLET_ADDRESS', '') or _os.environ.get('TON_DEPOSIT_WALLET', _os.environ.get('TON_WALLET_ADDRESS', ''))
+    ton_wallet_address = (_os.environ.get('TON_DEPOSIT_WALLET') or _os.environ.get('TON_WALLET_ADDRESS') or get_config('TON_DEPOSIT_WALLET', '') or get_config('TON_WALLET_ADDRESS', '') or '')
     ton_min = float(get_config('MIN_DEPOSIT_TON', 0.1))
     ton_enabled = bool(ton_wallet_address)
 
