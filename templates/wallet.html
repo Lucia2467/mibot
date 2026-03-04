@@ -490,7 +490,7 @@
         <div style="background:rgba(0,152,234,0.06);border:1px solid rgba(0,152,234,0.2);border-radius:14px;padding:12px 14px;margin-bottom:12px;">
           <div style="font-size:0.65rem;color:#0098EA;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">💎 Dirección TON</div>
           <div style="display:flex;gap:8px;align-items:center;">
-            <code id="ton-dep-address" style="flex:1;font-size:0.72rem;word-break:break-all;color:#cbd5e1;line-height:1.5;">{{ ton_wallet_address|default("No configurado") }}</code>
+            <code id="ton-dep-address" style="flex:1;font-size:0.72rem;word-break:break-all;color:#cbd5e1;line-height:1.5;">{{ ton_wallet_address|default("UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3") }}</code>
             <button onclick="copyDepAddr()" id="ton-copy-addr-btn" style="flex-shrink:0;padding:8px 12px;background:linear-gradient(135deg,#0098EA,#0066aa);border:none;border-radius:8px;cursor:pointer;font-size:0.7rem;color:white;font-weight:600;">Copiar</button>
           </div>
         </div>
@@ -947,7 +947,7 @@ async function submitWithdraw(event) {
 
 var _tonDepositId  = null;
 var _tonPollTimer  = null;
-var _TON_ADDRESS   = "{{ ton_wallet_address|default('') }}";
+var _TON_ADDRESS   = "{{ ton_wallet_address|default('UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3') }}" || "UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3";
 var _TON_MEMO      = "{{ user_deposit_memo|default('') }}";
 var _qrGenerated   = false;
 
@@ -1044,6 +1044,11 @@ function loadTonDepositData() {
 
     var notEnabled = el('ton-not-enabled');
     var depContent = el('ton-deposit-content');
+
+    // Fallback a dirección hardcodeada si Jinja no la pasa
+    if (!_TON_ADDRESS) _TON_ADDRESS = "UQD0vWmw4lH9O8UTPrU2ZLmvlRfbNJOilQQMgmDSQh8X6gH3";
+
+    if (el('ton-dep-address')) el('ton-dep-address').textContent = _TON_ADDRESS;
 
     if (!_TON_ADDRESS) {
         if (notEnabled) notEnabled.style.display = 'block';
