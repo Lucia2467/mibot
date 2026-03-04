@@ -44,7 +44,21 @@ def _memo_for(user_id) -> str:
 # ── inicialización de tabla ────────────────────────────────────────────────────
 
 def init_ton_deposits_table():
-    """Crea tabla + migra columnas faltantes. Se ejecuta al importar."""
+    """Crea tabla limpia. Si existe con esquema viejo la borra y recrea."""
+
+    # Detectar si la tabla existe con esquema viejo (columnas wallet_origin o wallet_destination)
+    # Si es así, la borramos y recreamos limpia.
+    try:
+        with get_cursor() as cursor:
+            cursor.execute("SHOW COLUMNS FROM ton_deposits")
+            cols = [r["Field"] if isinstance(r, dict) else r[0] for r in cursor.fetchall()]
+            old_schema = "wallet_origin" in cols or "wallet_destination" in cols
+            if old_schema:
+                logger.info("ton_deposits: esquema viejo detectado, recreando tabla...")
+                cursor.execute("DROP TABLE ton_deposits")
+                logger.info("ton_deposits: tabla vieja eliminada")
+    except Exception:
+        pass  # tabla no existe aún, normal
 
     try:
         execute_query("""
@@ -66,35 +80,9 @@ def init_ton_deposits_table():
                 INDEX idx_memo    (memo)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         """)
+        logger.info("✅ ton_deposits tabla lista")
     except Exception as e:
-        logger.warning(f"ton_deposits CREATE TABLE: {e}")
-
-    # Agregar columnas faltantes en tablas existentes.
-    # Railway MySQL no soporta IF NOT EXISTS en ALTER TABLE,
-    # así que intentamos cada ALTER y capturamos el error 1060 (columna ya existe).
-    migrations = [
-        "ALTER TABLE ton_deposits ADD COLUMN memo            VARCHAR(50)   DEFAULT NULL",
-        "ALTER TABLE ton_deposits ADD COLUMN ton_amount      DECIMAL(20,9) NOT NULL DEFAULT 0",
-        "ALTER TABLE ton_deposits ADD COLUMN ton_wallet_from VARCHAR(100)  NOT NULL DEFAULT ''",
-        "ALTER TABLE ton_deposits ADD COLUMN ton_tx_hash     VARCHAR(200)  DEFAULT NULL",
-        "ALTER TABLE ton_deposits ADD COLUMN credited_at     DATETIME      DEFAULT NULL",
-        "ALTER TABLE ton_deposits ADD COLUMN admin_note      TEXT          DEFAULT NULL",
-        # Arreglar columnas viejas que pueden ser NOT NULL sin default
-        "ALTER TABLE ton_deposits MODIFY COLUMN wallet_origin VARCHAR(100) NOT NULL DEFAULT ''",
-        "ALTER TABLE ton_deposits MODIFY COLUMN ton_amount    DECIMAL(20,9) NOT NULL DEFAULT 0",
-        "ALTER TABLE ton_deposits MODIFY COLUMN ton_wallet_from VARCHAR(100) NOT NULL DEFAULT ''",
-    ]
-    for sql in migrations:
-        try:
-            execute_query(sql)
-            col = sql.split("ADD COLUMN")[1].strip().split()[0]
-            logger.info(f"✅ Migración: columna '{col}' agregada")
-        except Exception as e:
-            err = str(e)
-            if "1060" in err or "Duplicate column" in err:
-                pass  # columna ya existe, ignorar
-            else:
-                logger.warning(f"Migración ALTER: {e}")
+        logger.error(f"ton_deposits CREATE TABLE: {e}")
 
     # Config por defecto
     for key, val in [
