@@ -434,6 +434,7 @@
                         <p>Gestionar misiones y recompensas</p>
                     </div>
                 </a>
+                {% if ton_payments_available %}
                 <a href="{{ url_for('ton_payments.admin_ton_payments') }}" class="menu-item" style="background: linear-gradient(135deg, #0098EA 0%, #0077B6 100%);">
                     <div class="icon">💎</div>
                     <div class="info">
@@ -441,6 +442,15 @@
                         <p>Gestionar pagos en TON</p>
                     </div>
                 </a>
+                {% else %}
+                <a href="/admin/ton-payments" class="menu-item" style="background: linear-gradient(135deg, #0098EA 0%, #0077B6 100%);">
+                    <div class="icon">💎</div>
+                    <div class="info">
+                        <h3>TON Payments</h3>
+                        <p>Gestionar pagos en TON</p>
+                    </div>
+                </a>
+                {% endif %}
                 <a href="{{ url_for('admin_competition') }}" class="menu-item" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);">
                     <div class="icon">🏆</div>
                     <div class="info">
