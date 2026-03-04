@@ -1,16 +1,10 @@
 """
 ton_deposits.py  –  Sistema de depósitos TON para SALLY-E
 ==========================================================
-
-Flujo completo:
-  1. Usuario abre modal → GET /api/ton/deposit/address
-     → Devuelve wallet del bot + memo único del usuario (TONU<user_id_8dig>)
-     → Crea registro pending en ton_deposits
-  2. Usuario envía TON con su memo a la wallet del bot
-  3. Frontend hace polling cada 8 s → GET /api/ton/deposit/status/<deposit_id>
-     → En CADA poll el backend llama _scan_and_credit()
-     → _scan_and_credit consulta Toncenter, busca tx con el memo, acredita ton_balance
-  4. Cuando status == 'credited' → frontend muestra éxito
+Flujo:
+  1. GET /api/ton/deposit/address  → wallet del bot + memo único (TONU12345678)
+  2. Usuario envía TON con memo como comment
+  3. Polling cada 8s → _scan_and_credit() busca la tx en Toncenter y acredita
 """
 
 import os
@@ -19,23 +13,39 @@ import logging
 import requests
 
 from db import execute_query, get_cursor
-from database import get_user, update_balance, get_config
+from database import get_user, update_balance
 
 logger = logging.getLogger(__name__)
 
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
+# ── helpers de config ──────────────────────────────────────────────────────────
+
+def _cfg(key, default=""):
+    """Lee config seguro — siempre devuelve string, nunca lanza excepción.
+    NOTA: get_config() de SALLY-E convierte automáticamente a int/float,
+    por eso usamos esta función que siempre devuelve string."""
+    try:
+        from database import get_config
+        val = get_config(key, default)
+        if val is None or val is False:
+            return str(default)
+        return str(val)
+    except Exception:
+        return str(default)
+
+
+# ── memo único por usuario ─────────────────────────────────────────────────────
 
 def _memo_for(user_id) -> str:
-    """Memo único y estable por usuario. Ej: user_id=123456789 → 'TONU23456789'"""
     digits = "".join(c for c in str(user_id) if c.isdigit())
     return "TONU" + digits[-8:].zfill(8) if digits else "TONU00000001"
 
 
-# ── Inicialización de tabla ────────────────────────────────────────────────────
+# ── inicialización de tabla ────────────────────────────────────────────────────
 
 def init_ton_deposits_table():
-    """Crea la tabla ton_deposits y agrega columnas necesarias. Se ejecuta al iniciar la app."""
+    """Crea tabla + columnas + config por defecto. Se ejecuta al importar."""
+
     try:
         execute_query("""
             CREATE TABLE IF NOT EXISTS ton_deposits (
@@ -50,36 +60,28 @@ def init_ton_deposits_table():
                 admin_note      TEXT          DEFAULT NULL,
                 created_at      DATETIME      DEFAULT CURRENT_TIMESTAMP,
                 credited_at     DATETIME      DEFAULT NULL,
-                INDEX idx_user_id  (user_id),
-                INDEX idx_status   (status),
-                INDEX idx_tx_hash  (ton_tx_hash),
-                INDEX idx_memo     (memo)
+                INDEX idx_user_id (user_id),
+                INDEX idx_status  (status),
+                INDEX idx_tx_hash (ton_tx_hash),
+                INDEX idx_memo    (memo)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         """)
     except Exception as e:
-        logger.warning(f"ton_deposits table: {e}")
+        logger.warning(f"ton_deposits CREATE TABLE: {e}")
 
-    # Columna memo en users
-    try:
-        execute_query("""
-            ALTER TABLE users
-            ADD COLUMN IF NOT EXISTS ton_deposit_memo VARCHAR(50) DEFAULT NULL
-        """)
-    except Exception:
-        pass
+    # NO usamos ALTER TABLE porque Railway MySQL no soporta IF NOT EXISTS en ALTER
+    # El memo se calcula deterministicamente desde user_id, no necesita columna extra
 
-    # Config por defecto (solo inserta si no existen)
-    default_config = [
-        ('ton_wallet_address',   ''),
-        ('ton_min_deposit',      '0.1'),
-        ('ton_deposits_enabled', '1'),
-        ('toncenter_api_key',    ''),
-    ]
-    for key, value in default_config:
+    for key, val in [
+        ("ton_wallet_address",   ""),
+        ("ton_min_deposit",      "0.1"),
+        ("ton_deposits_enabled", "1"),
+        ("toncenter_api_key",    ""),
+    ]:
         try:
             execute_query(
                 "INSERT IGNORE INTO config (config_key, config_value) VALUES (%s, %s)",
-                (key, value)
+                (key, val)
             )
         except Exception:
             pass
@@ -91,36 +93,14 @@ def init_ton_deposits_table():
 
 def get_or_create_user_memo(user_id) -> str:
     """
-    Devuelve el memo único del usuario (lo crea y persiste si no existe).
-    El memo identifica al usuario en la blockchain.
+    Calcula el memo único del usuario de forma determinista desde su user_id.
+    No requiere columna extra en la tabla users.
+    Ej: user_id=5515244003 → 'TONU44003' → 'TONU44003' (últimos 8 dígitos con padding)
     """
-    user_id = str(user_id)
-    try:
-        with get_cursor() as cursor:
-            cursor.execute(
-                "SELECT ton_deposit_memo FROM users WHERE user_id = %s", (user_id,)
-            )
-            row = cursor.fetchone()
-            if row:
-                memo = row["ton_deposit_memo"] if isinstance(row, dict) else row[0]
-                if memo:
-                    return memo
-    except Exception:
-        pass
-
-    memo = _memo_for(user_id)
-    try:
-        execute_query(
-            "UPDATE users SET ton_deposit_memo = %s WHERE user_id = %s",
-            (memo, user_id)
-        )
-    except Exception as e:
-        logger.warning(f"Could not save memo for user {user_id}: {e}")
-    return memo
+    return _memo_for(str(user_id))
 
 
 def create_pending_deposit(user_id, memo) -> str:
-    """Crea un registro pending. Devuelve deposit_id."""
     deposit_id = "TOND-" + uuid.uuid4().hex[:8].upper()
     execute_query("""
         INSERT INTO ton_deposits (deposit_id, user_id, memo, status)
@@ -130,33 +110,26 @@ def create_pending_deposit(user_id, memo) -> str:
 
 
 def get_deposit(deposit_id: str):
-    """Devuelve el registro de un depósito."""
     try:
         with get_cursor() as cursor:
             cursor.execute(
                 "SELECT * FROM ton_deposits WHERE deposit_id = %s", (deposit_id,)
             )
             row = cursor.fetchone()
-            return dict(row) if row and hasattr(row, "keys") else (
-                {"id": row[0], "deposit_id": row[1], "user_id": row[2],
-                 "ton_amount": row[3], "ton_wallet_from": row[4],
-                 "ton_tx_hash": row[5], "memo": row[6], "status": row[7]} if row else None
-            )
+            if row:
+                return dict(row) if hasattr(row, "keys") else row
     except Exception as e:
-        logger.error(f"get_deposit error: {e}")
-        return None
+        logger.error(f"get_deposit: {e}")
+    return None
 
 
 def get_user_deposits(user_id, limit=20):
-    """Historial de depósitos de un usuario."""
     try:
         with get_cursor() as cursor:
             cursor.execute("""
                 SELECT deposit_id, ton_amount, ton_tx_hash, status, created_at, credited_at
-                FROM ton_deposits
-                WHERE user_id = %s
-                ORDER BY created_at DESC
-                LIMIT %s
+                FROM ton_deposits WHERE user_id = %s
+                ORDER BY created_at DESC LIMIT %s
             """, (str(user_id), limit))
             rows = cursor.fetchall()
             return [dict(r) if hasattr(r, "keys") else r for r in rows]
@@ -165,7 +138,6 @@ def get_user_deposits(user_id, limit=20):
 
 
 def get_pending_deposits():
-    """Todos los depósitos pendientes (para panel admin)."""
     try:
         with get_cursor() as cursor:
             cursor.execute(
@@ -178,25 +150,18 @@ def get_pending_deposits():
 
 
 def credit_deposit(deposit_id: str, ton_amount: float, tx_hash: str, sender: str) -> bool:
-    """
-    Acredita ton_balance al usuario y marca el depósito como 'credited'.
-    Llama a update_balance de database.py (currency='ton').
-    """
     dep = get_deposit(deposit_id)
     if not dep:
-        logger.error(f"credit_deposit: deposit {deposit_id} not found")
+        logger.error(f"credit_deposit: {deposit_id} not found")
         return False
-
-    if dep["status"] == "credited":
+    if dep.get("status") == "credited":
         logger.warning(f"credit_deposit: {deposit_id} already credited")
         return False
 
-    user_id = dep["user_id"]
-
-    # Acreditar usando update_balance de SALLY-E (currency='ton', operation='add')
+    user_id = str(dep["user_id"])
     ok = update_balance(
         user_id, "ton", ton_amount, "add",
-        f"TON Deposit {deposit_id} | tx:{tx_hash[:16] if tx_hash else 'N/A'}"
+        f"TON Deposit {deposit_id} | tx:{(tx_hash or '')[:16]}"
     )
     if not ok:
         logger.error(f"credit_deposit: update_balance failed for {user_id}")
@@ -209,29 +174,36 @@ def credit_deposit(deposit_id: str, ton_amount: float, tx_hash: str, sender: str
         WHERE deposit_id=%s
     """, (ton_amount, tx_hash, sender, deposit_id))
 
-    logger.info(f"✅ TON deposit credited: {ton_amount} TON → user {user_id} (deposit {deposit_id})")
+    logger.info(f"✅ TON credited: {ton_amount} TON → user {user_id} (dep {deposit_id})")
     return True
 
 
-# ── Scanner de blockchain ──────────────────────────────────────────────────────
+# ── scanner de blockchain ──────────────────────────────────────────────────────
 
 def _scan_and_credit(user_id, deposit_id):
     """
-    Consulta Toncenter buscando transacciones entrantes a la wallet del bot
-    cuyo comment/message coincida con el memo del usuario.
-    Si la encuentra, acredita ton_balance automáticamente.
-    Llamado en cada poll del frontend (GET /api/ton/deposit/status/<id>).
+    Llama a Toncenter, busca tx entrante cuyo comment == memo del usuario,
+    y si la encuentra acredita ton_balance.
     """
     try:
-        receiver  = get_config("ton_wallet_address", "")
-        api_key   = get_config("toncenter_api_key", "") or os.getenv("TONCENTER_API_KEY", "")
-        ton_min   = float(get_config("ton_min_deposit", "0.1"))
+        receiver = _cfg("ton_wallet_address", "")
+        api_key  = _cfg("toncenter_api_key", "") or os.getenv("TONCENTER_API_KEY", "")
+        ton_min  = float(_cfg("ton_min_deposit", "0.1") or "0.1")
 
-        if not receiver or not receiver.startswith(("EQ", "UQ", "kQ", "0Q")):
-            logger.warning("ton_wallet_address no configurada o inválida")
+        # Fallback a variable de entorno si config está vacía
+        if not receiver:
+            receiver = os.getenv("TON_WALLET_ADDRESS", "")
+
+        if not receiver:
+            logger.error("TON: ton_wallet_address no configurada")
+            return
+
+        if not receiver.startswith(("EQ", "UQ", "kQ", "0Q", "Ef", "Uf")):
+            logger.error(f"TON: dirección inválida: '{receiver}'")
             return
 
         memo = get_or_create_user_memo(user_id)
+        logger.info(f"TON scan: memo='{memo}' wallet={receiver[:12]}…")
 
         headers = {}
         if api_key:
@@ -244,41 +216,49 @@ def _scan_and_credit(user_id, deposit_id):
             timeout=10
         )
         data = resp.json()
+
         if not data.get("ok"):
-            logger.warning(f"Toncenter error: {data.get('error')}")
+            logger.warning(f"Toncenter error: {data.get('error')} status={resp.status_code}")
             return
 
-        for tx in data.get("result", []):
-            in_msg  = tx.get("in_msg", {})
-            comment = str(in_msg.get("message", "") or "").strip()
+        txs = data.get("result", [])
+        logger.info(f"TON scan: {len(txs)} txs de Toncenter")
+
+        for tx in txs:
+            in_msg     = tx.get("in_msg", {})
+            comment    = str(in_msg.get("message", "") or "").strip()
             value_nano = int(in_msg.get("value", "0") or 0)
             tx_hash    = tx.get("transaction_id", {}).get("hash", "")
 
-            # El comment del usuario debe coincidir con su memo
-            if memo not in comment:
+            if not comment or memo not in comment:
                 continue
 
             ton_amount = value_nano / 1_000_000_000
-            if ton_amount < ton_min * 0.95:   # 5% tolerancia
+            logger.info(f"TON match! tx={tx_hash[:12]} amount={ton_amount} comment='{comment}'")
+
+            if ton_amount < ton_min * 0.95:
+                logger.warning(f"TON: monto {ton_amount} < min {ton_min}")
                 continue
 
-            # Verificar que esta tx no fue procesada antes
             with get_cursor() as cursor:
                 cursor.execute(
                     "SELECT id FROM ton_deposits WHERE ton_tx_hash = %s", (tx_hash,)
                 )
                 if cursor.fetchone():
-                    continue   # ya procesada
+                    logger.info(f"TON: tx {tx_hash[:12]} ya procesada")
+                    continue
 
             sender = str(in_msg.get("source", ""))
             credit_deposit(deposit_id, ton_amount, tx_hash, sender)
-            return   # solo procesar una tx por polling
+            return
+
+        logger.info(f"TON scan: sin match para memo '{memo}'")
 
     except Exception as e:
-        logger.error(f"_scan_and_credit error: {e}")
+        logger.error(f"_scan_and_credit error: {e}", exc_info=True)
 
 
-# ── Auto-inicialización ────────────────────────────────────────────────────────
+# ── auto-init ──────────────────────────────────────────────────────────────────
 try:
     init_ton_deposits_table()
 except Exception as _e:
