@@ -3,13 +3,13 @@
 
 /* ==================== VARIABLES PREMIUM AZUL ==================== */
 :root {
-    /* Colores base - Blanco limpio */
-    --color-void: #FFFFFF;
-    --color-bg-primary: #F8FAFF;
-    --color-bg-secondary: #EEF3FF;
-    --color-bg-tertiary: #E4ECFF;
-    --color-bg-elevated: #D8E4FF;
-    --color-bg-overlay: rgba(240, 245, 255, 0.97);
+    /* Colores base - Negro profundo */
+    --color-void: #000000;
+    --color-bg-primary: #030308;
+    --color-bg-secondary: #080812;
+    --color-bg-tertiary: #0D0D1A;
+    --color-bg-elevated: #121220;
+    --color-bg-overlay: rgba(3, 3, 8, 0.97);
 
     /* Gradientes Premium Azul */
     --gradient-primary: linear-gradient(135deg,
@@ -60,11 +60,11 @@
     --color-error: #FF3366;
     --color-info: #00D4FF;
 
-    /* Textos con máximo contraste - OSCUROS */
-    --color-text-primary: #0A0A1A;
-    --color-text-secondary: #2A3A5C;
-    --color-text-tertiary: #4A6080;
-    --color-text-muted: #7A8AA0;
+    /* Textos con máximo contraste - BLANCOS */
+    --color-text-primary: #FFFFFF;
+    --color-text-secondary: #C8D4E6;
+    --color-text-tertiary: #8B9DC3;
+    --color-text-muted: #5A6A8A;
 
     /* Sistema de sombras con glow azul */
     --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.4);
@@ -78,11 +78,11 @@
     --border-gradient-blue: 1px solid transparent;
     --border-glow: 1px solid rgba(0, 102, 255, 0.2);
 
-    /* Glassmorphism Premium Azul - Light */
-    --glass-ultra: rgba(255, 255, 255, 0.75);
-    --glass-strong: rgba(255, 255, 255, 0.92);
-    --glass-border: 1px solid rgba(0, 102, 255, 0.15);
-    --glass-highlight: rgba(0, 102, 255, 0.06);
+    /* Glassmorphism Premium Azul */
+    --glass-ultra: rgba(8, 8, 18, 0.7);
+    --glass-strong: rgba(8, 8, 18, 0.85);
+    --glass-border: 1px solid rgba(0, 102, 255, 0.12);
+    --glass-highlight: rgba(0, 163, 255, 0.05);
 
     /* Spacing perfecto (8px base) */
     --space-1: 0.2rem;
@@ -120,7 +120,7 @@ html {
 
 body {
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
-    background: #FFFFFF;
+    background: var(--color-void);
     color: var(--color-text-primary);
     line-height: 1.6;
     min-height: 100vh;
@@ -192,16 +192,16 @@ body::after {
 .nav-inner {
     max-width: 680px;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--glass-ultra);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: var(--glass-border);
     border-radius: var(--radius-2xl);
     padding: 0.3rem !important;
     box-shadow:
-        0 8px 32px rgba(0, 102, 255, 0.12),
-        inset 0 1px 1px rgba(255, 255, 255, 0.8),
-        0 0 0 1px rgba(0, 0, 0, 0.05);
+        var(--shadow-ultra),
+        inset 0 1px 1px var(--glass-highlight),
+        0 0 0 1px rgba(0, 0, 0, 0.1);
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 0.05rem !important;
@@ -403,13 +403,13 @@ body::after {
     font-weight: 900;
     letter-spacing: -0.04em;
     line-height: 1;
-    color: #0A0A1A !important;
+    color: #FFFFFF !important;
     margin-bottom: var(--space-2);
     text-shadow: none !important;
     filter: none !important;
     background: none !important;
     -webkit-background-clip: unset !important;
-    -webkit-text-fill-color: #0A0A1A !important;
+    -webkit-text-fill-color: #FFFFFF !important;
     background-clip: unset !important;
 }
 
@@ -640,7 +640,7 @@ body::after {
     border-radius: var(--radius-full);
     overflow: hidden;
     position: relative;
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 .progress-bar {
@@ -709,7 +709,7 @@ body::after {
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 30, 80, 0.5);
+    background: rgba(0, 0, 0, 0.9);
     backdrop-filter: blur(20px);
     z-index: 2000;
     display: flex;
@@ -927,7 +927,7 @@ body::after {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #F0F5FF 0%, #E8EEFF 50%, #F5F8FF 100%);
+    background: linear-gradient(135deg, #0B0B0F 0%, #13131B 50%, #1B1B27 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1252,16 +1252,16 @@ body::after {
     padding-top: env(safe-area-inset-top, 0);
     background: linear-gradient(
         180deg,
-        rgba(255, 255, 255, 0.95) 0%,
-        rgba(248, 250, 255, 0.98) 100%
+        rgba(11, 11, 15, 0.25) 0%,
+        rgba(11, 11, 15, 0.35) 100%
     );
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(0, 102, 255, 0.10);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
     align-items: center;
     box-shadow:
-        0 2px 16px rgba(0, 102, 255, 0.08),
+        0 2px 16px rgba(0, 0, 0, 0.25),
         0 0 36px rgba(0, 102, 255, 0.02);
 }
 
