@@ -8,12 +8,12 @@
     <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4);">
         <a href="/explore/games?user_id={{ user_id }}" style="text-decoration: none;">
             <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: all 0.3s ease;">
-                <i data-lucide="arrow-left" style="width: 22px; height: 22px; color: rgba(0, 20, 60, 0.7);"></i>
+                <i data-lucide="arrow-left" style="width: 22px; height: 22px; color: rgba(255, 255, 255, 0.7);"></i>
             </div>
         </a>
         <div style="flex: 1;">
             <h1 style="font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: var(--space-1);">Mines</h1>
-            <p style="font-size: 0.8125rem; color: rgba(0, 0, 0, 0.5);">Descubre gemas, evita minas</p>
+            <p style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Descubre gemas, evita minas</p>
         </div>
         <!-- Botón de historial -->
         <div onclick="toggleHistory()" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(0, 102, 255, 0.1); border-radius: 12px; border: 1px solid rgba(0, 102, 255, 0.3); cursor: pointer; transition: all 0.3s ease;">
@@ -30,7 +30,7 @@
             </button>
         </div>
         <div id="history-list" style="max-height: 300px; overflow-y: auto;">
-            <div style="text-align: center; padding: 20px; color: rgba(0, 0, 0, 0.5);">
+            <div style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.5);">
                 <i data-lucide="loader" style="width: 24px; height: 24px; animation: spin 1s linear infinite;"></i>
                 <p style="margin-top: 8px; font-size: 0.8125rem;">Cargando historial...</p>
             </div>
@@ -41,11 +41,11 @@
     <div class="card" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.06) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(0, 245, 255, 0.2); margin-bottom: var(--space-4);">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
             <div>
-                <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5); margin-bottom: var(--space-1);">Tu Balance</div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);">Tu Balance</div>
                 <div style="font-size: 1.25rem; font-weight: 700; color: #00D4FF;" id="user-balance">{{ "%.4f"|format(user.se_balance) }} S-E</div>
             </div>
             <div>
-                <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5); margin-bottom: var(--space-1);">Ganancia Potencial</div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);">Ganancia Potencial</div>
                 <div style="font-size: 1.25rem; font-weight: 700; color: #00FF88;" id="potential-win">0.0000 S-E</div>
             </div>
         </div>
@@ -57,7 +57,7 @@
 
         <!-- Apuesta -->
         <div style="margin-bottom: var(--space-6);">
-            <label style="font-size: 0.8125rem; color: rgba(0, 20, 60, 0.6); margin-bottom: var(--space-2); display: block;">Cantidad a apostar (S-E)</label>
+            <label style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-2); display: block;">Cantidad a apostar (S-E)</label>
             <div style="display: flex; gap: var(--space-2);">
                 <input type="number" id="bet-amount" step="0.0001" min="0.0001" max="{{ user.se_balance }}" value="0.01"
                     style="flex: 1; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 12px 16px; color: white; font-size: 1rem; font-weight: 600; outline: none;">
@@ -68,7 +68,7 @@
 
         <!-- Número de Minas -->
         <div style="margin-bottom: var(--space-4);">
-            <label style="font-size: 0.8125rem; color: rgba(0, 20, 60, 0.6); margin-bottom: var(--space-2); display: block;">Número de minas (1-24)</label>
+            <label style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-2); display: block;">Número de minas (1-24)</label>
             <div style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
                 <button class="mine-btn active" data-mines="6" style="flex: 1; min-width: 60px; background: rgba(0, 102, 255, 0.2); border: 1px solid rgba(0, 102, 255, 0.4); border-radius: 10px; padding: 10px; color: white; font-weight: 600; cursor: pointer;">6</button>
                 <button class="mine-btn" data-mines="10" style="flex: 1; min-width: 60px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; padding: 10px; color: white; font-weight: 600; cursor: pointer;">10</button>
@@ -81,7 +81,7 @@
         <!-- Multiplicador Info -->
         <div style="background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: var(--space-3); margin-bottom: var(--space-4);">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 0.8125rem; color: rgba(0, 0, 0, 0.5);">Multiplicador por gema:</span>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Multiplicador por gema:</span>
                 <span style="font-size: 1rem; font-weight: 700; color: #FFD700;" id="multiplier-display">0.5x</span>
             </div>
         </div>
@@ -97,11 +97,11 @@
     <div class="card" id="game-board-container" style="display: none; background: linear-gradient(135deg, rgba(0, 245, 255, 0.05) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(0, 245, 255, 0.2); margin-bottom: var(--space-4);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
             <div>
-                <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5);">Multiplicador Actual</div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Multiplicador Actual</div>
                 <div style="font-size: 1.5rem; font-weight: 800; color: #00FF88;" id="current-multiplier">0.50x</div>
             </div>
             <div style="text-align: right;">
-                <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5);">Gemas Encontradas</div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Gemas Encontradas</div>
                 <div style="font-size: 1.5rem; font-weight: 800; color: #00D4FF;" id="gems-found">0</div>
             </div>
         </div>
@@ -128,7 +128,7 @@
     <div class="card" id="game-result" style="display: none; text-align: center; margin-bottom: var(--space-4);">
         <div id="result-icon" style="width: 80px; height: 80px; margin: 0 auto var(--space-4); display: flex; align-items: center; justify-content: center; border-radius: 50%;"></div>
         <h2 id="result-title" style="font-size: 1.5rem; font-weight: 800; margin-bottom: var(--space-2);"></h2>
-        <p id="result-message" style="font-size: 1rem; color: rgba(0, 20, 60, 0.6); margin-bottom: var(--space-4);"></p>
+        <p id="result-message" style="font-size: 1rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-4);"></p>
         <button onclick="resetGame()" style="width: 100%; background: linear-gradient(135deg, #0066FF 0%, #0052CC 100%); border: none; border-radius: 14px; padding: 16px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer;">
             Jugar de Nuevo
         </button>
@@ -213,7 +213,7 @@ input:focus {
     border: none;
     border-radius: 14px;
     padding: 16px 20px;
-    color: #0A0A1A;
+    color: #0B0B0F;
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
@@ -252,7 +252,7 @@ input:focus {
     cursor: not-allowed;
     box-shadow: none !important;
     background: linear-gradient(135deg, rgba(100, 100, 100, 0.5) 0%, rgba(60, 60, 60, 0.5) 100%) !important;
-    color: rgba(0, 0, 0, 0.5) !important;
+    color: rgba(255, 255, 255, 0.5) !important;
 }
 
 /* Botón cashout en juego activo - verde pero SIN animación */
@@ -260,7 +260,7 @@ input:focus {
     opacity: 1 !important;
     cursor: not-allowed !important;
     background: linear-gradient(135deg, #00FF88 0%, #00CC66 100%) !important;
-    color: #0A0A1A !important;
+    color: #0B0B0F !important;
     box-shadow: 0 4px 20px rgba(0, 255, 136, 0.3) !important;
 }
 
@@ -269,7 +269,7 @@ input:focus {
     opacity: 1 !important;
     cursor: pointer !important;
     background: linear-gradient(135deg, #00FF88 0%, #00CC66 100%) !important;
-    color: #0A0A1A !important;
+    color: #0B0B0F !important;
     box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4) !important;
 }
 
@@ -730,7 +730,7 @@ function toggleHistory() {
 function loadGameHistory() {
     const historyList = document.getElementById('history-list');
     historyList.innerHTML = `
-        <div style="text-align: center; padding: 20px; color: rgba(0, 0, 0, 0.5);">
+        <div style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.5);">
             <i data-lucide="loader" style="width: 24px; height: 24px; animation: spin 1s linear infinite;"></i>
             <p style="margin-top: 8px; font-size: 0.8125rem;">Cargando historial...</p>
         </div>
@@ -763,10 +763,10 @@ function loadGameHistory() {
                                     <i data-lucide="${isWin ? 'trophy' : 'bomb'}" style="width: 16px; height: 16px; color: ${isWin ? '#00FF88' : '#FF3366'};"></i>
                                     <span style="font-size: 0.875rem; font-weight: 600; color: ${isWin ? '#00FF88' : '#FF3366'};">${isWin ? 'Victoria' : 'Derrota'}</span>
                                 </div>
-                                <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5);">${dateStr}</div>
+                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">${dateStr}</div>
                             </div>
                             <div style="text-align: right;">
-                                <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5);">Apuesta: ${parseFloat(game.bet_amount).toFixed(4)}</div>
+                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Apuesta: ${parseFloat(game.bet_amount).toFixed(4)}</div>
                                 <div style="font-size: 0.875rem; font-weight: 700; color: ${isWin ? '#00FF88' : '#FF3366'};">
                                     ${isWin ? '+' : ''}${parseFloat(game.profit).toFixed(4)} S-E
                                 </div>
@@ -783,7 +783,7 @@ function loadGameHistory() {
                 }
             } else {
                 historyList.innerHTML = `
-                    <div style="text-align: center; padding: 30px; color: rgba(0, 0, 0, 0.5);">
+                    <div style="text-align: center; padding: 30px; color: rgba(255, 255, 255, 0.5);">
                         <i data-lucide="inbox" style="width: 40px; height: 40px; margin-bottom: 12px;"></i>
                         <p style="font-size: 0.875rem;">No hay historial de juegos aún</p>
                         <p style="font-size: 0.75rem; margin-top: 4px;">¡Juega tu primera partida!</p>

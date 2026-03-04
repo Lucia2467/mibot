@@ -2,1497 +2,329 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Sally-E - Plataforma líder de crypto mining. Genera ingresos pasivos automáticamente.">
-    <meta name="theme-color" content="#030712">
-    <title>Sally-E | Crypto Mining Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticación Requerida - SALLY-E</title>
     
-    <link rel="icon" type="image/png" href="/static/images/logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Telegram WebApp Script - CRÍTICO -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        :root {
-            --primary-50: #eff6ff;
-            --primary-100: #dbeafe;
-            --primary-200: #bfdbfe;
-            --primary-300: #93c5fd;
-            --primary-400: #60a5fa;
-            --primary-500: #3b82f6;
-            --primary-600: #2563eb;
-            --primary-700: #1d4ed8;
-            --primary-800: #1e40af;
-            --primary-900: #1e3a8a;
-            
-            --cyan-400: #22d3ee;
-            --cyan-500: #06b6d4;
-            
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --gray-950: #030712;
-            
-            --success: #10b981;
-            --warning: #f59e0b;
-            --error: #ef4444;
-            --telegram: #0088cc;
-            
-            --gradient-primary: linear-gradient(135deg, var(--primary-600) 0%, var(--cyan-500) 100%);
-            --gradient-text: linear-gradient(135deg, #fff 0%, var(--gray-300) 100%);
-            --gradient-card: linear-gradient(145deg, rgba(31, 41, 55, 0.5) 0%, rgba(17, 24, 39, 0.8) 100%);
-            
-            --blur-sm: 8px;
-            --blur-md: 16px;
-            --blur-lg: 24px;
-            --blur-xl: 40px;
-            
-            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        *, *::before, *::after {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
-        html {
-            scroll-behavior: smooth;
-            -webkit-text-size-adjust: 100%;
-        }
-        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--gray-950);
-            color: var(--gray-50);
-            line-height: 1.6;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
-        /* ============================================
-           BACKGROUND & AMBIENT EFFECTS
-        ============================================ */
-        .ambient {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        .ambient-gradient {
-            position: absolute;
-            inset: 0;
-            background: 
-                radial-gradient(ellipse 80% 60% at 50% -20%, rgba(37, 99, 235, 0.2) 0%, transparent 50%),
-                radial-gradient(ellipse 50% 40% at 90% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse 40% 30% at 10% 90%, rgba(37, 99, 235, 0.08) 0%, transparent 50%);
-        }
-        
-        .ambient-grid {
-            position: absolute;
-            inset: 0;
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-            background-size: 72px 72px;
-            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
-        }
-        
-        .ambient-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.5;
-            animation: orbFloat 20s ease-in-out infinite;
-        }
-        
-        .ambient-orb-1 {
-            width: 600px;
-            height: 600px;
-            background: var(--primary-600);
-            top: -200px;
-            left: -100px;
-            animation-delay: 0s;
-        }
-        
-        .ambient-orb-2 {
-            width: 400px;
-            height: 400px;
-            background: var(--cyan-500);
-            bottom: -100px;
-            right: -100px;
-            animation-delay: -10s;
-        }
-        
-        @keyframes orbFloat {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(30px, -30px) scale(1.05); }
-            50% { transform: translate(-20px, 20px) scale(0.95); }
-            75% { transform: translate(20px, 10px) scale(1.02); }
-        }
-        
-        /* ============================================
-           HEADER / NAVIGATION
-        ============================================ */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            transition: var(--transition-base);
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(3, 7, 18, 0);
-            backdrop-filter: blur(0);
-            border-bottom: 1px solid transparent;
-            transition: var(--transition-base);
-        }
-        
-        .header.scrolled::before {
-            background: rgba(3, 7, 18, 0.85);
-            backdrop-filter: blur(var(--blur-lg));
-            border-bottom-color: rgba(255, 255, 255, 0.06);
-        }
-        
-        .header-container {
-            position: relative;
-            max-width: 1320px;
-            margin: 0 auto;
-            padding: 0 32px;
-            height: 88px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            text-decoration: none;
-            transition: var(--transition-base);
-        }
-        
-        .logo:hover {
-            transform: translateY(-1px);
-        }
-        
-        .logo-mark {
-            position: relative;
-            width: 48px;
-            height: 48px;
-            background: var(--gradient-primary);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 
-                0 0 0 1px rgba(255, 255, 255, 0.1),
-                0 8px 32px rgba(37, 99, 235, 0.4);
-        }
-        
-        .logo-mark::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
-        }
-        
-        .logo-mark svg {
-            width: 28px;
-            height: 28px;
-            fill: white;
-            position: relative;
-        }
-        
-        .logo-text {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 26px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            background: var(--gradient-text);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .nav {
-            display: flex;
-            align-items: center;
-            gap: 48px;
-        }
-        
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 40px;
-        }
-        
-        .nav-link {
-            position: relative;
-            color: var(--gray-400);
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-            letter-spacing: -0.01em;
-            transition: var(--transition-base);
-        }
-        
-        .nav-link:hover {
-            color: var(--gray-50);
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--gradient-primary);
-            border-radius: 1px;
-            transition: var(--transition-base);
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
-        }
-        
-        .nav-cta {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-family: inherit;
-            font-weight: 600;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition-base);
-        }
-        
-        .btn-sm {
-            padding: 12px 24px;
-            font-size: 14px;
-            border-radius: 12px;
-        }
-        
-        .btn-md {
-            padding: 16px 28px;
-            font-size: 15px;
-            border-radius: 14px;
-        }
-        
-        .btn-lg {
-            padding: 20px 36px;
-            font-size: 16px;
-            border-radius: 16px;
-        }
-        
-        .btn-ghost {
-            background: transparent;
-            color: var(--gray-300);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .btn-ghost:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.15);
-            color: var(--gray-50);
-        }
-        
-        .btn-primary {
-            background: var(--gradient-primary);
-            color: white;
-            box-shadow: 
-                0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-                0 4px 24px rgba(37, 99, 235, 0.4);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 
-                0 0 0 1px rgba(255, 255, 255, 0.15) inset,
-                0 8px 40px rgba(37, 99, 235, 0.5);
-        }
-        
-        .btn-telegram {
-            background: var(--telegram);
-            color: white;
-            box-shadow: 0 4px 24px rgba(0, 136, 204, 0.4);
-        }
-        
-        .btn-telegram:hover {
-            background: #0077b3;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 40px rgba(0, 136, 204, 0.5);
-        }
-        
-        .btn svg {
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-        }
-        
-        .btn-lg svg {
-            width: 24px;
-            height: 24px;
-        }
-        
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--gray-300);
-            padding: 8px;
-            cursor: pointer;
-        }
-        
-        .mobile-menu-btn svg {
-            width: 28px;
-            height: 28px;
-        }
-        
-        /* ============================================
-           HERO SECTION
-        ============================================ */
-        .hero {
-            position: relative;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
-            padding: 140px 32px 100px;
+            justify-content: center;
+            padding: 20px;
+            color: white;
         }
         
-        .hero-container {
-            max-width: 1320px;
-            margin: 0 auto;
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 100px;
-            align-items: center;
+        .container {
+            text-align: center;
+            max-width: 500px;
         }
         
-        .hero-content {
-            max-width: 620px;
+        .logo {
+            font-size: 80px;
+            margin-bottom: 20px;
         }
         
-        .hero-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 18px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 100px;
-            font-size: 13px;
+        h1 {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 16px 40px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 12px;
             font-weight: 600;
-            color: var(--success);
-            margin-bottom: 28px;
-            animation: fadeInUp 0.6s ease-out;
+            font-size: 16px;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
         
-        .hero-eyebrow-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
+        .btn:hover {
+            transform: translateY(-2px);
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.15); }
+        .features {
+            margin-top: 50px;
+            text-align: left;
         }
         
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .feature {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
         }
         
-        .hero-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(44px, 5.5vw, 72px);
-            font-weight: 700;
-            line-height: 1.05;
-            letter-spacing: -2.5px;
-            margin-bottom: 28px;
-            animation: fadeInUp 0.6s ease-out 0.1s both;
+        .feature-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 8px;
         }
         
-        .hero-title-gradient {
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .feature-desc {
+            font-size: 14px;
+            opacity: 0.9;
         }
         
-        .hero-description {
-            font-size: 19px;
-            color: var(--gray-400);
-            line-height: 1.75;
-            margin-bottom: 44px;
-            max-width: 520px;
-            animation: fadeInUp 0.6s ease-out 0.2s both;
-        }
-        
-        .hero-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 56px;
-            animation: fadeInUp 0.6s ease-out 0.3s both;
-        }
-        
-        .hero-metrics {
-            display: flex;
-            gap: 56px;
-            animation: fadeInUp 0.6s ease-out 0.4s both;
-        }
-        
-        .metric {
-            position: relative;
-        }
-        
-        .metric::after {
-            content: '';
-            position: absolute;
-            right: -28px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 1px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .metric:last-child::after {
+        /* Loading state */
+        .loading {
             display: none;
         }
         
-        .metric-value {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 36px;
-            font-weight: 700;
-            letter-spacing: -1px;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .loading.active {
+            display: block;
         }
         
-        .metric-label {
-            font-size: 14px;
-            color: var(--gray-500);
-            margin-top: 4px;
-        }
-        
-        /* Hero Visual / Dashboard Card */
-        .hero-visual {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            animation: fadeInUp 0.8s ease-out 0.3s both;
-        }
-        
-        .dashboard-card {
-            position: relative;
-            width: 100%;
-            max-width: 440px;
-            background: var(--gradient-card);
-            backdrop-filter: blur(var(--blur-xl));
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 28px;
-            padding: 36px;
-            box-shadow: 
-                0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-                0 60px 120px rgba(0, 0, 0, 0.5),
-                0 0 100px rgba(37, 99, 235, 0.15);
-        }
-        
-        .dashboard-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 36px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        
-        .dashboard-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--gray-500);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-        
-        .dashboard-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--success);
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        
-        .balance-section {
-            text-align: center;
-            margin-bottom: 36px;
-        }
-        
-        .balance-label {
-            font-size: 13px;
-            color: var(--gray-500);
-            margin-bottom: 12px;
-        }
-        
-        .balance-row {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .balance-value {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 56px;
-            font-weight: 700;
-            letter-spacing: -2px;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .balance-currency {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--gray-500);
-        }
-        
-        .mining-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 16px 24px;
-            background: rgba(16, 185, 129, 0.08);
-            border: 1px solid rgba(16, 185, 129, 0.15);
-            border-radius: 14px;
-            margin-bottom: 32px;
-        }
-        
-        .mining-spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(16, 185, 129, 0.2);
-            border-top-color: var(--success);
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
         
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
         
-        .mining-text {
+        .content.hidden {
+            display: none;
+        }
+        
+        .error-msg {
+            background: rgba(255,100,100,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
             font-size: 14px;
-            font-weight: 600;
-            color: var(--success);
-        }
-        
-        .mining-rate {
-            font-size: 13px;
-            color: var(--gray-500);
-            margin-left: auto;
-        }
-        
-        .wallet-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-        
-        .wallet-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 14px;
-            padding: 18px 14px;
-            text-align: center;
-            transition: var(--transition-base);
-        }
-        
-        .wallet-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .wallet-value {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--gray-50);
-        }
-        
-        .wallet-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--gray-500);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 6px;
-        }
-        
-        /* Floating Elements */
-        .floating-card {
-            position: absolute;
-            background: var(--gradient-card);
-            backdrop-filter: blur(var(--blur-md));
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        .floating-card-1 {
-            top: 20px;
-            right: -10px;
-        }
-        
-        .floating-card-2 {
-            bottom: 60px;
-            left: -20px;
-            animation-delay: -3s;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-16px); }
-        }
-        
-        .floating-icon {
-            width: 44px;
-            height: 44px;
-            background: var(--gradient-primary);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
-        }
-        
-        .floating-icon svg {
-            width: 24px;
-            height: 24px;
-            fill: white;
-        }
-        
-        .floating-content {
-            text-align: left;
-        }
-        
-        .floating-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--gray-50);
-        }
-        
-        .floating-subtitle {
-            font-size: 13px;
-            color: var(--gray-500);
-        }
-        
-        /* ============================================
-           FEATURES SECTION
-        ============================================ */
-        .features {
-            position: relative;
-            padding: 140px 32px;
-        }
-        
-        .features::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-        }
-        
-        .features-container {
-            max-width: 1320px;
-            margin: 0 auto;
-        }
-        
-        .section-header {
-            text-align: center;
-            max-width: 640px;
-            margin: 0 auto 80px;
-        }
-        
-        .section-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(37, 99, 235, 0.1);
-            border: 1px solid rgba(37, 99, 235, 0.2);
-            border-radius: 100px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--primary-400);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 24px;
-        }
-        
-        .section-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(32px, 4vw, 52px);
-            font-weight: 700;
-            letter-spacing: -1.5px;
-            margin-bottom: 20px;
-        }
-        
-        .section-description {
-            font-size: 18px;
-            color: var(--gray-400);
-            line-height: 1.7;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 28px;
-        }
-        
-        .feature-card {
-            position: relative;
-            background: var(--gradient-card);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 24px;
-            padding: 40px 36px;
-            transition: var(--transition-slow);
-            overflow: hidden;
-        }
-        
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--gradient-primary);
-            opacity: 0;
-            transition: var(--transition-base);
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(37, 99, 235, 0.2);
-            box-shadow: 
-                0 32px 64px rgba(0, 0, 0, 0.3),
-                0 0 80px rgba(37, 99, 235, 0.1);
-        }
-        
-        .feature-card:hover::before {
-            opacity: 1;
-        }
-        
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--gradient-primary);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 28px;
-            box-shadow: 0 12px 32px rgba(37, 99, 235, 0.3);
-        }
-        
-        .feature-icon svg {
-            width: 30px;
-            height: 30px;
-            fill: white;
-        }
-        
-        .feature-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 14px;
-        }
-        
-        .feature-description {
-            font-size: 15px;
-            color: var(--gray-400);
-            line-height: 1.7;
-        }
-        
-        /* ============================================
-           CTA SECTION
-        ============================================ */
-        .cta-section {
-            position: relative;
-            padding: 120px 32px;
-        }
-        
-        .cta-container {
-            max-width: 960px;
-            margin: 0 auto;
-        }
-        
-        .cta-card {
-            position: relative;
-            background: var(--gradient-card);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 32px;
-            padding: 80px 64px;
-            text-align: center;
-            overflow: hidden;
-        }
-        
-        .cta-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(ellipse at center, rgba(37, 99, 235, 0.15) 0%, transparent 50%);
-            pointer-events: none;
-        }
-        
-        .cta-title {
-            position: relative;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(32px, 4vw, 48px);
-            font-weight: 700;
-            letter-spacing: -1px;
-            margin-bottom: 20px;
-        }
-        
-        .cta-description {
-            position: relative;
-            font-size: 18px;
-            color: var(--gray-400);
-            margin-bottom: 44px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .cta-actions {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        
-        /* ============================================
-           FOOTER
-        ============================================ */
-        .footer {
-            position: relative;
-            padding: 64px 32px 48px;
-        }
-        
-        .footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-        }
-        
-        .footer-container {
-            max-width: 1320px;
-            margin: 0 auto;
-        }
-        
-        .footer-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 48px;
-        }
-        
-        .footer-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .footer-nav {
-            display: flex;
-            gap: 40px;
-        }
-        
-        .footer-link {
-            color: var(--gray-500);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: var(--transition-fast);
-        }
-        
-        .footer-link:hover {
-            color: var(--gray-300);
-        }
-        
-        .footer-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 32px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        
-        .footer-copyright {
-            font-size: 13px;
-            color: var(--gray-600);
-        }
-        
-        .footer-social {
-            display: flex;
-            gap: 12px;
-        }
-        
-        .social-link {
-            width: 44px;
-            height: 44px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gray-500);
-            transition: var(--transition-base);
-        }
-        
-        .social-link:hover {
-            background: var(--primary-600);
-            border-color: var(--primary-600);
-            color: white;
-        }
-        
-        .social-link svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-        
-        /* ============================================
-           RESPONSIVE
-        ============================================ */
-        @media (max-width: 1200px) {
-            .hero-container {
-                gap: 60px;
-            }
-            
-            .features-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 1024px) {
-            .hero-container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            
-            .hero-content {
-                max-width: 100%;
-            }
-            
-            .hero-description {
-                margin-left: auto;
-                margin-right: auto;
-            }
-            
-            .hero-actions {
-                justify-content: center;
-            }
-            
-            .hero-metrics {
-                justify-content: center;
-            }
-            
-            .floating-card {
-                display: none;
-            }
-            
-            .dashboard-card {
-                max-width: 400px;
-                margin: 0 auto;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .header-container {
-                height: 72px;
-                padding: 0 20px;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .nav-cta .btn-ghost {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .hero {
-                padding: 120px 20px 80px;
-                min-height: auto;
-            }
-            
-            .hero-title {
-                font-size: 36px;
-                letter-spacing: -1px;
-            }
-            
-            .hero-description {
-                font-size: 16px;
-            }
-            
-            .hero-actions {
-                flex-direction: column;
-            }
-            
-            .hero-actions .btn {
-                width: 100%;
-            }
-            
-            .hero-metrics {
-                flex-direction: column;
-                gap: 24px;
-            }
-            
-            .metric::after {
-                display: none;
-            }
-            
-            .metric {
-                text-align: center;
-            }
-            
-            .dashboard-card {
-                padding: 28px;
-            }
-            
-            .balance-value {
-                font-size: 44px;
-            }
-            
-            .features {
-                padding: 80px 20px;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .cta-section {
-                padding: 80px 20px;
-            }
-            
-            .cta-card {
-                padding: 48px 28px;
-            }
-            
-            .cta-actions {
-                flex-direction: column;
-            }
-            
-            .cta-actions .btn {
-                width: 100%;
-            }
-            
-            .footer {
-                padding: 48px 20px 32px;
-            }
-            
-            .footer-main {
-                flex-direction: column;
-                gap: 32px;
-                text-align: center;
-            }
-            
-            .footer-nav {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 24px;
-            }
-            
-            .footer-bottom {
-                flex-direction: column;
-                gap: 24px;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Ambient Background -->
-    <div class="ambient">
-        <div class="ambient-gradient"></div>
-        <div class="ambient-grid"></div>
-        <div class="ambient-orb ambient-orb-1"></div>
-        <div class="ambient-orb ambient-orb-2"></div>
-    </div>
-    
-    <!-- Header -->
-    <header class="header" id="header">
-        <div class="header-container">
-            <a href="/" class="logo">
-                <div class="logo-mark">
-                    <svg viewBox="0 0 24 24"><path d="M12 2L4 7v10l8 5 8-5V7l-8-5zm0 2.5L18 8v8l-6 3.5L6 16V8l6-3.5z"/></svg>
-                </div>
-                <span class="logo-text">Sally-E</span>
+    <div class="container">
+        <!-- Loading State -->
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <h1>Conectando...</h1>
+            <p>Verificando tu cuenta de Telegram</p>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content" id="main-content">
+            <div class="logo">🔐</div>
+            <h1>Acceso desde Telegram Requerido</h1>
+            <p>SALLY-E es una Telegram Mini App. Para acceder, debes abrir la aplicación desde Telegram.</p>
+            
+            <a href="https://t.me/SallyEbot" class="btn">
+                🚀 Abrir en Telegram
             </a>
             
-            <nav class="nav">
-                <div class="nav-links">
-                    <a href="#features" class="nav-link">Características</a>
-                    <a href="https://t.me/SallyEbot" class="nav-link" target="_blank">Telegram</a>
-                    <a href="/download" class="nav-link">Descargar</a>
-                </div>
-                <div class="nav-cta">
-                    <a href="/web-login" class="btn btn-sm btn-ghost">Iniciar Sesión</a>
-                </div>
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-                </button>
-            </nav>
-        </div>
-    </header>
-    
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-container">
-            <div class="hero-content">
-                <div class="hero-eyebrow">
-                    <span class="hero-eyebrow-dot"></span>
-                    Plataforma activa 24/7
-                </div>
-                
-                <h1 class="hero-title">
-                    Genera ingresos<br>
-                    <span class="hero-title-gradient">automáticamente</span>
-                </h1>
-                
-                <p class="hero-description">
-                    Sally-E es la plataforma líder de crypto mining. Comienza a generar S-E de forma automática y conviértelos en USDT, DOGE o TON cuando quieras.
+            <!-- NEW: Web Login Option -->
+            <div style="margin-top: 20px;">
+                <p style="font-size: 14px; opacity: 0.7; margin-bottom: 15px;">
+                    ¿Prefieres acceder desde el navegador?
                 </p>
-                
-                <div class="hero-actions">
-                    <a href="https://t.me/{{ bot_username | default('SallyEbot') }}/app" class="btn btn-lg btn-telegram">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
-                        </svg>
-                        Abrir en Telegram
-                    </a>
-                    <a href="/web-login" class="btn btn-lg btn-primary">
-                        Iniciar Sesión
-                    </a>
+                <a href="/web-login" style="display: inline-block; padding: 12px 28px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; color: white; text-decoration: none; font-weight: 500; transition: all 0.3s ease;">
+                    🌐 Login con Telegram Web
+                </a>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-title">⛏️ Minería Automática</div>
+                    <div class="feature-desc">Mina S-E automáticamente 24/7 sin esfuerzo</div>
                 </div>
                 
-                <div class="hero-metrics">
-                    <div class="metric">
-                        <div class="metric-value">50K+</div>
-                        <div class="metric-label">Usuarios activos</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-value">$2.5M</div>
-                        <div class="metric-label">Total pagado</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-value">99.9%</div>
-                        <div class="metric-label">Uptime</div>
-                    </div>
+                <div class="feature">
+                    <div class="feature-title">💰 Gana S-E</div>
+                    <div class="feature-desc">Completa tareas, invita amigos y mejora tu minero</div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-title">💸 Retira tus Ganancias</div>
+                    <div class="feature-desc">Convierte tus S-E a USDT, DOGE o TON</div>
                 </div>
             </div>
             
-            <div class="hero-visual">
-                <div class="dashboard-card">
-                    <div class="dashboard-header">
-                        <span class="dashboard-title">Dashboard</span>
-                        <span class="dashboard-status">
-                            <span class="status-dot"></span>
-                            Online
-                        </span>
-                    </div>
-                    
-                    <div class="balance-section">
-                        <div class="balance-label">Balance Total</div>
-                        <div class="balance-row">
-                            <span class="balance-value">12,847</span>
-                            <span class="balance-currency">S-E</span>
-                        </div>
-                    </div>
-                    
-                    <div class="mining-indicator">
-                        <div class="mining-spinner"></div>
-                        <span class="mining-text">Minería activa</span>
-                        <span class="mining-rate">+0.5/hora</span>
-                    </div>
-                    
-                    <div class="wallet-grid">
-                        <div class="wallet-item">
-                            <div class="wallet-value">$47.20</div>
-                            <div class="wallet-label">USDT</div>
-                        </div>
-                        <div class="wallet-item">
-                            <div class="wallet-value">156</div>
-                            <div class="wallet-label">DOGE</div>
-                        </div>
-                        <div class="wallet-item">
-                            <div class="wallet-value">2.4</div>
-                            <div class="wallet-label">TON</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="floating-card floating-card-1">
-                    <div class="floating-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                    </div>
-                    <div class="floating-content">
-                        <div class="floating-title">Retiro completado</div>
-                        <div class="floating-subtitle">+25 USDT enviados</div>
-                    </div>
-                </div>
-                
-                <div class="floating-card floating-card-2">
-                    <div class="floating-icon">
-                        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                    </div>
-                    <div class="floating-content">
-                        <div class="floating-title">Nuevo referido</div>
-                        <div class="floating-subtitle">+500 S-E bonus</div>
-                    </div>
-                </div>
-            </div>
+            <div class="error-msg" id="error-msg" style="display: none;"></div>
         </div>
-    </section>
-    
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="features-container">
-            <div class="section-header">
-                <div class="section-badge">Características</div>
-                <h2 class="section-title">Todo lo que necesitas para generar ingresos</h2>
-                <p class="section-description">
-                    Una plataforma completa diseñada para maximizar tus ganancias de forma simple, segura y automatizada
-                </p>
-            </div>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-                    </div>
-                    <h3 class="feature-title">Minería Automática 24/7</h3>
-                    <p class="feature-description">
-                        Genera S-E de forma continua sin intervención manual. Tu cuenta trabaja por ti las 24 horas del día.
-                    </p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
-                    </div>
-                    <h3 class="feature-title">Tareas y Misiones</h3>
-                    <p class="feature-description">
-                        Completa misiones diarias para multiplicar tus ganancias. Nuevas tareas disponibles cada día.
-                    </p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                    </div>
-                    <h3 class="feature-title">Sistema de Referidos</h3>
-                    <p class="feature-description">
-                        Invita amigos y gana bonificaciones por cada uno. Construye tu red y multiplica tus ingresos.
-                    </p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14c1.1 0 2 .9 2 2v1h-9a2 2 0 00-2 2v8a2 2 0 002 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-                    </div>
-                    <h3 class="feature-title">Múltiples Criptomonedas</h3>
-                    <p class="feature-description">
-                        Retira tus ganancias en USDT, DOGE o TON. Elige la criptomoneda que más te convenga.
-                    </p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-                    </div>
-                    <h3 class="feature-title">Seguridad Avanzada</h3>
-                    <p class="feature-description">
-                        Protección de nivel bancario con autenticación Telegram y encriptación de datos end-to-end.
-                    </p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
-                    </div>
-                    <h3 class="feature-title">App Móvil Nativa</h3>
-                    <p class="feature-description">
-                        Descarga nuestra aplicación Android y accede a tu cuenta desde cualquier lugar y momento.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="cta-container">
-            <div class="cta-card">
-                <h2 class="cta-title">Comienza a generar ingresos hoy</h2>
-                <p class="cta-description">
-                    Únete a miles de usuarios que ya están ganando con Sally-E. El registro es gratuito y solo toma segundos.
-                </p>
-                <div class="cta-actions">
-                    <a href="https://t.me/{{ bot_username | default('SallyEbot') }}/app" class="btn btn-lg btn-telegram">
-                        <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
-                        </svg>
-                        Abrir MiniApp
-                    </a>
-                    <a href="/web-login" class="btn btn-lg btn-primary">Iniciar Sesión</a>
-                    <a href="/download" class="btn btn-lg btn-ghost">Descargar App</a>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-main">
-                <div class="footer-brand">
-                    <div class="logo-mark" style="width:40px;height:40px;">
-                        <svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:white;"><path d="M12 2L4 7v10l8 5 8-5V7l-8-5zm0 2.5L18 8v8l-6 3.5L6 16V8l6-3.5z"/></svg>
-                    </div>
-                    <span class="logo-text" style="font-size:22px;">Sally-E</span>
-                </div>
-                <nav class="footer-nav">
-                    <a href="https://t.me/{{ bot_username | default('SallyEbot') }}" class="footer-link" target="_blank">Telegram Bot</a>
-                    <a href="https://t.me/Soporte_Sally" class="footer-link" target="_blank">Soporte</a>
-                    <a href="/download" class="footer-link">Descargar App</a>
-                    <a href="/web-login" class="footer-link">Iniciar Sesión</a>
-                </nav>
-            </div>
-            <div class="footer-bottom">
-                <p class="footer-copyright">2025 Sally-E. Todos los derechos reservados.</p>
-                <div class="footer-social">
-                    <a href="https://t.me/{{ bot_username | default('SallyEbot') }}" class="social-link" target="_blank" aria-label="Telegram">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </footer>
-    
+    </div>
+
     <script>
-        // Header scroll effect
-        const header = document.getElementById('header');
-        let lastScroll = 0;
+        // =====================================================
+        // DETECCIÓN AUTOMÁTICA DE TELEGRAM Y CREACIÓN DE CUENTA
+        // =====================================================
         
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.scrollY;
+        (function() {
+            const loading = document.getElementById('loading');
+            const mainContent = document.getElementById('main-content');
+            const errorMsg = document.getElementById('error-msg');
             
-            if (currentScroll > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
+            // Función para mostrar error
+            function showError(msg) {
+                loading.classList.remove('active');
+                mainContent.classList.remove('hidden');
+                errorMsg.textContent = msg;
+                errorMsg.style.display = 'block';
             }
             
-            lastScroll = currentScroll;
-        });
-        
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Función para redirigir
+            function redirectToApp(userId) {
+                const currentUrl = new URL(window.location.href);
+                const path = currentUrl.pathname === '/' ? '/' : currentUrl.pathname;
+                window.location.href = path + '?user_id=' + userId;
+            }
+            
+            // NUEVO: Verificar si hay sesión web activa primero
+            fetch('/api/web-session/status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.logged_in && data.user_id) {
+                    console.log('✅ Sesión web detectada:', data.user_id);
+                    redirectToApp(data.user_id);
+                    return;
                 }
+                
+                // Si no hay sesión web, continuar con la detección de Telegram
+                checkTelegramWebApp();
+            })
+            .catch(error => {
+                console.log('No hay sesión web previa, verificando Telegram...');
+                checkTelegramWebApp();
             });
-        });
-        
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+            
+            function checkTelegramWebApp() {
+                // Verificar si estamos en Telegram WebApp
+                if (window.Telegram && window.Telegram.WebApp) {
+                    const tg = window.Telegram.WebApp;
+                    
+                    // Inicializar Telegram WebApp
+                    tg.ready();
+                    tg.expand();
+                    
+                    // Obtener datos del usuario
+                    const initDataUnsafe = tg.initDataUnsafe;
+                    const telegramUser = initDataUnsafe?.user;
+                    
+                    console.log('📱 Telegram WebApp detectado');
+                    console.log('👤 Usuario:', telegramUser);
+                    console.log('📦 initData:', tg.initData);
+                    
+                    if (telegramUser && telegramUser.id) {
+                        // ¡Tenemos un usuario de Telegram!
+                        loading.classList.add('active');
+                        mainContent.classList.add('hidden');
+                        
+                        const userId = telegramUser.id.toString();
+                        const username = telegramUser.username || null;
+                        const firstName = telegramUser.first_name || 'Usuario';
+                        
+                        console.log('🔄 Sincronizando usuario:', userId);
+                        
+                        // Sincronizar/crear usuario en el backend
+                        fetch('/api/sync-telegram-data', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                user_id: userId,
+                                username: username,
+                                first_name: firstName,
+                                last_name: telegramUser.last_name || null,
+                                init_data: tg.initData
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('✅ Respuesta del servidor:', data);
+                            if (data.success) {
+                                // Redirigir con el user_id
+                                redirectToApp(userId);
+                            } else {
+                                showError('Error al crear cuenta: ' + (data.error || 'Desconocido'));
+                            }
+                        })
+                        .catch(error => {
+                            console.error('❌ Error:', error);
+                            showError('Error de conexión. Por favor, intenta de nuevo.');
+                        });
+                        
+                    } else {
+                        // Telegram WebApp sin datos de usuario
+                        console.log('⚠️ Telegram detectado pero sin datos de usuario');
+                        console.log('initDataUnsafe:', JSON.stringify(initDataUnsafe));
+                        
+                        // Verificar si hay user_id en la URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const urlUserId = urlParams.get('user_id') || urlParams.get('userId');
+                        
+                        if (urlUserId) {
+                            redirectToApp(urlUserId);
+                        }
+                    }
+                } else {
+                    // No estamos en Telegram WebApp
+                    console.log('🌐 Acceso desde navegador normal (no Telegram)');
+                    
+                    // Verificar si hay user_id en la URL de todos modos
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const urlUserId = urlParams.get('user_id') || urlParams.get('userId');
+                    
+                    if (urlUserId) {
+                        // Intentar con el user_id de la URL
+                        loading.classList.add('active');
+                        mainContent.classList.add('hidden');
+                        
+                        fetch('/api/sync-telegram-data', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                user_id: urlUserId
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                redirectToApp(urlUserId);
+                            } else {
+                                showError('Usuario no encontrado');
+                            }
+                        })
+                        .catch(() => {
+                            showError('Error de conexión');
+                        });
+                    }
                 }
-            });
-        }, observerOptions);
-        
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(30px)';
-            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(card);
-        });
+            }
+        })();
     </script>
 </body>
 </html>

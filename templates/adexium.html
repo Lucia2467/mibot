@@ -24,7 +24,7 @@
             <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: var(--space-2); background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
                 Adexium
             </h1>
-            <p style="font-size: 0.9375rem; color: rgba(0, 20, 60, 0.6); line-height: 1.6;" data-i18n="interstitial_earn_doge">
+            <p style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.6); line-height: 1.6;" data-i18n="interstitial_earn_doge">
                 Anuncios Interstitiales • Gana DOGE extra
             </p>
         </div>
@@ -41,7 +41,7 @@
                     </div>
                     <div>
                         <div style="font-weight: 600; font-size: 0.9375rem; color: white;" data-i18n="ads_today">Anuncios Hoy</div>
-                        <div style="font-size: 0.8125rem; color: rgba(0, 0, 0, 0.5);" data-i18n="max_12_per_day">Máximo 12 por día</div>
+                        <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="max_12_per_day">Máximo 12 por día</div>
                     </div>
                 </div>
                 <div style="text-align: right;">
@@ -60,7 +60,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-3); background: rgba(46, 204, 113, 0.05); border-radius: 12px; border: 1px solid rgba(46, 204, 113, 0.1);">
                 <div style="display: flex; align-items: center; gap: var(--space-2);">
                     <i data-lucide="coins" style="width: 18px; height: 18px; color: #2ECC71;"></i>
-                    <span style="font-size: 0.875rem; color: rgba(0, 20, 60, 0.7);" data-i18n="earned_today">Ganado hoy</span>
+                    <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7);" data-i18n="earned_today">Ganado hoy</span>
                 </div>
                 <div id="adx-earned-amount" style="font-weight: 700; font-size: 1rem; color: #2ECC71;">
                     {{ "%.3f"|format(progress.total_earned) }} DOGE
@@ -74,7 +74,7 @@
         <div style="text-align: center;">
             <!-- Reward per view -->
             <div style="margin-bottom: var(--space-4);">
-                <div style="font-size: 0.8125rem; color: rgba(0, 0, 0, 0.5); margin-bottom: var(--space-1);" data-i18n="reward_per_ad">Recompensa por anuncio</div>
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);" data-i18n="reward_per_ad">Recompensa por anuncio</div>
                 <div style="font-weight: 700; font-size: 1.5rem; color: #2ECC71;">+{{ config.reward_per_ad }} DOGE</div>
             </div>
 
@@ -82,7 +82,7 @@
             <button id="adx-watch-btn"
                     onclick="startAdexium()"
                     {% if progress.completed %}disabled{% endif %}
-                    style="width: 100%; padding: var(--space-4); border-radius: 14px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; {% if progress.completed %}background: rgba(46, 204, 113, 0.15); color: rgba(0, 0, 0, 0.5);{% else %}background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%); color: #fff;{% endif %}">
+                    style="width: 100%; padding: var(--space-4); border-radius: 14px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; {% if progress.completed %}background: rgba(46, 204, 113, 0.15); color: rgba(255, 255, 255, 0.5);{% else %}background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%); color: #fff;{% endif %}">
                 {% if progress.completed %}
                     <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
@@ -110,7 +110,7 @@
     <!-- Timer Card (Hidden by default, shows during ad) -->
     <div id="adx-timer-card" class="card" style="display: none; background: linear-gradient(135deg, rgba(46, 204, 113, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(46, 204, 113, 0.3); margin-top: var(--space-4);">
         <div style="text-align: center;">
-            <div style="font-size: 0.875rem; color: rgba(0, 20, 60, 0.6); margin-bottom: var(--space-2);">
+            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-2);">
                 Mantén el anuncio abierto
             </div>
             <div id="adx-timer-display" style="font-weight: 800; font-size: 2.5rem; color: #2ECC71;">
@@ -136,7 +136,7 @@
                 <div style="font-weight: 600; font-size: 0.9375rem; color: white; margin-bottom: var(--space-1);">
                     Recompensa Total
                 </div>
-                <div style="font-size: 0.8125rem; color: rgba(0, 0, 0, 0.5);">
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">
                     Completa los 12 anuncios para ganar <span style="color: #2ECC71; font-weight: 600;">hasta 0.036 DOGE</span>
                 </div>
             </div>
@@ -152,15 +152,15 @@
         <div style="display: flex; flex-direction: column; gap: var(--space-3);">
             <div style="display: flex; align-items: center; gap: var(--space-3);">
                 <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(46, 204, 113, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #2ECC71;">1</div>
-                <span style="font-size: 0.8125rem; color: rgba(0, 20, 60, 0.6);">Presiona "Ver Anuncio" para iniciar</span>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);">Presiona "Ver Anuncio" para iniciar</span>
             </div>
             <div style="display: flex; align-items: center; gap: var(--space-3);">
                 <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(46, 204, 113, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #2ECC71;">2</div>
-                <span style="font-size: 0.8125rem; color: rgba(0, 20, 60, 0.6);">Mantén el anuncio abierto <strong>15 segundos</strong></span>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);">Mantén el anuncio abierto <strong>15 segundos</strong></span>
             </div>
             <div style="display: flex; align-items: center; gap: var(--space-3);">
                 <div style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(46, 204, 113, 0.15); border-radius: 8px; font-weight: 700; font-size: 0.75rem; color: #2ECC71;">3</div>
-                <span style="font-size: 0.8125rem; color: rgba(0, 20, 60, 0.6);">Recibe tu recompensa automáticamente</span>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6);">Recibe tu recompensa automáticamente</span>
             </div>
         </div>
     </div>

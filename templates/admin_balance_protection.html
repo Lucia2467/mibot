@@ -8,12 +8,12 @@
     <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4);">
         <a href="/admin/dashboard" style="text-decoration: none;">
             <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
-                <i data-lucide="arrow-left" style="width: 22px; height: 22px; color: rgba(0, 20, 60, 0.7);"></i>
+                <i data-lucide="arrow-left" style="width: 22px; height: 22px; color: rgba(255, 255, 255, 0.7);"></i>
             </div>
         </a>
         <div>
             <h1 style="font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: var(--space-1);">🛡️ Balance Protection</h1>
-            <p style="font-size: 0.8125rem; color: rgba(0, 0, 0, 0.5);">Monitoring & Recovery System</p>
+            <p style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Monitoring & Recovery System</p>
         </div>
     </div>
 
@@ -21,19 +21,19 @@
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-bottom: var(--space-4);">
         <div class="card" style="text-align: center; padding: var(--space-4); background: linear-gradient(135deg, rgba(0, 255, 136, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border-color: rgba(0, 255, 136, 0.2);">
             <div style="font-size: 2rem; font-weight: 800; color: #00FF88;">{{ stats.total_users }}</div>
-            <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5);">Total Users</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Total Users</div>
         </div>
         <div class="card" style="text-align: center; padding: var(--space-4); background: linear-gradient(135deg, rgba(255, 183, 0, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border-color: rgba(255, 183, 0, 0.2);">
             <div style="font-size: 2rem; font-weight: 800; color: #FFB700;">{{ stats.pending_anomalies }}</div>
-            <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5);">Pending Anomalies</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Pending Anomalies</div>
         </div>
         <div class="card" style="text-align: center; padding: var(--space-4); background: linear-gradient(135deg, rgba(255, 51, 102, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border-color: rgba(255, 51, 102, 0.2);">
             <div style="font-size: 2rem; font-weight: 800; color: #FF3366;">{{ stats.critical_anomalies }}</div>
-            <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5);">Critical Issues</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Critical Issues</div>
         </div>
         <div class="card" style="text-align: center; padding: var(--space-4); background: linear-gradient(135deg, rgba(0, 245, 255, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border-color: rgba(0, 245, 255, 0.2);">
             <div style="font-size: 2rem; font-weight: 800; color: #00D4FF;">{{ stats.snapshots_today }}</div>
-            <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5);">Snapshots Today</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Snapshots Today</div>
         </div>
     </div>
 
@@ -81,11 +81,11 @@
                     </div>
                     <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">{{ anomaly.created_at }}</span>
                 </div>
-                <div style="font-size: 0.8125rem; color: rgba(0, 20, 60, 0.6); margin-bottom: var(--space-2);">
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-2);">
                     User: <strong style="color: white;">{{ anomaly.user_id }}</strong>
                 </div>
                 {% if anomaly.description %}
-                <div style="font-size: 0.8125rem; color: rgba(0, 0, 0, 0.5);">{{ anomaly.description }}</div>
+                <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">{{ anomaly.description }}</div>
                 {% endif %}
                 {% if anomaly.discrepancy %}
                 <div style="font-size: 0.8125rem; color: #FFB700; margin-top: var(--space-2);">
@@ -124,19 +124,19 @@
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3);">
             <div style="background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: var(--space-3); text-align: center;">
                 <div style="font-size: 1.25rem; font-weight: 700; color: white;">{{ report.total_transactions }}</div>
-                <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5);">Transactions</div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Transactions</div>
             </div>
             <div style="background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: var(--space-3); text-align: center;">
                 <div style="font-size: 1.25rem; font-weight: 700; color: #00FF88;">{{ "%.4f"|format(report.total_credits) }}</div>
-                <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5);">Total Credits</div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Total Credits</div>
             </div>
             <div style="background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: var(--space-3); text-align: center;">
                 <div style="font-size: 1.25rem; font-weight: 700; color: #FF3366;">{{ "%.4f"|format(report.total_debits) }}</div>
-                <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5);">Total Debits</div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Total Debits</div>
             </div>
             <div style="background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: var(--space-3); text-align: center;">
                 <div style="font-size: 1.25rem; font-weight: 700; color: #00D4FF;">{{ report.total_users_active }}</div>
-                <div style="font-size: 0.75rem; color: rgba(0, 0, 0, 0.5);">Active Users</div>
+                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Active Users</div>
             </div>
         </div>
     </div>
@@ -150,7 +150,7 @@
         <div id="verify-result" style="display: none; background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: var(--space-3); margin-bottom: var(--space-4);"></div>
         <div style="display: flex; gap: var(--space-3);">
             <button onclick="closeModal('verify-modal')" style="flex: 1; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 12px; color: white; font-weight: 600; cursor: pointer;">Cancel</button>
-            <button onclick="verifyBalance()" style="flex: 1; background: linear-gradient(135deg, #00D4FF 0%, #0088CC 100%); border: none; border-radius: 12px; padding: 12px; color: #0A0A1A; font-weight: 600; cursor: pointer;">Verify</button>
+            <button onclick="verifyBalance()" style="flex: 1; background: linear-gradient(135deg, #00D4FF 0%, #0088CC 100%); border: none; border-radius: 12px; padding: 12px; color: #0B0B0F; font-weight: 600; cursor: pointer;">Verify</button>
         </div>
     </div>
 </div>
