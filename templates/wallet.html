@@ -794,8 +794,11 @@
 @keyframes wd-breathe     { 0%,100%{opacity:0.55;transform:scale(1)} 50%{opacity:1;transform:scale(1.1)} }
 @keyframes wd-blink       { 0%,100%{opacity:1} 50%{opacity:0.25} }
 @keyframes wd-float       { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
-@keyframes wd-entry       { from{opacity:0;transform:scale(0.9) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+@keyframes wd-entry       { from{opacity:0;transform:scale(0.92) translateY(18px)} to{opacity:1;transform:scale(1) translateY(0)} }
 @keyframes wd-rise        { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+/* Reset: elements with wd-rise animation must start hidden until card appears */
+#wd-phase-success [style*="wd-rise"],
+#wd-phase-pending [style*="wd-rise"] { opacity: 0; }
 @keyframes wd-ring-burst  { 0%{opacity:1;transform:scale(0.75)} 100%{opacity:0;transform:scale(1.65)} }
 @keyframes wd-disc-pop    { from{opacity:0;transform:scale(0.55) rotate(-20deg)} to{opacity:1;transform:scale(1) rotate(0)} }
 @keyframes wd-check-entry { from{opacity:0;transform:scale(0.5) rotate(-30deg)} to{opacity:1;transform:scale(1) rotate(0)} }
@@ -804,7 +807,13 @@
 @keyframes wd-shimmer-line{ 0%,100%{opacity:0.3;transform:scaleX(0.4)} 50%{opacity:1;transform:scaleX(1)} }
 @keyframes wd-btn-sweep   { 0%,100%{transform:skewX(-20deg) translateX(-120%)} 50%{transform:skewX(-20deg) translateX(220%)} }
 @keyframes wd-confetti    { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(-130px) rotate(var(--cr,360deg));opacity:0} }
-/* ── Pending state ── */
+/* ── Phase base — always visible unless display:none ── */
+#wd-phase-processing, #wd-phase-success, #wd-phase-pending {
+  opacity: 1;
+}
+/* ── Font fallbacks (Google Fonts may be blocked in some WebApps) ── */
+.wd-card, .wd-card * { font-family: 'Syne', 'Outfit', system-ui, -apple-system, sans-serif; }
+.wd-card code, .wd-card [style*="JetBrains"], .wd-card [style*="monospace"] { font-family: 'JetBrains Mono', 'DM Mono', ui-monospace, monospace; }
 @keyframes wd-clock-tick  { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
 @keyframes wd-pend-pulse  { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.12)} }
 @keyframes wd-pend-ring   { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.06)} }
@@ -1296,8 +1305,13 @@ function showWithdrawalOverlay(amount, currency, autoSuccess) {
     document.getElementById('wd-success-amount-display').textContent  = fmt;
 
     // ── Reset ──
+    // ── Force card visible before animation ──
     phaseProc.style.display   = 'block';
-    phaseProc.style.animation = 'wd-entry 0.6s cubic-bezier(0.22,1,0.36,1) both';
+    phaseProc.style.opacity   = '1';
+    phaseProc.style.transform = 'none';
+    phaseProc.style.animation = 'none';           // kill old
+    void phaseProc.offsetHeight;                   // reflow
+    phaseProc.style.animation = 'wd-entry 0.55s cubic-bezier(0.22,1,0.36,1) both';
     phaseSucc.style.display   = 'none';
     if(phasePend) phasePend.style.display = 'none';
     document.getElementById('wd-master-bar').style.width   = '0%';
@@ -1312,12 +1326,11 @@ function showWithdrawalOverlay(amount, currency, autoSuccess) {
         document.getElementById('wd-time-'+n).textContent='';
     });
 
-    // ── Show overlay + canvas ──
-    overlay.style.display='flex';
-    overlay.style.opacity='0';
-    overlay.style.transition='opacity 0.45s ease';
-    requestAnimationFrame(() => { overlay.style.opacity='1'; });
-    setTimeout(_wdInitCanvas, 100);
+    // ── Show overlay immediately (no opacity fade delay) ──
+    overlay.style.opacity   = '1';
+    overlay.style.transition = '';
+    overlay.style.display   = 'flex';
+    setTimeout(_wdInitCanvas, 80);
 
     // ── Live timer ──
     _wdStartTime = performance.now();
@@ -1380,6 +1393,9 @@ function _wdTransitionSuccess(phaseProc, phaseSucc) {
     setTimeout(() => {
         phaseProc.style.display='none';
         phaseSucc.style.display='block';
+        phaseSucc.style.opacity='1';
+        phaseSucc.style.animation='none';
+        void phaseSucc.offsetHeight;
         phaseSucc.style.animation='wd-entry 0.55s cubic-bezier(0.22,1,0.36,1) both';
         // Show real elapsed time
         const elEl = document.getElementById('wd-elapsed-display');
@@ -1396,6 +1412,9 @@ function _wdTransitionPending(phaseProc, phasePend, amount, currency) {
     setTimeout(() => {
         phaseProc.style.display='none';
         phasePend.style.display='block';
+        phasePend.style.opacity='1';
+        phasePend.style.animation='none';
+        void phasePend.offsetHeight;
         phasePend.style.animation='wd-entry 0.55s cubic-bezier(0.22,1,0.36,1) both';
         // Populate pending content
         const fmt = parseFloat(amount).toFixed(4)+' '+currency;
