@@ -190,8 +190,12 @@ def migrate_users():
         'se_balance':         "ALTER TABLE users ADD COLUMN se_balance DECIMAL(20,8) DEFAULT 0.00000000",
         'usdt_balance':       "ALTER TABLE users ADD COLUMN usdt_balance DECIMAL(20,8) DEFAULT 0.00000000",
         'doge_balance':       "ALTER TABLE users ADD COLUMN doge_balance DECIMAL(20,8) DEFAULT 0.00000000",
-        'banned':             "ALTER TABLE users ADD COLUMN banned TINYINT(1) DEFAULT 0",
-        'wallet_address':     "ALTER TABLE users ADD COLUMN wallet_address VARCHAR(200) DEFAULT NULL",
+        'banned':                  "ALTER TABLE users ADD COLUMN banned TINYINT(1) DEFAULT 0",
+        'wallet_address':          "ALTER TABLE users ADD COLUMN wallet_address VARCHAR(200) DEFAULT NULL",
+        'ton_wallet_address':      "ALTER TABLE users ADD COLUMN ton_wallet_address VARCHAR(100) DEFAULT NULL",
+        'ton_wallet_linked_at':    "ALTER TABLE users ADD COLUMN ton_wallet_linked_at DATETIME DEFAULT NULL",
+        'withdrawal_blocked':      "ALTER TABLE users ADD COLUMN withdrawal_blocked TINYINT(1) DEFAULT 0",
+        'withdrawal_block_reason': "ALTER TABLE users ADD COLUMN withdrawal_block_reason VARCHAR(255) DEFAULT NULL",
     })
 
 
