@@ -384,8 +384,27 @@ def on_withdrawal_created(withdrawal_id, user_id, currency, amount, wallet_addre
     # Get inline keyboard with buttons ONLY FOR CHANNEL
     keyboard = get_inline_keyboard(lang)
 
-    print(f"[on_withdrawal_created] Sending notification to CHANNEL with banner and buttons in language: {lang}")
-    return send_telegram_photo(channel, banner_url, caption, reply_markup=keyboard)
+    # User caption (simpler, without admin info)
+    user_caption = f"""<b>⏳ {txt('new_withdrawal', lang)}</b>
+
+<b>💰 {currency}</b>
+<b>💵 {txt('amount', lang)}:</b> <code>{float(amount):.8f}</code> {currency}
+<b>📍 {txt('wallet', lang)}:</b> <code>{wallet_display}</code>
+<b>🆔 {txt('withdrawal_id', lang)}:</b> <code>{withdrawal_id}</code>
+<b>📅 {txt('date', lang)}:</b> {now}
+<b>⏳ {txt('status', lang)}:</b> {txt('pending', lang)}
+
+⚙️ {txt('requires_approval', lang)}"""
+
+    print(f"[on_withdrawal_created] Sending notification to CHANNEL and USER in language: {lang}")
+
+    # Send to channel WITH buttons
+    result_channel = send_telegram_photo(channel, banner_url, caption, reply_markup=keyboard)
+
+    # Send to user WITHOUT buttons
+    send_telegram_photo(user_id, banner_url, user_caption)
+
+    return result_channel
 
 
 def on_withdrawal_completed(withdrawal_id, user_id, currency, amount, wallet_address, tx_hash=None):
