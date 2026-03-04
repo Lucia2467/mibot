@@ -441,97 +441,112 @@
     </div>
 </div>
 
-<!-- TON Deposit Modal (Automático) PREMIUM -->
-<div id="deposit-modal" class="modal-overlay" style="display: none;">
-    <div class="modal" style="max-height: 92vh; overflow-y: auto; border-radius: 24px; background: linear-gradient(180deg, #0d1117 0%, #0a0f1a 100%); border: 1px solid rgba(0,152,234,0.2); padding: 0;">
+<!-- TON Deposit Modal -->
+{% if ton_enabled %}
+<div id="deposit-modal" class="modal-overlay" style="display:none;">
+  <div class="modal" style="padding:0;border-radius:20px;background:linear-gradient(180deg,#0d1117,#0a0f1a);border:1px solid rgba(0,152,234,0.2);max-height:92vh;overflow-y:auto;">
 
-        <!-- Header premium -->
-        <div style="background: linear-gradient(135deg, #0098EA 0%, #005f99 100%); padding: 20px 20px 28px; border-radius: 24px 24px 0 0; position: relative; overflow: hidden;">
-            <!-- Glow orbs -->
-            <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:rgba(255,255,255,0.08);border-radius:50%;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:-20px;left:-10px;width:80px;height:80px;background:rgba(0,0,0,0.12);border-radius:50%;pointer-events:none;"></div>
-            <button class="modal-close" onclick="closeDepositModal()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(8px);">
-                <i data-lucide="x" style="width:18px;height:18px;color:white;"></i>
-            </button>
-            <div style="display:flex;align-items:center;gap:12px;">
-                <div style="width:46px;height:46px;background:rgba(255,255,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;backdrop-filter:blur(8px);">💎</div>
-                <div>
-                    <div style="font-size:1.15rem;font-weight:800;color:white;letter-spacing:-0.01em;">Depositar TON</div>
-                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.75);margin-top:2px;display:flex;align-items:center;gap:5px;">
-                        <span style="width:7px;height:7px;background:#4ade80;border-radius:50%;display:inline-block;box-shadow:0 0 6px #4ade80;"></span>
-                        Acreditación automática · TON Network
-                    </div>
-                </div>
-            </div>
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#0098EA 0%,#005f99 100%);padding:20px 20px 24px;border-radius:20px 20px 0 0;position:relative;">
+      <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:rgba(255,255,255,0.07);border-radius:50%;pointer-events:none;"></div>
+      <button onclick="closeDepositModal()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+        <i data-lucide="x" style="width:18px;height:18px;color:white;"></i>
+      </button>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:46px;height:46px;background:rgba(255,255,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;">💎</div>
+        <div>
+          <div style="font-size:1.1rem;font-weight:800;color:white;">Depositar TON</div>
+          <div style="font-size:0.72rem;color:rgba(255,255,255,0.75);margin-top:3px;display:flex;align-items:center;gap:5px;">
+            <span style="width:7px;height:7px;background:#4ade80;border-radius:50%;display:inline-block;box-shadow:0 0 6px #4ade80;animation:ton-pulse 1.5s ease-in-out infinite;"></span>
+            Acreditación automática · TON Network
+          </div>
         </div>
-
-        <div style="padding: 20px;">
-
-            <!-- QR Section premium -->
-            <div style="background: linear-gradient(135deg, rgba(0,152,234,0.08) 0%, rgba(0,80,140,0.12) 100%); border: 1px solid rgba(0,152,234,0.2); border-radius: 20px; padding: 20px; margin-bottom: 16px; text-align: center;">
-                <div style="font-size:0.7rem;color:rgba(0,152,234,0.8);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;">📲 Escanear para depositar</div>
-                <!-- QR Container -->
-                <div style="display:inline-flex;align-items:center;justify-content:center;background:white;border-radius:18px;padding:14px;box-shadow:0 8px 32px rgba(0,152,234,0.3), 0 2px 8px rgba(0,0,0,0.4);">
-                    <div id="ton-qr-container" style="width:180px;height:180px;display:flex;align-items:center;justify-content:center;">
-                        <div style="text-align:center;color:#94a3b8;">
-                            <div style="width:40px;height:40px;border:3px solid #0098EA;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 8px;"></div>
-                            <div style="font-size:0.7rem;">Generando QR...</div>
-                        </div>
-                    </div>
-                </div>
-                <div style="font-size:0.72rem;color:rgba(255,255,255,0.45);margin-top:10px;">Tonkeeper · TON Wallet · MyTonWallet</div>
-            </div>
-
-            <!-- Dirección TON -->
-            <div style="background: rgba(0,152,234,0.06); border: 1px solid rgba(0,152,234,0.18); border-radius: 16px; padding: 14px 16px; margin-bottom: 12px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                    <span style="font-size:0.68rem;color:#0098EA;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">💎 Dirección TON</span>
-                    <button type="button" onclick="copyTonDepositAddress()" id="btn-copy-addr" style="display:flex;align-items:center;gap:5px;padding:5px 10px;background:linear-gradient(135deg,#0098EA,#0066aa);border:none;border-radius:8px;cursor:pointer;font-size:0.7rem;color:white;font-weight:600;transition:all 0.2s;">
-                        <i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar
-                    </button>
-                </div>
-                <code id="ton-deposit-address" style="display:block;font-size:0.76rem;word-break:break-all;color:#cbd5e1;line-height:1.6;font-family:monospace;">Cargando dirección...</code>
-            </div>
-
-            <!-- Memo OBLIGATORIO -->
-            <div style="background: linear-gradient(135deg, rgba(234,179,8,0.08) 0%, rgba(202,138,4,0.06) 100%); border: 1.5px solid rgba(234,179,8,0.3); border-radius: 16px; padding: 14px 16px; margin-bottom: 16px; position: relative; overflow: hidden;">
-                <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#eab308,#fbbf24,#eab308);border-radius:16px 16px 0 0;"></div>
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                    <div style="display:flex;align-items:center;gap:6px;">
-                        <span style="font-size:0.68rem;color:#eab308;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">💬 Memo</span>
-                        <span style="background:#ef4444;color:white;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:6px;letter-spacing:0.05em;">OBLIGATORIO</span>
-                    </div>
-                    <button type="button" onclick="copyTonDepositMemo()" id="btn-copy-memo" style="display:flex;align-items:center;gap:5px;padding:5px 10px;background:linear-gradient(135deg,#eab308,#ca8a04);border:none;border-radius:8px;cursor:pointer;font-size:0.7rem;color:white;font-weight:600;transition:all 0.2s;">
-                        <i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar
-                    </button>
-                </div>
-                <code id="ton-deposit-memo" style="display:block;font-size:1.3rem;font-weight:800;color:#fbbf24;letter-spacing:0.12em;font-family:monospace;margin:6px 0;">Cargando...</code>
-                <div style="display:flex;align-items:flex-start;gap:7px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(234,179,8,0.15);">
-                    <span style="font-size:14px;flex-shrink:0;margin-top:1px;">⚠️</span>
-                    <span style="font-size:0.72rem;color:rgba(234,179,8,0.8);line-height:1.5;">Incluye este memo <strong style="color:#fbbf24;">exactamente</strong> en tu transferencia. Sin memo el depósito <strong style="color:#ef4444;">NO será acreditado</strong>.</span>
-                </div>
-            </div>
-
-            <!-- Info row -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
-                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;text-align:center;">
-                    <div style="font-size:0.65rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Mínimo</div>
-                    <div style="font-size:1.1rem;font-weight:800;color:#0098EA;">0.1 TON</div>
-                </div>
-                <div style="background:rgba(74,222,128,0.05);border:1px solid rgba(74,222,128,0.15);border-radius:12px;padding:12px;text-align:center;">
-                    <div style="font-size:0.65rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Tipo</div>
-                    <div style="font-size:0.95rem;font-weight:800;color:#4ade80;">⚡ Automático</div>
-                </div>
-            </div>
-
-            <!-- Historial -->
-            <button type="button" onclick="openDepositHistoryModal()" style="width:100%;padding:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;color:rgba(255,255,255,0.6);font-size:0.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
-                <i data-lucide="clock" style="width:15px;height:15px;"></i>
-                Ver historial de depósitos
-            </button>
-        </div>
+      </div>
     </div>
+
+    <div style="padding:18px;">
+
+      <!-- Mínimo -->
+      <div style="background:rgba(0,152,234,0.08);border:1px solid rgba(0,152,234,0.25);border-radius:10px;padding:10px 14px;margin-bottom:16px;text-align:center;font-size:0.8rem;">
+        <span style="color:rgba(255,255,255,0.5);">Mínimo:</span>
+        <strong style="color:#0098EA;margin-left:6px;">{{ ton_min }} TON</strong>
+        <span style="color:#ffd700;font-size:0.72rem;margin-left:10px;">⚠️ Incluye el memo en tu transferencia</span>
+      </div>
+
+      <!-- QR -->
+      <div style="text-align:center;margin-bottom:16px;">
+        <div id="ton-qr-container" style="display:inline-block;background:#fff;padding:12px;border-radius:16px;border:3px solid #0098EA;box-shadow:0 8px 32px rgba(0,152,234,0.3);">
+          <canvas id="ton-qr-canvas" width="160" height="160"></canvas>
+        </div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:8px;">Tonkeeper · TON Wallet · MyTonWallet</div>
+      </div>
+
+      <!-- Dirección -->
+      <div style="background:rgba(0,152,234,0.06);border:1px solid rgba(0,152,234,0.2);border-radius:14px;padding:12px 14px;margin-bottom:12px;">
+        <div style="font-size:0.65rem;color:#0098EA;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">💎 Dirección TON</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <code id="ton-dep-address" style="flex:1;font-size:0.72rem;word-break:break-all;color:#cbd5e1;line-height:1.5;">{{ ton_wallet_address }}</code>
+          <button onclick="copyDepAddr()" id="ton-copy-addr-btn" style="flex-shrink:0;padding:8px 12px;background:linear-gradient(135deg,#0098EA,#0066aa);border:none;border-radius:8px;cursor:pointer;font-size:0.7rem;color:white;font-weight:600;">Copiar</button>
+        </div>
+      </div>
+
+      <!-- Memo OBLIGATORIO -->
+      <div style="background:linear-gradient(135deg,rgba(234,179,8,0.08),rgba(202,138,4,0.06));border:1.5px solid rgba(234,179,8,0.35);border-radius:14px;padding:12px 14px;margin-bottom:16px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#eab308,#fbbf24,#eab308);"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:0.65rem;color:#eab308;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;">💬 Memo</span>
+            <span style="background:#ef4444;color:white;font-size:0.58rem;font-weight:800;padding:2px 6px;border-radius:5px;">OBLIGATORIO</span>
+          </div>
+          <button onclick="copyDepMemo()" id="ton-copy-memo-btn" style="padding:6px 12px;background:linear-gradient(135deg,#eab308,#ca8a04);border:none;border-radius:8px;cursor:pointer;font-size:0.7rem;color:white;font-weight:700;">Copiar</button>
+        </div>
+        <code id="ton-dep-memo" style="display:block;font-size:1.25rem;font-weight:800;color:#fbbf24;letter-spacing:0.12em;text-align:center;padding:6px 0;">{{ user_deposit_memo }}</code>
+        <div style="font-size:0.7rem;color:#ef4444;margin-top:8px;line-height:1.4;">
+          ⚠️ Sin este memo tu depósito <strong>NO será acreditado</strong>.
+        </div>
+      </div>
+
+      <!-- Esperando -->
+      <div id="ton-waiting-box" style="background:rgba(0,152,234,0.07);border:1px solid rgba(0,152,234,0.25);border-radius:12px;padding:12px;text-align:center;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5px;">
+          <div style="width:9px;height:9px;background:#0098EA;border-radius:50%;animation:ton-pulse 1.5s ease-in-out infinite;"></div>
+          <span style="font-size:0.78rem;color:#0098EA;font-weight:600;">Esperando depósito...</span>
+        </div>
+        <div style="font-size:0.72rem;color:rgba(255,255,255,0.4);">El saldo se acredita automáticamente</div>
+      </div>
+
+      <!-- Éxito -->
+      <div id="ton-step-success" style="display:none;text-align:center;padding:20px 0;">
+        <div style="width:56px;height:56px;background:rgba(0,230,118,0.1);border:2px solid rgba(0,230,118,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2.5" width="26"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div style="font-size:1rem;font-weight:700;color:#00e676;margin-bottom:8px;">¡Depósito acreditado!</div>
+        <div id="ton-success-msg" style="font-size:0.8rem;color:rgba(255,255,255,0.5);line-height:1.6;white-space:pre-wrap;margin-bottom:16px;"></div>
+        <button onclick="closeDepositModal();location.reload();" style="padding:10px 24px;background:linear-gradient(135deg,#00e676,#00b852);border:none;border-radius:10px;color:#0a0f1a;font-weight:700;cursor:pointer;">Ver saldo</button>
+      </div>
+
+      <!-- Botones -->
+      <div style="display:flex;gap:10px;">
+        <button onclick="openDepositHistoryModal()" style="flex:1;padding:11px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:rgba(255,255,255,0.5);font-size:0.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <i data-lucide="clock" style="width:14px;height:14px;"></i> Historial
+        </button>
+        <button onclick="closeDepositModal()" style="flex:1;padding:11px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:rgba(255,255,255,0.5);font-size:0.78rem;cursor:pointer;">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
 </div>
+<style>@keyframes ton-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:0.6}}</style>
+{% else %}
+<div id="deposit-modal" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal-header"><h3 class="modal-title">Depósito</h3><button class="modal-close" onclick="closeDepositModal()"><i data-lucide="x"></i></button></div>
+    <div class="modal-body" style="text-align:center;padding:30px;">
+      <p style="color:rgba(255,255,255,0.5);">Los depósitos TON no están habilitados.</p>
+    </div>
+  </div>
+</div>
+{% endif %}
 
 <!-- Deposit History Modal -->
 <div id="deposit-history-modal" class="modal-overlay" style="display: none;">
@@ -930,166 +945,176 @@ async function submitWithdraw(event) {
 }
 
 // ============================================
-// DEPOSIT TON AUTOMÁTICO — PREMIUM
+// DEPOSIT TON — QR + POLLING AUTOMÁTICO
 // ============================================
 
-let _tonDepositAddress = '';
-let _tonDepositMemo = '';
+var _tonDepositId = null;
+var _tonPollTimer = null;
+var _TON_ADDRESS  = "{{ ton_wallet_address }}";
+var _TON_MEMO     = "{{ user_deposit_memo }}";
 
-function generateUserMemo(userId) {
-    const uid = String(userId).replace(/\D/g, '');
-    return 'DEP' + uid.slice(-8).padStart(8, '0');
+function el(id) { return document.getElementById(id); }
+
+function showDepStep(name) {
+    var waiting = el('ton-waiting-box');
+    var success = el('ton-step-success');
+    if (waiting) waiting.style.display = (name === 'qr') ? 'block' : 'none';
+    if (success) success.style.display = (name === 'success') ? 'block' : 'none';
 }
 
-// QR Code generator: carga qrcode.js desde CDN, fallback a canvas puro
-function generateQR(text, container) {
-    container.innerHTML = '';
-    const canvas = document.createElement('canvas');
-    canvas.width = 180; canvas.height = 180;
-    container.appendChild(canvas);
+function generateTonQR() {
+    var container = el('ton-qr-container');
+    var canvas    = el('ton-qr-canvas');
+    if (!container || !_TON_ADDRESS || _TON_ADDRESS === '') return;
+
+    var tonUri = 'ton://transfer/' + _TON_ADDRESS + '?text=' + encodeURIComponent(_TON_MEMO);
+
     if (typeof QRCode !== 'undefined') {
         try {
-            QRCode.toCanvas(canvas, text, {
-                width: 180, margin: 1,
-                color: { dark: '#000000', light: '#ffffff' },
-                errorCorrectionLevel: 'M'
-            }, function(err) { if (err) drawFallbackQR(canvas, text); });
-            return;
-        } catch(e) {}
+            // Limpiar canvas previo
+            if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
+            new QRCode(container, {
+                text: tonUri,
+                width: 160, height: 160,
+                colorDark: '#000000', colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        } catch(e) {
+            if (canvas) {
+                var ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#fff'; ctx.fillRect(0,0,160,160);
+                ctx.fillStyle = '#0098EA'; ctx.font = '10px monospace';
+                ctx.fillText(_TON_ADDRESS.slice(0,20) + '...', 5, 80);
+            }
+        }
     }
-    drawFallbackQR(canvas, text);
 }
 
-function drawFallbackQR(canvas, text) {
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, 180, 180);
-    ctx.fillStyle = '#0098EA'; ctx.font = 'bold 11px monospace';
-    ctx.textAlign = 'center'; ctx.fillText('Dirección TON', 90, 60);
-    ctx.fillStyle = '#333'; ctx.font = '8px monospace';
-    let line = '', y = 80;
-    for (let ch of text) {
-        if (line.length > 22) { ctx.fillText(line, 90, y); line = ch; y += 11; if(y>170) break; }
-        else line += ch;
-    }
-    if (line) ctx.fillText(line, 90, y);
-}
-
-function loadQRLib(callback) {
-    if (typeof QRCode !== 'undefined') { callback(); return; }
-    const s = document.createElement('script');
+function loadQRAndGenerate() {
+    if (typeof QRCode !== 'undefined') { generateTonQR(); return; }
+    var s = document.createElement('script');
     s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-    s.onload = callback; s.onerror = callback;
+    s.onload = generateTonQR;
+    s.onerror = generateTonQR; // fallback canvas
     document.head.appendChild(s);
 }
 
-async function loadTonDepositInfo() {
-    const userId = getCurrentUserId();
-    if (!userId) return;
-    const addrEl = document.getElementById('ton-deposit-address');
-    const memoEl = document.getElementById('ton-deposit-memo');
-    const qrContainer = document.getElementById('ton-qr-container');
-    try {
-        const response = await fetch('/api/ton/deposit/config');
-        const data = await response.json();
-        // La API retorna 'deposit_wallet' segun ton_deposit_system.py
-        let address = data.deposit_wallet || data.deposit_address || data.wallet_address || '';
-        const memo = generateUserMemo(userId);
-        _tonDepositAddress = address;
-        _tonDepositMemo = memo;
-        if (addrEl) addrEl.textContent = address || 'No configurado en el servidor';
-        if (memoEl) memoEl.textContent = memo;
-        if (qrContainer && address) {
-            generateQR(`ton://transfer/${address}?text=${memo}`, qrContainer);
-        } else if (qrContainer) {
-            qrContainer.innerHTML = '<div style="color:#ef4444;font-size:0.75rem;text-align:center;padding:20px;">Dirección no configurada</div>';
-        }
-    } catch (error) {
-        const memo = generateUserMemo(userId);
-        _tonDepositMemo = memo;
-        if (addrEl) addrEl.textContent = 'Error al cargar';
-        if (memoEl) memoEl.textContent = memo;
-    }
+function copyDepAddr() {
+    if (!_TON_ADDRESS) return;
+    navigator.clipboard.writeText(_TON_ADDRESS).then(function() {
+        var btn = el('ton-copy-addr-btn');
+        if (btn) { btn.textContent = '✓ OK'; setTimeout(function(){ btn.textContent = 'Copiar'; }, 2000); }
+        showToast('✅ Dirección TON copiada', 'success');
+    });
+}
+
+function copyDepMemo() {
+    navigator.clipboard.writeText(_TON_MEMO).then(function() {
+        var btn = el('ton-copy-memo-btn');
+        if (btn) { btn.textContent = '✓ OK'; setTimeout(function(){ btn.textContent = 'Copiar'; }, 2000); }
+        showToast('✅ Memo copiado — inclúyelo en tu transferencia', 'success');
+    });
+}
+
+async function startTonPolling(depositId) {
+    _tonDepositId = depositId;
+    if (_tonPollTimer) clearInterval(_tonPollTimer);
+    _tonPollTimer = setInterval(async function() {
+        try {
+            var r = await fetch('/api/ton/deposit/status/' + _tonDepositId);
+            var d = await r.json();
+            if (d.success && d.deposit) {
+                var status = d.deposit.status;
+                if (status === 'confirmed' || status === 'credited') {
+                    clearInterval(_tonPollTimer);
+                    showDepStep('success');
+                    var msg = '✅ ' + (d.deposit.amount || '') + ' TON recibidos
+Acreditado en tu cuenta.';
+                    if (el('ton-success-msg')) el('ton-success-msg').textContent = msg;
+                }
+            }
+        } catch(e) { /* seguir intentando */ }
+    }, 8000);
 }
 
 function openDepositModal() {
-    document.getElementById('deposit-modal').style.display = 'flex';
-    lucide.createIcons();
-    loadQRLib(() => loadTonDepositInfo());
+    var modal = el('deposit-modal');
+    if (modal) modal.style.display = 'flex';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    showDepStep('qr');
+    loadQRAndGenerate();
+
+    // Crear/obtener deposit_id para polling
+    fetch('/api/ton/deposit/create', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            user_id: getCurrentUserId(),
+            amount: 0,
+            wallet_origin: 'pending'
+        })
+    }).then(function(r){ return r.json(); }).then(function(d){
+        if (d.success && d.deposit_id) startTonPolling(d.deposit_id);
+    }).catch(function(){});
 }
 
 function closeDepositModal() {
-    document.getElementById('deposit-modal').style.display = 'none';
-}
-
-function copyTonDepositAddress() {
-    const address = _tonDepositAddress || document.getElementById('ton-deposit-address').textContent;
-    const btn = document.getElementById('btn-copy-addr');
-    navigator.clipboard.writeText(address).then(() => {
-        showToast('✅ Dirección TON copiada', 'success');
-        if (btn) { btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;"></i> Copiado'; lucide.createIcons(); setTimeout(() => { btn.innerHTML = '<i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar'; lucide.createIcons(); }, 2000); }
-    }).catch(() => showToast('Error al copiar', 'error'));
-}
-
-function copyTonDepositMemo() {
-    const memo = _tonDepositMemo || document.getElementById('ton-deposit-memo').textContent;
-    const btn = document.getElementById('btn-copy-memo');
-    navigator.clipboard.writeText(memo).then(() => {
-        showToast('✅ Memo copiado — inclúyelo en tu transferencia', 'success');
-        if (btn) { btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;"></i> Copiado'; lucide.createIcons(); setTimeout(() => { btn.innerHTML = '<i data-lucide="copy" style="width:12px;height:12px;"></i> Copiar'; lucide.createIcons(); }, 2000); }
-    }).catch(() => showToast('Error al copiar', 'error'));
+    var modal = el('deposit-modal');
+    if (modal) modal.style.display = 'none';
+    if (_tonPollTimer) { clearInterval(_tonPollTimer); _tonPollTimer = null; }
 }
 
 // Deposit History
 function openDepositHistoryModal() {
-    document.getElementById('deposit-history-modal').style.display = 'flex';
+    var m = el('deposit-history-modal');
+    if (m) m.style.display = 'flex';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
     loadDepositHistory();
-    lucide.createIcons();
 }
 
 function closeDepositHistoryModal() {
-    document.getElementById('deposit-history-modal').style.display = 'none';
+    var m = el('deposit-history-modal');
+    if (m) m.style.display = 'none';
 }
 
 async function loadDepositHistory() {
-    const userId = getCurrentUserId();
-    const container = document.getElementById('deposit-history-list');
+    var userId = getCurrentUserId();
+    var container = el('deposit-history-list');
+    if (!container) return;
     try {
-        const response = await fetch(`/api/ton/deposit/history?user_id=${userId}`);
-        const data = await response.json();
-        const deposits = data.deposits || [];
+        var r = await fetch('/api/ton/deposit/history?user_id=' + userId);
+        var data = await r.json();
+        var deposits = data.deposits || [];
         if (data.success && deposits.length > 0) {
-            container.innerHTML = deposits.map(dep => {
-                const amount = typeof dep.amount === 'number' ? dep.amount.toFixed(4) : dep.amount;
-                const sc = {
+            container.innerHTML = deposits.map(function(dep) {
+                var amount = typeof dep.amount === 'number' ? dep.amount.toFixed(4) : dep.amount;
+                var statusStyle = {
                     confirmed: 'background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.25);',
-                    approved:  'background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.25);',
                     pending:   'background:rgba(234,179,8,0.12);color:#fbbf24;border:1px solid rgba(234,179,8,0.25);',
                     confirming:'background:rgba(0,152,234,0.12);color:#38bdf8;border:1px solid rgba(0,152,234,0.25);',
-                    failed:    'background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25);',
+                    failed:    'background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25);'
                 }[dep.status] || 'background:rgba(255,255,255,0.06);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);';
-                const dateStr = dep.created_at ? new Date(dep.created_at).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}) : '';
-                return `<div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:rgba(0,152,234,0.05);border:1px solid rgba(0,152,234,0.1);border-radius:12px;margin-bottom:8px;">
-                    <div>
-                        <div style="font-weight:700;color:#38bdf8;font-size:0.9rem;">💎 ${amount} TON</div>
-                        <div style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:3px;">⚡ Auto · ${dateStr}</div>
-                        ${dep.tx_hash ? `<div style="font-size:0.65rem;color:rgba(255,255,255,0.25);font-family:monospace;margin-top:2px;">${dep.tx_hash.slice(0,14)}...</div>` : ''}
-                    </div>
-                    <span style="padding:4px 10px;border-radius:20px;font-size:0.68rem;font-weight:700;${sc}">${dep.status_text || dep.status}</span>
-                </div>`;
+                var dateStr = dep.created_at ? new Date(dep.created_at).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}) : '';
+                return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(0,152,234,0.05);border:1px solid rgba(0,152,234,0.1);border-radius:12px;margin-bottom:8px;">'
+                    + '<div><div style="font-weight:700;color:#38bdf8;">💎 ' + amount + ' TON</div>'
+                    + '<div style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:3px;">⚡ Auto · ' + dateStr + '</div>'
+                    + (dep.tx_hash ? '<div style="font-size:0.65rem;color:rgba(255,255,255,0.2);font-family:monospace;margin-top:2px;">' + dep.tx_hash.slice(0,14) + '...</div>' : '')
+                    + '</div><span style="padding:4px 10px;border-radius:20px;font-size:0.68rem;font-weight:700;' + statusStyle + '">'
+                    + (dep.status_text || dep.status) + '</span></div>';
             }).join('');
         } else {
-            container.innerHTML = `<div style="text-align:center;padding:40px 20px;color:rgba(255,255,255,0.3);">
-                <div style="font-size:2.5rem;margin-bottom:12px;">📭</div>
-                <div style="font-size:0.85rem;">Sin depósitos TON aún</div>
-            </div>`;
+            container.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.25);"><div style="font-size:2rem;margin-bottom:10px;">📭</div><div style="font-size:0.85rem;">Sin depósitos aún</div></div>';
         }
-    } catch (error) {
-        container.innerHTML = '<div style="text-align:center;padding:30px;color:#ef4444;font-size:0.85rem;">Error al cargar historial</div>';
+    } catch(e) {
+        container.innerHTML = '<div style="text-align:center;padding:30px;color:#ef4444;font-size:0.85rem;">Error al cargar</div>';
     }
 }
 
 // ============================================
 // HELPERS - Usa el showToast global de main.js
+// ============================================
+
+
 // ============================================
 
 // Close modals on overlay click
