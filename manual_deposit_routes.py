@@ -402,26 +402,28 @@ def approve_deposit():
             currency = deposit['currency'].upper()
             amount = float(deposit['amount'])
 
-            # Acreditar saldo según moneda
+            # Acreditar saldo según moneda — UPDATE atómico para evitar race conditions
             if currency == 'DOGE':
-                new_balance = float(user['doge_balance']) + amount
+                balance_before = float(user.get('doge_balance') or 0)
                 cursor.execute("""
-                    UPDATE users SET doge_balance = %s WHERE user_id = %s
-                """, (new_balance, deposit['user_id']))
+                    UPDATE users SET doge_balance = doge_balance + %s WHERE user_id = %s
+                """, (amount, deposit['user_id']))
+                new_balance = balance_before + amount
                 balance_field = 'doge_balance'
             elif currency == 'USDT':
-                new_balance = float(user['usdt_balance']) + amount
+                balance_before = float(user.get('usdt_balance') or 0)
                 cursor.execute("""
-                    UPDATE users SET usdt_balance = %s WHERE user_id = %s
-                """, (new_balance, deposit['user_id']))
+                    UPDATE users SET usdt_balance = usdt_balance + %s WHERE user_id = %s
+                """, (amount, deposit['user_id']))
+                new_balance = balance_before + amount
                 balance_field = 'usdt_balance'
             else:
-                # Para otras monedas, convertir a DOGE y acreditar
-                # Por ahora acreditamos como DOGE (puedes agregar tasas de conversión)
-                new_balance = float(user['doge_balance']) + amount
+                # Para otras monedas, acreditar como DOGE
+                balance_before = float(user.get('doge_balance') or 0)
                 cursor.execute("""
-                    UPDATE users SET doge_balance = %s WHERE user_id = %s
-                """, (new_balance, deposit['user_id']))
+                    UPDATE users SET doge_balance = doge_balance + %s WHERE user_id = %s
+                """, (amount, deposit['user_id']))
+                new_balance = balance_before + amount
                 balance_field = 'doge_balance'
 
             # Actualizar depósito
@@ -443,7 +445,7 @@ def approve_deposit():
                 deposit['user_id'],
                 currency,
                 amount,
-                float(user[balance_field]) if balance_field in user else 0,
+                balance_before,
                 new_balance,
                 f'Depósito manual aprobado: {deposit_id}'
             ))

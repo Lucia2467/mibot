@@ -169,8 +169,10 @@ def verify_transaction_on_blockchain(tx_hash, expected_destination, expected_amo
                 # Obtener origen
                 source = in_msg.get('source', '')
                 
-                # Verificar origen si se especificó
-                if wallet_origin and source:
+                # Verificar origen si se especificó y es una dirección válida real
+                TON_ADDRESS_PREFIXES = ('EQ', 'UQ', 'Ef', 'Uf', 'kQ', 'kf', '0Q', '0f')
+                is_valid_origin = wallet_origin and any(wallet_origin.startswith(p) for p in TON_ADDRESS_PREFIXES)
+                if is_valid_origin and source:
                     if normalize_ton_address(source) != normalize_ton_address(wallet_origin):
                         return {
                             'verified': False, 

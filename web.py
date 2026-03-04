@@ -6255,6 +6255,25 @@ except Exception as e:
     MANUAL_DEPOSITS_AVAILABLE = False
 
 
+# ============== DOGE BEP20 AUTO DEPOSIT SYSTEM ==============
+try:
+    from deposit_routes import register_deposit_routes as register_doge_deposit_routes
+    register_doge_deposit_routes(app)
+    logger.info("✅ DOGE BEP20 Auto Deposit routes loaded successfully")
+except ImportError as e:
+    logger.warning(f"⚠️ DOGE BEP20 deposit routes not available: {e}")
+except Exception as e:
+    logger.error(f"❌ Error loading DOGE BEP20 deposit routes: {e}")
+
+# ============== DOGE DEPOSIT BACKGROUND SCANNER ==============
+try:
+    from deposit_scheduler import start_deposit_scheduler
+    start_deposit_scheduler()
+    logger.info("✅ DOGE deposit background scanner started")
+except Exception as e:
+    logger.error(f"❌ Error starting deposit scheduler: {e}")
+
+
 # ============== USER TASKS PROMOTION SYSTEM ==============
 try:
     from user_tasks_routes import user_tasks_bp
