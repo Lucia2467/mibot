@@ -7,6 +7,13 @@ FIXED VERSION - Mandatory channel verification + Fixed referral system + Complet
 import os
 import sys
 import json
+
+# Cargar .env si existe (desarrollo local). En Railway las vars vienen del dashboard.
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 import secrets
 import random
 import logging
@@ -1029,12 +1036,12 @@ def wallet():
     min_doge = float(get_config('min_withdrawal_doge', 0.3))
 
     # TON deposit variables
-    import os as _os
-    ton_wallet_address = (_os.environ.get('TON_DEPOSIT_WALLET') or _os.environ.get('TON_WALLET_ADDRESS') or get_config('TON_DEPOSIT_WALLET', '') or get_config('TON_WALLET_ADDRESS', '') or '')
-    ton_min = float(get_config('MIN_DEPOSIT_TON', 0.1))
+    # En Railway: variables vienen del dashboard de entorno
+    ton_wallet_address = os.environ.get('TON_WALLET_ADDRESS', '').strip()
+    ton_min = float(os.environ.get('MIN_DEPOSIT_TON', '0.1'))
     ton_enabled = bool(ton_wallet_address)
 
-    # Memo unico por usuario
+    # Memo unico por usuario basado en su user_id
     uid_str = str(user_id)
     digits = ''.join(c for c in uid_str if c.isdigit())
     user_deposit_memo = 'DEP' + digits[-8:].zfill(8) if digits else 'DEP' + str(abs(hash(uid_str)))[:8]
