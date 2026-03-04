@@ -9,6 +9,7 @@ Endpoints:
   POST /admin/ton/deposit/reject       → rechazo manual (admin)
 """
 
+import os
 import logging
 from flask import Blueprint, request, jsonify, session
 from functools import wraps
@@ -21,8 +22,9 @@ from ton_deposits import (
     get_pending_deposits,
     credit_deposit,
     _scan_and_credit,
+    _cfg,
 )
-from database import get_user, get_config
+from database import get_user
 
 logger = logging.getLogger(__name__)
 
@@ -71,16 +73,17 @@ def api_ton_deposit_address(user):
     Devuelve la dirección de depósito del bot y el memo único del usuario.
     Crea (o reutiliza) un registro pending en ton_deposits.
     """
-    if get_config("ton_deposits_enabled", "1") != "1":
+    # BUG FIX: usar _cfg() porque get_config() devuelve int, no string
+    if _cfg("ton_deposits_enabled", "1") != "1":
         return jsonify({"success": False, "error": "Depósitos TON deshabilitados"}), 503
 
-    ton_wallet = get_config("ton_wallet_address", "")
-    if not ton_wallet or not ton_wallet.startswith(("EQ", "UQ", "kQ", "0Q")):
-        return jsonify({"success": False, "error": "Wallet TON no configurada"}), 503
+    ton_wallet = _cfg("ton_wallet_address", "") or os.getenv("TON_WALLET_ADDRESS", "")
+    if not ton_wallet or not ton_wallet.startswith(("EQ", "UQ", "kQ", "0Q", "Ef", "Uf")):
+        return jsonify({"success": False, "error": "Wallet TON no configurada en admin config"}), 503
 
     user_id  = str(user["user_id"])
     memo     = get_or_create_user_memo(user_id)
-    ton_min  = float(get_config("ton_min_deposit", "0.1"))
+    ton_min  = float(_cfg("ton_min_deposit", "0.1") or "0.1")
 
     # Reutilizar pending existente si lo hay
     existing = None
