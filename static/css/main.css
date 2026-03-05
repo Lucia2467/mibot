@@ -330,7 +330,7 @@ body::after {
 }
 
 .nav-item.active .nav-label {
-    background: linear-gradient(135deg, #00D4FF 0%, #3B82F6 100%);
+    background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -488,7 +488,7 @@ body::after {
 .stat-value {
     font-size: 1.6rem;
     font-weight: 900;
-    background: linear-gradient(135deg, var(--color-neon-cyan) 0%, var(--color-neon-purple) 100%);
+    background: linear-gradient(135deg, var(--color-neon-cyan) 0%, var(--color-blue-primary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -531,7 +531,7 @@ body::after {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+    background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #00A3FF 100%);
     background-size: 200% 200%;
     color: white;
     box-shadow: 0 0 40px rgba(0, 102, 255, 0.4);
