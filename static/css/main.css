@@ -165,7 +165,6 @@ body::after {
 
 .main-content {
     flex: 1;
-    padding-top: calc(84px + env(safe-area-inset-top, 0));
     padding-bottom: calc(90px + env(safe-area-inset-bottom));
 }
 
