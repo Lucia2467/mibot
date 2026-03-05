@@ -1147,30 +1147,17 @@ function openDepositModal() {
     _qrDone = false;
     loadQRLib(makeQR);
 
-    // Polling por user_id — arranca siempre, no depende de deposit_id previo
+    // Obtener deposit_id para polling (usa el nuevo endpoint GET)
     var userId = (elD("current-user-id") || {}).value || new URLSearchParams(window.location.search).get("user_id") || "";
     if (userId) {
-        if (_tonPollTimer) clearInterval(_tonPollTimer);
-        var _pollSince = Math.floor(Date.now() / 1000);
-        _tonPollTimer = setInterval(function() {
-            fetch("/api/ton/deposit/latest?user_id=" + userId + "&since=" + _pollSince)
-            .then(function(r){ return r.json(); })
-            .then(function(d) {
-                if (d.success && d.credited) {
-                    clearInterval(_tonPollTimer);
-                    _tonPollTimer = null;
-                    var overlay = elD("ton-success-overlay");
-                    var amountEl = elD("ton-success-amount");
-                    var msgEl = elD("ton-success-msg");
-                    if (amountEl) amountEl.textContent = parseFloat(d.ton_amount || 0).toFixed(4) + " TON";
-                    if (msgEl) msgEl.textContent = window.tt ? window.tt("ton_dep_success_msg") : "Tu TON ha sido acreditado en tu cuenta";
-                    if (overlay) {
-                        overlay.style.display = "flex";
-                        if (typeof lucide !== "undefined") lucide.createIcons();
-                    }
-                }
-            }).catch(function(){});
-        }, 6000);
+        fetch("/api/ton/deposit/address?user_id=" + userId)
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+            if (d.success && d.deposit_id) startTonPolling(d.deposit_id);
+            // Actualizar dirección y memo si vienen del backend
+            if (d.deposit_address && addrEl) addrEl.textContent = d.deposit_address;
+            if (d.memo && memoEl) { TON_MEMO = d.memo; memoEl.textContent = d.memo; _qrDone = false; makeQR(); }
+        }).catch(function(){});
     }
 }
 
