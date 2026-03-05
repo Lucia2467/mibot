@@ -249,8 +249,8 @@ body::after {
     top: 4px;
     left: 50%;
     transform: translateX(-50%);
-    width: 42px;
-    height: 40px;
+    width: 44px;
+    height: 42px;
     border-radius: 14px;
     background: linear-gradient(135deg, rgba(0,102,255,0.35) 0%, rgba(0,163,255,0.25) 100%);
     border: 1px solid rgba(0,163,255,0.3);
@@ -302,9 +302,9 @@ body::after {
 
 .nav-item:not(.active) .nav-icon svg,
 .nav-item:not(.active) .nav-icon i {
-    color: var(--color-neon-cyan);
-    stroke: var(--color-neon-cyan);
-    filter: drop-shadow(0 0 8px rgba(0, 245, 255, 0.4));
+    color: rgba(139, 157, 195, 0.6);
+    stroke: rgba(139, 157, 195, 0.6);
+    filter: none;
 }
 
 .nav-item.active .nav-icon svg,
