@@ -249,18 +249,19 @@ body::after {
     top: 4px;
     left: 50%;
     transform: translateX(-50%);
-    width: 36px;
+    width: 38px;
     height: 36px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, rgba(0,102,255,0.35) 0%, rgba(0,163,255,0.25) 100%);
-    border: 1px solid rgba(0,163,255,0.3);
-    opacity: 0;
-    transition: opacity 0.25s ease, box-shadow 0.25s ease;
-    box-shadow: 0 0 16px rgba(0, 102, 255, 0.4), 0 0 32px rgba(0, 163, 255, 0.2);
+    border-radius: 13px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    opacity: 1;
+    transition: all 0.25s ease;
 }
 
 .nav-item.active::before {
-    opacity: 1;
+    background: linear-gradient(135deg, rgba(0,102,255,0.4) 0%, rgba(0,163,255,0.28) 100%);
+    border: 1px solid rgba(0,163,255,0.4);
+    box-shadow: 0 0 18px rgba(0, 102, 255, 0.45), 0 0 36px rgba(0, 163, 255, 0.2);
 }
 
 /* Active dot indicator */
@@ -302,8 +303,8 @@ body::after {
 
 .nav-item:not(.active) .nav-icon svg,
 .nav-item:not(.active) .nav-icon i {
-    color: rgba(139, 157, 195, 0.6);
-    stroke: rgba(139, 157, 195, 0.6);
+    color: rgba(139, 157, 195, 0.75);
+    stroke: rgba(139, 157, 195, 0.75);
     filter: none;
 }
 
@@ -326,7 +327,7 @@ body::after {
 }
 
 .nav-item:not(.active) .nav-label {
-    color: rgba(139, 157, 195, 0.45);
+    color: rgba(139, 157, 195, 0.6);
 }
 
 .nav-item.active .nav-label {
