@@ -565,14 +565,14 @@
 <!-- ===== WITHDRAWAL ULTRA-PREMIUM OVERLAY ===== -->
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 
-<div id="withdrawal-overlay" style="display:none;position:fixed;inset:0;z-index:99998;align-items:center;justify-content:center;">
+<div id="withdrawal-overlay" style="display:none;position:fixed;inset:0;z-index:99998;">
 
   <!-- ── BACKGROUND SYSTEM ── -->
   <div id="wd-bg" style="position:absolute;inset:0;background:#030C07;"></div>
   <canvas id="wd-canvas" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.55;pointer-events:none;"></canvas>
 
   <!-- ── PHASE 1 : PROCESSING ── -->
-  <div id="wd-phase-processing" style="position:relative;z-index:2;width:92%;max-width:350px;">
+  <div id="wd-phase-processing" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;width:92%;max-width:350px;">
     <div class="wd-card">
 
       <!-- Live timer crown -->
@@ -677,7 +677,7 @@
   </div>
 
   <!-- ── PHASE 2 : SUCCESS ── -->
-  <div id="wd-phase-success" style="display:none;position:relative;z-index:2;width:92%;max-width:350px;">
+  <div id="wd-phase-success" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;width:92%;max-width:350px;">
     <div id="wd-confetti-container" style="position:absolute;inset:-80px;pointer-events:none;overflow:hidden;"></div>
     <div class="wd-card" style="overflow:visible;">
 
@@ -830,7 +830,7 @@
 </style>
 
   <!-- ── PHASE 3 : PENDING ── -->
-  <div id="wd-phase-pending" style="display:none;position:relative;z-index:2;width:92%;max-width:350px;">
+  <div id="wd-phase-pending" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;width:92%;max-width:350px;">
     <div class="wd-card-pending" style="overflow:hidden;">
 
       <!-- Amber shimmer line top -->
@@ -1307,7 +1307,7 @@ function showWithdrawalOverlay(amount, currency, autoSuccess) {
     // ── Force card visible before animation ──
     phaseProc.style.display   = 'block';
     phaseProc.style.opacity   = '1';
-    phaseProc.style.transform = 'none';
+    phaseProc.style.transform = 'translate(-50%,-50%)';
     phaseProc.style.animation = 'none';           // kill old
     void phaseProc.offsetHeight;                   // reflow
     phaseProc.style.animation = 'wd-entry 0.55s cubic-bezier(0.22,1,0.36,1) both';
@@ -1388,7 +1388,7 @@ function showWithdrawalOverlay(amount, currency, autoSuccess) {
 function _wdTransitionSuccess(phaseProc, phaseSucc) {
     phaseProc.style.transition='opacity 0.3s ease,transform 0.3s ease';
     phaseProc.style.opacity='0';
-    phaseProc.style.transform='scale(0.95) translateY(-10px)';
+    phaseProc.style.transform='translate(-50%,-50%) scale(0.95) translateY(-10px)';
     setTimeout(() => {
         phaseProc.style.display='none';
         phaseSucc.style.display='block';
@@ -1407,7 +1407,7 @@ function _wdTransitionPending(phaseProc, phasePend, amount, currency) {
     if(!phasePend) return;
     phaseProc.style.transition='opacity 0.3s ease,transform 0.3s ease';
     phaseProc.style.opacity='0';
-    phaseProc.style.transform='scale(0.95) translateY(-10px)';
+    phaseProc.style.transform='translate(-50%,-50%) scale(0.95) translateY(-10px)';
     setTimeout(() => {
         phaseProc.style.display='none';
         phasePend.style.display='block';
