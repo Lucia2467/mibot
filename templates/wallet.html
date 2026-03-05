@@ -746,91 +746,7 @@
     </div>
   </div>
 
-  <!-- ── PHASE 3 : PENDING ── -->
-/* ── Card base ── */
-.wd-card {
-  position:relative;
-  background:linear-gradient(148deg,rgba(255,255,255,0.048) 0%,rgba(255,255,255,0.016) 100%);
-  border:1px solid rgba(255,255,255,0.075);
-  border-radius:24px;
-  padding:28px 24px 26px;
-  box-shadow:0 48px 120px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.08);
-  text-align:center;
-}
-/* ── Halo ── */
-.wd-halo {
-  position:absolute;inset:-30px;border-radius:50%;
-  background:radial-gradient(circle,rgba(34,217,122,0.15) 0%,transparent 62%);
-  animation:wd-breathe 3.5s ease-in-out infinite;
-  pointer-events:none;
-}
-/* ── Step rows ── */
-.wd-step-row { opacity:0;transform:translateY(6px);transition:opacity 0.35s ease,transform 0.35s ease; }
-.wd-step-pill {
-  display:flex;align-items:center;gap:9px;
-  background:rgba(255,255,255,0.025);
-  border:1px solid rgba(255,255,255,0.055);
-  border-radius:10px;padding:9px 12px;
-  transition:background 0.3s,border-color 0.3s;
-}
-.wd-step-done .wd-step-pill { background:rgba(34,217,122,0.06);border-color:rgba(34,217,122,0.2); }
-.wd-step-num {
-  font-family:'JetBrains Mono',monospace;font-size:0.62rem;font-weight:500;
-  color:rgba(34,217,122,0.4);letter-spacing:0.05em;flex-shrink:0;width:16px;
-}
-.wd-step-done .wd-step-num { color:#22d97a; }
-.wd-step-bar-wrap { flex:1; }
-.wd-step-track { height:1.5px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden; }
-.wd-step-fill  { height:100%;width:0%;background:linear-gradient(90deg,#22d97a,#0098EA);border-radius:2px;transition:width 1.4s cubic-bezier(0.4,0,0.2,1); }
-.wd-step-done .wd-step-fill { width:100% !important; }
-.wd-step-ico { flex-shrink:0;color:rgba(255,255,255,0.2);transition:color 0.3s; }
-.wd-step-done .wd-step-ico { color:rgba(34,217,122,0.6); }
-.wd-step-label { font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:500;color:rgba(255,255,255,0.32);white-space:nowrap;flex:1;text-align:left;transition:color 0.3s; }
-.wd-step-done .wd-step-label { color:rgba(34,217,122,0.8); }
-.wd-step-time { font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:rgba(34,217,122,0.55);flex-shrink:0;opacity:0;transition:opacity 0.4s; }
-.wd-step-done .wd-step-time { opacity:1; }
 
-/* ── Keyframes ── */
-@keyframes wd-spin        { to{transform:rotate(360deg)} }
-@keyframes wd-spin-rev    { to{transform:rotate(-360deg)} }
-@keyframes wd-breathe     { 0%,100%{opacity:0.55;transform:scale(1)} 50%{opacity:1;transform:scale(1.1)} }
-@keyframes wd-blink       { 0%,100%{opacity:1} 50%{opacity:0.25} }
-@keyframes wd-float       { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
-@keyframes wd-entry       { from{opacity:0;transform:scale(0.92) translateY(18px)} to{opacity:1;transform:scale(1) translateY(0)} }
-@keyframes wd-rise        { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-/* Reset: elements with wd-rise animation must start hidden until card appears */
-#wd-phase-success [style*="wd-rise"],
-#wd-phase-pending [style*="wd-rise"] { opacity: 0; }
-@keyframes wd-ring-burst  { 0%{opacity:1;transform:scale(0.75)} 100%{opacity:0;transform:scale(1.65)} }
-@keyframes wd-disc-pop    { from{opacity:0;transform:scale(0.55) rotate(-20deg)} to{opacity:1;transform:scale(1) rotate(0)} }
-@keyframes wd-check-entry { from{opacity:0;transform:scale(0.5) rotate(-30deg)} to{opacity:1;transform:scale(1) rotate(0)} }
-@keyframes wd-draw-check  { to{stroke-dashoffset:0} }
-@keyframes wd-gem         { 0%{opacity:0;transform:rotate(45deg) scale(0)} 60%{opacity:1;transform:rotate(45deg) scale(1.4)} 100%{opacity:1;transform:rotate(45deg) scale(1)} }
-@keyframes wd-shimmer-line{ 0%,100%{opacity:0.3;transform:scaleX(0.4)} 50%{opacity:1;transform:scaleX(1)} }
-@keyframes wd-btn-sweep   { 0%,100%{transform:skewX(-20deg) translateX(-120%)} 50%{transform:skewX(-20deg) translateX(220%)} }
-@keyframes wd-confetti    { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(-130px) rotate(var(--cr,360deg));opacity:0} }
-/* ── Phase base — always visible unless display:none ── */
-#wd-phase-processing, #wd-phase-success, #wd-phase-pending {
-  opacity: 1;
-}
-/* ── Font fallbacks (Google Fonts may be blocked in some WebApps) ── */
-.wd-card, .wd-card * { font-family: 'Syne', 'Outfit', system-ui, -apple-system, sans-serif; }
-.wd-card code, .wd-card [style*="JetBrains"], .wd-card [style*="monospace"] { font-family: 'JetBrains Mono', 'DM Mono', ui-monospace, monospace; }
-@keyframes wd-clock-tick  { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
-@keyframes wd-pend-pulse  { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.12)} }
-@keyframes wd-pend-ring   { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.06)} }
-@keyframes wd-pend-dot    { 0%,100%{opacity:0.3} 50%{opacity:1} }
-@keyframes wd-shimmer-amber { 0%,100%{opacity:0.25;transform:scaleX(0.3)} 50%{opacity:0.9;transform:scaleX(1)} }
-.wd-card-pending {
-  position:relative;
-  background:linear-gradient(148deg,rgba(245,158,11,0.06) 0%,rgba(255,255,255,0.015) 100%);
-  border:1px solid rgba(245,158,11,0.15);
-  border-radius:24px;
-  padding:28px 24px 26px;
-  box-shadow:0 48px 120px rgba(0,0,0,0.7),inset 0 1px 0 rgba(245,158,11,0.08),0 0 0 1px rgba(245,158,11,0.04);
-  text-align:center;
-}
-</style>
 
   <!-- ── PHASE 3 : PENDING ── -->
   <div id="wd-phase-pending" style="display:none;position:relative;z-index:2;width:92%;max-width:350px;margin:0 auto;">
@@ -2032,5 +1948,92 @@ document.head.appendChild(style);
         </button>
     </div>
 </div>
+
+
+<style>
+/* ── Card base ── */
+.wd-card {
+  position:relative;
+  background:linear-gradient(148deg,rgba(255,255,255,0.048) 0%,rgba(255,255,255,0.016) 100%);
+  border:1px solid rgba(255,255,255,0.075);
+  border-radius:24px;
+  padding:28px 24px 26px;
+  box-shadow:0 48px 120px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.08);
+  text-align:center;
+}
+/* ── Halo ── */
+.wd-halo {
+  position:absolute;inset:-30px;border-radius:50%;
+  background:radial-gradient(circle,rgba(34,217,122,0.15) 0%,transparent 62%);
+  animation:wd-breathe 3.5s ease-in-out infinite;
+  pointer-events:none;
+}
+/* ── Step rows ── */
+.wd-step-row { opacity:0;transform:translateY(6px);transition:opacity 0.35s ease,transform 0.35s ease; }
+.wd-step-pill {
+  display:flex;align-items:center;gap:9px;
+  background:rgba(255,255,255,0.025);
+  border:1px solid rgba(255,255,255,0.055);
+  border-radius:10px;padding:9px 12px;
+  transition:background 0.3s,border-color 0.3s;
+}
+.wd-step-done .wd-step-pill { background:rgba(34,217,122,0.06);border-color:rgba(34,217,122,0.2); }
+.wd-step-num {
+  font-family:'JetBrains Mono',monospace;font-size:0.62rem;font-weight:500;
+  color:rgba(34,217,122,0.4);letter-spacing:0.05em;flex-shrink:0;width:16px;
+}
+.wd-step-done .wd-step-num { color:#22d97a; }
+.wd-step-bar-wrap { flex:1; }
+.wd-step-track { height:1.5px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden; }
+.wd-step-fill  { height:100%;width:0%;background:linear-gradient(90deg,#22d97a,#0098EA);border-radius:2px;transition:width 1.4s cubic-bezier(0.4,0,0.2,1); }
+.wd-step-done .wd-step-fill { width:100% !important; }
+.wd-step-ico { flex-shrink:0;color:rgba(255,255,255,0.2);transition:color 0.3s; }
+.wd-step-done .wd-step-ico { color:rgba(34,217,122,0.6); }
+.wd-step-label { font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:500;color:rgba(255,255,255,0.32);white-space:nowrap;flex:1;text-align:left;transition:color 0.3s; }
+.wd-step-done .wd-step-label { color:rgba(34,217,122,0.8); }
+.wd-step-time { font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:rgba(34,217,122,0.55);flex-shrink:0;opacity:0;transition:opacity 0.4s; }
+.wd-step-done .wd-step-time { opacity:1; }
+
+/* ── Keyframes ── */
+@keyframes wd-spin        { to{transform:rotate(360deg)} }
+@keyframes wd-spin-rev    { to{transform:rotate(-360deg)} }
+@keyframes wd-breathe     { 0%,100%{opacity:0.55;transform:scale(1)} 50%{opacity:1;transform:scale(1.1)} }
+@keyframes wd-blink       { 0%,100%{opacity:1} 50%{opacity:0.25} }
+@keyframes wd-float       { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+@keyframes wd-entry       { from{opacity:0;transform:scale(0.92) translateY(18px)} to{opacity:1;transform:scale(1) translateY(0)} }
+@keyframes wd-rise        { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+/* Reset: elements with wd-rise animation must start hidden until card appears */
+#wd-phase-success [style*="wd-rise"],
+#wd-phase-pending [style*="wd-rise"] { opacity: 0; }
+@keyframes wd-ring-burst  { 0%{opacity:1;transform:scale(0.75)} 100%{opacity:0;transform:scale(1.65)} }
+@keyframes wd-disc-pop    { from{opacity:0;transform:scale(0.55) rotate(-20deg)} to{opacity:1;transform:scale(1) rotate(0)} }
+@keyframes wd-check-entry { from{opacity:0;transform:scale(0.5) rotate(-30deg)} to{opacity:1;transform:scale(1) rotate(0)} }
+@keyframes wd-draw-check  { to{stroke-dashoffset:0} }
+@keyframes wd-gem         { 0%{opacity:0;transform:rotate(45deg) scale(0)} 60%{opacity:1;transform:rotate(45deg) scale(1.4)} 100%{opacity:1;transform:rotate(45deg) scale(1)} }
+@keyframes wd-shimmer-line{ 0%,100%{opacity:0.3;transform:scaleX(0.4)} 50%{opacity:1;transform:scaleX(1)} }
+@keyframes wd-btn-sweep   { 0%,100%{transform:skewX(-20deg) translateX(-120%)} 50%{transform:skewX(-20deg) translateX(220%)} }
+@keyframes wd-confetti    { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(-130px) rotate(var(--cr,360deg));opacity:0} }
+/* ── Phase base — always visible unless display:none ── */
+#wd-phase-processing, #wd-phase-success, #wd-phase-pending {
+  opacity: 1;
+}
+/* ── Font fallbacks (Google Fonts may be blocked in some WebApps) ── */
+.wd-card, .wd-card * { font-family: 'Syne', 'Outfit', system-ui, -apple-system, sans-serif; }
+.wd-card code, .wd-card [style*="JetBrains"], .wd-card [style*="monospace"] { font-family: 'JetBrains Mono', 'DM Mono', ui-monospace, monospace; }
+@keyframes wd-clock-tick  { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+@keyframes wd-pend-pulse  { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.12)} }
+@keyframes wd-pend-ring   { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.06)} }
+@keyframes wd-pend-dot    { 0%,100%{opacity:0.3} 50%{opacity:1} }
+@keyframes wd-shimmer-amber { 0%,100%{opacity:0.25;transform:scaleX(0.3)} 50%{opacity:0.9;transform:scaleX(1)} }
+.wd-card-pending {
+  position:relative;
+  background:linear-gradient(148deg,rgba(245,158,11,0.06) 0%,rgba(255,255,255,0.015) 100%);
+  border:1px solid rgba(245,158,11,0.15);
+  border-radius:24px;
+  padding:28px 24px 26px;
+  box-shadow:0 48px 120px rgba(0,0,0,0.7),inset 0 1px 0 rgba(245,158,11,0.08),0 0 0 1px rgba(245,158,11,0.04);
+  text-align:center;
+}
+</style>
 
 {% endblock %}
