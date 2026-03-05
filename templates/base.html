@@ -499,18 +499,46 @@
         }
 
         .lang-toggle-btn-premium {
+            position: relative;
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
+            gap: 5px;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.15) 0%, rgba(0, 61, 153, 0.2) 50%, rgba(0, 163, 255, 0.15) 100%);
+            border: 1px solid rgba(0, 102, 255, 0.4);
             border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            justify-content: center;
             cursor: pointer;
-            transition: background 0.2s ease, border-color 0.2s ease;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .lang-toggle-btn-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .lang-toggle-btn-premium:hover::before {
+            left: 100%;
+        }
+
+        .lang-toggle-btn-premium:hover {
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.25) 0%, rgba(0, 61, 153, 0.3) 50%, rgba(0, 163, 255, 0.25) 100%);
+            border-color: rgba(0, 102, 255, 0.6);
+            box-shadow: 0 0 14px rgba(0, 102, 255, 0.4);
+        }
+
+        .lang-toggle-btn-premium:active {
+            transform: scale(0.95);
         }
 
         .lang-toggle-btn-premium:hover {
@@ -606,9 +634,10 @@
         }
 
         .lang-icon-svg {
-            width: 13px;
-            height: 13px;
-            color: rgba(255,255,255,0.6);
+            width: 14px;
+            height: 14px;
+            color: #3B82F6;
+            filter: drop-shadow(0 0 4px rgba(0, 102, 255, 0.6));
         }
 
         .lang-code {
@@ -722,7 +751,7 @@
                 <!-- Botón de Idioma Premium con Dropdown -->
                 <div class="lang-toggle-wrapper" id="lang-wrapper">
                     <button class="lang-toggle-btn-premium" onclick="toggleLangDropdown()" title="Change Language">
-                        <i data-lucide="globe" class="lang-icon-svg"></i>
+                        <span style="font-size: 15px; line-height: 1;">🌐</span>
                     </button>
 
                     <!-- Dropdown de idiomas -->
