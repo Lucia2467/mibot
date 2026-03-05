@@ -6612,14 +6612,12 @@ def _ton_deposit_monitor():
                     if not tx_hash or tx_hash in seen:
                         continue
 
-                    # Validar formato memo: DEP + 8 dígitos O TONU + 8 dígitos (legacy)
-                    match_dep  = re.match(r"^DEP([0-9]{8})$", memo)
-                    match_tonu = re.match(r"^TONU([0-9]{8})$", memo)
-                    if not match_dep and not match_tonu:
+                    # Validar formato memo: DEP + exactamente 8 dígitos
+                    if not re.match(r"^DEP[0-9]{8}$", memo):
                         seen.add(tx_hash)   # ignorar para no revisar de nuevo
                         continue
 
-                    suffix = (match_dep or match_tonu).group(1)   # 8 dígitos
+                    suffix = memo[3:]   # 8 dígitos
 
                     from database import get_cursor, execute_query, update_balance
                     
