@@ -528,7 +528,7 @@
             </button>
           </div>
           <div style="background:rgba(245,158,11,0.08);border-radius:10px;padding:10px;text-align:center;">
-            <code id="ton-dep-memo" style="font-size:1.3rem;font-weight:900;color:#fbbf24;letter-spacing:0.18em;">{{ user_deposit_memo if user_deposit_memo else "DEP00000001" }}</code>
+            <code id="ton-dep-memo" style="font-size:1.3rem;font-weight:900;color:#fbbf24;letter-spacing:0.18em;">{{ user_deposit_memo if user_deposit_memo else "TONU00000001" }}</code>
           </div>
           <div style="display:flex;align-items:flex-start;gap:6px;margin-top:10px;">
             <i data-lucide="alert-triangle" style="width:12px;height:12px;color:#ef4444;flex-shrink:0;margin-top:2px;"></i>
@@ -567,23 +567,22 @@
 
 <div id="withdrawal-overlay" style="display:none;position:fixed;inset:0;z-index:99998;overflow-y:auto;">
 
+  <div id="wd-center" style="position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 0;box-sizing:border-box;">
+
   <!-- ── BACKGROUND SYSTEM ── -->
   <div id="wd-bg" style="position:absolute;inset:0;background:#030C07;"></div>
   <canvas id="wd-canvas" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.55;pointer-events:none;"></canvas>
 
-  <!-- ── CENTERING WRAPPER ── -->
-  <div id="wd-center" style="position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 0;box-sizing:border-box;">
-
   <!-- ── PHASE 1 : PROCESSING ── -->
-  <div id="wd-phase-processing" style="position:relative;z-index:2;width:92%;max-width:350px;margin:0 auto;">
+  <div id="wd-phase-processing" style="position:relative;z-index:2;width:92%;max-width:350px;">
     <div class="wd-card">
 
       <!-- Live timer crown -->
       <div style="display:flex;justify-content:center;margin-bottom:8px;">
         <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(34,217,122,0.07);border:1px solid rgba(34,217,122,0.15);border-radius:40px;padding:5px 14px;">
           <div style="width:5px;height:5px;border-radius:50%;background:#22d97a;box-shadow:0 0 8px #22d97a;animation:wd-blink 1s ease-in-out infinite;"></div>
-          <span style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.7rem;color:rgba(34,217,122,0.7);letter-spacing:0.08em;text-transform:uppercase;">Processing</span>
-          <span id="wd-live-timer" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.7rem;color:#22d97a;font-weight:500;min-width:28px;">0.0s</span>
+          <span style="font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.7rem;color:rgba(34,217,122,0.7);letter-spacing:0.08em;text-transform:uppercase;">Processing</span>
+          <span id="wd-live-timer" style="font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.7rem;color:#22d97a;font-weight:500;min-width:28px;">0.0s</span>
         </div>
       </div>
 
@@ -627,15 +626,15 @@
       </div>
 
       <!-- Greeting text — one natural sentence -->
-      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:1.45rem;font-weight:700;color:#fff;letter-spacing:-0.03em;margin-bottom:6px;line-height:1.25;">
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:1.45rem;font-weight:700;color:#fff;letter-spacing:-0.03em;margin-bottom:6px;line-height:1.25;">
         <span id="wd-greeting-ok" style="font-weight:400;color:rgba(255,255,255,0.42);"></span><span id="wd-username" style="color:#22d97a;text-shadow:0 0 28px rgba(34,217,122,0.5);"></span><span id="wd-greeting-comma" style="font-weight:400;color:rgba(255,255,255,0.28);">,</span>
       </div>
-      <div id="wd-processing-label" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:0.95rem;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:-0.01em;margin-bottom:20px;"></div>
+      <div id="wd-processing-label" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:0.95rem;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:-0.01em;margin-bottom:20px;"></div>
 
       <!-- Amount badge -->
       <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(34,217,122,0.2);border-radius:10px;padding:9px 18px;margin-bottom:24px;background:rgba(34,217,122,0.05);">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#22d97a" stroke-width="2"/><path d="M8 12h8M12 8v8" stroke="#22d97a" stroke-width="2" stroke-linecap="round"/></svg>
-        <span id="wd-overlay-amount" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:1.3rem;font-weight:500;color:#22d97a;letter-spacing:0.03em;"></span>
+        <span id="wd-overlay-amount" style="font-family:'SF Mono',Monaco,Consolas,monospace;font-size:1.3rem;font-weight:500;color:#22d97a;letter-spacing:0.03em;"></span>
       </div>
 
       <!-- 3 steps -->
@@ -680,7 +679,7 @@
   </div>
 
   <!-- ── PHASE 2 : SUCCESS ── -->
-  <div id="wd-phase-success" style="display:none;position:relative;z-index:2;width:92%;max-width:350px;margin:0 auto;">
+  <div id="wd-phase-success" style="display:none;position:relative;z-index:2;width:92%;max-width:350px;">
     <div id="wd-confetti-container" style="position:absolute;inset:-80px;pointer-events:none;overflow:hidden;"></div>
     <div class="wd-card" style="overflow:visible;">
 
@@ -712,30 +711,30 @@
       </div>
 
       <!-- Title -->
-      <div id="wd-success-title" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:1.7rem;font-weight:800;color:#fff;letter-spacing:-0.05em;margin-bottom:5px;opacity:0;animation:wd-rise 0.4s 0.2s ease both;"></div>
+      <div id="wd-success-title" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:1.7rem;font-weight:800;color:#fff;letter-spacing:-0.05em;margin-bottom:5px;opacity:0;animation:wd-rise 0.4s 0.2s ease both;"></div>
 
       <!-- Amount -->
-      <div id="wd-success-amount-display" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:2.4rem;font-weight:400;color:#22d97a;letter-spacing:0.02em;margin-bottom:14px;opacity:0;animation:wd-rise 0.4s 0.32s ease both;text-shadow:0 0 40px rgba(34,217,122,0.45);"></div>
+      <div id="wd-success-amount-display" style="font-family:'SF Mono',Monaco,Consolas,monospace;font-size:2.4rem;font-weight:400;color:#22d97a;letter-spacing:0.02em;margin-bottom:14px;opacity:0;animation:wd-rise 0.4s 0.32s ease both;text-shadow:0 0 40px rgba(34,217,122,0.45);"></div>
 
       <!-- Status row -->
       <div style="display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:20px;">
         <!-- Sent chip -->
         <div style="display:inline-flex;align-items:center;gap:6px;opacity:0;animation:wd-rise 0.4s 0.44s ease both;" id="wd-sent-chip">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 6l6 6-6 6" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span id="wd-success-sent" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.3);"></span>
+          <span id="wd-success-sent" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.3);"></span>
         </div>
         <!-- Divider -->
         <div style="width:1px;height:14px;background:rgba(255,255,255,0.1);opacity:0;animation:wd-rise 0.4s 0.44s ease both;"></div>
         <!-- Time chip — shows real elapsed time -->
         <div style="display:inline-flex;align-items:center;gap:5px;opacity:0;animation:wd-rise 0.4s 0.44s ease both;" id="wd-time-chip">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#22d97a" stroke-width="1.8"/><path d="M12 7v5l3 3" stroke="#22d97a" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <span id="wd-elapsed-display" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.72rem;color:rgba(34,217,122,0.75);font-weight:500;"></span>
+          <span id="wd-elapsed-display" style="font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.72rem;color:rgba(34,217,122,0.75);font-weight:500;"></span>
         </div>
       </div>
 
       <!-- CTA -->
       <button onclick="closeWithdrawalOverlay()" id="wd-cta-btn"
-        style="width:100%;padding:16px;background:linear-gradient(135deg,#22d97a,#17b864);border:none;border-radius:14px;color:#021409;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-weight:700;font-size:1rem;cursor:pointer;letter-spacing:0.02em;box-shadow:0 0 0 1px rgba(34,217,122,0.3),0 12px 40px rgba(34,217,122,0.25),inset 0 1px 0 rgba(255,255,255,0.28);opacity:0;animation:wd-rise 0.4s 0.58s ease both;position:relative;overflow:hidden;transition:box-shadow 0.25s,transform 0.18s;"
+        style="width:100%;padding:16px;background:linear-gradient(135deg,#22d97a,#17b864);border:none;border-radius:14px;color:#021409;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:700;font-size:1rem;cursor:pointer;letter-spacing:0.02em;box-shadow:0 0 0 1px rgba(34,217,122,0.3),0 12px 40px rgba(34,217,122,0.25),inset 0 1px 0 rgba(255,255,255,0.28);opacity:0;animation:wd-rise 0.4s 0.58s ease both;position:relative;overflow:hidden;transition:box-shadow 0.25s,transform 0.18s;"
         onmouseover="this.style.boxShadow='0 0 0 1px rgba(34,217,122,0.5),0 18px 56px rgba(34,217,122,0.4),inset 0 1px 0 rgba(255,255,255,0.32)';this.style.transform='translateY(-1px)'"
         onmouseout="this.style.boxShadow='0 0 0 1px rgba(34,217,122,0.3),0 12px 40px rgba(34,217,122,0.25),inset 0 1px 0 rgba(255,255,255,0.28)';this.style.transform='translateY(0)'"
         onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='translateY(-1px)'">
@@ -747,9 +746,8 @@
   </div>
 
 
-
   <!-- ── PHASE 3 : PENDING ── -->
-  <div id="wd-phase-pending" style="display:none;position:relative;z-index:2;width:92%;max-width:350px;margin:0 auto;">
+  <div id="wd-phase-pending" style="display:none;position:relative;z-index:2;width:92%;max-width:350px;">
     <div class="wd-card-pending" style="overflow:hidden;">
 
       <!-- Amber shimmer line top -->
@@ -759,7 +757,7 @@
       <div style="display:flex;justify-content:center;margin-bottom:20px;">
         <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);border-radius:40px;padding:6px 16px;">
           <div style="width:5px;height:5px;border-radius:50%;background:#f59e0b;box-shadow:0 0 8px #f59e0b;animation:wd-pend-dot 1.4s ease-in-out infinite;"></div>
-          <span id="wd-pend-status-label" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.68rem;color:rgba(245,158,11,0.85);letter-spacing:0.08em;text-transform:uppercase;"></span>
+          <span id="wd-pend-status-label" style="font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.68rem;color:rgba(245,158,11,0.85);letter-spacing:0.08em;text-transform:uppercase;"></span>
         </div>
       </div>
 
@@ -797,25 +795,25 @@
       </div>
 
       <!-- Text -->
-      <div id="wd-pend-title" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-0.04em;margin-bottom:5px;opacity:0;animation:wd-rise 0.4s 0.2s ease both;"></div>
-      <div id="wd-pend-amount" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:2.2rem;font-weight:400;color:#f59e0b;letter-spacing:0.02em;margin-bottom:12px;opacity:0;animation:wd-rise 0.4s 0.32s ease both;text-shadow:0 0 36px rgba(245,158,11,0.4);"></div>
-      <div id="wd-pend-desc" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:0.82rem;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:22px;opacity:0;animation:wd-rise 0.4s 0.44s ease both;max-width:260px;margin-left:auto;margin-right:auto;"></div>
+      <div id="wd-pend-title" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-0.04em;margin-bottom:5px;opacity:0;animation:wd-rise 0.4s 0.2s ease both;"></div>
+      <div id="wd-pend-amount" style="font-family:'SF Mono',Monaco,Consolas,monospace;font-size:2.2rem;font-weight:400;color:#f59e0b;letter-spacing:0.02em;margin-bottom:12px;opacity:0;animation:wd-rise 0.4s 0.32s ease both;text-shadow:0 0 36px rgba(245,158,11,0.4);"></div>
+      <div id="wd-pend-desc" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:0.82rem;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:22px;opacity:0;animation:wd-rise 0.4s 0.44s ease both;max-width:260px;margin-left:auto;margin-right:auto;"></div>
 
       <!-- Info row -->
       <div style="display:flex;align-items:stretch;gap:1px;margin-bottom:22px;opacity:0;animation:wd-rise 0.4s 0.5s ease both;" id="wd-pend-info-row">
         <div style="flex:1;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.12);border-radius:10px 0 0 10px;padding:10px 8px;">
-          <div style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.62rem;color:rgba(245,158,11,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;" id="wd-pend-ref-label"></div>
-          <div id="wd-pend-elapsed-val" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.9rem;color:#f59e0b;font-weight:500;"></div>
+          <div style="font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.62rem;color:rgba(245,158,11,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;" id="wd-pend-ref-label"></div>
+          <div id="wd-pend-elapsed-val" style="font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.9rem;color:#f59e0b;font-weight:500;"></div>
         </div>
         <div style="flex:1;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.12);border-left:none;border-radius:0 10px 10px 0;padding:10px 8px;">
-          <div style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.62rem;color:rgba(245,158,11,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;" id="wd-pend-eta-label"></div>
-          <div style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.9rem;color:rgba(255,255,255,0.55);font-weight:500;" id="wd-pend-eta-val"></div>
+          <div style="font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.62rem;color:rgba(245,158,11,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;" id="wd-pend-eta-label"></div>
+          <div style="font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.9rem;color:rgba(255,255,255,0.55);font-weight:500;" id="wd-pend-eta-val"></div>
         </div>
       </div>
 
       <!-- CTA amber -->
       <button onclick="closeWithdrawalOverlay()"
-        style="width:100%;padding:15px;background:linear-gradient(135deg,rgba(245,158,11,0.9),rgba(217,119,6,0.9));border:none;border-radius:14px;color:#1a0f00;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;letter-spacing:0.02em;box-shadow:0 0 0 1px rgba(245,158,11,0.3),0 10px 36px rgba(245,158,11,0.2),inset 0 1px 0 rgba(255,255,255,0.22);opacity:0;animation:wd-rise 0.4s 0.62s ease both;position:relative;overflow:hidden;transition:box-shadow 0.25s,transform 0.18s;"
+        style="width:100%;padding:15px;background:linear-gradient(135deg,rgba(245,158,11,0.9),rgba(217,119,6,0.9));border:none;border-radius:14px;color:#1a0f00;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;letter-spacing:0.02em;box-shadow:0 0 0 1px rgba(245,158,11,0.3),0 10px 36px rgba(245,158,11,0.2),inset 0 1px 0 rgba(255,255,255,0.22);opacity:0;animation:wd-rise 0.4s 0.62s ease both;position:relative;overflow:hidden;transition:box-shadow 0.25s,transform 0.18s;"
         onmouseover="this.style.boxShadow='0 0 0 1px rgba(245,158,11,0.5),0 16px 48px rgba(245,158,11,0.32),inset 0 1px 0 rgba(255,255,255,0.28)';this.style.transform='translateY(-1px)'"
         onmouseout="this.style.boxShadow='0 0 0 1px rgba(245,158,11,0.3),0 10px 36px rgba(245,158,11,0.2),inset 0 1px 0 rgba(255,255,255,0.22)';this.style.transform='translateY(0)'"
         onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='translateY(-1px)'">
@@ -824,12 +822,98 @@
       </button>
 
     </div>
-  </div><!-- /wd-phase-pending -->
+  </div>
   </div><!-- /wd-center -->
-
 </div><!-- /withdrawal-overlay -->
+<style>
+/* ── Card base ── */
+.wd-card {
+  position:relative;
+  background:linear-gradient(148deg,rgba(255,255,255,0.048) 0%,rgba(255,255,255,0.016) 100%);
+  border:1px solid rgba(255,255,255,0.075);
+  border-radius:24px;
+  padding:28px 24px 26px;
+  box-shadow:0 48px 120px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.08);
+  text-align:center;
+}
+/* ── Halo ── */
+.wd-halo {
+  position:absolute;inset:-30px;border-radius:50%;
+  background:radial-gradient(circle,rgba(34,217,122,0.15) 0%,transparent 62%);
+  animation:wd-breathe 3.5s ease-in-out infinite;
+  pointer-events:none;
+}
+/* ── Step rows ── */
+.wd-step-row { opacity:0;transform:translateY(6px);transition:opacity 0.35s ease,transform 0.35s ease; }
+.wd-step-pill {
+  display:flex;align-items:center;gap:9px;
+  background:rgba(255,255,255,0.025);
+  border:1px solid rgba(255,255,255,0.055);
+  border-radius:10px;padding:9px 12px;
+  transition:background 0.3s,border-color 0.3s;
+}
+.wd-step-done .wd-step-pill { background:rgba(34,217,122,0.06);border-color:rgba(34,217,122,0.2); }
+.wd-step-num {
+  font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.62rem;font-weight:500;
+  color:rgba(34,217,122,0.4);letter-spacing:0.05em;flex-shrink:0;width:16px;
+}
+.wd-step-done .wd-step-num { color:#22d97a; }
+.wd-step-bar-wrap { flex:1; }
+.wd-step-track { height:1.5px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden; }
+.wd-step-fill  { height:100%;width:0%;background:linear-gradient(90deg,#22d97a,#0098EA);border-radius:2px;transition:width 1.4s cubic-bezier(0.4,0,0.2,1); }
+.wd-step-done .wd-step-fill { width:100% !important; }
+.wd-step-ico { flex-shrink:0;color:rgba(255,255,255,0.2);transition:color 0.3s; }
+.wd-step-done .wd-step-ico { color:rgba(34,217,122,0.6); }
+.wd-step-label { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:0.75rem;font-weight:500;color:rgba(255,255,255,0.32);white-space:nowrap;flex:1;text-align:left;transition:color 0.3s; }
+.wd-step-done .wd-step-label { color:rgba(34,217,122,0.8); }
+.wd-step-time { font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.62rem;color:rgba(34,217,122,0.55);flex-shrink:0;opacity:0;transition:opacity 0.4s; }
+.wd-step-done .wd-step-time { opacity:1; }
+
+/* ── Keyframes ── */
+@keyframes wd-spin        { to{transform:rotate(360deg)} }
+@keyframes wd-spin-rev    { to{transform:rotate(-360deg)} }
+@keyframes wd-breathe     { 0%,100%{opacity:0.55;transform:scale(1)} 50%{opacity:1;transform:scale(1.1)} }
+@keyframes wd-blink       { 0%,100%{opacity:1} 50%{opacity:0.25} }
+@keyframes wd-float       { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+@keyframes wd-entry       { from{opacity:0;transform:scale(0.92) translateY(18px)} to{opacity:1;transform:scale(1) translateY(0)} }
+@keyframes wd-rise        { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+/* Reset: elements with wd-rise animation must start hidden until card appears */
+#wd-phase-success [style*="wd-rise"],
+#wd-phase-pending [style*="wd-rise"] { opacity: 0; }
+@keyframes wd-ring-burst  { 0%{opacity:1;transform:scale(0.75)} 100%{opacity:0;transform:scale(1.65)} }
+@keyframes wd-disc-pop    { from{opacity:0;transform:scale(0.55) rotate(-20deg)} to{opacity:1;transform:scale(1) rotate(0)} }
+@keyframes wd-check-entry { from{opacity:0;transform:scale(0.5) rotate(-30deg)} to{opacity:1;transform:scale(1) rotate(0)} }
+@keyframes wd-draw-check  { to{stroke-dashoffset:0} }
+@keyframes wd-gem         { 0%{opacity:0;transform:rotate(45deg) scale(0)} 60%{opacity:1;transform:rotate(45deg) scale(1.4)} 100%{opacity:1;transform:rotate(45deg) scale(1)} }
+@keyframes wd-shimmer-line{ 0%,100%{opacity:0.3;transform:scaleX(0.4)} 50%{opacity:1;transform:scaleX(1)} }
+@keyframes wd-btn-sweep   { 0%,100%{transform:skewX(-20deg) translateX(-120%)} 50%{transform:skewX(-20deg) translateX(220%)} }
+@keyframes wd-confetti    { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(-130px) rotate(var(--cr,360deg));opacity:0} }
+/* ── Phase base — always visible unless display:none ── */
+#wd-phase-processing, #wd-phase-success, #wd-phase-pending {
+  opacity: 1;
+}
+/* ── Font fallbacks (Google Fonts may be blocked in some WebApps) ── */
+.wd-card, .wd-card * { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+.wd-card code, .wd-card [style*="JetBrains"], .wd-card [style*="monospace"] { font-family: 'SF Mono', Monaco, Consolas, monospace; }
+@keyframes wd-clock-tick  { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+@keyframes wd-pend-pulse  { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.12)} }
+@keyframes wd-pend-ring   { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.06)} }
+@keyframes wd-pend-dot    { 0%,100%{opacity:0.3} 50%{opacity:1} }
+@keyframes wd-shimmer-amber { 0%,100%{opacity:0.25;transform:scaleX(0.3)} 50%{opacity:0.9;transform:scaleX(1)} }
+.wd-card-pending {
+  position:relative;
+  background:linear-gradient(148deg,rgba(245,158,11,0.06) 0%,rgba(255,255,255,0.015) 100%);
+  border:1px solid rgba(245,158,11,0.15);
+  border-radius:24px;
+  padding:28px 24px 26px;
+  box-shadow:0 48px 120px rgba(0,0,0,0.7),inset 0 1px 0 rgba(245,158,11,0.08),0 0 0 1px rgba(245,158,11,0.04);
+  text-align:center;
+}
+</style>
+
 
 <!-- SUCCESS OVERLAY — centered fullscreen -->
+<div id="ton-success-overlay" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);align-items:center;justify-content:center;">
   <div style="text-align:center;padding:40px 32px;max-width:340px;width:90%;position:relative;animation:dep-success-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both;">
     <!-- Glow ring -->
     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);width:220px;height:220px;background:radial-gradient(circle,rgba(34,217,122,0.15) 0%,transparent 70%);border-radius:50%;pointer-events:none;animation:dep-glow-pulse 2s ease-in-out infinite;"></div>
@@ -1227,7 +1311,7 @@ function showWithdrawalOverlay(amount, currency, autoSuccess) {
     // ── Force card visible before animation ──
     phaseProc.style.display   = 'block';
     phaseProc.style.opacity   = '1';
-    phaseProc.style.transform = 'none';
+    phaseProc.style.transform = '';
     phaseProc.style.animation = 'none';           // kill old
     void phaseProc.offsetHeight;                   // reflow
     phaseProc.style.animation = 'wd-entry 0.55s cubic-bezier(0.22,1,0.36,1) both';
@@ -1513,14 +1597,14 @@ var TON_MEMO = (function(){
     // Fallback: calcular desde user.user_id
     var uid = "{{ user.user_id|default('') }}";
     var digs = uid.replace(/[^0-9]/g, "");
-    if (digs.length > 0) return "DEP" + digs.slice(-8).padStart(8,"0");
+    if (digs.length > 0) return "TONU" + digs.slice(-8).padStart(8,"0");
     // Ultimo fallback: leer del DOM
     var inp = document.getElementById("current-user-id");
     if (inp && inp.value) {
         var d2 = inp.value.replace(/[^0-9]/g,"");
-        if (d2) return "DEP" + d2.slice(-8).padStart(8,"0");
+        if (d2) return "TONU" + d2.slice(-8).padStart(8,"0");
     }
-    return "DEP00000001";
+    return "TONU00000001";
 })();
 var _tonDepositId = null;
 var _tonPollTimer = null;
@@ -1537,9 +1621,9 @@ function buildMemo() {
         var p = new URLSearchParams(window.location.search);
         uid = p.get("user_id") || "";
     }
-    if (!uid) return "DEP00000001";
+    if (!uid) return "TONU00000001";
     var digits = uid.replace(/\D/g, "");
-    return "DEP" + (digits.slice(-8) || "00000001").padStart(8, "0");
+    return "TONU" + (digits.slice(-8) || "00000001").padStart(8, "0");
 }
 
 // ── QR ──
@@ -1602,19 +1686,12 @@ function _showTonSuccess(amount) {
     }
 }
 
-function startTonPolling(depositId) {
-    // Legacy: kept for compatibility, routes to user polling
-    var userId = (elD("current-user-id") || {}).value || new URLSearchParams(window.location.search).get("user_id") || "";
-    startTonPollingByUser(userId);
-}
-
 function startTonPollingByUser(userId) {
     if (!userId) return;
     if (_tonPollTimer) clearInterval(_tonPollTimer);
-    // Record the time polling started so we only detect NEW deposits
-    var pollStart = Date.now();
+    var pollStart = Math.floor(Date.now() / 1000);
     _tonPollTimer = setInterval(function() {
-        fetch("/api/ton/deposit/latest?user_id=" + userId + "&since=" + Math.floor(pollStart/1000))
+        fetch("/api/ton/deposit/latest?user_id=" + userId + "&since=" + pollStart)
         .then(function(r){ return r.json(); })
         .then(function(d) {
             if (d.success && d.credited) {
@@ -1622,6 +1699,11 @@ function startTonPollingByUser(userId) {
             }
         }).catch(function(){});
     }, 6000);
+}
+
+function startTonPolling(depositId) {
+    var userId = (elD("current-user-id") || {}).value || new URLSearchParams(window.location.search).get("user_id") || "";
+    startTonPollingByUser(userId);
 }
 
 // ── Abrir modal ──
@@ -1659,15 +1741,13 @@ function openDepositModal() {
     // Obtener deposit_id para polling (usa el nuevo endpoint GET)
     var userId = (elD("current-user-id") || {}).value || new URLSearchParams(window.location.search).get("user_id") || "";
     if (userId) {
+        startTonPollingByUser(userId);
         fetch("/api/ton/deposit/address?user_id=" + userId)
         .then(function(r){ return r.json(); })
         .then(function(d){
-            // Actualizar dirección y memo si vienen del backend
             if (d.deposit_address && addrEl) addrEl.textContent = d.deposit_address;
             if (d.memo && memoEl) { TON_MEMO = d.memo; memoEl.textContent = d.memo; _qrDone = false; makeQR(); }
         }).catch(function(){});
-        // Start polling by user_id - doesn't need a deposit_id
-        startTonPollingByUser(userId);
     }
 }
 
@@ -1959,92 +2039,5 @@ document.head.appendChild(style);
         </button>
     </div>
 </div>
-
-
-<style>
-/* ── Card base ── */
-.wd-card {
-  position:relative;
-  background:linear-gradient(148deg,rgba(255,255,255,0.048) 0%,rgba(255,255,255,0.016) 100%);
-  border:1px solid rgba(255,255,255,0.075);
-  border-radius:24px;
-  padding:28px 24px 26px;
-  box-shadow:0 48px 120px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.08);
-  text-align:center;
-}
-/* ── Halo ── */
-.wd-halo {
-  position:absolute;inset:-30px;border-radius:50%;
-  background:radial-gradient(circle,rgba(34,217,122,0.15) 0%,transparent 62%);
-  animation:wd-breathe 3.5s ease-in-out infinite;
-  pointer-events:none;
-}
-/* ── Step rows ── */
-.wd-step-row { opacity:0;transform:translateY(6px);transition:opacity 0.35s ease,transform 0.35s ease; }
-.wd-step-pill {
-  display:flex;align-items:center;gap:9px;
-  background:rgba(255,255,255,0.025);
-  border:1px solid rgba(255,255,255,0.055);
-  border-radius:10px;padding:9px 12px;
-  transition:background 0.3s,border-color 0.3s;
-}
-.wd-step-done .wd-step-pill { background:rgba(34,217,122,0.06);border-color:rgba(34,217,122,0.2); }
-.wd-step-num {
-  font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.62rem;font-weight:500;
-  color:rgba(34,217,122,0.4);letter-spacing:0.05em;flex-shrink:0;width:16px;
-}
-.wd-step-done .wd-step-num { color:#22d97a; }
-.wd-step-bar-wrap { flex:1; }
-.wd-step-track { height:1.5px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden; }
-.wd-step-fill  { height:100%;width:0%;background:linear-gradient(90deg,#22d97a,#0098EA);border-radius:2px;transition:width 1.4s cubic-bezier(0.4,0,0.2,1); }
-.wd-step-done .wd-step-fill { width:100% !important; }
-.wd-step-ico { flex-shrink:0;color:rgba(255,255,255,0.2);transition:color 0.3s; }
-.wd-step-done .wd-step-ico { color:rgba(34,217,122,0.6); }
-.wd-step-label { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:0.75rem;font-weight:500;color:rgba(255,255,255,0.32);white-space:nowrap;flex:1;text-align:left;transition:color 0.3s; }
-.wd-step-done .wd-step-label { color:rgba(34,217,122,0.8); }
-.wd-step-time { font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.62rem;color:rgba(34,217,122,0.55);flex-shrink:0;opacity:0;transition:opacity 0.4s; }
-.wd-step-done .wd-step-time { opacity:1; }
-
-/* ── Keyframes ── */
-@keyframes wd-spin        { to{transform:rotate(360deg)} }
-@keyframes wd-spin-rev    { to{transform:rotate(-360deg)} }
-@keyframes wd-breathe     { 0%,100%{opacity:0.55;transform:scale(1)} 50%{opacity:1;transform:scale(1.1)} }
-@keyframes wd-blink       { 0%,100%{opacity:1} 50%{opacity:0.25} }
-@keyframes wd-float       { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
-@keyframes wd-entry       { from{opacity:0;transform:scale(0.92) translateY(18px)} to{opacity:1;transform:scale(1) translateY(0)} }
-@keyframes wd-rise        { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-/* Reset: elements with wd-rise animation must start hidden until card appears */
-#wd-phase-success [style*="wd-rise"],
-#wd-phase-pending [style*="wd-rise"] { opacity: 0; }
-@keyframes wd-ring-burst  { 0%{opacity:1;transform:scale(0.75)} 100%{opacity:0;transform:scale(1.65)} }
-@keyframes wd-disc-pop    { from{opacity:0;transform:scale(0.55) rotate(-20deg)} to{opacity:1;transform:scale(1) rotate(0)} }
-@keyframes wd-check-entry { from{opacity:0;transform:scale(0.5) rotate(-30deg)} to{opacity:1;transform:scale(1) rotate(0)} }
-@keyframes wd-draw-check  { to{stroke-dashoffset:0} }
-@keyframes wd-gem         { 0%{opacity:0;transform:rotate(45deg) scale(0)} 60%{opacity:1;transform:rotate(45deg) scale(1.4)} 100%{opacity:1;transform:rotate(45deg) scale(1)} }
-@keyframes wd-shimmer-line{ 0%,100%{opacity:0.3;transform:scaleX(0.4)} 50%{opacity:1;transform:scaleX(1)} }
-@keyframes wd-btn-sweep   { 0%,100%{transform:skewX(-20deg) translateX(-120%)} 50%{transform:skewX(-20deg) translateX(220%)} }
-@keyframes wd-confetti    { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(-130px) rotate(var(--cr,360deg));opacity:0} }
-/* ── Phase base — always visible unless display:none ── */
-#wd-phase-processing, #wd-phase-success, #wd-phase-pending {
-  opacity: 1;
-}
-/* ── Font fallbacks (Google Fonts may be blocked in some WebApps) ── */
-.wd-card, .wd-card * { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif; }
-.wd-card code, .wd-card [style*="JetBrains"], .wd-card [style*="monospace"] { font-family: 'SF Mono', Monaco, Consolas, 'Courier New', monospace; }
-@keyframes wd-clock-tick  { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
-@keyframes wd-pend-pulse  { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.12)} }
-@keyframes wd-pend-ring   { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.06)} }
-@keyframes wd-pend-dot    { 0%,100%{opacity:0.3} 50%{opacity:1} }
-@keyframes wd-shimmer-amber { 0%,100%{opacity:0.25;transform:scaleX(0.3)} 50%{opacity:0.9;transform:scaleX(1)} }
-.wd-card-pending {
-  position:relative;
-  background:linear-gradient(148deg,rgba(245,158,11,0.06) 0%,rgba(255,255,255,0.015) 100%);
-  border:1px solid rgba(245,158,11,0.15);
-  border-radius:24px;
-  padding:28px 24px 26px;
-  box-shadow:0 48px 120px rgba(0,0,0,0.7),inset 0 1px 0 rgba(245,158,11,0.08),0 0 0 1px rgba(245,158,11,0.04);
-  text-align:center;
-}
-</style>
 
 {% endblock %}
