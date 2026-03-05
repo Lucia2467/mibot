@@ -25,7 +25,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #0B0B0F;
+            background: #000000;
             z-index: 999999;
             display: flex;
             align-items: center;
@@ -43,25 +43,24 @@
             visibility: visible;
         }
         .vpn-checking-content {
-            text-align: center;
-            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        .vpn-checking-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(0, 102, 255, 0.2);
-            border-top-color: #0066FF;
+        .vpn-dot {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            animation: vpn-spin 1s linear infinite;
-            margin: 0 auto 20px;
+            background: #0066FF;
+            animation: vpnDotBounce 1.4s ease-in-out infinite both;
         }
-        @keyframes vpn-spin {
-            to { transform: rotate(360deg); }
-        }
-        .vpn-checking-text {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.7);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
+        .vpn-dot:nth-child(1) { animation-delay: 0s; }
+        .vpn-dot:nth-child(2) { animation-delay: 0.2s; }
+        .vpn-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes vpnDotBounce {
+            0%, 80%, 100% { transform: scale(0.7); opacity: 0.35; }
+            40%            { transform: scale(1.2); opacity: 1; }
         }
     `;
 
@@ -78,8 +77,9 @@
         overlay.className = 'vpn-block-overlay checking';
         overlay.innerHTML = `
             <div class="vpn-checking-content">
-                <div class="vpn-checking-spinner"></div>
-                <div class="vpn-checking-text">Verificando conexión...</div>
+                <div class="vpn-dot"></div>
+                <div class="vpn-dot"></div>
+                <div class="vpn-dot"></div>
             </div>
         `;
         
