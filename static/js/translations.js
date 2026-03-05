@@ -114,13 +114,13 @@ const LANG = {
         link_wallet_warning: "Make sure this is YOUR wallet. Once linked, withdrawals will be sent to this address.",
         bep20_address: "BEP-20 Address",
         address_format: "Must start with 0x",
-        link_wallet_btn: "Link Wallet"
+        link_wallet_btn: "Link Wallet",
         ton_wallet_linked: "TON wallet linked",
         ton_link_desc: "Link your TON wallet to receive TON withdrawals.",
         ton_address_label: "TON ADDRESS",
         ton_address_format: "Format: EQ... or UQ... (48 characters)",
         update_ton_wallet: "Update TON Wallet",
-        link_ton_wallet: "Link TON Wallet",,
+        link_ton_wallet: "Link TON Wallet",
         
         // Deposit System
         deposit: "Deposit",
@@ -1208,13 +1208,13 @@ const LANG = {
         link_wallet_warning: "Asegúrate de que esta sea TU wallet. Una vez vinculada, los retiros se enviarán a esta dirección.",
         bep20_address: "Dirección BEP-20",
         address_format: "Debe comenzar con 0x",
-        link_wallet_btn: "Vincular Wallet"
+        link_wallet_btn: "Vincular Wallet",
         ton_wallet_linked: "Wallet TON vinculada",
         ton_link_desc: "Vincula tu wallet TON para recibir retiros en TON.",
         ton_address_label: "DIRECCIÓN TON",
         ton_address_format: "Formato: EQ... o UQ... (48 caracteres)",
         update_ton_wallet: "Actualizar Wallet TON",
-        link_ton_wallet: "Vincular Wallet TON",,
+        link_ton_wallet: "Vincular Wallet TON",
         
         // Sistema de Depósito
         deposit: "Depositar",
@@ -2302,13 +2302,13 @@ const LANG = {
         link_wallet_warning: "Certifique-se de que esta é SUA carteira. Uma vez vinculada, os saques serão enviados para este endereço.",
         bep20_address: "Endereço BEP-20",
         address_format: "Deve começar com 0x",
-        link_wallet_btn: "Vincular Carteira"
+        link_wallet_btn: "Vincular Carteira",
         ton_wallet_linked: "Carteira TON vinculada",
         ton_link_desc: "Vincule sua carteira TON para receber saques em TON.",
         ton_address_label: "ENDEREÇO TON",
         ton_address_format: "Formato: EQ... ou UQ... (48 caracteres)",
         update_ton_wallet: "Atualizar Carteira TON",
-        link_ton_wallet: "Vincular Carteira TON",,
+        link_ton_wallet: "Vincular Carteira TON",
         
         // Sistema de Depósito
         deposit: "Depositar",
@@ -3358,13 +3358,13 @@ const LANG = {
         link_wallet_warning: "Убедитесь, что это ВАШ кошелёк. После привязки выводы будут отправляться на этот адрес.",
         bep20_address: "Адрес BEP-20",
         address_format: "Должен начинаться с 0x",
-        link_wallet_btn: "Привязать Кошелёк"
+        link_wallet_btn: "Привязать Кошелёк",
         ton_wallet_linked: "Кошелёк TON привязан",
         ton_link_desc: "Привяжите кошелёк TON для получения выводов в TON.",
         ton_address_label: "АДРЕС TON",
         ton_address_format: "Формат: EQ... или UQ... (48 символов)",
         update_ton_wallet: "Обновить Кошелёк TON",
-        link_ton_wallet: "Привязать Кошелёк TON",,
+        link_ton_wallet: "Привязать Кошелёк TON",
         
         // Система Депозитов
         deposit: "Депозит",
@@ -4398,13 +4398,13 @@ const LANG = {
         link_wallet_warning: "تأكد أن هذه محفظتك. بمجرد الربط، سيتم إرسال السحوبات إلى هذا العنوان.",
         bep20_address: "عنوان BEP-20",
         address_format: "يجب أن يبدأ بـ 0x",
-        link_wallet_btn: "ربط المحفظة"
+        link_wallet_btn: "ربط المحفظة",
         ton_wallet_linked: "تم ربط محفظة TON",
         ton_link_desc: "اربط محفظة TON الخاصة بك لاستقبال عمليات سحب TON.",
         ton_address_label: "عنوان TON",
         ton_address_format: "الصيغة: EQ... أو UQ... (48 حرفاً)",
         update_ton_wallet: "تحديث محفظة TON",
-        link_ton_wallet: "ربط محفظة TON",,
+        link_ton_wallet: "ربط محفظة TON",
         
         // نظام الإيداع
         deposit: "إيداع",
