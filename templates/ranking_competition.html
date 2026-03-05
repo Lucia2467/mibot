@@ -1241,12 +1241,29 @@ function updateCompetitionState(state) {
     banner.classList.add(STATE_CLASSES[state.state] || 'state-active');
 
     // Update state label and message
-    stateLabel.textContent = state.title || 'Competencia Activa';
-    stateMessage.textContent = state.message || '';
+    const stateKeyMap = {
+        'ACTIVE': 'competition_active',
+        'ENDED': 'competition_ended',
+        'DISTRIBUTING': 'competition_distributing',
+        'DISTRIBUTED': 'competition_distributed',
+        'PREPARATION': 'competition_preparation'
+    };
+    const msgKeyMap = {
+        'ACTIVE': 'competition_msg_active',
+        'ENDED': 'competition_msg_ended',
+        'DISTRIBUTING': 'competition_msg_distributing',
+        'DISTRIBUTED': 'competition_msg_distributed',
+        'PREPARATION': 'competition_msg_preparation'
+    };
+    const stateKey = stateKeyMap[state.state] || 'competition_active';
+    const msgKey = msgKeyMap[state.state] || 'competition_msg_active';
+    stateLabel.textContent = window.t ? window.t(stateKey) : (state.title || 'Competencia Activa');
+    stateMessage.textContent = window.t ? window.t(msgKey) : (state.message || '');
 
     // Update competition number
     if (state.competition_number) {
-        competitionNumber.textContent = `Competencia #${state.competition_number}`;
+        const compLabel = window.t ? window.t('competition_label') : 'Competencia';
+        competitionNumber.textContent = `${compLabel} #${state.competition_number}`;
     }
 
     // Handle countdown/timer based on state
@@ -1304,19 +1321,23 @@ function updateUserStats(userRank, state) {
     // Handle different states
     if (state.state === 'DISTRIBUTED' && userRank.reward_credited) {
         statusEl.className = 'pts-user-prize-status qualifies';
-        statusEl.textContent = `+${userRank.reward_doge} DOGE acreditado`;
+        const creditedText = window.t ? window.t('competition_credited') : 'acreditado';
+        statusEl.textContent = `+${userRank.reward_doge} DOGE ${creditedText}`;
     } else if (pos && pos <= 5) {
         if (pts >= MIN_PTS) {
             statusEl.className = 'pts-user-prize-status qualifies';
             const reward = PRIZES[pos] || 0;
             if (state.state === 'ACTIVE') {
-                statusEl.textContent = `Califica: ${reward} DOGE`;
+                const qualifiesText = window.t ? window.t('competition_qualifies') : 'Califica';
+                statusEl.textContent = `${qualifiesText}: ${reward} DOGE`;
             } else {
-                statusEl.textContent = `Premio: ${reward} DOGE`;
+                const prizeText = window.t ? window.t('ranking_weekly_prizes') : 'Premio';
+                statusEl.textContent = `${prizeText}: ${reward} DOGE`;
             }
         } else {
             statusEl.className = 'pts-user-prize-status not-qualifies';
-            statusEl.textContent = `Necesita ${MIN_PTS - pts} PTS`;
+            const needsText = window.t ? window.t('competition_needs') : 'Necesita';
+            statusEl.textContent = `${needsText} ${MIN_PTS - pts} PTS`;
         }
     } else {
         statusEl.className = 'pts-user-prize-status no-prize';
@@ -1328,10 +1349,10 @@ function renderRankingList(ranking, state) {
     const container = document.getElementById('pts-ranking-list');
     const noParticipantsText = window.t ? window.t('ranking_no_participants') : 'Sin participantes';
     const youText = window.t ? window.t('ranking_you') : '(Tu)';
-    const qualifiesText = 'Califica';
-    const needsText = 'Necesita';
-    const noPrizeText = 'Sin premio';
-    const creditedText = 'Acreditado';
+    const qualifiesText = window.t ? window.t('competition_qualifies') : 'Califica';
+    const needsText = window.t ? window.t('competition_needs') : 'Necesita';
+    const noPrizeText = window.t ? window.t('competition_no_prize') : 'Sin premio';
+    const creditedText = window.t ? window.t('competition_credited') : 'Acreditado';
 
     if (!ranking || ranking.length === 0) {
         container.innerHTML = `
