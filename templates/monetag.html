@@ -578,10 +578,13 @@ function showMoneTagAd() {
         timerDisplay.textContent = remaining;
         timerBar.style.width = `${Math.min(100, (elapsedSeconds / minSeconds) * 100)}%`;
         
-        // Si el timer llega a 0 y el usuario sigue en la página esperando
-        if (remaining === 0 && !mtgAdWaitingForReturn) {
+        // Si el timer llega a 0, disparar validación automáticamente
+        if (remaining === 0) {
             clearInterval(mtgTimerInterval);
             mtgTimerInterval = null;
+            if (mtgAdWaitingForReturn) {
+                handleUserReturnedFromAd();
+            }
         }
     }, 1000);
     

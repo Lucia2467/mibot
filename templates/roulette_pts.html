@@ -1131,8 +1131,27 @@ async function doubleReward() {
         const adResult = await new Promise((resolve) => {
             rouletteAdResolve = resolve;
             
+            // Auto-resolver cuando el tiempo mínimo se cumple (por si visibilitychange no dispara)
+            const autoResolveInterval = setInterval(() => {
+                if (!rouletteAdWaiting || !rouletteAdStartTime) {
+                    clearInterval(autoResolveInterval);
+                    return;
+                }
+                const elapsed = Math.floor((Date.now() - rouletteAdStartTime) / 1000);
+                if (elapsed >= MIN_AD_WATCH_TIME_SEC) {
+                    clearInterval(autoResolveInterval);
+                    if (rouletteAdWaiting) {
+                        rouletteAdWaiting = false;
+                        rouletteAdResolve = null;
+                        resolve({ success: true, watchTime: Date.now() - rouletteAdStartTime, watchedSeconds: elapsed });
+                        rouletteAdStartTime = null;
+                    }
+                }
+            }, 500);
+            
             // Timeout de seguridad: 120 segundos
             setTimeout(() => {
+                clearInterval(autoResolveInterval);
                 if (rouletteAdWaiting) {
                     rouletteAdWaiting = false;
                     rouletteAdResolve = null;
