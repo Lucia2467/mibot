@@ -1488,3 +1488,8 @@ body::after {
 .header-avatar-loading {
     opacity: 0.7;
 }
+
+/* Remove top line on explore cards */
+.explore-card::before {
+    display: none;
+}
