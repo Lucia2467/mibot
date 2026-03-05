@@ -378,25 +378,25 @@ function showAdIncompleteNotification(remainingSeconds, watchedSeconds) {
         </div>
         
         <h3 style="font-size: 1.25rem; font-weight: 700; color: #EF4444; margin-bottom: 12px;">
-            Anuncio No Completado
+            ${window.t ? window.t('ad_not_completed') : '¡Anuncio No Completado!'}
         </h3>
         
         <p style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 20px; line-height: 1.5;">
-            Debes ver el anuncio completo para recibir tu recompensa.
+            ${window.t ? window.t('ad_not_completed_desc_reward') : 'Debes ver el anuncio completo para recibir tu recompensa.'}
         </p>
         
-        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; padding: 16px; margin-bottom: 20px; display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Tiempo visto:</span>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">${window.t ? window.t('ad_time_watched') : 'Tiempo visto:'}</span>
                 <span style="font-size: 0.875rem; font-weight: 600; color: #EF4444;">${watchedSeconds}s</span>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Tiempo requerido:</span>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">${window.t ? window.t('ad_time_required') : 'Tiempo requerido:'}</span>
                 <span style="font-size: 0.875rem; font-weight: 600; color: rgba(255, 255, 255, 0.8);">${MONETAG_CONFIG.minWatchSeconds}s</span>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">Te faltaron:</span>
-                <span style="font-size: 0.9375rem; font-weight: 700; color: #EF4444;">${remainingSeconds} segundos</span>
+                <span style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">${window.t ? window.t('ad_time_missing') : 'Te faltaron:'}</span>
+                <span style="font-size: 0.9375rem; font-weight: 700; color: #EF4444;">${remainingSeconds} ${window.t ? window.t('ad_seconds') : 'segundos'}</span>
             </div>
         </div>
         
@@ -412,7 +412,7 @@ function showAdIncompleteNotification(remainingSeconds, watchedSeconds) {
             cursor: pointer;
             transition: all 0.3s ease;
         ">
-            Entendido
+            ${window.t ? window.t('ad_understood') : 'Entendido'}
         </button>
     `;
     
