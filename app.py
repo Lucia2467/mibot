@@ -2699,7 +2699,7 @@ def vpn_blocked():
 
 @app.route('/api/ton/deposit/latest', methods=['GET'])
 def api_ton_deposit_latest():
-    """Checks if a new TON deposit was credited after a given timestamp"""
+    """Checks if a new TON deposit was credited after a given timestamp (seconds)"""
     user_id = get_user_id()
     if not user_id:
         return jsonify({'success': False, 'error': 'User ID required'}), 400
@@ -2712,16 +2712,16 @@ def api_ton_deposit_latest():
 
     try:
         from database import get_cursor
-        from datetime import datetime
-        since_dt = datetime.utcfromtimestamp(since_ts) if since_ts else datetime.utcfromtimestamp(0)
         with get_cursor() as cur:
+            # Use MySQL's UNIX_TIMESTAMP to compare directly, avoiding timezone issues
             cur.execute(
                 """SELECT amount, status, credited_at
                    FROM ton_deposits
-                   WHERE user_id=%s AND status IN ('confirmed','credited')
-                   AND credited_at >= %s
+                   WHERE user_id=%s
+                     AND status IN ('confirmed','credited')
+                     AND UNIX_TIMESTAMP(credited_at) >= %s
                    ORDER BY credited_at DESC LIMIT 1""",
-                (str(user_id), since_dt)
+                (str(user_id), since_ts)
             )
             row = cur.fetchone()
     except Exception as e:
@@ -6612,12 +6612,14 @@ def _ton_deposit_monitor():
                     if not tx_hash or tx_hash in seen:
                         continue
 
-                    # Validar formato memo: DEP + exactamente 8 dígitos
-                    if not re.match(r"^DEP[0-9]{8}$", memo):
+                    # Validar formato memo: DEP + 8 dígitos O TONU + 8 dígitos (legacy)
+                    match_dep  = re.match(r"^DEP([0-9]{8})$", memo)
+                    match_tonu = re.match(r"^TONU([0-9]{8})$", memo)
+                    if not match_dep and not match_tonu:
                         seen.add(tx_hash)   # ignorar para no revisar de nuevo
                         continue
 
-                    suffix = memo[3:]   # 8 dígitos
+                    suffix = (match_dep or match_tonu).group(1)   # 8 dígitos
 
                     from database import get_cursor, execute_query, update_balance
                     
