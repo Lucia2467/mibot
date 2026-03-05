@@ -528,7 +528,7 @@
             </button>
           </div>
           <div style="background:rgba(245,158,11,0.08);border-radius:10px;padding:10px;text-align:center;">
-            <code id="ton-dep-memo" style="font-size:1.3rem;font-weight:900;color:#fbbf24;letter-spacing:0.18em;">{{ user_deposit_memo if user_deposit_memo else "TONU00000001" }}</code>
+            <code id="ton-dep-memo" style="font-size:1.3rem;font-weight:900;color:#fbbf24;letter-spacing:0.18em;">{{ user_deposit_memo if user_deposit_memo else "DEP00000001" }}</code>
           </div>
           <div style="display:flex;align-items:flex-start;gap:6px;margin-top:10px;">
             <i data-lucide="alert-triangle" style="width:12px;height:12px;color:#ef4444;flex-shrink:0;margin-top:2px;"></i>
@@ -1513,14 +1513,14 @@ var TON_MEMO = (function(){
     // Fallback: calcular desde user.user_id
     var uid = "{{ user.user_id|default('') }}";
     var digs = uid.replace(/[^0-9]/g, "");
-    if (digs.length > 0) return "TONU" + digs.slice(-8).padStart(8,"0");
+    if (digs.length > 0) return "DEP" + digs.slice(-8).padStart(8,"0");
     // Ultimo fallback: leer del DOM
     var inp = document.getElementById("current-user-id");
     if (inp && inp.value) {
         var d2 = inp.value.replace(/[^0-9]/g,"");
-        if (d2) return "TONU" + d2.slice(-8).padStart(8,"0");
+        if (d2) return "DEP" + d2.slice(-8).padStart(8,"0");
     }
-    return "TONU00000001";
+    return "DEP00000001";
 })();
 var _tonDepositId = null;
 var _tonPollTimer = null;
@@ -1537,9 +1537,9 @@ function buildMemo() {
         var p = new URLSearchParams(window.location.search);
         uid = p.get("user_id") || "";
     }
-    if (!uid) return "TONU00000001";
+    if (!uid) return "DEP00000001";
     var digits = uid.replace(/\D/g, "");
-    return "TONU" + (digits.slice(-8) || "00000001").padStart(8, "0");
+    return "DEP" + (digits.slice(-8) || "00000001").padStart(8, "0");
 }
 
 // ── QR ──
@@ -1588,30 +1588,40 @@ function copyDepMemo() {
 }
 
 // ── Polling ──
+function _showTonSuccess(amount) {
+    clearInterval(_tonPollTimer);
+    _tonPollTimer = null;
+    var overlay = elD("ton-success-overlay");
+    var amountEl = elD("ton-success-amount");
+    var msgEl = elD("ton-success-msg");
+    if (amountEl) amountEl.textContent = parseFloat(amount || 0).toFixed(4) + " TON";
+    if (msgEl) msgEl.textContent = window.tt ? window.tt("ton_dep_success_msg") : "Tu TON ha sido acreditado en tu cuenta";
+    if (overlay) {
+        overlay.style.display = "flex";
+        if (typeof lucide !== "undefined") lucide.createIcons();
+    }
+}
+
 function startTonPolling(depositId) {
-    _tonDepositId = depositId;
-    if (_tonPollTimer) clearInterval(_tonPollTimer);
+    // Legacy: kept for compatibility, routes to user polling
     var userId = (elD("current-user-id") || {}).value || new URLSearchParams(window.location.search).get("user_id") || "";
+    startTonPollingByUser(userId);
+}
+
+function startTonPollingByUser(userId) {
+    if (!userId) return;
+    if (_tonPollTimer) clearInterval(_tonPollTimer);
+    // Record the time polling started so we only detect NEW deposits
+    var pollStart = Date.now();
     _tonPollTimer = setInterval(function() {
-        fetch("/api/ton/deposit/status/" + _tonDepositId + "?user_id=" + userId)
+        fetch("/api/ton/deposit/latest?user_id=" + userId + "&since=" + Math.floor(pollStart/1000))
         .then(function(r){ return r.json(); })
         .then(function(d) {
-            if (d.success && (d.status === "credited" || d.status === "confirmed")) {
-                clearInterval(_tonPollTimer);
-                // Mostrar overlay de éxito premium centrado
-                var amount = parseFloat(d.ton_amount || 0).toFixed(4);
-                var overlay = elD("ton-success-overlay");
-                var amountEl = elD("ton-success-amount");
-                var msgEl = elD("ton-success-msg");
-                if (amountEl) amountEl.textContent = amount + " TON";
-                if (msgEl) msgEl.textContent = window.tt ? window.tt("ton_dep_success_msg") : "Your TON has been credited to your account";
-                if (overlay) {
-                    overlay.style.display = "flex";
-                    if (typeof lucide !== "undefined") lucide.createIcons();
-                }
+            if (d.success && d.credited) {
+                _showTonSuccess(d.ton_amount);
             }
         }).catch(function(){});
-    }, 8000);
+    }, 6000);
 }
 
 // ── Abrir modal ──
@@ -1652,11 +1662,12 @@ function openDepositModal() {
         fetch("/api/ton/deposit/address?user_id=" + userId)
         .then(function(r){ return r.json(); })
         .then(function(d){
-            if (d.success && d.deposit_id) startTonPolling(d.deposit_id);
             // Actualizar dirección y memo si vienen del backend
             if (d.deposit_address && addrEl) addrEl.textContent = d.deposit_address;
             if (d.memo && memoEl) { TON_MEMO = d.memo; memoEl.textContent = d.memo; _qrDone = false; makeQR(); }
         }).catch(function(){});
+        // Start polling by user_id - doesn't need a deposit_id
+        startTonPollingByUser(userId);
     }
 }
 
