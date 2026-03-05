@@ -326,46 +326,30 @@
                 {% if user.ton_wallet_address %}
                 <div style="background: rgba(34, 197, 94, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
                     <div style="font-size: 0.875rem; color: #22c55e; text-align: center; margin-bottom: 10px;">
-                        ✅ TON wallet linked
+                        ✅ <span data-i18n="ton_wallet_linked">TON wallet linked</span>
                     </div>
                     <div style="font-size: 0.75rem; color: var(--color-text-secondary); font-family: monospace; word-break: break-all; text-align: center;">
                         {{ user.ton_wallet_address }}
                     </div>
-                    {% if user.ton_wallet_memo %}
-                    <div style="font-size: 0.75rem; color: #0098EA; text-align: center; margin-top: 8px;">
-                        💬 Memo: {{ user.ton_wallet_memo }}
-                    </div>
-                    {% endif %}
                 </div>
                 {% else %}
                 <div style="background: rgba(0, 152, 234, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
                     <div style="font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.6;">
                         <strong>💎 TON Network:</strong><br>
-                        Link your TON wallet to receive TON withdrawals. Use Tonkeeper, TON Wallet, or any compatible wallet.
+                        <span data-i18n="ton_link_desc">Link your TON wallet to receive TON withdrawals.</span>
                     </div>
                 </div>
                 {% endif %}
 
                 <form id="link-ton-form" onsubmit="submitLinkWallet(event, 'ton')">
                     <div class="input-group">
-                        <label class="input-label">TON Address</label>
+                        <label class="input-label" data-i18n="ton_address_label">TON ADDRESS</label>
                         <input type="text" class="input" id="ton-address-input" placeholder="EQ... or UQ..." required value="{{ user.ton_wallet_address|default('') }}">
-                        <small style="color: var(--color-text-tertiary); margin-top: 5px;">Format: EQ... or UQ... (48 characters)</small>
-                    </div>
-
-                    <div class="input-group">
-                        <label class="input-label">
-                            💬 Memo / Tag
-                            <span style="color: var(--color-text-tertiary); font-weight: normal;">(Optional)</span>
-                        </label>
-                        <input type="text" class="input" id="ton-memo-input" placeholder="Memo or Tag (if required by exchange)" maxlength="120" value="{{ user.ton_wallet_memo|default('') }}">
-                        <small style="color: #eab308; margin-top: 5px; display: block;">
-                            ⚠️ Required for exchanges like Binance, OKX, etc. Leave empty for personal wallets.
-                        </small>
+                        <small style="color: var(--color-text-tertiary); margin-top: 5px;" data-i18n="ton_address_format">Format: EQ... or UQ... (48 characters)</small>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-block" style="background: linear-gradient(135deg, #0098EA 0%, #0077B6 100%);">
-                        {{ 'Update TON Wallet' if user.ton_wallet_address else 'Link TON Wallet' }}
+                        <span data-i18n="{{ 'update_ton_wallet' if user.ton_wallet_address else 'link_ton_wallet' }}">{{ 'Update TON Wallet' if user.ton_wallet_address else 'Link TON Wallet' }}</span>
                     </button>
                 </form>
             </div>
