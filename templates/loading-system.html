@@ -1,13 +1,12 @@
 <!--
-    ⚡ SISTEMA GLOBAL DE ANIMACIONES DE CARGA ULTRA PRO 8K
-    - Loading Anti-Saturación con bloqueo de 2 segundos
-    - Pantalla de inicio profesional con animaciones cinematográficas
-    - Desactivación de botones durante carga
+    SISTEMA GLOBAL DE ANIMACIONES DE CARGA
+    - Pantalla de inicio con puntos estilo Facebook/WhatsApp
+    - Sin textos, animación limpia y minimalista
 -->
 
 <style>
 /* ============================================
-   PANTALLA DE INICIO PROFESIONAL 8K
+   PANTALLA DE INICIO - DOTS STYLE
    ============================================ */
 #global-loader {
     position: fixed;
@@ -22,18 +21,8 @@
     justify-content: center;
     z-index: 9999999;
     opacity: 1;
-    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.6s ease;
     overflow: hidden;
-}
-
-#global-loader::before {
-    content: '';
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(0, 102, 255, 0.03) 1px, transparent 1px);
-    background-size: 50px 50px;
-    animation: gridMove 20s linear infinite;
 }
 
 #global-loader.hidden {
@@ -41,37 +30,21 @@
     pointer-events: none;
 }
 
-/* Logo Container con efectos avanzados */
+/* Logo Container */
 .loader-logo {
-    width: 140px;
-    height: 140px;
-    margin-bottom: 50px;
+    width: 130px;
+    height: 130px;
+    margin-bottom: 48px;
     position: relative;
-    transform: translateY(60px);
-    z-index: 2;
 }
 
 .loader-logo::before {
     content: '';
     position: absolute;
     inset: -20px;
-    background: radial-gradient(circle, rgba(0, 102, 255, 0.2), transparent 70%);
-    filter: blur(30px);
+    background: radial-gradient(circle, rgba(0, 102, 255, 0.15), transparent 70%);
+    filter: blur(25px);
     animation: glowPulse 3s ease-in-out infinite;
-}
-
-.loader-logo::after {
-    content: '';
-    position: absolute;
-    inset: -40px;
-    background: conic-gradient(from 0deg,
-        transparent 0deg,
-        rgba(0, 102, 255, 0.1) 60deg,
-        rgba(0, 82, 204, 0.1) 120deg,
-        rgba(0, 245, 255, 0.1) 180deg,
-        transparent 240deg);
-    animation: rotate 4s linear infinite;
-    filter: blur(20px);
 }
 
 .loader-logo img {
@@ -81,137 +54,44 @@
     position: relative;
     z-index: 1;
     animation: logoFloat 3s ease-in-out infinite;
-    filter: drop-shadow(0 0 40px rgba(0, 102, 255, 0.8))
-            drop-shadow(0 0 80px rgba(0, 102, 255, 0.4));
-}
-
-/* Texto de carga dinámico - Ultra definido */
-.loader-text {
-    margin-top: 30px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #FFFFFF;
-    text-align: center;
-    letter-spacing: 1px;
-    min-height: 28px;
-    text-shadow: 0 0 30px rgba(255, 255, 255, 0.5),
-                 0 0 60px rgba(0, 102, 255, 0.3);
-    position: relative;
-    z-index: 2;
-}
-
-/* Indicador de puntos animados mejorado */
-.loader-dots {
-    display: inline-block;
-}
-
-.loader-dots::after {
-    content: '';
-    animation: dotsFlow 1.5s steps(4, end) infinite;
-}
-
-/* Barra de progreso profesional 8K */
-.loader-progress-container {
-    width: 280px;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    margin-top: 30px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.loader-progress-container::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.05) 50%,
-        transparent 100%);
-    animation: shimmer 2s infinite;
-}
-
-.loader-progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg,
-        #0066FF 0%,
-        #0066FF 20%,
-        #3B82F6 40%,
-        #0052CC 60%,
-        #00D4FF 80%,
-        #00D4FF 100%);
-    background-size: 200% 100%;
-    border-radius: 20px;
-    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    animation: gradientFlow 2s ease infinite;
-    box-shadow: 0 0 20px rgba(0, 102, 255, 0.6),
-                0 0 40px rgba(0, 102, 255, 0.4),
-                inset 0 1px 2px rgba(255, 255, 255, 0.3);
-}
-
-.loader-progress-bar::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.4) 50%,
-        transparent 100%);
-    animation: progressGleam 1.5s ease infinite;
-}
-
-.loader-progress-bar::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 12px;
-    height: 12px;
-    background: radial-gradient(circle, #FFFFFF, rgba(0, 102, 255, 0.8));
-    border-radius: 50%;
-    box-shadow: 0 0 15px #0066FF,
-                0 0 30px #0066FF,
-                0 0 45px rgba(0, 102, 255, 0.5);
-    animation: glowDot 1s ease-in-out infinite;
-}
-
-/* Partículas decorativas */
-.loader-progress-container::after {
-    content: '';
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: #00D4FF;
-    border-radius: 50%;
-    top: 50%;
-    left: 0;
-    animation: particleTravel 3s ease-in-out infinite;
-    box-shadow: 0 0 10px #00D4FF;
-}
-
-/* Indicador de estado con icono mejorado */
-.loader-status-icon {
-    width: 22px;
-    height: 22px;
-    margin-right: 10px;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.status-check {
-    color: #00FF88;
-    animation: checkPopPro 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.8));
+    filter: drop-shadow(0 0 30px rgba(0, 102, 255, 0.7))
+            drop-shadow(0 0 60px rgba(0, 102, 255, 0.3));
 }
 
 /* ============================================
-   LOADING ANTI-SATURACIÓN 8K
+   DOTS ESTILO FACEBOOK / WHATSAPP
+   ============================================ */
+.fb-dots {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fb-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    animation: fbDotBounce 1.4s ease-in-out infinite both;
+}
+
+.fb-dot:nth-child(1) { animation-delay: 0s; }
+.fb-dot:nth-child(2) { animation-delay: 0.2s; }
+.fb-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes fbDotBounce {
+    0%, 80%, 100% {
+        transform: scale(0.7);
+        opacity: 0.4;
+    }
+    40% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+}
+
+/* ============================================
+   BLOQUEADOR ANTI-SATURACIÓN - DOTS STYLE
    ============================================ */
 #saturation-blocker {
     position: fixed;
@@ -219,16 +99,16 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(5, 5, 10, 0.92);
-    backdrop-filter: blur(12px) saturate(1.5);
-    -webkit-backdrop-filter: blur(12px) saturate(1.5);
+    background: rgba(5, 5, 10, 0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 999998;
     opacity: 0;
-    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.3s ease;
 }
 
 #saturation-blocker.active {
@@ -236,72 +116,24 @@
     opacity: 1;
 }
 
-/* Spinner de saturación mejorado */
-.saturation-spinner {
-    width: 60px;
-    height: 60px;
-    position: relative;
+/* Dots del saturation blocker */
+.saturation-dots {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.saturation-spinner-ring {
-    width: 100%;
-    height: 100%;
-    border: 5px solid transparent;
-    border-top: 5px solid #0066FF;
-    border-right: 5px solid #3B82F6;
-    border-bottom: 5px solid #0052CC;
+.saturation-dot {
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    animation: spinPro 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-    box-shadow: 0 0 30px rgba(0, 102, 255, 0.5),
-                0 0 60px rgba(0, 82, 204, 0.3),
-                inset 0 0 20px rgba(0, 102, 255, 0.2);
-    position: relative;
+    background: rgba(255, 255, 255, 0.9);
+    animation: fbDotBounce 1.4s ease-in-out infinite both;
 }
 
-.saturation-spinner-ring::before {
-    content: '';
-    position: absolute;
-    inset: -5px;
-    border: 3px solid transparent;
-    border-left: 3px solid #00D4FF;
-    border-radius: 50%;
-    animation: spinReverse 1.5s linear infinite;
-}
-
-.saturation-text {
-    margin-top: 25px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #FFFFFF;
-    text-align: center;
-    opacity: 0.95;
-    letter-spacing: 0.5px;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-}
-
-/* Pulse en el centro del spinner mejorado */
-.saturation-pulse {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 16px;
-    height: 16px;
-    background: radial-gradient(circle, #FFFFFF, #0066FF);
-    border-radius: 50%;
-    animation: pulsePro 1.2s ease-in-out infinite;
-    box-shadow: 0 0 20px #0066FF,
-                0 0 40px rgba(0, 102, 255, 0.6);
-}
-
-.saturation-pulse::before {
-    content: '';
-    position: absolute;
-    inset: -8px;
-    border: 2px solid rgba(0, 102, 255, 0.3);
-    border-radius: 50%;
-    animation: ripple 1.2s ease-out infinite;
-}
+.saturation-dot:nth-child(1) { animation-delay: 0s; }
+.saturation-dot:nth-child(2) { animation-delay: 0.2s; }
+.saturation-dot:nth-child(3) { animation-delay: 0.4s; }
 
 /* ============================================
    BOTONES DESHABILITADOS DURANTE CARGA
@@ -317,7 +149,6 @@ body.loading-active input[type="submit"] {
     opacity: 0.5 !important;
     cursor: not-allowed !important;
     user-select: none !important;
-    filter: grayscale(0.3);
 }
 
 body.loading-active .nav-item {
@@ -325,330 +156,92 @@ body.loading-active .nav-item {
 }
 
 /* ============================================
-   ANIMACIONES 8K PROFESIONALES
+   ANIMACIONES
    ============================================ */
-@keyframes spinPro {
-    0% {
-        transform: rotate(0deg);
-        border-top-color: #0066FF;
-    }
-    33% {
-        border-top-color: #3B82F6;
-    }
-    66% {
-        border-top-color: #0052CC;
-    }
-    100% {
-        transform: rotate(360deg);
-        border-top-color: #0066FF;
-    }
-}
-
-@keyframes spinReverse {
-    0% { transform: rotate(360deg); }
-    100% { transform: rotate(0deg); }
-}
-
 @keyframes logoFloat {
-    0%, 100% {
-        transform: translateY(0) scale(1);
-    }
-    50% {
-        transform: translateY(-8px) scale(1.03);
-    }
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%       { transform: translateY(-8px) scale(1.03); }
 }
 
 @keyframes glowPulse {
-    0%, 100% {
-        opacity: 0.6;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.2);
-    }
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50%       { opacity: 1;   transform: scale(1.2); }
 }
 
-@keyframes rotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes pulsePro {
-    0%, 100% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: translate(-50%, -50%) scale(1.8);
-        opacity: 0.4;
-    }
-}
-
-@keyframes ripple {
-    0% {
-        transform: scale(1);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(2.5);
-        opacity: 0;
-    }
-}
-
-@keyframes gradientFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-@keyframes progressGleam {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(400%); }
-}
-
-@keyframes glowDot {
-    0%, 100% {
-        box-shadow: 0 0 15px #0066FF,
-                    0 0 30px #0066FF,
-                    0 0 45px rgba(0, 102, 255, 0.5);
-    }
-    50% {
-        box-shadow: 0 0 25px #0066FF,
-                    0 0 50px #0066FF,
-                    0 0 75px rgba(0, 102, 255, 0.8);
-    }
-}
-
-@keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-@keyframes particleTravel {
-    0% {
-        left: 0;
-        opacity: 0;
-    }
-    10% {
-        opacity: 1;
-    }
-    90% {
-        opacity: 1;
-    }
-    100% {
-        left: 100%;
-        opacity: 0;
-    }
-}
-
-@keyframes gridMove {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(50px, 50px); }
-}
-
-@keyframes dotsFlow {
-    0% { content: ''; }
-    25% { content: '.'; }
-    50% { content: '..'; }
-    75% { content: '...'; }
-    100% { content: ''; }
-}
-
-@keyframes checkPopPro {
-    0% {
-        transform: scale(0) rotate(-180deg);
-        opacity: 0;
-    }
-    50% {
-        transform: scale(1.4) rotate(10deg);
-    }
-    100% {
-        transform: scale(1) rotate(0deg);
-        opacity: 1;
-    }
-}
-
-@keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.text-fade-in {
-    animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-/* Responsive para móviles */
+/* Responsive */
 @media (max-width: 480px) {
-    .loader-logo {
-        width: 120px;
-        height: 120px;
-    }
-
-    .loader-progress-container {
-        width: 240px;
-    }
-
-    .loader-text {
-        font-size: 1rem;
-    }
+    .loader-logo    { width: 110px; height: 110px; }
+    .fb-dot         { width: 9px; height: 9px; }
+    .saturation-dot { width: 11px; height: 11px; }
 }
 </style>
 
-<!-- Global Loader - Pantalla de Inicio Profesional 8K -->
+<!-- Pantalla de Inicio -->
 <div id="global-loader">
     <div class="loader-logo">
-        <img src="/static/imagen/logo.png" alt="SALLY-E" onerror="this.style.display='none'">
+        <img src="/static/imagen/logo.png" alt="Logo" onerror="this.style.display='none'">
     </div>
-    <div class="loader-text" id="loader-text-dynamic">
-        <span class="loader-dots">Iniciando</span>
-    </div>
-    <div class="loader-progress-container">
-        <div class="loader-progress-bar" id="loader-progress-bar"></div>
+    <div class="fb-dots">
+        <div class="fb-dot"></div>
+        <div class="fb-dot"></div>
+        <div class="fb-dot"></div>
     </div>
 </div>
 
-<!-- Bloqueador Anti-Saturación 8K -->
+<!-- Bloqueador Anti-Saturación (cambio de páginas / procesando) -->
 <div id="saturation-blocker">
-    <div class="saturation-spinner">
-        <div class="saturation-spinner-ring"></div>
-        <div class="saturation-pulse"></div>
+    <div class="saturation-dots">
+        <div class="saturation-dot"></div>
+        <div class="saturation-dot"></div>
+        <div class="saturation-dot"></div>
     </div>
-    <div class="saturation-text">Procesando<span class="loader-dots"></span></div>
 </div>
 
 <script>
 // ============================================
-// SISTEMA DE CARGA INICIAL PROFESIONAL 8K
+// SISTEMA DE CARGA INICIAL
 // ============================================
 
-// Función helper para obtener traducción si está disponible
-function getLoadingText(key, fallback) {
-    if (typeof t === 'function') {
-        const translated = t(key);
-        return translated !== key ? translated : fallback;
-    }
-    return fallback;
-}
-
-const LOADING_MESSAGES = [
-    { key: 'loading_connecting', text: 'Conectando al servidor', icon: '', duration: 700 },
-    { key: 'loading_verifying', text: 'Verificando datos de la cuenta', icon: '', duration: 700 },
-    { key: 'loading_no_issues', text: 'La cuenta no tiene anomalías', icon: '', duration: 700 },
-    { key: 'loading_access_granted', text: 'Acceso permitido', icon: '', duration: 700 }
-];
-
 let isFirstLoad = !sessionStorage.getItem('sally_app_loaded');
-let currentMessageIndex = 0;
 
-// Función para actualizar el texto de carga
-function updateLoaderText() {
-    const textElement = document.getElementById('loader-text-dynamic');
-    const progressBar = document.getElementById('loader-progress-bar');
-
-    if (!textElement || currentMessageIndex >= LOADING_MESSAGES.length) {
-        return;
-    }
-
-    const currentMessage = LOADING_MESSAGES[currentMessageIndex];
-    const displayText = getLoadingText(currentMessage.key, currentMessage.text);
-    const progress = ((currentMessageIndex + 1) / LOADING_MESSAGES.length) * 100;
-
-    // Actualizar texto con animación
-    textElement.innerHTML = `<span class="text-fade-in">${currentMessage.icon} ${displayText}<span class="loader-dots"></span></span>`;
-
-    // Actualizar barra de progreso con suavidad
-    if (progressBar) {
-        progressBar.style.width = `${progress}%`;
-    }
-
-    currentMessageIndex++;
-
-    // Programar siguiente mensaje
-    if (currentMessageIndex < LOADING_MESSAGES.length) {
-        setTimeout(updateLoaderText, currentMessage.duration);
-    } else {
-        // Último mensaje - preparar para ocultar
-        setTimeout(() => {
-            // Mostrar mensaje final de éxito
-            const readyText = getLoadingText('loading_ready', 'Sistema listo');
-            textElement.innerHTML = `<span class="text-fade-in status-check">✓ ${readyText}</span>`;
-            if (progressBar) {
-                progressBar.style.width = '100%';
-            }
-            // Ocultar después de 800ms
-            setTimeout(hideGlobalLoader, 800);
-        }, currentMessage.duration);
-    }
-}
-
-// Función para ocultar loader global
 function hideGlobalLoader() {
     const loader = document.getElementById('global-loader');
     if (loader) {
         loader.classList.add('hidden');
-        setTimeout(() => {
-            loader.style.display = 'none';
-        }, 800);
+        setTimeout(() => { loader.style.display = 'none'; }, 600);
     }
-    // Marcar que la app ya fue cargada en esta sesión
     sessionStorage.setItem('sally_app_loaded', 'true');
 }
 
 // ============================================
-// SISTEMA ANTI-SATURACIÓN 8K
+// SISTEMA ANTI-SATURACIÓN
 // ============================================
 
-const SATURATION_DURATION = 0; // 2 segundos de bloqueo
+const SATURATION_DURATION = 0;
 let isSaturationActive = false;
 let saturationTimeout = null;
 
-// Mostrar bloqueador de saturación
 function showSaturationBlocker(customMessage = null) {
-    if (isSaturationActive) return; // Evitar múltiples activaciones
+    if (isSaturationActive) return;
 
     const blocker = document.getElementById('saturation-blocker');
     if (!blocker) return;
 
     isSaturationActive = true;
-
-    // Actualizar mensaje si se proporciona
-    if (customMessage) {
-        const textElement = blocker.querySelector('.saturation-text');
-        if (textElement) {
-            textElement.innerHTML = `${customMessage}<span class="loader-dots"></span>`;
-        }
-    }
-
-    // Activar bloqueador visual
     blocker.classList.add('active');
-
-    // Desactivar todos los botones
     document.body.classList.add('loading-active');
 
-    // Limpiar timeout anterior si existe
-    if (saturationTimeout) {
-        clearTimeout(saturationTimeout);
-    }
+    if (saturationTimeout) clearTimeout(saturationTimeout);
 
-    // Ocultar después de 2 segundos
     saturationTimeout = setTimeout(() => {
         hideSaturationBlocker();
     }, SATURATION_DURATION);
 
-    // Haptic feedback
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
     }
 }
 
-// Ocultar bloqueador de saturación
 function hideSaturationBlocker() {
     const blocker = document.getElementById('saturation-blocker');
     if (!blocker) return;
@@ -656,15 +249,8 @@ function hideSaturationBlocker() {
     blocker.classList.remove('active');
     document.body.classList.remove('loading-active');
     isSaturationActive = false;
-
-    // Restablecer mensaje por defecto
-    const textElement = blocker.querySelector('.saturation-text');
-    if (textElement) {
-        textElement.innerHTML = 'Procesando<span class="loader-dots"></span>';
-    }
 }
 
-// Verificar si hay saturación activa
 function isSaturated() {
     return isSaturationActive;
 }
@@ -674,11 +260,9 @@ function isSaturated() {
 // ============================================
 
 function initSaturationSystem() {
-    // Interceptar clicks en elementos interactivos
     document.addEventListener('click', function(e) {
         const target = e.target;
 
-        // Verificar si es un elemento interactivo
         const isInteractive =
             target.closest('button') ||
             target.closest('.btn') ||
@@ -688,7 +272,6 @@ function initSaturationSystem() {
             target.closest('.item[onclick]') ||
             target.closest('input[type="submit"]');
 
-        // Excluir elementos específicos que no necesitan bloqueo
         const isExcluded =
             target.closest('#promo-modal') ||
             target.closest('.toast') ||
@@ -696,27 +279,13 @@ function initSaturationSystem() {
             target.closest('[data-no-saturation]');
 
         if (isInteractive && !isExcluded && !isSaturationActive) {
-            // Determinar mensaje según el tipo de acción
-            let message = 'Procesando';
-
-            if (target.closest('.nav-item')) {
-                message = 'Cargando sección';
-            } else if (target.closest('[onclick*="claim"]')) {
-                message = 'Reclamando recompensa';
-            } else if (target.closest('[onclick*="withdraw"]')) {
-                message = 'Procesando retiro';
-            } else if (target.closest('[onclick*="submit"]') || target.closest('[type="submit"]')) {
-                message = 'Enviando datos';
-            }
-
-            showSaturationBlocker(message);
+            showSaturationBlocker();
         }
-    }, true); // Usar capture para interceptar antes
+    }, true);
 
-    // Interceptar envíos de formularios
     document.addEventListener('submit', function(e) {
         if (!isSaturationActive) {
-            showSaturationBlocker('Enviando datos');
+            showSaturationBlocker();
         }
     }, true);
 }
@@ -726,36 +295,24 @@ function initSaturationSystem() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar sistema anti-saturación
     initSaturationSystem();
 
-    // Si es la primera carga, mostrar secuencia de inicio
     if (isFirstLoad) {
-        // Iniciar secuencia de mensajes
-        setTimeout(updateLoaderText, 500);
+        setTimeout(hideGlobalLoader, 2500);
     } else {
-        // Si ya fue cargado antes, ocultar inmediatamente
         const loader = document.getElementById('global-loader');
-        if (loader) {
-            loader.style.display = 'none';
-        }
+        if (loader) loader.style.display = 'none';
     }
 });
 
-// También verificar al cargar completamente la página
 window.addEventListener('load', function() {
     if (!isFirstLoad) {
         const loader = document.getElementById('global-loader');
-        if (loader) {
-            loader.style.display = 'none';
-        }
+        if (loader) loader.style.display = 'none';
     }
 });
 
-// ============================================
-// EXPORTAR FUNCIONES GLOBALMENTE
-// ============================================
-
+// Exportar funciones globalmente
 window.showSaturationBlocker = showSaturationBlocker;
 window.hideSaturationBlocker = hideSaturationBlocker;
 window.isSaturated = isSaturated;
