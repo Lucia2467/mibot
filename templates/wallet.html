@@ -4,15 +4,29 @@
 
 {% block content %}
 <div class="container">
-    <!-- BOTÓN FLOTANTE DE REGLAS DE RETIRO -->
-    <button id="withdrawal-rules-button" onclick="openWithdrawalRulesModal()" style="position: fixed; top: 60px; right: 20px; width: 50px; height: 50px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(22, 163, 74, 0.25) 100%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9999; box-shadow: 0 8px 32px rgba(34, 197, 94, 0.3); transition: all 0.3s ease;">
-        <i data-lucide="book-open" style="width: 24px; height: 24px; color: #22c55e;"></i>
-    </button>
-    
-    <h1 class="page-title">
-        <i data-lucide="wallet"></i>
-        <span data-i18n="wallet_title">Wallet</span>
-    </h1>
+    <!-- HEADER WALLET CON BOTÓN DE TÉRMINOS INTEGRADO -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4);">
+        <h1 class="page-title" style="margin-bottom: 0;">
+            <i data-lucide="wallet"></i>
+            <span data-i18n="wallet_title">Wallet</span>
+        </h1>
+        <button id="withdrawal-rules-button" onclick="openWithdrawalRulesModal()"
+            style="display: inline-flex; align-items: center; gap: 6px;
+                   padding: 8px 14px;
+                   background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.15) 100%);
+                   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+                   border: 1.5px solid rgba(34,197,94,0.45);
+                   border-radius: 20px;
+                   cursor: pointer;
+                   transition: all 0.25s ease;
+                   box-shadow: 0 2px 12px rgba(34,197,94,0.15);
+                   flex-shrink: 0;"
+            onmouseover="this.style.background='linear-gradient(135deg,rgba(34,197,94,0.28) 0%,rgba(22,163,74,0.28) 100%)'; this.style.boxShadow='0 4px 20px rgba(34,197,94,0.3)';"
+            onmouseout="this.style.background='linear-gradient(135deg,rgba(34,197,94,0.15) 0%,rgba(22,163,74,0.15) 100%)'; this.style.boxShadow='0 2px 12px rgba(34,197,94,0.15)';">
+            <i data-lucide="book-open" style="width: 15px; height: 15px; color: #22c55e; flex-shrink: 0;"></i>
+            <span style="font-size: 0.72rem; font-weight: 700; color: #22c55e; letter-spacing: 0.03em; white-space: nowrap;" data-i18n="terms_btn">T&amp;C</span>
+        </button>
+    </div>
 
     <!-- Balance Hero -->
     <div class="card balance-card card-highlight">
