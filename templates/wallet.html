@@ -563,7 +563,7 @@
 </div>
 
 <!-- ===== WITHDRAWAL ULTRA-PREMIUM OVERLAY ===== -->
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
 
 <div id="withdrawal-overlay" style="display:none;position:fixed;inset:0;z-index:99998;overflow-y:auto;">
 
@@ -582,8 +582,8 @@
       <div style="display:flex;justify-content:center;margin-bottom:8px;">
         <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(34,217,122,0.07);border:1px solid rgba(34,217,122,0.15);border-radius:40px;padding:5px 14px;">
           <div style="width:5px;height:5px;border-radius:50%;background:#22d97a;box-shadow:0 0 8px #22d97a;animation:wd-blink 1s ease-in-out infinite;"></div>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:rgba(34,217,122,0.7);letter-spacing:0.08em;text-transform:uppercase;">Processing</span>
-          <span id="wd-live-timer" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:#22d97a;font-weight:500;min-width:28px;">0.0s</span>
+          <span style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.7rem;color:rgba(34,217,122,0.7);letter-spacing:0.08em;text-transform:uppercase;">Processing</span>
+          <span id="wd-live-timer" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.7rem;color:#22d97a;font-weight:500;min-width:28px;">0.0s</span>
         </div>
       </div>
 
@@ -627,15 +627,15 @@
       </div>
 
       <!-- Greeting text — one natural sentence -->
-      <div style="font-family:'Syne',sans-serif;font-size:1.45rem;font-weight:700;color:#fff;letter-spacing:-0.03em;margin-bottom:6px;line-height:1.25;">
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:1.45rem;font-weight:700;color:#fff;letter-spacing:-0.03em;margin-bottom:6px;line-height:1.25;">
         <span id="wd-greeting-ok" style="font-weight:400;color:rgba(255,255,255,0.42);"></span><span id="wd-username" style="color:#22d97a;text-shadow:0 0 28px rgba(34,217,122,0.5);"></span><span id="wd-greeting-comma" style="font-weight:400;color:rgba(255,255,255,0.28);">,</span>
       </div>
-      <div id="wd-processing-label" style="font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:-0.01em;margin-bottom:20px;"></div>
+      <div id="wd-processing-label" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:0.95rem;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:-0.01em;margin-bottom:20px;"></div>
 
       <!-- Amount badge -->
       <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(34,217,122,0.2);border-radius:10px;padding:9px 18px;margin-bottom:24px;background:rgba(34,217,122,0.05);">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#22d97a" stroke-width="2"/><path d="M8 12h8M12 8v8" stroke="#22d97a" stroke-width="2" stroke-linecap="round"/></svg>
-        <span id="wd-overlay-amount" style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:500;color:#22d97a;letter-spacing:0.03em;"></span>
+        <span id="wd-overlay-amount" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:1.3rem;font-weight:500;color:#22d97a;letter-spacing:0.03em;"></span>
       </div>
 
       <!-- 3 steps -->
@@ -712,30 +712,30 @@
       </div>
 
       <!-- Title -->
-      <div id="wd-success-title" style="font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;color:#fff;letter-spacing:-0.05em;margin-bottom:5px;opacity:0;animation:wd-rise 0.4s 0.2s ease both;"></div>
+      <div id="wd-success-title" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:1.7rem;font-weight:800;color:#fff;letter-spacing:-0.05em;margin-bottom:5px;opacity:0;animation:wd-rise 0.4s 0.2s ease both;"></div>
 
       <!-- Amount -->
-      <div id="wd-success-amount-display" style="font-family:'JetBrains Mono',monospace;font-size:2.4rem;font-weight:400;color:#22d97a;letter-spacing:0.02em;margin-bottom:14px;opacity:0;animation:wd-rise 0.4s 0.32s ease both;text-shadow:0 0 40px rgba(34,217,122,0.45);"></div>
+      <div id="wd-success-amount-display" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:2.4rem;font-weight:400;color:#22d97a;letter-spacing:0.02em;margin-bottom:14px;opacity:0;animation:wd-rise 0.4s 0.32s ease both;text-shadow:0 0 40px rgba(34,217,122,0.45);"></div>
 
       <!-- Status row -->
       <div style="display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:20px;">
         <!-- Sent chip -->
         <div style="display:inline-flex;align-items:center;gap:6px;opacity:0;animation:wd-rise 0.4s 0.44s ease both;" id="wd-sent-chip">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 6l6 6-6 6" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span id="wd-success-sent" style="font-family:'Syne',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.3);"></span>
+          <span id="wd-success-sent" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.3);"></span>
         </div>
         <!-- Divider -->
         <div style="width:1px;height:14px;background:rgba(255,255,255,0.1);opacity:0;animation:wd-rise 0.4s 0.44s ease both;"></div>
         <!-- Time chip — shows real elapsed time -->
         <div style="display:inline-flex;align-items:center;gap:5px;opacity:0;animation:wd-rise 0.4s 0.44s ease both;" id="wd-time-chip">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#22d97a" stroke-width="1.8"/><path d="M12 7v5l3 3" stroke="#22d97a" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <span id="wd-elapsed-display" style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:rgba(34,217,122,0.75);font-weight:500;"></span>
+          <span id="wd-elapsed-display" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.72rem;color:rgba(34,217,122,0.75);font-weight:500;"></span>
         </div>
       </div>
 
       <!-- CTA -->
       <button onclick="closeWithdrawalOverlay()" id="wd-cta-btn"
-        style="width:100%;padding:16px;background:linear-gradient(135deg,#22d97a,#17b864);border:none;border-radius:14px;color:#021409;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;letter-spacing:0.02em;box-shadow:0 0 0 1px rgba(34,217,122,0.3),0 12px 40px rgba(34,217,122,0.25),inset 0 1px 0 rgba(255,255,255,0.28);opacity:0;animation:wd-rise 0.4s 0.58s ease both;position:relative;overflow:hidden;transition:box-shadow 0.25s,transform 0.18s;"
+        style="width:100%;padding:16px;background:linear-gradient(135deg,#22d97a,#17b864);border:none;border-radius:14px;color:#021409;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-weight:700;font-size:1rem;cursor:pointer;letter-spacing:0.02em;box-shadow:0 0 0 1px rgba(34,217,122,0.3),0 12px 40px rgba(34,217,122,0.25),inset 0 1px 0 rgba(255,255,255,0.28);opacity:0;animation:wd-rise 0.4s 0.58s ease both;position:relative;overflow:hidden;transition:box-shadow 0.25s,transform 0.18s;"
         onmouseover="this.style.boxShadow='0 0 0 1px rgba(34,217,122,0.5),0 18px 56px rgba(34,217,122,0.4),inset 0 1px 0 rgba(255,255,255,0.32)';this.style.transform='translateY(-1px)'"
         onmouseout="this.style.boxShadow='0 0 0 1px rgba(34,217,122,0.3),0 12px 40px rgba(34,217,122,0.25),inset 0 1px 0 rgba(255,255,255,0.28)';this.style.transform='translateY(0)'"
         onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='translateY(-1px)'">
@@ -759,7 +759,7 @@
       <div style="display:flex;justify-content:center;margin-bottom:20px;">
         <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);border-radius:40px;padding:6px 16px;">
           <div style="width:5px;height:5px;border-radius:50%;background:#f59e0b;box-shadow:0 0 8px #f59e0b;animation:wd-pend-dot 1.4s ease-in-out infinite;"></div>
-          <span id="wd-pend-status-label" style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:rgba(245,158,11,0.85);letter-spacing:0.08em;text-transform:uppercase;"></span>
+          <span id="wd-pend-status-label" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.68rem;color:rgba(245,158,11,0.85);letter-spacing:0.08em;text-transform:uppercase;"></span>
         </div>
       </div>
 
@@ -797,25 +797,25 @@
       </div>
 
       <!-- Text -->
-      <div id="wd-pend-title" style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-0.04em;margin-bottom:5px;opacity:0;animation:wd-rise 0.4s 0.2s ease both;"></div>
-      <div id="wd-pend-amount" style="font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:400;color:#f59e0b;letter-spacing:0.02em;margin-bottom:12px;opacity:0;animation:wd-rise 0.4s 0.32s ease both;text-shadow:0 0 36px rgba(245,158,11,0.4);"></div>
-      <div id="wd-pend-desc" style="font-family:'Syne',sans-serif;font-size:0.82rem;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:22px;opacity:0;animation:wd-rise 0.4s 0.44s ease both;max-width:260px;margin-left:auto;margin-right:auto;"></div>
+      <div id="wd-pend-title" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-0.04em;margin-bottom:5px;opacity:0;animation:wd-rise 0.4s 0.2s ease both;"></div>
+      <div id="wd-pend-amount" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:2.2rem;font-weight:400;color:#f59e0b;letter-spacing:0.02em;margin-bottom:12px;opacity:0;animation:wd-rise 0.4s 0.32s ease both;text-shadow:0 0 36px rgba(245,158,11,0.4);"></div>
+      <div id="wd-pend-desc" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:0.82rem;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:22px;opacity:0;animation:wd-rise 0.4s 0.44s ease both;max-width:260px;margin-left:auto;margin-right:auto;"></div>
 
       <!-- Info row -->
       <div style="display:flex;align-items:stretch;gap:1px;margin-bottom:22px;opacity:0;animation:wd-rise 0.4s 0.5s ease both;" id="wd-pend-info-row">
         <div style="flex:1;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.12);border-radius:10px 0 0 10px;padding:10px 8px;">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:rgba(245,158,11,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;" id="wd-pend-ref-label"></div>
-          <div id="wd-pend-elapsed-val" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:#f59e0b;font-weight:500;"></div>
+          <div style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.62rem;color:rgba(245,158,11,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;" id="wd-pend-ref-label"></div>
+          <div id="wd-pend-elapsed-val" style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.9rem;color:#f59e0b;font-weight:500;"></div>
         </div>
         <div style="flex:1;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.12);border-left:none;border-radius:0 10px 10px 0;padding:10px 8px;">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:rgba(245,158,11,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;" id="wd-pend-eta-label"></div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:rgba(255,255,255,0.55);font-weight:500;" id="wd-pend-eta-val"></div>
+          <div style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.62rem;color:rgba(245,158,11,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;" id="wd-pend-eta-label"></div>
+          <div style="font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.9rem;color:rgba(255,255,255,0.55);font-weight:500;" id="wd-pend-eta-val"></div>
         </div>
       </div>
 
       <!-- CTA amber -->
       <button onclick="closeWithdrawalOverlay()"
-        style="width:100%;padding:15px;background:linear-gradient(135deg,rgba(245,158,11,0.9),rgba(217,119,6,0.9));border:none;border-radius:14px;color:#1a0f00;font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;letter-spacing:0.02em;box-shadow:0 0 0 1px rgba(245,158,11,0.3),0 10px 36px rgba(245,158,11,0.2),inset 0 1px 0 rgba(255,255,255,0.22);opacity:0;animation:wd-rise 0.4s 0.62s ease both;position:relative;overflow:hidden;transition:box-shadow 0.25s,transform 0.18s;"
+        style="width:100%;padding:15px;background:linear-gradient(135deg,rgba(245,158,11,0.9),rgba(217,119,6,0.9));border:none;border-radius:14px;color:#1a0f00;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;letter-spacing:0.02em;box-shadow:0 0 0 1px rgba(245,158,11,0.3),0 10px 36px rgba(245,158,11,0.2),inset 0 1px 0 rgba(255,255,255,0.22);opacity:0;animation:wd-rise 0.4s 0.62s ease both;position:relative;overflow:hidden;transition:box-shadow 0.25s,transform 0.18s;"
         onmouseover="this.style.boxShadow='0 0 0 1px rgba(245,158,11,0.5),0 16px 48px rgba(245,158,11,0.32),inset 0 1px 0 rgba(255,255,255,0.28)';this.style.transform='translateY(-1px)'"
         onmouseout="this.style.boxShadow='0 0 0 1px rgba(245,158,11,0.3),0 10px 36px rgba(245,158,11,0.2),inset 0 1px 0 rgba(255,255,255,0.22)';this.style.transform='translateY(0)'"
         onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='translateY(-1px)'">
@@ -1979,7 +1979,7 @@ document.head.appendChild(style);
 }
 .wd-step-done .wd-step-pill { background:rgba(34,217,122,0.06);border-color:rgba(34,217,122,0.2); }
 .wd-step-num {
-  font-family:'JetBrains Mono',monospace;font-size:0.62rem;font-weight:500;
+  font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.62rem;font-weight:500;
   color:rgba(34,217,122,0.4);letter-spacing:0.05em;flex-shrink:0;width:16px;
 }
 .wd-step-done .wd-step-num { color:#22d97a; }
@@ -1989,9 +1989,9 @@ document.head.appendChild(style);
 .wd-step-done .wd-step-fill { width:100% !important; }
 .wd-step-ico { flex-shrink:0;color:rgba(255,255,255,0.2);transition:color 0.3s; }
 .wd-step-done .wd-step-ico { color:rgba(34,217,122,0.6); }
-.wd-step-label { font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:500;color:rgba(255,255,255,0.32);white-space:nowrap;flex:1;text-align:left;transition:color 0.3s; }
+.wd-step-label { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;font-size:0.75rem;font-weight:500;color:rgba(255,255,255,0.32);white-space:nowrap;flex:1;text-align:left;transition:color 0.3s; }
 .wd-step-done .wd-step-label { color:rgba(34,217,122,0.8); }
-.wd-step-time { font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:rgba(34,217,122,0.55);flex-shrink:0;opacity:0;transition:opacity 0.4s; }
+.wd-step-time { font-family:'SF Mono',Monaco,Consolas,'Courier New',monospace;font-size:0.62rem;color:rgba(34,217,122,0.55);flex-shrink:0;opacity:0;transition:opacity 0.4s; }
 .wd-step-done .wd-step-time { opacity:1; }
 
 /* ── Keyframes ── */
@@ -2018,8 +2018,8 @@ document.head.appendChild(style);
   opacity: 1;
 }
 /* ── Font fallbacks (Google Fonts may be blocked in some WebApps) ── */
-.wd-card, .wd-card * { font-family: 'Syne', 'Outfit', system-ui, -apple-system, sans-serif; }
-.wd-card code, .wd-card [style*="JetBrains"], .wd-card [style*="monospace"] { font-family: 'JetBrains Mono', 'DM Mono', ui-monospace, monospace; }
+.wd-card, .wd-card * { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif; }
+.wd-card code, .wd-card [style*="JetBrains"], .wd-card [style*="monospace"] { font-family: 'SF Mono', Monaco, Consolas, 'Courier New', monospace; }
 @keyframes wd-clock-tick  { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
 @keyframes wd-pend-pulse  { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.12)} }
 @keyframes wd-pend-ring   { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.06)} }
