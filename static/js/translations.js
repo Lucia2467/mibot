@@ -108,6 +108,7 @@ const LANG = {
         
         // Link Wallet Modal
         link_wallet: "Link Wallet",
+        link_wallet_title: "Link Wallet",
         wallet_already_linked: "You already have a wallet linked",
         important: "Important",
         link_wallet_warning: "Make sure this is YOUR wallet. Once linked, withdrawals will be sent to this address.",
@@ -158,6 +159,9 @@ const LANG = {
         
         // Withdraw Modal
         request_withdrawal: "Request Withdrawal",
+        linked_addresses: "Linked Addresses",
+        not_linked: "Not linked",
+        available_balance: "Available balance",
         currency: "Currency:",
         confirm_withdrawal: "Confirm Withdrawal",
         your_bep20_address: "Your BEP-20 Address:",
@@ -355,6 +359,7 @@ const LANG = {
         
         // Competition States
         competition_active: "Active Competition",
+        competition_label: "Competition",
         competition_ended: "Competition Ended",
         competition_distributing: "Distributing Rewards",
         competition_distributed: "Rewards Delivered",
@@ -1191,6 +1196,7 @@ const LANG = {
         
         // Modal Vincular Wallet
         link_wallet: "Vincular Wallet",
+        link_wallet_title: "Vincular Wallet",
         wallet_already_linked: "Ya tienes una wallet vinculada",
         important: "Importante",
         link_wallet_warning: "Asegúrate de que esta sea TU wallet. Una vez vinculada, los retiros se enviarán a esta dirección.",
@@ -1241,6 +1247,9 @@ const LANG = {
         
         // Modal Retiro
         request_withdrawal: "Solicitar Retiro",
+        linked_addresses: "Direcciones Vinculadas",
+        not_linked: "No vinculada",
+        available_balance: "Saldo disponible",
         currency: "Moneda:",
         confirm_withdrawal: "Confirmar Retiro",
         your_bep20_address: "Tu Dirección BEP-20:",
@@ -1438,6 +1447,7 @@ const LANG = {
         
         // Competition States
         competition_active: "Competencia Activa",
+        competition_label: "Competencia",
         competition_ended: "Competencia Finalizada",
         competition_distributing: "Distribuyendo Recompensas",
         competition_distributed: "Recompensas Entregadas",
@@ -2274,6 +2284,7 @@ const LANG = {
         
         // Modal Vincular Carteira
         link_wallet: "Vincular Carteira",
+        link_wallet_title: "Vincular Carteira",
         wallet_already_linked: "Você já tem uma carteira vinculada",
         important: "Importante",
         link_wallet_warning: "Certifique-se de que esta é SUA carteira. Uma vez vinculada, os saques serão enviados para este endereço.",
@@ -2324,6 +2335,9 @@ const LANG = {
         
         // Modal Saque
         request_withdrawal: "Solicitar Saque",
+        linked_addresses: "Endereços Vinculados",
+        not_linked: "Não vinculado",
+        available_balance: "Saldo disponível",
         currency: "Moeda:",
         confirm_withdrawal: "Confirmar Saque",
         your_bep20_address: "Seu Endereço BEP-20:",
@@ -2519,6 +2533,7 @@ const LANG = {
         
         // Competition States
         competition_active: "Competição Ativa",
+        competition_label: "Competição",
         competition_ended: "Competição Encerrada",
         competition_distributing: "Distribuindo Recompensas",
         competition_distributed: "Recompensas Entregues",
@@ -3319,6 +3334,7 @@ const LANG = {
         
         // Модальное окно Привязки Кошелька
         link_wallet: "Привязать Кошелёк",
+        link_wallet_title: "Привязать Кошелёк",
         wallet_already_linked: "У вас уже привязан кошелёк",
         important: "Важно",
         link_wallet_warning: "Убедитесь, что это ВАШ кошелёк. После привязки выводы будут отправляться на этот адрес.",
@@ -3369,6 +3385,9 @@ const LANG = {
         
         // Модальное окно Вывода
         request_withdrawal: "Запрос на Вывод",
+        linked_addresses: "Привязанные Адреса",
+        not_linked: "Не привязан",
+        available_balance: "Доступный баланс",
         currency: "Валюта:",
         confirm_withdrawal: "Подтвердить Вывод",
         your_bep20_address: "Ваш Адрес BEP-20:",
@@ -3564,6 +3583,7 @@ const LANG = {
         
         // Competition States
         competition_active: "Активное соревнование",
+        competition_label: "Соревнование",
         competition_ended: "Соревнование завершено",
         competition_distributing: "Распределение наград",
         competition_distributed: "Награды выданы",
@@ -4348,6 +4368,7 @@ const LANG = {
         
         // نافذة ربط المحفظة
         link_wallet: "ربط المحفظة",
+        link_wallet_title: "ربط المحفظة",
         wallet_already_linked: "لديك محفظة مرتبطة بالفعل",
         important: "مهم",
         link_wallet_warning: "تأكد أن هذه محفظتك. بمجرد الربط، سيتم إرسال السحوبات إلى هذا العنوان.",
@@ -4398,6 +4419,9 @@ const LANG = {
         
         // نافذة السحب
         request_withdrawal: "طلب سحب",
+        linked_addresses: "العناوين المرتبطة",
+        not_linked: "غير مرتبط",
+        available_balance: "الرصيد المتاح",
         currency: "العملة:",
         confirm_withdrawal: "تأكيد السحب",
         your_bep20_address: "عنوان BEP-20 الخاص بك:",
@@ -4593,6 +4617,7 @@ const LANG = {
         
         // Competition States
         competition_active: "المسابقة نشطة",
+        competition_label: "مسابقة",
         competition_ended: "انتهت المسابقة",
         competition_distributing: "توزيع المكافآت",
         competition_distributed: "تم تسليم المكافآت",
