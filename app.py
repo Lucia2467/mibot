@@ -2697,6 +2697,44 @@ def vpn_blocked():
 
 # ============== TON DEPOSIT API ROUTES ==============
 
+@app.route('/api/ton/deposit/latest', methods=['GET'])
+def api_ton_deposit_latest():
+    """Checks if a new TON deposit was credited after a given timestamp"""
+    user_id = get_user_id()
+    if not user_id:
+        return jsonify({'success': False, 'error': 'User ID required'}), 400
+
+    since_ts = request.args.get('since', 0)
+    try:
+        since_ts = int(since_ts)
+    except (ValueError, TypeError):
+        since_ts = 0
+
+    try:
+        from database import get_cursor
+        from datetime import datetime
+        since_dt = datetime.utcfromtimestamp(since_ts) if since_ts else datetime.utcfromtimestamp(0)
+        with get_cursor() as cur:
+            cur.execute(
+                """SELECT amount, status, credited_at
+                   FROM ton_deposits
+                   WHERE user_id=%s AND status IN ('confirmed','credited')
+                   AND credited_at >= %s
+                   ORDER BY credited_at DESC LIMIT 1""",
+                (str(user_id), since_dt)
+            )
+            row = cur.fetchone()
+    except Exception as e:
+        logger.error(f"[ton_deposit_latest] DB error: {e}")
+        return jsonify({'success': False, 'credited': False}), 500
+
+    if not row:
+        return jsonify({'success': True, 'credited': False})
+
+    amount = float(row['amount'] if isinstance(row, dict) else row[0])
+    return jsonify({'success': True, 'credited': True, 'ton_amount': amount})
+
+
 @app.route('/api/ton/deposit/address', methods=['GET'])
 def api_ton_deposit_address():
     """Returns the TON deposit address and memo for the user"""
