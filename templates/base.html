@@ -722,33 +722,11 @@
     <div class="snow-container" id="snow-container"></div>
 
     <div class="app-shell{% if user %} has-top-header{% endif %}">
-        <!-- ========== TOP HEADER - USER PROFILE ========== -->
+        <!-- ========== TOP HEADER ========== -->
         {% if user %}
         <header class="app-top-header" id="app-top-header">
-            <div class="header-inner">
-                <!-- Avatar del usuario -->
-                <div class="header-avatar-container">
-                    <div class="header-avatar-placeholder header-avatar-loading" id="header-avatar-placeholder">
-                        <span id="avatar-initial">{{ (user.first_name or 'U')[0] | upper }}</span>
-                    </div>
-                    <img
-                        src=""
-                        alt="Avatar"
-                        class="header-avatar"
-                        id="header-avatar"
-                        style="display: none;"
-                        onerror="this.style.display='none'; document.getElementById('header-avatar-placeholder').style.display='flex';"
-                    >
-                    <div class="header-avatar-status"></div>
-                </div>
-
-                <!-- Info del usuario -->
-                <div class="header-user-info">
-                    <div class="header-user-name" id="header-user-name">{{ user.first_name or 'Usuario' }}{% if user.last_name %} {{ user.last_name }}{% endif %}</div>
-                    <div class="header-user-id" id="header-user-id">ID: {{ user_id or user.user_id or '---' }}</div>
-                </div>
-
-                <!-- Botón de Idioma Premium con Dropdown -->
+            <div class="header-inner" style="justify-content: flex-end;">
+                <!-- Botón de Idioma -->
                 <div class="lang-toggle-wrapper" id="lang-wrapper">
                     <button class="lang-toggle-btn-premium" onclick="toggleLangDropdown()" title="Change Language">
                         <span style="font-size: 15px; line-height: 1;">🌐</span>
