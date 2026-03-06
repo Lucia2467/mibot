@@ -227,6 +227,14 @@ const LANG = {
         reward_info: "Each user who completes your task will receive",
         publish_task: "Publish Task",
         pkg_desc_starter: "Ideal to start",
+        opt_telegram_channel: "📢 Telegram Channel",
+        opt_telegram_group: "👥 Telegram Group",
+        opt_website: "🌐 Website",
+        opt_social: "📱 Social Media",
+        opt_other: "🔗 Other Link",
+        task_title_placeholder: "e.g. Join my crypto channel",
+        task_desc_placeholder: "Brief task description",
+        important: "Important",
         pkg_desc_basic: "For small channels",
         pkg_desc_standard: "Best value",
         pkg_desc_premium: "For serious projects",
@@ -1353,6 +1361,14 @@ const LANG = {
         reward_info: "Cada usuario que complete tu tarea recibirá",
         publish_task: "Publicar Tarea",
         pkg_desc_starter: "Ideal para empezar",
+        opt_telegram_channel: "📢 Canal de Telegram",
+        opt_telegram_group: "👥 Grupo de Telegram",
+        opt_website: "🌐 Sitio Web",
+        opt_social: "📱 Red Social",
+        opt_other: "🔗 Otro Link",
+        task_title_placeholder: "Ej: Únete a mi canal de cripto",
+        task_desc_placeholder: "Breve descripción de la tarea",
+        important: "Importante",
         pkg_desc_basic: "Para canales pequeños",
         pkg_desc_standard: "Mejor valor",
         pkg_desc_premium: "Para proyectos serios",
@@ -2478,6 +2494,14 @@ const LANG = {
         reward_info: "Cada usuário que completar sua tarefa receberá",
         publish_task: "Publicar Tarefa",
         pkg_desc_starter: "Ideal para começar",
+        opt_telegram_channel: "📢 Canal do Telegram",
+        opt_telegram_group: "👥 Grupo do Telegram",
+        opt_website: "🌐 Site",
+        opt_social: "📱 Rede Social",
+        opt_other: "🔗 Outro Link",
+        task_title_placeholder: "Ex: Entre no meu canal de cripto",
+        task_desc_placeholder: "Breve descrição da tarefa",
+        important: "Importante",
         pkg_desc_basic: "Para canais pequenos",
         pkg_desc_standard: "Melhor custo-benefício",
         pkg_desc_premium: "Para projetos sérios",
@@ -5566,32 +5590,41 @@ function getCurrentLanguage() {
  * Apply translations to all elements with data-i18n
  */
 function applyTranslations() {
+    // Translate data-i18n elements
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const translation = t(key);
+        if (!translation || translation === key) return;
 
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             el.placeholder = translation;
+        } else if (el.tagName === 'OPTION') {
+            // For options, preserve emoji prefix if present
+            const match = el.textContent.match(/^(\S+\s)/);
+            el.textContent = match ? match[1] + translation.replace(/^\S+\s/, '') : translation;
         } else {
-            // Si tiene elementos hijos (iconos, spans), solo actualiza el nodo de texto
-            const childIcons = el.querySelectorAll('i, svg, img, span[data-i18n]');
-            if (childIcons.length > 0) {
-                // Buscar o crear un nodo de texto al final
-                let textNode = null;
+            // If element has child icons/elements, only update text nodes
+            const hasChildren = el.querySelector('i, svg, img');
+            if (hasChildren) {
                 for (const node of el.childNodes) {
                     if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-                        textNode = node;
-                        break;
+                        node.textContent = ' ' + translation;
+                        return;
                     }
                 }
-                if (textNode) {
-                    textNode.textContent = ' ' + translation;
-                } else {
-                    el.appendChild(document.createTextNode(' ' + translation));
-                }
+                el.appendChild(document.createTextNode(' ' + translation));
             } else {
                 el.textContent = translation;
             }
+        }
+    });
+
+    // Translate data-i18n-placeholder elements
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        const translation = t(key);
+        if (translation && translation !== key) {
+            el.placeholder = translation;
         }
     });
 }
