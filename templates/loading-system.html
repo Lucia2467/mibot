@@ -72,17 +72,18 @@
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
     z-index: 999998;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    pointer-events: none;
+    transition: none;
 }
 
 #saturation-blocker.active {
-    display: flex;
     opacity: 1;
+    pointer-events: all;
 }
 
 .saturation-dots {
@@ -166,8 +167,6 @@ function showSaturationBlocker(customMessage = null) {
     isSaturationActive = true;
     blocker.classList.add('active');
     document.body.classList.add('loading-active');
-    if (saturationTimeout) clearTimeout(saturationTimeout);
-    saturationTimeout = setTimeout(hideSaturationBlocker, SATURATION_DURATION);
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
     }
