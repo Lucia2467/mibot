@@ -170,6 +170,9 @@ function showSaturationBlocker(customMessage = null) {
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
     }
+    // Safety: ocultar automáticamente máximo en 1.5s
+    if (saturationTimeout) clearTimeout(saturationTimeout);
+    saturationTimeout = setTimeout(hideSaturationBlocker, 1500);
 }
 
 function hideSaturationBlocker() {
