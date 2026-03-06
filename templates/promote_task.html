@@ -658,8 +658,12 @@
 
     <!-- Tabs -->
     <div class="tabs-container">
-        <button class="tab-btn active" onclick="switchTab('create')"><i data-lucide="plus-circle"></i> <span data-i18n="create_task">Create Task</span></button>
-        <button class="tab-btn" onclick="switchTab('my-tasks')"><i data-lucide="list"></i> <span data-i18n="my_tasks">My Tasks</span></button>
+        <button class="tab-btn active" onclick="switchTab('create')">
+            <span data-i18n="create_task">Create Task</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('my-tasks')">
+            <span data-i18n="my_tasks">My Tasks</span>
+        </button>
     </div>
 
     <!-- Tab: Create Task -->
@@ -699,30 +703,30 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label" data-i18n="task_type">Tipo de Tarea</label>
+                <label class="form-label" data-i18n="task_type">Task Type</label>
                 <select class="form-select" id="taskType" onchange="updateFormFields()">
-                    <option value="telegram_channel">📢 Canal de Telegram</option>
-                    <option value="telegram_group">👥 Grupo de Telegram</option>
-                    <option value="website">🌐 Sitio Web</option>
-                    <option value="social">📱 Red Social</option>
-                    <option value="other">🔗 Otro Link</option>
+                    <option value="telegram_channel" data-i18n="opt_telegram_channel">📢 Telegram Channel</option>
+                    <option value="telegram_group" data-i18n="opt_telegram_group">👥 Telegram Group</option>
+                    <option value="website" data-i18n="opt_website">🌐 Website</option>
+                    <option value="social" data-i18n="opt_social">📱 Social Media</option>
+                    <option value="other" data-i18n="opt_other">🔗 Other Link</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label class="form-label" data-i18n="task_title">Título de la Tarea</label>
+                <label class="form-label" data-i18n="task_title">Task Title</label>
                 <input type="text" class="form-input" id="taskTitle" 
-                       placeholder="Ej: Únete a mi canal de cripto" maxlength="100">
+                       data-i18n-placeholder="task_title_placeholder" placeholder="e.g. Join my crypto channel" maxlength="100">
             </div>
 
             <div class="form-group">
-                <label class="form-label" data-i18n="task_description">Descripción (opcional)</label>
+                <label class="form-label" data-i18n="task_description">Description (optional)</label>
                 <input type="text" class="form-input" id="taskDescription" 
-                       placeholder="Breve descripción de la tarea" maxlength="255">
+                       data-i18n-placeholder="task_desc_placeholder" placeholder="Brief task description" maxlength="255">
             </div>
 
             <div class="form-group">
-                <label class="form-label" data-i18n="task_url">URL del Link</label>
+                <label class="form-label" data-i18n="task_url">Link URL</label>
                 <input type="url" class="form-input" id="taskUrl" 
                        placeholder="https://t.me/tuchannel">
             </div>
@@ -730,7 +734,7 @@
             <!-- Telegram Channel Fields -->
             <div id="telegramFields">
                 <div class="form-group">
-                    <label class="form-label" data-i18n="channel_username">Username del Canal</label>
+                    <label class="form-label" data-i18n="channel_username">Channel Username</label>
                     <input type="text" class="form-input" id="channelUsername" 
                            placeholder="@tuchannel (sin https://t.me/)">
                 </div>
@@ -739,8 +743,8 @@
                     <label class="form-checkbox">
                         <input type="checkbox" id="requiresJoin" onchange="toggleJoinWarning()">
                         <div class="checkbox-text">
-                            <strong data-i18n="require_join">Verificar unión al canal</strong><br>
-                            <span data-i18n="require_join_desc">Los usuarios deben unirse para completar la tarea</span>
+                            <strong data-i18n="require_join">Verify channel join</strong><br>
+                            <span data-i18n="require_join_desc">Users must join to complete the task</span>
                         </div>
                     </label>
                 </div>
@@ -748,7 +752,7 @@
                 <div id="joinWarning" class="warning-box" style="display: none;">
                     <div class="warning-box-title">
                         <i data-lucide="alert-triangle"></i>
-                        <span data-i18n="important">Importante</span>
+                        <span data-i18n="important">Important</span>
                     </div>
                     <div class="warning-box-text" data-i18n="bot_admin_warning">
                         Para verificar que los usuarios se unan a tu canal, debes agregar a 
