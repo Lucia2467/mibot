@@ -5569,11 +5569,29 @@ function applyTranslations() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const translation = t(key);
-        
+
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             el.placeholder = translation;
         } else {
-            el.textContent = translation;
+            // Si tiene elementos hijos (iconos, spans), solo actualiza el nodo de texto
+            const childIcons = el.querySelectorAll('i, svg, img, span[data-i18n]');
+            if (childIcons.length > 0) {
+                // Buscar o crear un nodo de texto al final
+                let textNode = null;
+                for (const node of el.childNodes) {
+                    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                        textNode = node;
+                        break;
+                    }
+                }
+                if (textNode) {
+                    textNode.textContent = ' ' + translation;
+                } else {
+                    el.appendChild(document.createTextNode(' ' + translation));
+                }
+            } else {
+                el.textContent = translation;
+            }
         }
     });
 }
