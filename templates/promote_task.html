@@ -644,12 +644,12 @@
     <!-- Header -->
     <div class="promote-header">
         <h1><i data-lucide="megaphone"></i> Promociona tu Tarea</h1>
-        <p data-i18n="promote_subtitle">Publica tu canal o link y obtén usuarios reales</p>
+        <p data-i18n="promote_subtitle"></p>
     </div>
 
     <!-- Balance Display -->
     <div class="balance-display">
-        <div class="balance-label" data-i18n="your_doge_balance">Tu Balance DOGE</div>
+        <div class="balance-label" data-i18n="your_doge_balance"></div>
         <div class="balance-value">
             <span id="userDogeBalance">{{ "%.4f"|format(user.doge_balance|default(0)|float) }}</span>
             <span>DOGE</span>
@@ -658,12 +658,8 @@
 
     <!-- Tabs -->
     <div class="tabs-container">
-        <button class="tab-btn active" onclick="switchTab('create')" data-i18n="create_task">
-            <i data-lucide="plus-circle"></i> Crear Tarea
-        </button>
-        <button class="tab-btn" onclick="switchTab('my-tasks')" data-i18n="my_tasks">
-            <i data-lucide="list"></i> Mis Tareas
-        </button>
+        <button class="tab-btn active" onclick="switchTab('create')" data-i18n="create_task"></button>
+        <button class="tab-btn" onclick="switchTab('my-tasks')" data-i18n="my_tasks"></button>
     </div>
 
     <!-- Tab: Create Task -->
@@ -672,7 +668,7 @@
         <div class="form-section">
             <div class="form-section-title">
                 <i data-lucide="package"></i>
-                <span data-i18n="select_package">Selecciona un Paquete</span>
+                <span data-i18n="select_package"></span>
             </div>
             
             <div class="packages-grid">
@@ -687,9 +683,9 @@
                     <div class="package-price">{{ pkg.price_doge }} DOGE</div>
                     <div class="package-completions">
                         <i data-lucide="users"></i>
-                        <span>{{ pkg.max_completions }} completaciones</span>
+                        <span>{{ pkg.max_completions }} <span data-i18n="total_completions"></span></span>
                     </div>
-                    <div class="package-desc">{{ pkg.description }}</div>
+                    <div class="package-desc" data-i18n="pkg_desc_{{ pkg_id }}">{{ pkg.description }}</div>
                 </div>
                 {% endfor %}
             </div>
@@ -699,7 +695,7 @@
         <div class="form-section">
             <div class="form-section-title">
                 <i data-lucide="edit-3"></i>
-                <span data-i18n="task_details">Detalles de la Tarea</span>
+                <span data-i18n="task_details"></span>
             </div>
 
             <div class="form-group">
