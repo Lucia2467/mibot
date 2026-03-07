@@ -357,71 +357,261 @@
 </div>
 
 <style>
-/* ── Task rows ── */
+/* ══════════════════════════════════════
+   TASK CARDS — 3D CINEMATIC PREMIUM
+══════════════════════════════════════ */
+
+/* Root perspective context */
+#tab-content-all,
+#tab-content-social,
+#tab-content-ads { perspective: 1200px; }
+
+/* ── Base card ── */
 .task-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 13px 14px;
-    background: var(--glass-ultra, rgba(255,255,255,0.04));
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 14px;
-    margin-bottom: 8px;
+    gap: 14px;
+    padding: 15px 16px;
+
+    /* Layered glassmorphism background */
+    background:
+        linear-gradient(135deg,
+            rgba(255,255,255,0.07) 0%,
+            rgba(255,255,255,0.02) 50%,
+            rgba(255,255,255,0.04) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    /* 3D border — top highlight + bottom shadow */
+    border-top:    1px solid rgba(255,255,255,0.14);
+    border-left:   1px solid rgba(255,255,255,0.10);
+    border-right:  1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(0,0,0,0.35);
+
+    border-radius: 18px;
+    margin-bottom: 10px;
     cursor: pointer;
-    transition: background .15s, border-color .15s;
+    position: relative;
+    overflow: hidden;
+
+    /* 3D lift + smooth transitions */
+    transform: translateZ(0) translateY(0) scale(1);
+    transform-style: preserve-3d;
+    transition:
+        transform 0.22s cubic-bezier(0.34,1.56,0.64,1),
+        box-shadow 0.22s ease,
+        border-color 0.18s ease;
+
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.05) inset,
+        0 -1px 0 rgba(0,0,0,0.4) inset,
+        0 4px 16px rgba(0,0,0,0.3),
+        0 1px 3px rgba(0,0,0,0.4);
+
     -webkit-tap-highlight-color: transparent;
+    will-change: transform, box-shadow;
 }
-.task-row:active { background: rgba(255,255,255,0.08); }
+
+/* Specular shimmer layer */
+.task-row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        115deg,
+        rgba(255,255,255,0.10) 0%,
+        rgba(255,255,255,0.04) 30%,
+        transparent 60%,
+        rgba(255,255,255,0.02) 100%
+    );
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.2s;
+}
+
+/* Ambient glow rim — unique per card via JS data attr */
+.task-row::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 19px;
+    background: transparent;
+    opacity: 0;
+    transition: opacity 0.25s;
+    pointer-events: none;
+}
+
+/* Press — deep push into screen */
+.task-row:active {
+    transform: translateZ(0) translateY(2px) scale(0.984);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.04) inset,
+        0 -1px 0 rgba(0,0,0,0.5) inset,
+        0 2px 8px rgba(0,0,0,0.4),
+        0 0 0 rgba(0,0,0,0);
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+/* Hover — float up */
+@media (hover: hover) {
+    .task-row:hover {
+        transform: translateZ(0) translateY(-3px) scale(1.008);
+        box-shadow:
+            0 2px 0 rgba(255,255,255,0.07) inset,
+            0 -1px 0 rgba(0,0,0,0.4) inset,
+            0 14px 40px rgba(0,0,0,0.45),
+            0 4px 12px rgba(0,0,0,0.3);
+    }
+    .task-row:hover::before { opacity: 1.5; }
+}
+
+/* ── Icon box — 3D raised cube ── */
 .task-row-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+
+    /* Extruded face effect */
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.15) inset,
+        0 -2px 0 rgba(0,0,0,0.4) inset,
+        2px 0 0 rgba(255,255,255,0.06) inset,
+        -2px 0 0 rgba(0,0,0,0.2) inset,
+        0 6px 20px rgba(0,0,0,0.4),
+        0 2px 6px rgba(0,0,0,0.3);
+
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s;
 }
-.task-row-body { flex: 1; min-width: 0; }
+.task-row:active .task-row-icon {
+    transform: scale(0.92) translateZ(-4px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.1) inset,
+        0 -1px 0 rgba(0,0,0,0.5) inset,
+        0 3px 10px rgba(0,0,0,0.4);
+}
+
+/* ── Body ── */
+.task-row-body {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    z-index: 2;
+}
 .task-row-title {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--color-text-primary, #fff);
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #fff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    letter-spacing: -0.01em;
 }
-.task-row-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.task-row-arrow { color: rgba(255,255,255,0.25); flex-shrink: 0; }
-.task-chip {
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.12);
+.task-row-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.task-row-arrow {
+    color: rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.2s, color 0.2s;
+}
+.task-row:hover .task-row-arrow,
+.task-row:active .task-row-arrow {
     color: rgba(255,255,255,0.5);
-    background: rgba(255,255,255,0.04);
+    transform: translateX(2px);
 }
-.task-chip-reward { color: #4D94FF; border-color: rgba(77,148,255,0.3); background: rgba(77,148,255,0.08); }
+
+/* ── Chips ── */
+.task-chip {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.05);
+
+    /* Chip has tiny 3D depth too */
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.08) inset,
+        0 -1px 0 rgba(0,0,0,0.3) inset,
+        0 2px 6px rgba(0,0,0,0.2);
+    letter-spacing: 0.01em;
+}
+.task-chip-reward {
+    color: #6BB8FF;
+    border-color: rgba(77,148,255,0.28);
+    background: rgba(77,148,255,0.10);
+    box-shadow:
+        0 1px 0 rgba(77,148,255,0.15) inset,
+        0 -1px 0 rgba(0,0,0,0.3) inset,
+        0 2px 10px rgba(77,148,255,0.15);
+}
+
+/* ── Check-in banner 3D ── */
+div[style*="linear-gradient(135deg,#001a66"] {
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.08) inset,
+        0 -2px 0 rgba(0,0,0,0.5) inset,
+        0 12px 40px rgba(0,50,200,0.35),
+        0 4px 12px rgba(0,0,0,0.4) !important;
+    transform: translateZ(0);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* ── Empty state ── */
 .tasks-empty {
     text-align: center;
-    padding: 40px 20px;
-    color: rgba(255,255,255,0.3);
+    padding: 50px 20px;
+    color: rgba(255,255,255,0.25);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     font-size: 0.85rem;
 }
+
+/* ── Utility ── */
+#tasks-tabs::-webkit-scrollbar { display: none; }
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+/* ── Card entrance animation ── */
+@keyframes cardIn {
+    from { opacity:0; transform: translateY(18px) scale(0.96); }
+    to   { opacity:1; transform: translateY(0)   scale(1); }
+}
+.task-row {
+    animation: cardIn 0.35s cubic-bezier(0.34,1.2,0.64,1) both;
+}
+.task-row:nth-child(1)  { animation-delay: 0.00s; }
+.task-row:nth-child(2)  { animation-delay: 0.06s; }
+.task-row:nth-child(3)  { animation-delay: 0.12s; }
+.task-row:nth-child(4)  { animation-delay: 0.18s; }
+.task-row:nth-child(5)  { animation-delay: 0.24s; }
+.task-row:nth-child(6)  { animation-delay: 0.30s; }
+.task-row:nth-child(7)  { animation-delay: 0.36s; }
+.task-row:nth-child(8)  { animation-delay: 0.40s; }
+
 /* Active tab */
 .task-tab.active {
     background: rgba(255,255,255,0.12) !important;
     border-color: rgba(255,255,255,0.35) !important;
     color: #fff !important;
 }
-#tasks-tabs::-webkit-scrollbar { display: none; }
-.spin { animation: spin 1s linear infinite; }
-@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 </style>
 
 <script>
@@ -1295,6 +1485,123 @@ async function stModalSubmit() {
         if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 }
+
+
+// ══════════════════════════════════
+// 3D TILT — Gyroscope + Touch
+// ══════════════════════════════════
+(function() {
+    const MAX_TILT = 8;       // degrees
+    const MAX_GLOW = 12;      // px glow spread
+
+    function applyTilt(card, rx, ry, px, py) {
+        const icon = card.querySelector('.task-row-icon');
+        const glow = card._glowColor || 'rgba(77,148,255,0.4)';
+
+        card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(6px)`;
+        card.style.boxShadow = `
+            0 2px 0 rgba(255,255,255,0.07) inset,
+            0 -1px 0 rgba(0,0,0,0.4) inset,
+            ${-ry * 1.5}px ${rx * 1.5}px 40px rgba(0,0,0,0.5),
+            0 ${MAX_GLOW + Math.abs(ry)}px ${30 + Math.abs(ry) * 2}px ${glow}
+        `;
+        // Specular highlight follows tilt
+        const shimX = 50 + ry * 3;
+        const shimY = 50 - rx * 3;
+        card.style.backgroundImage = `
+            radial-gradient(circle at ${shimX}% ${shimY}%,
+                rgba(255,255,255,0.10) 0%,
+                rgba(255,255,255,0.04) 30%,
+                transparent 70%),
+            linear-gradient(135deg,
+                rgba(255,255,255,0.07) 0%,
+                rgba(255,255,255,0.02) 50%,
+                rgba(255,255,255,0.04) 100%)
+        `;
+        if (icon) {
+            icon.style.transform = `translateZ(12px) translateX(${ry * 0.4}px) translateY(${-rx * 0.4}px)`;
+        }
+    }
+
+    function resetCard(card) {
+        card.style.transform = '';
+        card.style.boxShadow = '';
+        card.style.backgroundImage = '';
+        card.style.transition = 'transform 0.5s cubic-bezier(0.34,1,0.64,1), box-shadow 0.5s ease, background-image 0.3s';
+        const icon = card.querySelector('.task-row-icon');
+        if (icon) { icon.style.transform = ''; icon.style.transition = 'transform 0.5s'; }
+        setTimeout(() => { card.style.transition = ''; if(icon) icon.style.transition=''; }, 500);
+    }
+
+    // Touch tilt on cards
+    function bindCard(card) {
+        // Extract glow color from icon bg
+        const icon = card.querySelector('.task-row-icon');
+        if (icon) {
+            const bg = icon.style.background || '';
+            const match = bg.match(/rgba?\([^)]+\)/);
+            card._glowColor = match ? match[0].replace(/[\d.]+\)$/, '0.35)') : 'rgba(77,148,255,0.35)';
+        }
+
+        card.addEventListener('touchstart', e => {
+            card.style.transition = 'none';
+            const rect = card.getBoundingClientRect();
+            const t = e.touches[0];
+            const px = (t.clientX - rect.left) / rect.width;
+            const py = (t.clientY - rect.top)  / rect.height;
+            const ry =  (px - 0.5) * MAX_TILT * 2;
+            const rx = -(py - 0.5) * MAX_TILT;
+            applyTilt(card, rx, ry, px, py);
+        }, { passive: true });
+
+        card.addEventListener('touchmove', e => {
+            const rect = card.getBoundingClientRect();
+            const t = e.touches[0];
+            const px = (t.clientX - rect.left) / rect.width;
+            const py = (t.clientY - rect.top)  / rect.height;
+            const ry =  (px - 0.5) * MAX_TILT * 2;
+            const rx = -(py - 0.5) * MAX_TILT;
+            applyTilt(card, rx, ry, px, py);
+        }, { passive: true });
+
+        card.addEventListener('touchend', () => resetCard(card));
+        card.addEventListener('touchcancel', () => resetCard(card));
+    }
+
+    // Gyroscope global parallax
+    let gyroSupported = false;
+    window.addEventListener('deviceorientation', e => {
+        if (!gyroSupported && (e.gamma !== null)) {
+            gyroSupported = true;
+        }
+        if (!gyroSupported) return;
+        const ry = Math.max(-MAX_TILT, Math.min(MAX_TILT, (e.gamma || 0) * 0.35));
+        const rx = Math.max(-MAX_TILT, Math.min(MAX_TILT, ((e.beta || 0) - 45) * 0.2));
+
+        document.querySelectorAll('.task-row').forEach(card => {
+            // Only apply gyro if not being touched
+            if (!card._touching) {
+                card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(3px)`;
+            }
+        });
+    }, { passive: true });
+
+    // Bind all current + future cards
+    function bindAllCards() {
+        document.querySelectorAll('.task-row:not([data-tilt-bound])').forEach(card => {
+            card.setAttribute('data-tilt-bound', '1');
+            bindCard(card);
+        });
+    }
+
+    // Run after DOM + after JS renders dynamic cards
+    document.addEventListener('DOMContentLoaded', () => {
+        bindAllCards();
+        // Re-bind after dynamic renders (community tasks)
+        const observer = new MutationObserver(bindAllCards);
+        observer.observe(document.body, { childList: true, subtree: true });
+    });
+})();
 
 </script>
 
