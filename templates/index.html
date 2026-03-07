@@ -2,6 +2,301 @@
 
 {% block title %}SALLY-E | Dashboard{% endblock %}
 
+{% block extra_head %}
+<style>
+/* ══════════════════════════════════════════════════════════════
+   INDEX — PREMIUM 3D CINEMATIC (post main.css)
+══════════════════════════════════════════════════════════════ */
+
+/* ── Balance Card ── */
+.premium-balance {
+    background: linear-gradient(155deg, #0c0c20 0%, #080816 45%, #040410 100%) !important;
+    border-top:    1px solid rgba(0,102,255,0.28) !important;
+    border-left:   1px solid rgba(0,102,255,0.16) !important;
+    border-right:  1px solid rgba(0,0,0,0.5) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.7) !important;
+    border-radius: 24px !important;
+    box-shadow:
+        0 3px 0 rgba(0,102,255,0.10) inset,
+        0 -2px 0 rgba(0,0,0,0.6) inset,
+        0 24px 70px rgba(0,0,0,0.65),
+        0 0 100px rgba(0,60,200,0.10) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    transform: translateZ(0);
+    animation: idxIn 0.45s cubic-bezier(0.34,1.2,0.64,1) 0.05s both;
+}
+.premium-balance::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(125deg,
+        rgba(255,255,255,0.05) 0%,
+        rgba(255,255,255,0.02) 30%,
+        transparent 60%,
+        rgba(0,102,255,0.03) 100%);
+    pointer-events: none;
+    border-radius: 24px;
+}
+
+/* ── Stats Grid ── */
+.premium-stats {
+    animation: idxIn 0.45s cubic-bezier(0.34,1.2,0.64,1) 0.12s both;
+}
+.premium-stat {
+    background: linear-gradient(145deg, #111128 0%, #0c0c1e 55%, #080814 100%) !important;
+    border-top:    1px solid rgba(0,102,255,0.22) !important;
+    border-left:   1px solid rgba(0,102,255,0.12) !important;
+    border-right:  1px solid rgba(0,0,0,0.4) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.65) !important;
+    border-radius: 18px !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.05) inset,
+        0 -2px 0 rgba(0,0,0,0.55) inset,
+        0 8px 28px rgba(0,0,0,0.45) !important;
+    transform: translateZ(0) translateY(0);
+    transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1), box-shadow 0.22s !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+.premium-stat::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,163,255,0.5), transparent);
+    opacity: 0.7;
+}
+.premium-stat:hover {
+    transform: translateY(-4px) scale(1.03) !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.07) inset,
+        0 -2px 0 rgba(0,0,0,0.55) inset,
+        0 18px 50px rgba(0,0,0,0.5),
+        0 0 40px rgba(0,80,200,0.18) !important;
+}
+.premium-stat:active {
+    transform: translateY(1px) scale(0.97) !important;
+    transition: transform 0.07s ease !important;
+}
+
+/* ── Mining Card ── */
+.mining-card-premium {
+    background: linear-gradient(145deg, #0d0d1e 0%, #090916 55%, #050511 100%) !important;
+    border-top:    1px solid rgba(0,255,136,0.22) !important;
+    border-left:   1px solid rgba(0,255,136,0.12) !important;
+    border-right:  1px solid rgba(0,0,0,0.4) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.65) !important;
+    border-radius: 24px !important;
+    box-shadow:
+        0 3px 0 rgba(0,255,136,0.07) inset,
+        0 -2px 0 rgba(0,0,0,0.55) inset,
+        0 20px 60px rgba(0,0,0,0.5),
+        0 0 80px rgba(0,180,100,0.06) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    animation: idxIn 0.45s cubic-bezier(0.34,1.2,0.64,1) 0.20s both;
+}
+.mining-card-premium::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(130deg,
+        rgba(0,255,136,0.04) 0%,
+        transparent 50%,
+        rgba(0,102,255,0.03) 100%);
+    pointer-events: none;
+    border-radius: 24px;
+}
+
+/* ── Mining icon box ── */
+.mining-icon-box {
+    background: linear-gradient(145deg, rgba(0,255,136,0.20) 0%, rgba(0,160,80,0.10) 100%) !important;
+    border-top:    1px solid rgba(0,255,136,0.35) !important;
+    border-left:   1px solid rgba(0,255,136,0.20) !important;
+    border-right:  1px solid rgba(0,0,0,0.25) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.45) !important;
+    box-shadow:
+        0 2px 0 rgba(0,255,136,0.12) inset,
+        0 -1px 0 rgba(0,0,0,0.4) inset,
+        0 8px 24px rgba(0,200,100,0.18) !important;
+    border-radius: 14px !important;
+}
+
+/* ── Mining status bar ── */
+.mining-status {
+    background: linear-gradient(135deg, rgba(0,255,136,0.08) 0%, rgba(0,180,80,0.04) 100%) !important;
+    border-top:    1px solid rgba(0,255,136,0.22) !important;
+    border-left:   1px solid rgba(0,255,136,0.12) !important;
+    border-right:  1px solid rgba(0,0,0,0.2) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.35) !important;
+    box-shadow: 0 1px 0 rgba(0,255,136,0.06) inset, 0 4px 16px rgba(0,0,0,0.3) !important;
+    border-radius: 12px !important;
+}
+
+/* ── Premium cards (actions, activity, tips) ── */
+.premium-card {
+    background: linear-gradient(145deg, #101022 0%, #090918 55%, #060614 100%) !important;
+    border-top:    1px solid rgba(255,255,255,0.09) !important;
+    border-left:   1px solid rgba(255,255,255,0.05) !important;
+    border-right:  1px solid rgba(0,0,0,0.35) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.6) !important;
+    border-radius: 24px !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.04) inset,
+        0 -2px 0 rgba(0,0,0,0.5) inset,
+        0 14px 44px rgba(0,0,0,0.42) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    animation: idxIn 0.45s cubic-bezier(0.34,1.2,0.64,1) 0.28s both;
+}
+.premium-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+}
+
+/* ── Quick action items ── */
+.quick-action-item {
+    background: linear-gradient(145deg, #131328 0%, #0d0d20 55%, #090917 100%) !important;
+    border-top:    1px solid rgba(0,102,255,0.20) !important;
+    border-left:   1px solid rgba(0,102,255,0.12) !important;
+    border-right:  1px solid rgba(0,0,0,0.35) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.6) !important;
+    border-radius: 18px !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.05) inset,
+        0 -2px 0 rgba(0,0,0,0.5) inset,
+        0 8px 28px rgba(0,0,0,0.42) !important;
+    transform: translateZ(0);
+    transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1), box-shadow 0.22s !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+.quick-action-item::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,150,255,0.4), transparent);
+    opacity: 0.6;
+}
+.quick-action-item:hover {
+    background: linear-gradient(145deg, #181838 0%, #10102a 55%, #0c0c1e 100%) !important;
+    transform: translateY(-5px) scale(1.03) !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.08) inset,
+        0 -2px 0 rgba(0,0,0,0.5) inset,
+        0 22px 55px rgba(0,0,0,0.5),
+        0 0 50px rgba(0,80,200,0.22) !important;
+}
+.quick-action-item:active {
+    transform: translateY(2px) scale(0.96) !important;
+    transition: transform 0.07s ease !important;
+}
+
+/* ── Quick action icon ── */
+.quick-action-icon {
+    background: linear-gradient(145deg, rgba(0,102,255,0.20) 0%, rgba(0,60,150,0.12) 100%) !important;
+    border-top:    1px solid rgba(0,102,255,0.30) !important;
+    border-left:   1px solid rgba(0,102,255,0.18) !important;
+    border-right:  1px solid rgba(0,0,0,0.25) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.45) !important;
+    box-shadow:
+        0 2px 0 rgba(0,102,255,0.12) inset,
+        0 -1px 0 rgba(0,0,0,0.4) inset,
+        0 8px 20px rgba(0,0,0,0.4) !important;
+    border-radius: 16px !important;
+    transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1) !important;
+}
+.quick-action-item:hover .quick-action-icon {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow:
+        0 2px 0 rgba(0,102,255,0.18) inset,
+        0 -1px 0 rgba(0,0,0,0.4) inset,
+        0 12px 30px rgba(0,80,200,0.28) !important;
+}
+
+/* ── Claim button 3D ── */
+.btn.btn-primary {
+    background: linear-gradient(155deg, #0055dd 0%, #0066ff 50%, #0099ff 100%) !important;
+    border-top:    1px solid rgba(255,255,255,0.20) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.35) !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.18) inset,
+        0 -3px 0 rgba(0,0,0,0.35) inset,
+        0 10px 35px rgba(0,102,255,0.5),
+        0 3px 8px rgba(0,0,0,0.4) !important;
+    border-radius: 16px !important;
+    transform: translateZ(0);
+    transition: transform 0.18s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.18s !important;
+}
+.btn.btn-primary:hover {
+    transform: translateY(-2px) scale(1.01) !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.20) inset,
+        0 -3px 0 rgba(0,0,0,0.35) inset,
+        0 16px 50px rgba(0,102,255,0.6) !important;
+}
+.btn.btn-primary:active {
+    transform: translateY(2px) scale(0.98) !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.12) inset,
+        0 -1px 0 rgba(0,0,0,0.3) inset,
+        0 4px 14px rgba(0,102,255,0.3) !important;
+    transition: transform 0.07s ease !important;
+}
+
+/* ── Boost button 3D ── */
+.boost-trigger-btn {
+    background: linear-gradient(145deg, #0f1030 0%, #0a0a22 100%) !important;
+    border-top:    1px solid rgba(0,163,255,0.28) !important;
+    border-left:   1px solid rgba(0,163,255,0.16) !important;
+    border-right:  1px solid rgba(0,0,0,0.3) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.55) !important;
+    box-shadow:
+        0 2px 0 rgba(0,102,255,0.12) inset,
+        0 -2px 0 rgba(0,0,0,0.4) inset,
+        0 8px 28px rgba(0,102,255,0.22) !important;
+    border-radius: 16px !important;
+    transform: translateZ(0);
+    transition: transform 0.18s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.18s !important;
+}
+.boost-trigger-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow:
+        0 2px 0 rgba(0,102,255,0.18) inset,
+        0 -2px 0 rgba(0,0,0,0.4) inset,
+        0 14px 40px rgba(0,102,255,0.32) !important;
+}
+.boost-trigger-btn:active {
+    transform: translateY(2px) scale(0.98) !important;
+    transition: transform 0.07s ease !important;
+}
+
+/* ── Progress bar shimmer ── */
+.mining-progress-bar::after {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent) !important;
+}
+
+/* ── Entrance animation ── */
+@keyframes idxIn {
+    from { opacity:0; transform:translateY(20px) scale(0.96); }
+    to   { opacity:1; transform:translateY(0)    scale(1); }
+}
+
+/* ── Roulette FAB 3D ── */
+.roulette-fab-inner {
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.08) inset,
+        0 -1px 0 rgba(0,0,0,0.5) inset,
+        0 4px 12px rgba(0,0,0,0.5) !important;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Splash Screen Premium -->
 <div id="splash-screen" class="splash-screen">
@@ -1940,4 +2235,80 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- AdsGram Boost System -->
 <script src="/static/js/adsgram_boost.js"></script>
+
+<script>
+/* ── INDEX 3D TILT + PARTICLES ── */
+(function(){
+    const MAX_TILT = 6;
+
+    function applyTilt(el, rx, ry) {
+        el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(4px)`;
+        const ic = el.querySelector('.quick-action-icon');
+        if (ic) ic.style.transform = 'translateZ(8px)';
+    }
+    function resetTilt(el) {
+        el.style.transition = 'transform 0.5s cubic-bezier(0.34,1,0.64,1)';
+        el.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) translateZ(0)';
+        const ic = el.querySelector('.quick-action-icon');
+        if (ic) { ic.style.transition = 'transform 0.5s'; ic.style.transform = 'translateZ(0)'; }
+        setTimeout(() => { el.style.transition = ''; }, 500);
+    }
+    function bindTilt(el) {
+        if (el._tiltBound) return;
+        el._tiltBound = true;
+        el.addEventListener('touchmove', e => {
+            const t = e.touches[0], r = el.getBoundingClientRect();
+            const x = (t.clientX - r.left) / r.width - 0.5;
+            const y = (t.clientY - r.top)  / r.height - 0.5;
+            el.style.transition = '';
+            applyTilt(el, -y * MAX_TILT, x * MAX_TILT);
+        }, { passive:true });
+        el.addEventListener('touchend', () => resetTilt(el), { passive:true });
+    }
+    function bindAll() {
+        document.querySelectorAll('.quick-action-item, .premium-stat').forEach(bindTilt);
+    }
+
+    // Gyro parallax en balance + mining
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', e => {
+            const bx = Math.max(-4, Math.min(4, (e.beta  || 0) * 0.08));
+            const by = Math.max(-4, Math.min(4, (e.gamma || 0) * 0.08));
+            const bal = document.querySelector('.premium-balance');
+            const min = document.querySelector('.mining-card-premium');
+            if (bal) bal.style.transform = `perspective(1200px) rotateX(${-bx}deg) rotateY(${by}deg)`;
+            if (min) min.style.transform = `perspective(1200px) rotateX(${-bx*0.6}deg) rotateY(${by*0.6}deg)`;
+        }, { passive:true });
+    }
+
+    // Partículas flotantes en balance card
+    function spawnParticles() {
+        const card = document.querySelector('.premium-balance');
+        if (!card) return;
+        for (let i = 0; i < 10; i++) {
+            setTimeout(() => {
+                const p = document.createElement('div');
+                const sz = Math.random() * 3 + 1;
+                p.style.cssText = `position:absolute;width:${sz}px;height:${sz}px;`+
+                    `background:rgba(0,${120+Math.random()*135|0},255,${0.3+Math.random()*0.4});`+
+                    `border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*100}%;`+
+                    `pointer-events:none;z-index:2;`+
+                    `animation:idxPtcl ${1.5+Math.random()*2}s ease-out forwards;`;
+                card.appendChild(p);
+                setTimeout(() => p.remove(), 4000);
+            }, i * 200);
+        }
+    }
+    const ps = document.createElement('style');
+    ps.textContent = `@keyframes idxPtcl{0%{opacity:.8;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-45px) scale(0.2)}}`;
+    document.head.appendChild(ps);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        bindAll();
+        setTimeout(spawnParticles, 1000);
+        setInterval(spawnParticles, 7000);
+        new MutationObserver(bindAll).observe(document.body, { childList:true, subtree:true });
+    });
+})();
+</script>
 {% endblock %}
