@@ -1085,39 +1085,53 @@ let _stCurrentTask = null;
 let _stScreenshot = null;
 
 function stOpenModal(taskId) {
-    const key = 'window._stask_' + taskId.replace(/-/g,'_');
     const task = eval('window._stask_' + taskId.replace(/-/g,'_'));
     if (!task) return;
     _stCurrentTask = task;
     _stScreenshot = null;
 
-    // Reset fields
+    // Reset
     document.getElementById('stask-file-input').value = '';
     document.getElementById('stask-preview-img').style.display = 'none';
     document.getElementById('stask-upload-ph').style.display = 'flex';
-    document.getElementById('stask-upload-check').style.display = 'none';
+    document.getElementById('stask-upload-success').style.display = 'none';
     document.getElementById('stask-upload-area').style.borderColor = 'rgba(255,255,255,0.1)';
+    document.getElementById('stask-upload-area').style.background = 'rgba(255,255,255,0.025)';
     document.getElementById('stask-post-link').value = '';
     document.getElementById('stask-username').value = '';
 
-    const pc = task.pcolor;
-    const pname = task.pname;
+    const pc  = task.pcolor;
+    const pn  = task.pname;
+    const pcA = pc + '55'; // semi-transparent accent
+    const pcB = pc + '22';
 
-    // Header background
+    // ── Header ──
     document.getElementById('stask-modal-header').style.background =
-        `linear-gradient(135deg, ${pc}33 0%, ${pc}18 60%, #0d0d1a 100%)`;
+        `linear-gradient(160deg, ${pc}55 0%, ${pc}28 45%, #0a0a14 100%)`;
+    document.getElementById('stask-header-orb').style.background = pc;
 
     // Icon
     const iconEl = document.getElementById('stask-modal-icon');
-    iconEl.style.background = pc + '22';
-    iconEl.style.border = `1.5px solid ${pc}44`;
-    iconEl.style.color = pc;
-    iconEl.innerHTML = stGetIcon(task.platform, pc);
+    iconEl.style.background    = `linear-gradient(135deg, ${pc}44, ${pc}22)`;
+    iconEl.style.border        = `1.5px solid ${pc}55`;
+    iconEl.style.color         = '#fff';
+    iconEl.innerHTML           = stGetIcon(task.platform, '#fff');
 
+    // Text
     document.getElementById('stask-modal-platform').style.color = pc;
-    document.getElementById('stask-modal-platform').textContent = pname;
-    document.getElementById('stask-modal-title').textContent = task.title;
-    document.getElementById('stask-modal-reward').textContent = task.reward;
+    document.getElementById('stask-modal-platform').textContent = pn;
+    document.getElementById('stask-modal-title').textContent    = task.title;
+    const rewardBadge = document.getElementById('stask-modal-reward-badge');
+    rewardBadge.style.background   = pc + '28';
+    rewardBadge.style.borderColor  = pc + '55';
+    rewardBadge.style.color        = pc;
+    rewardBadge.textContent        = task.reward;
+
+    // Step numbers accent
+    ['stask-num1','stask-num2','stask-num3','stask-num4'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.style.background = pcB; el.style.color = pc; }
+    });
 
     // Description
     const descWrap = document.getElementById('stask-modal-desc-wrap');
@@ -1126,9 +1140,17 @@ function stOpenModal(taskId) {
         descWrap.style.display = 'block';
     } else { descWrap.style.display = 'none'; }
 
-    // Instructions
+    // Instructions card
     const instrWrap = document.getElementById('stask-modal-instr-wrap');
     if (task.instructions) {
+        instrWrap.style.background   = pcB;
+        instrWrap.style.borderColor  = pcA;
+        document.getElementById('stask-instr-bg').style.background = pc;
+        const iconWrap = document.getElementById('stask-instr-icon-wrap');
+        iconWrap.style.background = pcA;
+        iconWrap.style.color      = pc;
+        const lbl = document.getElementById('stask-instr-label');
+        lbl.style.color = pc;
         document.getElementById('stask-modal-instr').textContent = task.instructions;
         instrWrap.style.display = 'block';
     } else { instrWrap.style.display = 'none'; }
@@ -1136,28 +1158,40 @@ function stOpenModal(taskId) {
     // Step 1: platform link
     const step1 = document.getElementById('stask-step1');
     if (task.target_url) {
-        document.getElementById('stask-modal-link').href = task.target_url;
-        document.getElementById('stask-modal-link').style.background = pc + '20';
-        document.getElementById('stask-modal-link').style.border = `1.5px solid ${pc}40`;
-        document.getElementById('stask-modal-link').style.color = pc;
-        document.getElementById('stask-modal-link-label').textContent = 'Ir a ' + pname;
+        const link = document.getElementById('stask-modal-link');
+        link.href               = task.target_url;
+        link.style.background   = `linear-gradient(135deg, ${pc}33, ${pc}18)`;
+        link.style.border       = `1.5px solid ${pc}55`;
+        link.style.color        = '#fff';
+        document.getElementById('stask-modal-link-label').textContent = 'Ir a ' + pn;
         step1.style.display = 'block';
     } else { step1.style.display = 'none'; }
 
     // Step 2: screenshot
-    document.getElementById('stask-step2').style.display = task.requires_screenshot ? 'block' : 'none';
+    const step2 = document.getElementById('stask-step2');
+    step2.style.display = task.requires_screenshot ? 'block' : 'none';
+    if (task.requires_screenshot) {
+        const iconUp = document.getElementById('stask-upload-icon-wrap');
+        iconUp.style.background = pcB;
+        iconUp.style.color      = pc;
+    }
+
+    // Input rows accent on focus uses CSS — set icon color
+    [document.getElementById('stask-link-row'), document.getElementById('stask-user-row')].forEach(el => {
+        if (el) { const icon = el.querySelector('i'); if (icon) icon.style.color = pc + 'aa'; }
+    });
 
     // Step 4 platform label
-    document.getElementById('stask-step4-platform').textContent = pname;
+    document.getElementById('stask-step4-platform').textContent   = pn;
+    document.getElementById('stask-step4-platform').style.color   = pc;
 
-    // Submit button color
-    const submitBtn = document.getElementById('stask-modal-submit');
-    submitBtn.style.background = `linear-gradient(135deg, ${pc}, ${pc}cc)`;
-    submitBtn.style.color = '#fff';
-    submitBtn.style.boxShadow = `0 6px 20px ${pc}40`;
+    // Submit button
+    const btn = document.getElementById('stask-modal-submit');
+    btn.style.background  = `linear-gradient(135deg, ${pc} 0%, ${pc}cc 100%)`;
+    btn.style.color       = '#fff';
+    btn.style.boxShadow   = `0 8px 28px ${pc}50`;
 
     stCheckSubmit();
-
     document.getElementById('stask-modal').style.display = 'block';
     if (typeof lucide !== 'undefined') lucide.createIcons();
     document.body.style.overflow = 'hidden';
@@ -1191,8 +1225,9 @@ function stModalPreview(input) {
         img.src = e.target.result;
         img.style.display = 'block';
         document.getElementById('stask-upload-ph').style.display = 'none';
-        document.getElementById('stask-upload-check').style.display = 'flex';
+        document.getElementById('stask-upload-success').style.display = 'flex';
         document.getElementById('stask-upload-area').style.borderColor = '#22c55e55';
+        document.getElementById('stask-upload-area').style.background = 'rgba(34,197,94,0.04)';
         if (typeof lucide !== 'undefined') lucide.createIcons();
         stCheckSubmit();
     };
@@ -1432,124 +1467,249 @@ async function stModalSubmit() {
 </style>
 
 <!-- ══════════════════════════════════════════ -->
-<!-- MODAL TAREA SOCIAL - PREMIUM               -->
-<!-- ══════════════════════════════════════════ -->
+<!-- MODAL TAREA SOCIAL -->
 <div id="stask-modal" style="display:none;position:fixed;inset:0;z-index:9999;">
     <!-- Backdrop -->
-    <div onclick="stCloseModal()" style="position:absolute;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);"></div>
+    <div onclick="stCloseModal()" style="position:absolute;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(12px);"></div>
 
-    <!-- Sheet -->
-    <div id="stask-modal-sheet" style="position:absolute;bottom:0;left:0;right:0;max-height:92vh;display:flex;flex-direction:column;border-radius:24px 24px 0 0;overflow:hidden;transition:transform .3s cubic-bezier(.32,1,.45,1);">
+    <!-- Sheet container -->
+    <div id="stask-modal-sheet" style="
+        position:absolute;bottom:0;left:0;right:0;
+        max-height:95vh;display:flex;flex-direction:column;
+        border-radius:32px 32px 0 0;overflow:hidden;
+        box-shadow:0 -24px 80px rgba(0,0,0,0.6);
+    ">
+        <!-- ══ HERO HEADER ══ -->
+        <div id="stask-modal-header" style="flex-shrink:0;position:relative;overflow:hidden;">
 
-        <!-- Colored header band -->
-        <div id="stask-modal-header" style="padding:0;flex-shrink:0;">
-            <!-- Handle -->
-            <div style="display:flex;justify-content:center;padding:10px 0 0;">
-                <div style="width:40px;height:4px;background:rgba(255,255,255,0.2);border-radius:4px;"></div>
+            <!-- Decorative bg blobs -->
+            <div id="stask-header-orb" style="position:absolute;top:-80px;right:-60px;width:260px;height:260px;border-radius:50%;filter:blur(80px);opacity:0.35;pointer-events:none;"></div>
+            <div id="stask-header-orb2" style="position:absolute;bottom:-40px;left:-30px;width:140px;height:140px;border-radius:50%;filter:blur(50px);opacity:0.2;pointer-events:none;"></div>
+
+            <!-- Subtle grid pattern overlay -->
+            <div style="position:absolute;inset:0;opacity:0.03;background-image:repeating-linear-gradient(0deg,transparent,transparent 24px,rgba(255,255,255,1) 24px,rgba(255,255,255,1) 25px),repeating-linear-gradient(90deg,transparent,transparent 24px,rgba(255,255,255,1) 24px,rgba(255,255,255,1) 25px);pointer-events:none;"></div>
+
+            <!-- Handle pill -->
+            <div style="display:flex;justify-content:center;padding:14px 0 0;position:relative;">
+                <div style="width:40px;height:4px;background:rgba(255,255,255,0.22);border-radius:10px;"></div>
             </div>
-            <!-- Title row -->
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 16px;">
-                <div style="display:flex;align-items:center;gap:12px;">
-                    <div id="stask-modal-icon" style="width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"></div>
-                    <div>
-                        <div id="stask-modal-platform" style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2px;"></div>
-                        <div id="stask-modal-title" style="font-size:1rem;font-weight:800;color:#fff;line-height:1.2;"></div>
-                    </div>
+
+            <!-- Main header content -->
+            <div style="position:relative;padding:18px 20px 24px;display:flex;align-items:center;gap:16px;">
+
+                <!-- Platform icon — large -->
+                <div id="stask-modal-icon" style="
+                    width:64px;height:64px;border-radius:20px;
+                    display:flex;align-items:center;justify-content:center;
+                    flex-shrink:0;position:relative;
+                    box-shadow:0 12px 32px rgba(0,0,0,0.4);
+                "></div>
+
+                <!-- Title block -->
+                <div style="flex:1;min-width:0;">
+                    <div id="stask-modal-platform" style="font-size:0.65rem;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:5px;"></div>
+                    <div id="stask-modal-title" style="font-size:1.15rem;font-weight:800;color:#fff;line-height:1.2;margin-bottom:6px;"></div>
+                    <!-- Reward badge -->
+                    <div id="stask-modal-reward-badge" style="
+                        display:inline-flex;align-items:center;gap:5px;
+                        padding:4px 12px;border-radius:20px;
+                        background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);
+                        font-size:0.85rem;font-weight:800;color:#fff;
+                    "></div>
                 </div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <div id="stask-modal-reward" style="font-size:1rem;font-weight:800;color:#4D94FF;"></div>
-                    <button onclick="stCloseModal()"
-                        style="width:32px;height:32px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
-                        <i data-lucide="x" style="width:15px;height:15px;color:rgba(255,255,255,0.7);"></i>
-                    </button>
-                </div>
+
+                <!-- Close button -->
+                <button onclick="stCloseModal()" style="
+                    position:absolute;top:18px;right:20px;
+                    width:36px;height:36px;
+                    background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.12);
+                    border-radius:50%;display:flex;align-items:center;justify-content:center;
+                    cursor:pointer;flex-shrink:0;backdrop-filter:blur(10px);
+                ">
+                    <i data-lucide="x" style="width:16px;height:16px;color:rgba(255,255,255,0.8);"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Scrollable body -->
-        <div id="stask-modal-body" style="flex:1;overflow-y:auto;background:#0d0d1a;padding:20px;display:flex;flex-direction:column;gap:14px;">
+        <!-- ══ SCROLLABLE BODY ══ -->
+        <div id="stask-modal-body" style="flex:1;overflow-y:auto;background:#0b0b16;padding:22px 20px 0;display:flex;flex-direction:column;gap:18px;">
 
             <!-- Description -->
             <div id="stask-modal-desc-wrap" style="display:none;">
-                <p id="stask-modal-desc" style="margin:0;font-size:0.85rem;color:rgba(255,255,255,0.55);line-height:1.65;"></p>
+                <p id="stask-modal-desc" style="margin:0;font-size:0.87rem;color:rgba(255,255,255,0.48);line-height:1.72;"></p>
             </div>
 
-            <!-- Instructions -->
-            <div id="stask-modal-instr-wrap" style="display:none;background:rgba(0,245,255,0.04);border:1px solid rgba(0,245,255,0.12);border-radius:14px;padding:14px;">
-                <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;">
-                    <i data-lucide="clipboard-list" style="width:14px;height:14px;color:#00f5ff;flex-shrink:0;"></i>
-                    <span style="font-size:0.75rem;font-weight:700;color:#00f5ff;letter-spacing:0.04em;text-transform:uppercase;">Instrucciones</span>
+            <!-- Instructions card -->
+            <div id="stask-modal-instr-wrap" style="display:none;border-radius:18px;padding:16px 18px;border:1px solid;overflow:hidden;position:relative;">
+                <div id="stask-instr-bg" style="position:absolute;inset:0;opacity:0.07;"></div>
+                <div style="position:relative;display:flex;gap:12px;align-items:flex-start;">
+                    <div id="stask-instr-icon-wrap" style="width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i data-lucide="clipboard-list" style="width:16px;height:16px;color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div id="stask-instr-label" style="font-size:0.68rem;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Instrucciones</div>
+                        <p id="stask-modal-instr" style="margin:0;font-size:0.86rem;color:rgba(255,255,255,0.62);line-height:1.65;"></p>
+                    </div>
                 </div>
-                <p id="stask-modal-instr" style="margin:0;font-size:0.84rem;color:rgba(255,255,255,0.6);line-height:1.6;"></p>
             </div>
 
-            <!-- Steps: numbered -->
-            <div style="display:flex;flex-direction:column;gap:10px;" id="stask-steps">
-                <!-- Step 1: Go to platform -->
-                <div id="stask-step1" style="display:none;">
-                    <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Paso 1 · Ir a la plataforma</div>
-                    <a id="stask-modal-link" href="#" target="_blank"
-                        style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:13px;font-size:0.88rem;font-weight:700;text-decoration:none;transition:opacity .2s;">
-                        <i data-lucide="external-link" style="width:16px;height:16px;"></i>
+            <!-- ══ STEPS ══ -->
+
+            <!-- Step 1: Go to platform -->
+            <div id="stask-step1" style="display:none;">
+                <div class="stask-step-hdr">
+                    <span class="stask-step-badge" id="stask-num1">1</span>
+                    <span>Ir a la plataforma</span>
+                </div>
+                <a id="stask-modal-link" href="#" target="_blank" class="stask-go-btn">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;">
+                        <i data-lucide="external-link" style="width:17px;height:17px;"></i>
                         <span id="stask-modal-link-label">Ir a la plataforma</span>
-                    </a>
-                </div>
+                        <i data-lucide="arrow-right" style="width:15px;height:15px;margin-left:auto;opacity:0.7;"></i>
+                    </span>
+                </a>
+            </div>
 
-                <!-- Step 2: Screenshot -->
-                <div id="stask-step2" style="display:none;">
-                    <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Paso 2 · Captura de pantalla</div>
-                    <div id="stask-upload-area" onclick="document.getElementById('stask-file-input').click()"
-                         style="border:2px dashed rgba(255,255,255,0.1);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;background:rgba(255,255,255,0.02);transition:border-color .2s,background .2s;position:relative;overflow:hidden;">
-                        <img id="stask-preview-img" style="display:none;width:100%;max-height:200px;object-fit:contain;border-radius:10px;margin-bottom:10px;" alt="preview">
-                        <div id="stask-upload-ph" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-                            <i data-lucide="image-plus" style="width:32px;height:32px;color:rgba(255,255,255,0.25);"></i>
-                            <div style="font-size:0.83rem;font-weight:600;color:rgba(255,255,255,0.45);">Toca para subir captura</div>
-                            <div style="font-size:0.72rem;color:rgba(255,255,255,0.25);">JPG, PNG · máx 5MB</div>
+            <!-- Step 2: Screenshot upload -->
+            <div id="stask-step2" style="display:none;">
+                <div class="stask-step-hdr">
+                    <span class="stask-step-badge" id="stask-num2">2</span>
+                    <span>Captura de pantalla</span>
+                    <span class="stask-tag-required">Requerido</span>
+                </div>
+                <div id="stask-upload-area" onclick="document.getElementById('stask-file-input').click()"
+                     style="border:2px dashed rgba(255,255,255,0.1);border-radius:20px;cursor:pointer;background:rgba(255,255,255,0.02);transition:all .25s;position:relative;overflow:hidden;min-height:130px;display:flex;align-items:center;justify-content:center;">
+
+                    <!-- Preview image (hidden until upload) -->
+                    <img id="stask-preview-img" style="display:none;width:100%;max-height:240px;object-fit:cover;border-radius:18px;" alt="preview">
+
+                    <!-- Placeholder -->
+                    <div id="stask-upload-ph" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 20px;">
+                        <div id="stask-upload-icon-wrap" style="width:60px;height:60px;border-radius:18px;display:flex;align-items:center;justify-content:center;">
+                            <i data-lucide="image-plus" style="width:28px;height:28px;"></i>
                         </div>
-                        <div id="stask-upload-check" style="display:none;position:absolute;top:10px;right:10px;width:26px;height:26px;background:#22c55e;border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                            <i data-lucide="check" style="width:14px;height:14px;color:#fff;"></i>
+                        <div style="text-align:center;">
+                            <div style="font-size:0.9rem;font-weight:700;color:rgba(255,255,255,0.7);margin-bottom:4px;">Toca para subir captura</div>
+                            <div style="font-size:0.73rem;color:rgba(255,255,255,0.28);">JPG · PNG · máx 5MB</div>
                         </div>
                     </div>
-                    <input type="file" id="stask-file-input" accept="image/*" onchange="stModalPreview(this)" style="display:none;">
-                </div>
 
-                <!-- Step 3: Post link -->
-                <div id="stask-step3">
-                    <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Paso 3 · Link de tu publicación <span style="color:rgba(255,255,255,0.2);font-weight:500;">(opcional)</span></div>
-                    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;">
-                        <i data-lucide="link-2" style="width:16px;height:16px;color:rgba(255,255,255,0.3);flex-shrink:0;"></i>
-                        <input id="stask-post-link" type="url" placeholder="https://..." autocomplete="off"
-                            style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:0.85rem;min-width:0;"
-                            oninput="stCheckSubmit()">
+                    <!-- Success badge (shown after upload) -->
+                    <div id="stask-upload-success" style="display:none;position:absolute;bottom:12px;right:12px;background:#22c55e;border-radius:12px;padding:6px 12px;display:flex;align-items:center;gap:5px;box-shadow:0 4px 14px rgba(34,197,94,0.4);">
+                        <i data-lucide="check" style="width:13px;height:13px;color:#fff;"></i>
+                        <span style="font-size:0.72rem;font-weight:800;color:#fff;letter-spacing:0.04em;">SUBIDA</span>
                     </div>
                 </div>
+                <input type="file" id="stask-file-input" accept="image/*" onchange="stModalPreview(this)" style="display:none;">
+            </div>
 
-                <!-- Step 4: Username -->
-                <div id="stask-step4">
-                    <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Paso 4 · Tu usuario en <span id="stask-step4-platform"></span> <span style="color:rgba(255,255,255,0.2);font-weight:500;">(opcional)</span></div>
-                    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;">
-                        <i data-lucide="at-sign" style="width:16px;height:16px;color:rgba(255,255,255,0.3);flex-shrink:0;"></i>
-                        <input id="stask-username" type="text" placeholder="@tu_usuario" autocomplete="off"
-                            style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:0.85rem;min-width:0;"
-                            oninput="stCheckSubmit()">
-                    </div>
+            <!-- Step 3: Post link -->
+            <div id="stask-step3">
+                <div class="stask-step-hdr">
+                    <span class="stask-step-badge" id="stask-num3">3</span>
+                    <span>Link de la publicación</span>
+                    <span class="stask-tag-optional">Opcional</span>
+                </div>
+                <div class="stask-field-wrap" id="stask-link-row">
+                    <i data-lucide="link-2" style="width:18px;height:18px;flex-shrink:0;opacity:0.4;"></i>
+                    <input id="stask-post-link" type="url" placeholder="https://..." autocomplete="off"
+                        style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:0.9rem;min-width:0;"
+                        oninput="stCheckSubmit()">
                 </div>
             </div>
 
+            <!-- Step 4: Username -->
+            <div id="stask-step4" style="padding-bottom:24px;">
+                <div class="stask-step-hdr">
+                    <span class="stask-step-badge" id="stask-num4">4</span>
+                    <span>Tu usuario en <b id="stask-step4-platform"></b></span>
+                    <span class="stask-tag-optional">Opcional</span>
+                </div>
+                <div class="stask-field-wrap" id="stask-user-row">
+                    <i data-lucide="at-sign" style="width:18px;height:18px;flex-shrink:0;opacity:0.4;"></i>
+                    <input id="stask-username" type="text" placeholder="@tu_usuario" autocomplete="off"
+                        style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:0.9rem;min-width:0;"
+                        oninput="stCheckSubmit()">
+                </div>
+            </div>
         </div>
 
-        <!-- Footer -->
-        <div style="background:#0d0d1a;padding:16px 20px 28px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
-            <button id="stask-modal-submit" onclick="stModalSubmit()"
-                style="width:100%;padding:15px;border:none;border-radius:14px;font-size:0.92rem;font-weight:800;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:0.01em;">
-                <span style="display:inline-flex;align-items:center;gap:8px;">
-                    <i data-lucide="send" style="width:16px;height:16px;"></i>
-                    Enviar para revisión
-                </span>
+        <!-- ══ FOOTER ══ -->
+        <div style="background:#0b0b16;padding:16px 20px 32px;border-top:1px solid rgba(255,255,255,0.05);flex-shrink:0;">
+            <button id="stask-modal-submit" onclick="stModalSubmit()" style="
+                width:100%;padding:17px;border:none;border-radius:18px;
+                font-size:0.95rem;font-weight:800;cursor:pointer;
+                transition:all .2s;letter-spacing:0.03em;
+                display:flex;align-items:center;justify-content:center;gap:9px;
+            ">
+                <i data-lucide="send" style="width:17px;height:17px;"></i>
+                Enviar para revisión
             </button>
         </div>
-
     </div>
 </div>
+
+<style>
+/* ── Social task modal shared styles ── */
+.stask-step-hdr {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.38);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.stask-step-badge {
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 900;
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.4);
+    flex-shrink: 0;
+}
+.stask-tag-required {
+    margin-left: auto;
+    font-size: 0.6rem; font-weight: 800;
+    padding: 3px 8px; border-radius: 6px;
+    background: rgba(251,178,63,0.14);
+    color: #FBB23F;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+.stask-tag-optional {
+    font-size: 0.65rem; font-weight: 500;
+    color: rgba(255,255,255,0.18);
+    text-transform: none; letter-spacing: 0;
+}
+.stask-go-btn {
+    display: flex; align-items: center;
+    padding: 15px 18px;
+    border-radius: 16px;
+    font-size: 0.92rem; font-weight: 800;
+    text-decoration: none;
+    transition: opacity .2s, transform .1s;
+    letter-spacing: 0.01em;
+}
+.stask-go-btn:active { transform: scale(0.97); }
+.stask-field-wrap {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.045);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 14px 16px;
+    transition: border-color .2s, background .2s;
+}
+.stask-field-wrap:focus-within {
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.07);
+}
+#stask-modal-body::-webkit-scrollbar { display: none; }
+#stask-modal-body { scrollbar-width: none; }
+</style>
 
 {% endblock %}
