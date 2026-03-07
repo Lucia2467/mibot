@@ -716,10 +716,12 @@ def tasks():
     print(f"[tasks] Disponibles: {list(available_tasks.keys())}, Completadas: {list(completed_tasks.keys())}")
 
     # Usar el nuevo template con sistema PTS
+    social_tasks = get_active_social_tasks(user_id=user_id) if globals().get('SOCIAL_TASKS_AVAILABLE') else []
     return render_template('tasks_pts.html',
                          user=user,
                          available_tasks=available_tasks,
                          completed_tasks=completed_tasks,
+                         social_tasks=social_tasks,
                          user_id=user_id,
                          show_support_button=True)
 
@@ -6270,14 +6272,9 @@ except Exception as e:
 try:
     from user_tasks_routes import user_tasks_bp
     from user_tasks_system import init_user_tasks_table
-
-    # Registrar el blueprint
     app.register_blueprint(user_tasks_bp)
-
-    # Inicializar tablas
     with app.app_context():
         init_user_tasks_table()
-
     logger.info("✅ User Tasks Promotion system loaded successfully")
     USER_TASKS_AVAILABLE = True
 except ImportError as e:
@@ -6285,9 +6282,25 @@ except ImportError as e:
     USER_TASKS_AVAILABLE = False
 except Exception as e:
     logger.error(f"❌ Error loading User Tasks Promotion system: {e}")
-    import traceback
-    traceback.print_exc()
+    import traceback; traceback.print_exc()
     USER_TASKS_AVAILABLE = False
+
+# ============== SOCIAL TASKS SYSTEM ==============
+try:
+    from social_tasks_routes import social_tasks_bp
+    from social_tasks_system import get_active_social_tasks, init_social_tasks_tables
+    app.register_blueprint(social_tasks_bp)
+    with app.app_context():
+        init_social_tasks_tables()
+    logger.info("✅ Social Tasks system loaded successfully")
+    SOCIAL_TASKS_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"⚠️ Social Tasks system not available: {e}")
+    SOCIAL_TASKS_AVAILABLE = False
+except Exception as e:
+    logger.error(f"❌ Error loading Social Tasks system: {e}")
+    import traceback; traceback.print_exc()
+    SOCIAL_TASKS_AVAILABLE = False
 
 
 # ============================================
