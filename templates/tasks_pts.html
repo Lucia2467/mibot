@@ -338,44 +338,6 @@
     </div>
     {% endif %}
 
-                {% if task.target_url %}
-                <a href="{{ task.target_url }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:var(--space-2) var(--space-4);background:rgba(0,102,255,0.1);border:1px solid rgba(0,102,255,0.3);border-radius:var(--radius-full);color:var(--color-blue-primary);font-size:0.8rem;font-weight:600;text-decoration:none;margin-bottom:var(--space-3);">
-                    🔗 Ir a {{ task.platform|capitalize }}
-                </a>
-                {% endif %}
-
-                {% if task.requires_screenshot %}
-                <div id="upload-area-{{ task.task_id }}" onclick="document.getElementById('file-st-{{ task.task_id }}').click()"
-                     style="border:2px dashed rgba(0,102,255,0.4);border-radius:var(--radius-lg);padding:var(--space-4);text-align:center;cursor:pointer;margin-bottom:var(--space-3);background:rgba(0,102,255,0.03);">
-                    <img id="preview-st-{{ task.task_id }}" style="display:none;width:100%;max-height:180px;object-fit:contain;border-radius:var(--radius-md);margin-bottom:var(--space-2);" alt="preview">
-                    <div id="upload-ph-{{ task.task_id }}">
-                        <div style="font-size:1.8rem;margin-bottom:6px;">📸</div>
-                        <div style="font-size:0.8rem;color:var(--color-text-secondary);">Toca para subir captura de pantalla</div>
-                        <div style="font-size:0.7rem;color:var(--color-text-muted);margin-top:4px;">JPG, PNG — máx 5MB</div>
-                    </div>
-                </div>
-                <input type="file" id="file-st-{{ task.task_id }}" accept="image/*" onchange="stPreview('{{ task.task_id }}', this)">
-                {% endif %}
-
-                <button id="stsubmit-{{ task.task_id }}"
-                        onclick="stSubmit('{{ task.task_id }}', {{ task.requires_screenshot|tojson }})"
-                        {% if task.requires_screenshot %}disabled{% endif %}
-                        style="width:100%;padding:var(--space-3);background:var(--gradient-primary);border:none;border-radius:var(--radius-lg);color:white;font-size:0.9rem;font-weight:700;cursor:pointer;opacity:{% if task.requires_screenshot %}0.5{% else %}1{% endif %};">
-                    📤 Enviar para revisión
-                </button>
-            </div>
-
-            <button onclick="stToggle('{{ task.task_id }}')" id="stbtn-{{ task.task_id }}"
-                    style="width:100%;padding:var(--space-2) var(--space-4);background:var(--gradient-primary);border:none;color:white;font-size:0.8rem;font-weight:600;cursor:pointer;">
-                Ver tarea →
-            </button>
-            {% endif %}
-        </div>
-        {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-
     <!-- SEPARADOR: ANUNCIOS -->
     <div style="display: flex; align-items: center; margin: var(--space-6) 0;">
         <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.2), transparent);"></div>
