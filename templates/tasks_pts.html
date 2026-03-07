@@ -100,7 +100,7 @@
             </div>
             {% endfor %}
         {% else %}
-            <div class="tasks-empty">
+            <div class="tasks-empty tasks-empty-telegram">
                 <i data-lucide="inbox" style="width:40px;height:40px;opacity:0.3;"></i>
                 <p>No hay tareas disponibles</p>
             </div>
@@ -640,7 +640,7 @@ async function loadUserTasks(){
             c.innerHTML=d.tasks.map(task=>`<div class="user-task-item" style="display:flex;align-items:center;padding:var(--space-3);background:var(--glass-ultra);border-radius:var(--radius-md);border:1px solid rgba(255,215,0,0.15);"><div style="flex-shrink:0;width:40px;height:40px;background:linear-gradient(135deg,${getTaskColor(task.task_type)});border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin-right:var(--space-3);">${getTaskIcon(task.task_type)}</div><div style="flex:1;min-width:0;"><div style="font-weight:600;color:var(--color-text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(task.title)}</div><div style="display:flex;align-items:center;gap:var(--space-2);font-size:0.75rem;"><span style="color:var(--color-neon-cyan);">+${task.reward} S-E</span><span style="color:var(--color-text-muted);">•</span><span style="color:var(--color-text-tertiary);">${task.completions}</span>${task.requires_join?'<span style="color:#FFD700;">🔒</span>':''}</div></div><button class="pts-btn-small" onclick="completeUserTask('${task.task_id}','${escapeHtml(task.url)}',${task.requires_join},'${escapeHtml(task.channel_username||'')}')"><span data-i18n="pts_complete">${t('pts_complete')}</span></button></div>`).join('');
             if(typeof lucide!=='undefined')lucide.createIcons();
         }else{
-            c.innerHTML=`<div style="text-align:center;padding:var(--space-6);color:var(--color-text-tertiary);"><i data-lucide="inbox" style="width:40px;height:40px;margin-bottom:var(--space-2);opacity:0.5;"></i><p style="margin:0;font-size:0.85rem;">${t('pts_no_community_tasks')}</p><p style="margin:var(--space-2) 0 0;font-size:0.75rem;color:var(--color-text-muted);">${t('pts_be_first')}</p></div>`;
+            c.innerHTML=`<div class="tasks-empty tasks-empty-community" style="text-align:center;padding:var(--space-6);color:var(--color-text-tertiary);"><i data-lucide="inbox" style="width:40px;height:40px;margin-bottom:var(--space-2);opacity:0.5;"></i><p style="margin:0;font-size:0.85rem;">${t('pts_no_community_tasks')}</p><p style="margin:var(--space-2) 0 0;font-size:0.75rem;color:var(--color-text-muted);">${t('pts_be_first')}</p></div>`;
             if(typeof lucide!=='undefined')lucide.createIcons();
         }
     }catch(e){
@@ -835,12 +835,16 @@ function switchTab(tab) {
         if (telegramWrap)  telegramWrap.style.display  = 'block';
         if (communityWrap) communityWrap.style.display = 'block';
         if (comp) comp.style.display = 'block';
+        // Hide empty states in "all" tab — they clutter when other sections have content
+        document.querySelectorAll('.tasks-empty-telegram, .tasks-empty-community').forEach(el => el.style.display = 'none');
 
     } else if (tab === 'telegram') {
         if (allEl) allEl.style.display = 'block';
         if (telegramWrap)  telegramWrap.style.display  = 'block';
         if (communityWrap) communityWrap.style.display = 'none';
         if (comp) comp.style.display = 'block';
+        // Restore empty state for this tab
+        document.querySelectorAll('.tasks-empty-telegram').forEach(el => el.style.display = 'flex');
 
     } else if (tab === 'social') {
         if (socialEl) socialEl.style.display = 'block';
