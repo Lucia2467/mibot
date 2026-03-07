@@ -1,5 +1,25 @@
 {% extends "base.html" %}
 {% block title %}SALLY-E | Tasks{% endblock %}
+{% block extra_head %}
+<style>
+/* ── FORCE task-row black gradient — overrides main.css ── */
+.task-row,
+div.task-row,
+a.task-row {
+    background: linear-gradient(145deg, #141420 0%, #0c0c16 50%, #07070f 100%) !important;
+    border-top:    1px solid rgba(255,255,255,0.11) !important;
+    border-left:   1px solid rgba(255,255,255,0.07) !important;
+    border-right:  1px solid rgba(0,0,0,0.3) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.55) !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.05) inset,
+        0 -1px 0 rgba(0,0,0,0.4) inset,
+        0 6px 20px rgba(0,0,0,0.4),
+        0 2px 6px rgba(0,0,0,0.3) !important;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <span id="pts-balance" style="display:none;">0</span>
 
@@ -2012,7 +2032,7 @@ async function stModalSubmit() {
         </div>
 
         <!-- ══ BODY ══ -->
-        <div id="stask-modal-body" style="flex:1;overflow-y:auto;background:#0c0c18;padding:20px;display:flex;flex-direction:column;gap:12px;">
+        <div id="stask-modal-body" style="flex:1;overflow-y:auto;background:#0c0c18;padding:20px 20px 0;display:flex;flex-direction:column;gap:14px;">
 
             <!-- Description -->
             <div id="stask-modal-desc-wrap" style="display:none;">
@@ -2020,7 +2040,7 @@ async function stModalSubmit() {
             </div>
 
             <!-- Instructions -->
-            <div id="stask-modal-instr-wrap" style="display:none;border-radius:16px;padding:14px 16px;border:1px solid;position:relative;overflow:hidden;">
+            <div id="stask-modal-instr-wrap" style="display:none;border-radius:16px;padding:14px 16px;border:1px solid;position:relative;">
                 <div id="stask-instr-bg" style="position:absolute;inset:0;opacity:0.07;pointer-events:none;"></div>
                 <div style="position:relative;display:flex;gap:11px;align-items:flex-start;">
                     <div id="stask-instr-icon-wrap" style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
