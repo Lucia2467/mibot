@@ -3,298 +3,7 @@
 {% block title %}SALLY-E | Dashboard{% endblock %}
 
 {% block extra_head %}
-<style>
-/* ══════════════════════════════════════════════════════════════
-   INDEX — PREMIUM 3D CINEMATIC (post main.css)
-══════════════════════════════════════════════════════════════ */
-
-/* ── Balance Card ── */
-.premium-balance {
-    background: linear-gradient(155deg, #0c0c20 0%, #080816 45%, #040410 100%) !important;
-    border-top:    1px solid rgba(0,102,255,0.28) !important;
-    border-left:   1px solid rgba(0,102,255,0.16) !important;
-    border-right:  1px solid rgba(0,0,0,0.5) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.7) !important;
-    border-radius: 24px !important;
-    box-shadow:
-        0 3px 0 rgba(0,102,255,0.10) inset,
-        0 -2px 0 rgba(0,0,0,0.6) inset,
-        0 24px 70px rgba(0,0,0,0.65),
-        0 0 100px rgba(0,60,200,0.10) !important;
-    position: relative !important;
-    overflow: hidden !important;
-    transform: translateZ(0);
-    animation: idxIn 0.45s cubic-bezier(0.34,1.2,0.64,1) 0.05s both;
-}
-.premium-balance::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(125deg,
-        rgba(255,255,255,0.05) 0%,
-        rgba(255,255,255,0.02) 30%,
-        transparent 60%,
-        rgba(0,102,255,0.03) 100%);
-    pointer-events: none;
-    border-radius: 24px;
-}
-
-/* ── Stats Grid ── */
-.premium-stats {
-    animation: idxIn 0.45s cubic-bezier(0.34,1.2,0.64,1) 0.12s both;
-}
-.premium-stat {
-    background: linear-gradient(145deg, #111128 0%, #0c0c1e 55%, #080814 100%) !important;
-    border-top:    1px solid rgba(0,102,255,0.22) !important;
-    border-left:   1px solid rgba(0,102,255,0.12) !important;
-    border-right:  1px solid rgba(0,0,0,0.4) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.65) !important;
-    border-radius: 18px !important;
-    box-shadow:
-        0 2px 0 rgba(255,255,255,0.05) inset,
-        0 -2px 0 rgba(0,0,0,0.55) inset,
-        0 8px 28px rgba(0,0,0,0.45) !important;
-    transform: translateZ(0) translateY(0);
-    transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1), box-shadow 0.22s !important;
-    position: relative !important;
-    overflow: hidden !important;
-}
-.premium-stat::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(0,163,255,0.5), transparent);
-    opacity: 0.7;
-}
-.premium-stat:hover {
-    transform: translateY(-4px) scale(1.03) !important;
-    box-shadow:
-        0 2px 0 rgba(255,255,255,0.07) inset,
-        0 -2px 0 rgba(0,0,0,0.55) inset,
-        0 18px 50px rgba(0,0,0,0.5),
-        0 0 40px rgba(0,80,200,0.18) !important;
-}
-.premium-stat:active {
-    transform: translateY(1px) scale(0.97) !important;
-    transition: transform 0.07s ease !important;
-}
-
-/* ── Mining Card ── */
-.mining-card-premium {
-    background: linear-gradient(145deg, #0d0d1e 0%, #090916 55%, #050511 100%) !important;
-    border-top:    1px solid rgba(0,255,136,0.22) !important;
-    border-left:   1px solid rgba(0,255,136,0.12) !important;
-    border-right:  1px solid rgba(0,0,0,0.4) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.65) !important;
-    border-radius: 24px !important;
-    box-shadow:
-        0 3px 0 rgba(0,255,136,0.07) inset,
-        0 -2px 0 rgba(0,0,0,0.55) inset,
-        0 20px 60px rgba(0,0,0,0.5),
-        0 0 80px rgba(0,180,100,0.06) !important;
-    position: relative !important;
-    overflow: hidden !important;
-    animation: idxIn 0.45s cubic-bezier(0.34,1.2,0.64,1) 0.20s both;
-}
-.mining-card-premium::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(130deg,
-        rgba(0,255,136,0.04) 0%,
-        transparent 50%,
-        rgba(0,102,255,0.03) 100%);
-    pointer-events: none;
-    border-radius: 24px;
-}
-
-/* ── Mining icon box ── */
-.mining-icon-box {
-    background: linear-gradient(145deg, rgba(0,255,136,0.20) 0%, rgba(0,160,80,0.10) 100%) !important;
-    border-top:    1px solid rgba(0,255,136,0.35) !important;
-    border-left:   1px solid rgba(0,255,136,0.20) !important;
-    border-right:  1px solid rgba(0,0,0,0.25) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.45) !important;
-    box-shadow:
-        0 2px 0 rgba(0,255,136,0.12) inset,
-        0 -1px 0 rgba(0,0,0,0.4) inset,
-        0 8px 24px rgba(0,200,100,0.18) !important;
-    border-radius: 14px !important;
-}
-
-/* ── Mining status bar ── */
-.mining-status {
-    background: linear-gradient(135deg, rgba(0,255,136,0.08) 0%, rgba(0,180,80,0.04) 100%) !important;
-    border-top:    1px solid rgba(0,255,136,0.22) !important;
-    border-left:   1px solid rgba(0,255,136,0.12) !important;
-    border-right:  1px solid rgba(0,0,0,0.2) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.35) !important;
-    box-shadow: 0 1px 0 rgba(0,255,136,0.06) inset, 0 4px 16px rgba(0,0,0,0.3) !important;
-    border-radius: 12px !important;
-}
-
-/* ── Premium cards (actions, activity, tips) ── */
-.premium-card {
-    background: linear-gradient(145deg, #101022 0%, #090918 55%, #060614 100%) !important;
-    border-top:    1px solid rgba(255,255,255,0.09) !important;
-    border-left:   1px solid rgba(255,255,255,0.05) !important;
-    border-right:  1px solid rgba(0,0,0,0.35) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.6) !important;
-    border-radius: 24px !important;
-    box-shadow:
-        0 2px 0 rgba(255,255,255,0.04) inset,
-        0 -2px 0 rgba(0,0,0,0.5) inset,
-        0 14px 44px rgba(0,0,0,0.42) !important;
-    position: relative !important;
-    overflow: hidden !important;
-    animation: idxIn 0.45s cubic-bezier(0.34,1.2,0.64,1) 0.28s both;
-}
-.premium-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
-}
-
-/* ── Quick action items ── */
-.quick-action-item {
-    background: linear-gradient(145deg, #131328 0%, #0d0d20 55%, #090917 100%) !important;
-    border-top:    1px solid rgba(0,102,255,0.20) !important;
-    border-left:   1px solid rgba(0,102,255,0.12) !important;
-    border-right:  1px solid rgba(0,0,0,0.35) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.6) !important;
-    border-radius: 18px !important;
-    box-shadow:
-        0 2px 0 rgba(255,255,255,0.05) inset,
-        0 -2px 0 rgba(0,0,0,0.5) inset,
-        0 8px 28px rgba(0,0,0,0.42) !important;
-    transform: translateZ(0);
-    transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1), box-shadow 0.22s !important;
-    position: relative !important;
-    overflow: hidden !important;
-}
-.quick-action-item::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(0,150,255,0.4), transparent);
-    opacity: 0.6;
-}
-.quick-action-item:hover {
-    background: linear-gradient(145deg, #181838 0%, #10102a 55%, #0c0c1e 100%) !important;
-    transform: translateY(-5px) scale(1.03) !important;
-    box-shadow:
-        0 2px 0 rgba(255,255,255,0.08) inset,
-        0 -2px 0 rgba(0,0,0,0.5) inset,
-        0 22px 55px rgba(0,0,0,0.5),
-        0 0 50px rgba(0,80,200,0.22) !important;
-}
-.quick-action-item:active {
-    transform: translateY(2px) scale(0.96) !important;
-    transition: transform 0.07s ease !important;
-}
-
-/* ── Quick action icon ── */
-.quick-action-icon {
-    background: linear-gradient(145deg, rgba(0,102,255,0.20) 0%, rgba(0,60,150,0.12) 100%) !important;
-    border-top:    1px solid rgba(0,102,255,0.30) !important;
-    border-left:   1px solid rgba(0,102,255,0.18) !important;
-    border-right:  1px solid rgba(0,0,0,0.25) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.45) !important;
-    box-shadow:
-        0 2px 0 rgba(0,102,255,0.12) inset,
-        0 -1px 0 rgba(0,0,0,0.4) inset,
-        0 8px 20px rgba(0,0,0,0.4) !important;
-    border-radius: 16px !important;
-    transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1) !important;
-}
-.quick-action-item:hover .quick-action-icon {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow:
-        0 2px 0 rgba(0,102,255,0.18) inset,
-        0 -1px 0 rgba(0,0,0,0.4) inset,
-        0 12px 30px rgba(0,80,200,0.28) !important;
-}
-
-/* ── Claim button 3D ── */
-.btn.btn-primary {
-    background: linear-gradient(155deg, #0055dd 0%, #0066ff 50%, #0099ff 100%) !important;
-    border-top:    1px solid rgba(255,255,255,0.20) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.35) !important;
-    box-shadow:
-        0 2px 0 rgba(255,255,255,0.18) inset,
-        0 -3px 0 rgba(0,0,0,0.35) inset,
-        0 10px 35px rgba(0,102,255,0.5),
-        0 3px 8px rgba(0,0,0,0.4) !important;
-    border-radius: 16px !important;
-    transform: translateZ(0);
-    transition: transform 0.18s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.18s !important;
-}
-.btn.btn-primary:hover {
-    transform: translateY(-2px) scale(1.01) !important;
-    box-shadow:
-        0 2px 0 rgba(255,255,255,0.20) inset,
-        0 -3px 0 rgba(0,0,0,0.35) inset,
-        0 16px 50px rgba(0,102,255,0.6) !important;
-}
-.btn.btn-primary:active {
-    transform: translateY(2px) scale(0.98) !important;
-    box-shadow:
-        0 1px 0 rgba(255,255,255,0.12) inset,
-        0 -1px 0 rgba(0,0,0,0.3) inset,
-        0 4px 14px rgba(0,102,255,0.3) !important;
-    transition: transform 0.07s ease !important;
-}
-
-/* ── Boost button 3D ── */
-.boost-trigger-btn {
-    background: linear-gradient(145deg, #0f1030 0%, #0a0a22 100%) !important;
-    border-top:    1px solid rgba(0,163,255,0.28) !important;
-    border-left:   1px solid rgba(0,163,255,0.16) !important;
-    border-right:  1px solid rgba(0,0,0,0.3) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.55) !important;
-    box-shadow:
-        0 2px 0 rgba(0,102,255,0.12) inset,
-        0 -2px 0 rgba(0,0,0,0.4) inset,
-        0 8px 28px rgba(0,102,255,0.22) !important;
-    border-radius: 16px !important;
-    transform: translateZ(0);
-    transition: transform 0.18s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.18s !important;
-}
-.boost-trigger-btn:hover {
-    transform: translateY(-2px) !important;
-    box-shadow:
-        0 2px 0 rgba(0,102,255,0.18) inset,
-        0 -2px 0 rgba(0,0,0,0.4) inset,
-        0 14px 40px rgba(0,102,255,0.32) !important;
-}
-.boost-trigger-btn:active {
-    transform: translateY(2px) scale(0.98) !important;
-    transition: transform 0.07s ease !important;
-}
-
-/* ── Progress bar shimmer ── */
-.mining-progress-bar::after {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent) !important;
-}
-
-/* ── Entrance animation ── */
-@keyframes idxIn {
-    from { opacity:0; transform:translateY(20px) scale(0.96); }
-    to   { opacity:1; transform:translateY(0)    scale(1); }
-}
-
-/* ── Roulette FAB 3D ── */
-.roulette-fab-inner {
-    box-shadow:
-        0 1px 0 rgba(255,255,255,0.08) inset,
-        0 -1px 0 rgba(0,0,0,0.5) inset,
-        0 4px 12px rgba(0,0,0,0.5) !important;
-}
-</style>
+<!-- 3D Premium styles are inline below -->
 {% endblock %}
 
 {% block content %}
@@ -409,6 +118,16 @@ body {
     opacity: 0;
     visibility: hidden;
 }
+
+/* ── Card entrance animations ── */
+@keyframes idxIn {
+    from { opacity:0; transform:translateY(18px) scale(0.96); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.premium-balance     { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.05s both; }
+.premium-stats       { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.12s both; }
+.mining-card-premium { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.20s both; }
+.premium-card        { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.28s both; }
 </style>
 
 <!-- ==================== RULETA PTS - BOTÓN FLOTANTE PREMIUM ==================== -->
@@ -569,22 +288,29 @@ body {
     justify-content: center;
     gap: 10px;
     padding: 14px 24px;
-    background: linear-gradient(135deg, rgba(0, 102, 255, 0.15) 0%, rgba(0, 61, 153, 0.15) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.4);
+    background: linear-gradient(145deg, #0f1030 0%, #0a0a22 100%);
+    border-top: 1px solid rgba(0,163,255,0.30);
+    border-left: 1px solid rgba(0,163,255,0.18);
+    border-right: 1px solid rgba(0,0,0,0.3);
+    border-bottom: 1px solid rgba(0,0,0,0.55);
     border-radius: var(--radius-lg);
     color: #00A3FF;
     font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 20px rgba(0, 102, 255, 0.2);
+    transition: transform 0.18s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.18s;
+    box-shadow:
+        0 2px 0 rgba(0,102,255,0.12) inset,
+        0 -2px 0 rgba(0,0,0,0.4) inset,
+        0 8px 28px rgba(0,102,255,0.22);
 }
 
 .boost-trigger-btn:hover {
-    background: linear-gradient(135deg, rgba(0, 102, 255, 0.25) 0%, rgba(0, 61, 153, 0.25) 100%);
-    border-color: rgba(0, 102, 255, 0.6);
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 102, 255, 0.35);
+    box-shadow:
+        0 2px 0 rgba(0,102,255,0.16) inset,
+        0 -2px 0 rgba(0,0,0,0.4) inset,
+        0 14px 40px rgba(0,102,255,0.32);
 }
 
 .boost-trigger-btn:active {
@@ -598,13 +324,20 @@ body {
 
 /* ==================== PREMIUM CARD STYLES ==================== */
 .premium-card {
-    background: linear-gradient(145deg, rgba(8, 8, 20, 0.9) 0%, rgba(5, 5, 15, 0.95) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.15);
+    background: linear-gradient(145deg, #101022 0%, #090918 55%, #060614 100%);
+    border-top: 1px solid rgba(255,255,255,0.09);
+    border-left: 1px solid rgba(255,255,255,0.05);
+    border-right: 1px solid rgba(0,0,0,0.35);
+    border-bottom: 1px solid rgba(0,0,0,0.6);
     border-radius: 20px;
     padding: 24px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.04) inset,
+        0 -2px 0 rgba(0,0,0,0.5) inset,
+        0 14px 44px rgba(0,0,0,0.45);
 }
 
 .premium-card::before {
@@ -680,14 +413,22 @@ body {
 }
 
 .premium-stat {
-    background: linear-gradient(145deg, rgba(0, 102, 255, 0.08) 0%, rgba(0, 61, 153, 0.05) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.15);
+    background: linear-gradient(145deg, #111128 0%, #0c0c1e 55%, #080814 100%);
+    border-top: 1px solid rgba(0,102,255,0.24);
+    border-left: 1px solid rgba(0,102,255,0.14);
+    border-right: 1px solid rgba(0,0,0,0.4);
+    border-bottom: 1px solid rgba(0,0,0,0.65);
     border-radius: 16px;
     padding: 18px 12px;
     text-align: center;
     position: relative;
     overflow: hidden;
-    transition: all 0.3s ease;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.05) inset,
+        0 -2px 0 rgba(0,0,0,0.55) inset,
+        0 8px 28px rgba(0,0,0,0.45);
+    transform: translateZ(0);
+    transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1), box-shadow 0.22s;
 }
 
 .premium-stat::before {
@@ -703,9 +444,14 @@ body {
 }
 
 .premium-stat:hover {
-    background: linear-gradient(145deg, rgba(0, 102, 255, 0.12) 0%, rgba(0, 61, 153, 0.08) 100%);
-    border-color: rgba(0, 102, 255, 0.3);
-    transform: translateY(-2px);
+    background: linear-gradient(145deg, #181838 0%, #0f0f28 55%, #0a0a1e 100%);
+    border-color: rgba(0,102,255,0.35);
+    transform: translateY(-5px) scale(1.03);
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.07) inset,
+        0 -2px 0 rgba(0,0,0,0.55) inset,
+        0 18px 50px rgba(0,0,0,0.55),
+        0 0 40px rgba(0,80,200,0.20);
 }
 
 .premium-stat-value {
@@ -726,14 +472,22 @@ body {
 
 /* PREMIUM BALANCE CARD */
 .premium-balance {
-    background: linear-gradient(145deg, rgba(8, 8, 20, 0.95) 0%, rgba(3, 3, 10, 0.98) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.2);
+    background: linear-gradient(155deg, #0b0b1e 0%, #07071a 45%, #040412 100%);
+    border-top: 1px solid rgba(0,102,255,0.30);
+    border-left: 1px solid rgba(0,102,255,0.18);
+    border-right: 1px solid rgba(0,0,0,0.5);
+    border-bottom: 1px solid rgba(0,0,0,0.7);
     border-radius: 24px;
     padding: 28px;
     text-align: center;
     position: relative;
     overflow: hidden;
     margin-bottom: 20px;
+    box-shadow:
+        0 3px 0 rgba(0,102,255,0.10) inset,
+        0 -3px 0 rgba(0,0,0,0.6) inset,
+        0 24px 70px rgba(0,0,0,0.7),
+        0 0 100px rgba(0,50,200,0.10);
 }
 
 .premium-balance::before {
@@ -787,13 +541,21 @@ body {
 
 /* MINING CARD PREMIUM */
 .mining-card-premium {
-    background: linear-gradient(145deg, rgba(8, 8, 20, 0.9) 0%, rgba(5, 5, 15, 0.95) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.15);
+    background: linear-gradient(145deg, #0d0d1e 0%, #09091a 55%, #050512 100%);
+    border-top: 1px solid rgba(0,255,136,0.24);
+    border-left: 1px solid rgba(0,255,136,0.14);
+    border-right: 1px solid rgba(0,0,0,0.4);
+    border-bottom: 1px solid rgba(0,0,0,0.65);
     border-radius: 24px;
     padding: 24px;
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
+    box-shadow:
+        0 3px 0 rgba(0,255,136,0.07) inset,
+        0 -3px 0 rgba(0,0,0,0.6) inset,
+        0 20px 60px rgba(0,0,0,0.55),
+        0 0 80px rgba(0,180,100,0.06);
 }
 
 .mining-card-premium::before {
@@ -829,13 +591,20 @@ body {
 .mining-icon-box {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, rgba(0, 255, 136, 0.15) 0%, rgba(0, 102, 255, 0.15) 100%);
-    border: 1px solid rgba(0, 255, 136, 0.3);
+    background: linear-gradient(145deg, rgba(0,255,136,0.22) 0%, rgba(0,160,80,0.12) 100%);
+    border-top: 1px solid rgba(0,255,136,0.38);
+    border-left: 1px solid rgba(0,255,136,0.22);
+    border-right: 1px solid rgba(0,0,0,0.25);
+    border-bottom: 1px solid rgba(0,0,0,0.45);
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+    box-shadow:
+        0 2px 0 rgba(0,255,136,0.14) inset,
+        0 -1px 0 rgba(0,0,0,0.4) inset,
+        0 8px 24px rgba(0,200,100,0.20);
 }
 
 .mining-icon-box i {
@@ -911,35 +680,53 @@ body {
 }
 
 .quick-action-item {
-    background: linear-gradient(145deg, rgba(0, 102, 255, 0.06) 0%, rgba(0, 61, 153, 0.03) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.12);
+    background: linear-gradient(145deg, #131328 0%, #0d0d20 55%, #090917 100%);
+    border-top: 1px solid rgba(0,102,255,0.22);
+    border-left: 1px solid rgba(0,102,255,0.13);
+    border-right: 1px solid rgba(0,0,0,0.35);
+    border-bottom: 1px solid rgba(0,0,0,0.6);
     border-radius: 16px;
     padding: 20px 16px;
     text-align: center;
     text-decoration: none;
-    transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.05) inset,
+        0 -2px 0 rgba(0,0,0,0.5) inset,
+        0 8px 28px rgba(0,0,0,0.45);
+    transform: translateZ(0);
+    transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1), box-shadow 0.22s;
 }
 
 .quick-action-item:hover {
-    background: linear-gradient(145deg, rgba(0, 102, 255, 0.12) 0%, rgba(0, 61, 153, 0.08) 100%);
-    border-color: rgba(0, 102, 255, 0.3);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 102, 255, 0.15);
+    background: linear-gradient(145deg, #1a1a38 0%, #10102a 55%, #0c0c1e 100%);
+    transform: translateY(-5px) scale(1.03);
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.08) inset,
+        0 -2px 0 rgba(0,0,0,0.5) inset,
+        0 22px 55px rgba(0,0,0,0.55),
+        0 0 50px rgba(0,80,200,0.22);
 }
 
 .quick-action-icon {
     width: 52px;
     height: 52px;
-    background: linear-gradient(135deg, rgba(0, 102, 255, 0.15) 0%, rgba(0, 163, 255, 0.1) 100%);
-    border: 1px solid rgba(0, 102, 255, 0.2);
+    background: linear-gradient(145deg, rgba(0,102,255,0.22) 0%, rgba(0,60,150,0.14) 100%);
+    border-top: 1px solid rgba(0,102,255,0.32);
+    border-left: 1px solid rgba(0,102,255,0.20);
+    border-right: 1px solid rgba(0,0,0,0.25);
+    border-bottom: 1px solid rgba(0,0,0,0.45);
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 12px;
+    box-shadow:
+        0 2px 0 rgba(0,102,255,0.14) inset,
+        0 -1px 0 rgba(0,0,0,0.4) inset,
+        0 8px 22px rgba(0,0,0,0.4);
 }
 
 .quick-action-icon i,
