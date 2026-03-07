@@ -1,174 +1,243 @@
 """
-RUTAS DEL SISTEMA DE TAREAS SOCIALES
+social_tasks_routes.py - Blueprint para el sistema de Tareas Sociales
+Rutas admin: /admin/social-tasks/*
+Rutas usuario: /social-tasks, /api/social-tasks/*
 """
-from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for
+
+import base64
+from functools import wraps
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session
+
 from social_tasks_system import (
-    init_social_tasks_tables, admin_create_social_task, admin_update_social_task,
-    admin_delete_social_task, admin_get_all_tasks, admin_get_pending_submissions,
-    admin_get_all_submissions, admin_approve_submission, admin_reject_submission,
-    get_active_social_tasks, get_social_task, submit_social_task,
-    get_user_submissions, get_platforms, get_actions
+    SOCIAL_PLATFORMS, SOCIAL_ACTIONS, PLATFORMS_MAP,
+    init_social_tasks_tables,
+    get_all_social_tasks,
+    get_active_social_tasks,
+    get_social_task,
+    create_social_task,
+    update_social_task,
+    toggle_social_task,
+    delete_social_task,
+    submit_social_task,
+    get_user_submissions,
+    get_all_submissions,
+    approve_submission,
+    reject_submission,
 )
-from database import get_user
 
 social_tasks_bp = Blueprint('social_tasks', __name__)
 
-# Init tables on import
-init_social_tasks_tables()
+
+# ──────────────────────────────────────────────────
+#  Helpers
+# ──────────────────────────────────────────────────
+def _admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get('admin_logged_in'):
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated
 
 
-def admin_logged_in():
-    return session.get('admin_logged_in', False)
-
-
-# ============================================================
-# RUTAS ADMIN
-# ============================================================
-
-@social_tasks_bp.route('/admin/social-tasks')
-def admin_social_tasks():
-    if not admin_logged_in():
-        return redirect(url_for('admin_login'))
-    tasks = admin_get_all_tasks(include_inactive=True)
-    pending_count = len(admin_get_pending_submissions())
-    platforms = get_platforms()
-    actions = get_actions()
-    return render_template('admin_social_tasks.html',
-                           tasks=tasks,
-                           pending_count=pending_count,
-                           platforms=platforms,
-                           actions=actions)
-
-
-@social_tasks_bp.route('/admin/social-tasks/create', methods=['POST'])
-def admin_create_task():
-    if not admin_logged_in():
-        return jsonify({'success': False, 'error': 'No autorizado'}), 401
-    data = request.get_json()
-    result = admin_create_social_task(
-        platform=data.get('platform'),
-        action_type=data.get('action_type'),
-        title=data.get('title'),
-        description=data.get('description', ''),
-        target_url=data.get('target_url', ''),
-        target_username=data.get('target_username', ''),
-        instructions=data.get('instructions', ''),
-        reward_amount=data.get('reward_amount', 1.0),
-        reward_currency=data.get('reward_currency', 'se'),
-        max_completions=data.get('max_completions', 100),
-        requires_screenshot=data.get('requires_screenshot', True)
+def _get_user_id():
+    """Extrae user_id de query string o JSON body."""
+    return (
+        request.args.get('user_id')
+        or (request.json or {}).get('user_id')
+        or request.form.get('user_id')
     )
-    return jsonify(result)
 
 
-@social_tasks_bp.route('/admin/social-tasks/<task_id>/update', methods=['POST'])
-def admin_update_task(task_id):
-    if not admin_logged_in():
-        return jsonify({'success': False, 'error': 'No autorizado'}), 401
-    data = request.get_json()
-    result = admin_update_social_task(task_id, **data)
-    return jsonify(result)
-
-
-@social_tasks_bp.route('/admin/social-tasks/<task_id>/toggle', methods=['POST'])
-def admin_toggle_task(task_id):
-    if not admin_logged_in():
-        return jsonify({'success': False, 'error': 'No autorizado'}), 401
-    data = request.get_json()
-    result = admin_update_social_task(task_id, is_active=data.get('is_active', True))
-    return jsonify(result)
-
-
-@social_tasks_bp.route('/admin/social-tasks/<task_id>/delete', methods=['POST'])
-def admin_delete_task(task_id):
-    if not admin_logged_in():
-        return jsonify({'success': False, 'error': 'No autorizado'}), 401
-    result = admin_delete_social_task(task_id)
-    return jsonify(result)
-
-
-@social_tasks_bp.route('/admin/social-tasks/submissions')
-def admin_submissions():
-    if not admin_logged_in():
-        return redirect(url_for('admin_login'))
-    status = request.args.get('status', None)
-    task_id = request.args.get('task_id', None)
-    if task_id:
-        submissions = admin_get_pending_submissions(task_id)
-    else:
-        submissions = admin_get_all_submissions(status=status)
-    pending_count = len(admin_get_pending_submissions())
-    return render_template('admin_social_submissions.html',
-                           submissions=submissions,
-                           current_status=status,
-                           pending_count=pending_count)
-
-
-@social_tasks_bp.route('/admin/social-tasks/submissions/<submission_id>/approve', methods=['POST'])
-def approve_submission(submission_id):
-    if not admin_logged_in():
-        return jsonify({'success': False, 'error': 'No autorizado'}), 401
-    data = request.get_json() or {}
-    result = admin_approve_submission(submission_id, data.get('admin_note', ''))
-    return jsonify(result)
-
-
-@social_tasks_bp.route('/admin/social-tasks/submissions/<submission_id>/reject', methods=['POST'])
-def reject_submission(submission_id):
-    if not admin_logged_in():
-        return jsonify({'success': False, 'error': 'No autorizado'}), 401
-    data = request.get_json() or {}
-    result = admin_reject_submission(submission_id, data.get('admin_note', ''))
-    return jsonify(result)
-
-
-# ============================================================
-# RUTAS USUARIO
-# ============================================================
-
+# ──────────────────────────────────────────────────
+#  PÁGINA USUARIO: /social-tasks
+# ──────────────────────────────────────────────────
 @social_tasks_bp.route('/social-tasks')
 def social_tasks_page():
     user_id = request.args.get('user_id')
     if not user_id:
-        return redirect('/')
-    user = get_user(user_id)
-    if not user:
-        return redirect('/')
+        return "Error: user_id requerido", 400
+
     tasks = get_active_social_tasks(user_id=user_id)
     submissions = get_user_submissions(user_id)
-    platforms = {p['id']: p for p in get_platforms()}
-    actions = {a['id']: a for a in get_actions()}
-    return render_template('social_tasks.html',
-                           user=user,
-                           user_id=user_id,
-                           tasks=tasks,
-                           submissions=submissions,
-                           platforms=platforms,
-                           actions=actions)
+
+    return render_template(
+        'social_tasks.html',
+        user_id=user_id,
+        tasks=tasks,
+        submissions=submissions,
+        platforms=PLATFORMS_MAP,
+    )
+
+
+# ──────────────────────────────────────────────────
+#  API USUARIO
+# ──────────────────────────────────────────────────
+@social_tasks_bp.route('/api/social-tasks/list')
+def api_social_tasks_list():
+    user_id = _get_user_id()
+    if not user_id:
+        return jsonify({'success': False, 'error': 'user_id requerido'}), 400
+
+    tasks = get_active_social_tasks(user_id=user_id)
+    # Convertir Decimal a float para JSON
+    result = []
+    for t in tasks:
+        row = dict(t)
+        if hasattr(row.get('reward_amount'), 'real'):
+            row['reward_amount'] = float(row['reward_amount'])
+        result.append(row)
+
+    return jsonify({'success': True, 'tasks': result})
+
+
+@social_tasks_bp.route('/api/social-tasks/status')
+def api_social_tasks_status():
+    """Devuelve estado simple: cuántas tareas activas hay."""
+    tasks = get_active_social_tasks()
+    return jsonify({'success': True, 'active_tasks': len(tasks)})
 
 
 @social_tasks_bp.route('/api/social-tasks/submit', methods=['POST'])
-def api_submit_task():
-    data = request.get_json()
+def api_social_tasks_submit():
+    data = request.json or {}
     user_id = data.get('user_id')
     task_id = data.get('task_id')
-    screenshot = data.get('screenshot')  # base64
-    note = data.get('note', '')
 
-    if not all([user_id, task_id, screenshot]):
-        return jsonify({'success': False, 'error': 'Faltan datos requeridos'})
+    if not user_id or not task_id:
+        return jsonify({'success': False, 'error': 'user_id y task_id requeridos'}), 400
 
-    # Limit screenshot size (5MB base64 ~ 3.75MB file)
-    if len(screenshot) > 5_000_000:
-        return jsonify({'success': False, 'error': 'La imagen es demasiado grande (máx 5MB)'})
+    screenshot_data = data.get('screenshot')  # base64 string
+    user_note = data.get('note', '').strip() or None
 
-    result = submit_social_task(task_id, user_id, screenshot, note)
-    return jsonify(result)
+    # Validar tamaño de screenshot (~5 MB)
+    if screenshot_data and len(screenshot_data) > 7 * 1024 * 1024:
+        return jsonify({'success': False, 'error': 'La imagen es demasiado grande (máx 5 MB)'}), 400
+
+    ok, result = submit_social_task(
+        task_id=task_id,
+        user_id=user_id,
+        screenshot_data=screenshot_data,
+        user_note=user_note,
+    )
+
+    if ok:
+        return jsonify({'success': True, 'submission_id': result,
+                        'message': '¡Envío recibido! El admin lo revisará pronto.'})
+    return jsonify({'success': False, 'error': result}), 400
 
 
 @social_tasks_bp.route('/api/social-tasks/my-submissions')
 def api_my_submissions():
-    user_id = request.args.get('user_id')
+    user_id = _get_user_id()
     if not user_id:
-        return jsonify([])
-    return jsonify(get_user_submissions(user_id))
+        return jsonify({'success': False, 'error': 'user_id requerido'}), 400
+
+    subs = get_user_submissions(user_id)
+    result = []
+    for s in subs:
+        row = dict(s)
+        row.pop('screenshot_data', None)  # No enviar la imagen en el listado
+        if hasattr(row.get('reward_amount'), 'real'):
+            row['reward_amount'] = float(row['reward_amount'])
+        result.append(row)
+
+    return jsonify({'success': True, 'submissions': result})
+
+
+# ──────────────────────────────────────────────────
+#  ADMIN PAGES
+# ──────────────────────────────────────────────────
+@social_tasks_bp.route('/admin/social-tasks')
+@_admin_required
+def admin_social_tasks_page():
+    tasks = get_all_social_tasks()
+    return render_template(
+        'admin_social_tasks.html',
+        tasks=tasks,
+        platforms=SOCIAL_PLATFORMS,
+        actions=SOCIAL_ACTIONS,
+    )
+
+
+@social_tasks_bp.route('/admin/social-tasks/submissions')
+@_admin_required
+def admin_social_submissions_page():
+    status = request.args.get('status')
+    task_id = request.args.get('task_id')
+    submissions = get_all_submissions(status=status, task_id=task_id)
+
+    return render_template(
+        'admin_social_submissions.html',
+        submissions=submissions,
+        current_status=status,
+        current_task_id=task_id,
+    )
+
+
+# ──────────────────────────────────────────────────
+#  ADMIN API
+# ──────────────────────────────────────────────────
+@social_tasks_bp.route('/admin/social-tasks/create', methods=['POST'])
+@_admin_required
+def admin_create_task():
+    data = request.json or {}
+    if not data.get('title'):
+        return jsonify({'success': False, 'error': 'Título requerido'}), 400
+
+    task_id = create_social_task(data)
+    if task_id:
+        return jsonify({'success': True, 'task_id': task_id})
+    return jsonify({'success': False, 'error': 'Error al crear la tarea'}), 500
+
+
+@social_tasks_bp.route('/admin/social-tasks/<task_id>/update', methods=['POST'])
+@_admin_required
+def admin_update_task(task_id):
+    data = request.json or {}
+    ok = update_social_task(task_id, data)
+    if ok:
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'error': 'Error al actualizar'}), 500
+
+
+@social_tasks_bp.route('/admin/social-tasks/<task_id>/toggle', methods=['POST'])
+@_admin_required
+def admin_toggle_task(task_id):
+    data = request.json or {}
+    active = bool(data.get('active', True))
+    ok = toggle_social_task(task_id, active)
+    if ok:
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'error': 'Error'}), 500
+
+
+@social_tasks_bp.route('/admin/social-tasks/<task_id>/delete', methods=['POST'])
+@_admin_required
+def admin_delete_task(task_id):
+    ok = delete_social_task(task_id)
+    if ok:
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'error': 'Error al eliminar'}), 500
+
+
+@social_tasks_bp.route('/admin/social-tasks/submissions/<submission_id>/approve', methods=['POST'])
+@_admin_required
+def admin_approve_submission(submission_id):
+    data = request.json or {}
+    admin_note = data.get('note', '').strip() or None
+    ok, msg = approve_submission(submission_id, admin_note=admin_note)
+    if ok:
+        return jsonify({'success': True, 'message': msg})
+    return jsonify({'success': False, 'error': msg}), 400
+
+
+@social_tasks_bp.route('/admin/social-tasks/submissions/<submission_id>/reject', methods=['POST'])
+@_admin_required
+def admin_reject_submission(submission_id):
+    data = request.json or {}
+    admin_note = data.get('note', '').strip() or None
+    ok, msg = reject_submission(submission_id, admin_note=admin_note)
+    if ok:
+        return jsonify({'success': True, 'message': msg})
+    return jsonify({'success': False, 'error': msg}), 400

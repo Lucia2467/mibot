@@ -6504,17 +6504,18 @@ except Exception as e:
 # ============== USER TASKS PROMOTION SYSTEM ==============
 try:
     from user_tasks_routes import user_tasks_bp
-from social_tasks_routes import social_tasks_bp
-from social_tasks_system import get_active_social_tasks
+    from social_tasks_routes import social_tasks_bp
+    from social_tasks_system import get_active_social_tasks, init_social_tasks_tables
     from user_tasks_system import init_user_tasks_table
 
-    # Registrar el blueprint
+    # Registrar blueprints
     app.register_blueprint(user_tasks_bp)
-app.register_blueprint(social_tasks_bp)
+    app.register_blueprint(social_tasks_bp)
 
     # Inicializar tablas
     with app.app_context():
         init_user_tasks_table()
+        init_social_tasks_tables()
 
     logger.info("✅ User Tasks Promotion system loaded successfully")
     USER_TASKS_AVAILABLE = True

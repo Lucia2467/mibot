@@ -1,350 +1,389 @@
 """
-SISTEMA DE TAREAS SOCIALES CON CAPTURA DE PANTALLA
-- Admin crea tareas (TikTok, Twitter, Instagram, Facebook, Binance, YouTube, etc.)
-- Usuario completa la tarea y sube captura de pantalla
-- Admin revisa y aprueba/rechaza
-- Se acredita recompensa automáticamente al aprobar
+social_tasks_system.py - Sistema de Tareas Sociales (admin-created, screenshot-verified)
+Las tareas son creadas por el admin con recompensas en SE, DOGE o TON.
+Los usuarios las completan enviando una captura de pantalla o simplemente haciendo clic.
+El admin aprueba o rechaza los envíos manualmente.
 """
 
 import uuid
-import base64
-import os
 from datetime import datetime
-from database import execute_query, fetch_one, fetch_all, update_balance
+from db import execute_query, get_cursor
+from database import update_balance
 
-# ============================================================
-# PLATAFORMAS DISPONIBLES (admin puede activar/desactivar)
-# ============================================================
-DEFAULT_PLATFORMS = [
-    {'id': 'tiktok',    'name': 'TikTok',     'icon': '🎵', 'color': '#010101'},
-    {'id': 'twitter',   'name': 'X (Twitter)','icon': '🐦', 'color': '#1DA1F2'},
-    {'id': 'instagram', 'name': 'Instagram',  'icon': '📷', 'color': '#E1306C'},
-    {'id': 'facebook',  'name': 'Facebook',   'icon': '📘', 'color': '#1877F2'},
-    {'id': 'youtube',   'name': 'YouTube',    'icon': '▶️', 'color': '#FF0000'},
-    {'id': 'binance',   'name': 'Binance',    'icon': '🔶', 'color': '#F0B90B'},
-    {'id': 'telegram',  'name': 'Telegram',   'icon': '✈️', 'color': '#2AABEE'},
-    {'id': 'discord',   'name': 'Discord',    'icon': '🎮', 'color': '#5865F2'},
-    {'id': 'other',     'name': 'Otro',       'icon': '🔗', 'color': '#666666'},
+
+# ============== PLATAFORMAS SOPORTADAS ==============
+SOCIAL_PLATFORMS = [
+    {'id': 'telegram',  'name': 'Telegram',  'icon': '✈️',  'color': '#0088cc'},
+    {'id': 'twitter',   'name': 'Twitter/X', 'icon': '🐦',  'color': '#1da1f2'},
+    {'id': 'youtube',   'name': 'YouTube',   'icon': '▶️',  'color': '#ff0000'},
+    {'id': 'instagram', 'name': 'Instagram', 'icon': '📸',  'color': '#e1306c'},
+    {'id': 'tiktok',    'name': 'TikTok',    'icon': '🎵',  'color': '#010101'},
+    {'id': 'facebook',  'name': 'Facebook',  'icon': '👍',  'color': '#1877f2'},
+    {'id': 'discord',   'name': 'Discord',   'icon': '💬',  'color': '#5865f2'},
+    {'id': 'other',     'name': 'Otro',      'icon': '🔗',  'color': '#6b7280'},
 ]
 
-TASK_ACTIONS = [
+SOCIAL_ACTIONS = [
     {'id': 'follow',    'name': 'Seguir / Suscribirse'},
-    {'id': 'like',      'name': 'Dar Me Gusta'},
+    {'id': 'like',      'name': 'Dar Like'},
     {'id': 'comment',   'name': 'Comentar'},
-    {'id': 'share',     'name': 'Compartir / Repostear'},
-    {'id': 'register',  'name': 'Registrarse'},
-    {'id': 'join',      'name': 'Unirse a grupo/comunidad'},
+    {'id': 'share',     'name': 'Compartir'},
+    {'id': 'join',      'name': 'Unirse al grupo'},
     {'id': 'watch',     'name': 'Ver video'},
-    {'id': 'custom',    'name': 'Personalizado'},
+    {'id': 'repost',    'name': 'Repostear'},
+    {'id': 'other',     'name': 'Otro'},
 ]
 
-# Directorio para guardar capturas
-UPLOAD_DIR = os.path.join(os.path.dirname(__file__), 'static', 'social_task_uploads')
+PLATFORMS_MAP = {p['id']: p for p in SOCIAL_PLATFORMS}
 
 
+# ============== INICIALIZAR TABLAS ==============
 def init_social_tasks_tables():
-    """Crea las tablas necesarias para el sistema de tareas sociales"""
+    """Crea las tablas necesarias si no existen."""
+
+    execute_query("""
+        CREATE TABLE IF NOT EXISTS social_tasks (
+            task_id        VARCHAR(36)    NOT NULL PRIMARY KEY,
+            title          VARCHAR(200)   NOT NULL,
+            description    TEXT           DEFAULT NULL,
+            platform       VARCHAR(50)    NOT NULL DEFAULT 'other',
+            action_type    VARCHAR(50)    NOT NULL DEFAULT 'follow',
+            target_url     VARCHAR(500)   DEFAULT NULL,
+            instructions   TEXT           DEFAULT NULL,
+            reward_amount  DECIMAL(18,6)  NOT NULL DEFAULT 1.0,
+            reward_currency VARCHAR(10)   NOT NULL DEFAULT 'se',
+            max_completions INT           NOT NULL DEFAULT 100,
+            current_completions INT       NOT NULL DEFAULT 0,
+            requires_screenshot TINYINT(1) NOT NULL DEFAULT 1,
+            is_active      TINYINT(1)    NOT NULL DEFAULT 1,
+            created_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    """)
+
+    execute_query("""
+        CREATE TABLE IF NOT EXISTS social_task_submissions (
+            submission_id  VARCHAR(36)   NOT NULL PRIMARY KEY,
+            task_id        VARCHAR(36)   NOT NULL,
+            user_id        VARCHAR(64)   NOT NULL,
+            screenshot_data LONGTEXT     DEFAULT NULL,
+            user_note      TEXT          DEFAULT NULL,
+            status         ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+            admin_note     TEXT          DEFAULT NULL,
+            submitted_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            reviewed_at    DATETIME     DEFAULT NULL,
+            INDEX idx_task_id  (task_id),
+            INDEX idx_user_id  (user_id),
+            INDEX idx_status   (status),
+            UNIQUE KEY uq_user_task (task_id, user_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    """)
+
+    print("[social_tasks] ✅ Tablas inicializadas")
+
+
+# ============== CRUD TAREAS (ADMIN) ==============
+
+def get_all_social_tasks():
+    """Retorna todas las tareas sociales (admin view)."""
     try:
-        # Tabla de tareas sociales
-        execute_query("""
-            CREATE TABLE IF NOT EXISTS social_tasks (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                task_id VARCHAR(50) UNIQUE NOT NULL,
-                platform VARCHAR(50) NOT NULL,
-                action_type VARCHAR(50) NOT NULL,
-                title VARCHAR(255) NOT NULL,
-                description TEXT,
-                target_url VARCHAR(500),
-                target_username VARCHAR(255),
-                instructions TEXT,
-                reward_amount DECIMAL(18,6) NOT NULL DEFAULT 1.0,
-                reward_currency ENUM('se','doge') NOT NULL DEFAULT 'se',
-                max_completions INT NOT NULL DEFAULT 100,
-                current_completions INT NOT NULL DEFAULT 0,
-                is_active BOOLEAN NOT NULL DEFAULT TRUE,
-                requires_screenshot BOOLEAN NOT NULL DEFAULT TRUE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )
-        """)
-
-        # Tabla de envíos de usuarios
-        execute_query("""
-            CREATE TABLE IF NOT EXISTS social_task_submissions (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                submission_id VARCHAR(50) UNIQUE NOT NULL,
-                task_id VARCHAR(50) NOT NULL,
-                user_id VARCHAR(50) NOT NULL,
-                screenshot_path VARCHAR(500),
-                screenshot_data MEDIUMTEXT,
-                user_note TEXT,
-                status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
-                admin_note TEXT,
-                reviewed_by VARCHAR(50),
-                submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                reviewed_at TIMESTAMP NULL,
-                reward_credited BOOLEAN NOT NULL DEFAULT FALSE,
-                UNIQUE KEY unique_user_task (task_id, user_id)
-            )
-        """)
-
-        print("[SocialTasks] ✅ Tablas inicializadas")
-        return True
-    except Exception as e:
-        print(f"[SocialTasks] ❌ Error inicializando tablas: {e}")
-        return False
-
-
-# ============================================================
-# FUNCIONES ADMIN
-# ============================================================
-
-def admin_create_social_task(platform, action_type, title, description,
-                              target_url, target_username, instructions,
-                              reward_amount, reward_currency, max_completions,
-                              requires_screenshot=True):
-    try:
-        task_id = f"st_{uuid.uuid4().hex[:12]}"
-        execute_query("""
-            INSERT INTO social_tasks
-            (task_id, platform, action_type, title, description, target_url,
-             target_username, instructions, reward_amount, reward_currency,
-             max_completions, requires_screenshot)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-        """, (task_id, platform, action_type, title, description, target_url,
-              target_username, instructions, float(reward_amount), reward_currency,
-              int(max_completions), bool(requires_screenshot)))
-        return {'success': True, 'task_id': task_id}
-    except Exception as e:
-        return {'success': False, 'error': str(e)}
-
-
-def admin_update_social_task(task_id, **kwargs):
-    try:
-        allowed = ['title','description','target_url','target_username','instructions',
-                   'reward_amount','reward_currency','max_completions','is_active','requires_screenshot']
-        sets, vals = [], []
-        for k, v in kwargs.items():
-            if k in allowed:
-                sets.append(f"{k} = %s")
-                vals.append(v)
-        if not sets:
-            return {'success': False, 'error': 'Nada que actualizar'}
-        vals.append(task_id)
-        execute_query(f"UPDATE social_tasks SET {', '.join(sets)} WHERE task_id = %s", vals)
-        return {'success': True}
-    except Exception as e:
-        return {'success': False, 'error': str(e)}
-
-
-def admin_delete_social_task(task_id):
-    try:
-        execute_query("UPDATE social_tasks SET is_active = FALSE WHERE task_id = %s", (task_id,))
-        return {'success': True}
-    except Exception as e:
-        return {'success': False, 'error': str(e)}
-
-
-def admin_get_all_tasks(include_inactive=True):
-    try:
-        sql = "SELECT * FROM social_tasks"
-        if not include_inactive:
-            sql += " WHERE is_active = TRUE"
-        sql += " ORDER BY created_at DESC"
-        return fetch_all(sql) or []
-    except Exception as e:
-        print(f"[SocialTasks] Error: {e}")
-        return []
-
-
-def admin_get_pending_submissions(task_id=None):
-    try:
-        if task_id:
-            rows = fetch_all("""
-                SELECT s.*, t.title as task_title, t.platform, t.action_type,
-                       t.reward_amount, t.reward_currency,
-                       u.first_name, u.username
-                FROM social_task_submissions s
-                JOIN social_tasks t ON s.task_id = t.task_id
-                LEFT JOIN users u ON s.user_id = u.user_id
-                WHERE s.task_id = %s AND s.status = 'pending'
-                ORDER BY s.submitted_at ASC
-            """, (task_id,))
-        else:
-            rows = fetch_all("""
-                SELECT s.*, t.title as task_title, t.platform, t.action_type,
-                       t.reward_amount, t.reward_currency,
-                       u.first_name, u.username
-                FROM social_task_submissions s
-                JOIN social_tasks t ON s.task_id = t.task_id
-                LEFT JOIN users u ON s.user_id = u.user_id
-                WHERE s.status = 'pending'
-                ORDER BY s.submitted_at ASC
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT * FROM social_tasks
+                ORDER BY created_at DESC
             """)
-        return rows or []
+            return cursor.fetchall()
     except Exception as e:
-        print(f"[SocialTasks] Error: {e}")
+        print(f"[social_tasks] get_all: {e}")
         return []
 
-
-def admin_get_all_submissions(status=None, limit=100):
-    try:
-        sql = """
-            SELECT s.*, t.title as task_title, t.platform, t.action_type,
-                   t.reward_amount, t.reward_currency,
-                   u.first_name, u.username
-            FROM social_task_submissions s
-            JOIN social_tasks t ON s.task_id = t.task_id
-            LEFT JOIN users u ON s.user_id = u.user_id
-        """
-        params = []
-        if status:
-            sql += " WHERE s.status = %s"
-            params.append(status)
-        sql += " ORDER BY s.submitted_at DESC LIMIT %s"
-        params.append(limit)
-        return fetch_all(sql, params) or []
-    except Exception as e:
-        return []
-
-
-def admin_approve_submission(submission_id, admin_note=''):
-    try:
-        sub = fetch_one("""
-            SELECT s.*, t.reward_amount, t.reward_currency, t.task_id
-            FROM social_task_submissions s
-            JOIN social_tasks t ON s.task_id = t.task_id
-            WHERE s.submission_id = %s AND s.status = 'pending'
-        """, (submission_id,))
-
-        if not sub:
-            return {'success': False, 'error': 'Envío no encontrado o ya revisado'}
-
-        # Acreditar recompensa
-        currency = sub['reward_currency']
-        amount = float(sub['reward_amount'])
-        update_balance(sub['user_id'], currency, amount, 'add',
-                       f"Tarea social aprobada: {sub['task_id']}")
-
-        # Actualizar estado
-        execute_query("""
-            UPDATE social_task_submissions
-            SET status='approved', admin_note=%s, reviewed_at=NOW(), reward_credited=TRUE
-            WHERE submission_id=%s
-        """, (admin_note, submission_id))
-
-        # Incrementar contador de completaciones
-        execute_query("""
-            UPDATE social_tasks SET current_completions = current_completions + 1
-            WHERE task_id = %s
-        """, (sub['task_id'],))
-
-        return {'success': True, 'rewarded': amount, 'currency': currency}
-    except Exception as e:
-        return {'success': False, 'error': str(e)}
-
-
-def admin_reject_submission(submission_id, admin_note=''):
-    try:
-        sub = fetch_one(
-            "SELECT * FROM social_task_submissions WHERE submission_id=%s AND status='pending'",
-            (submission_id,))
-        if not sub:
-            return {'success': False, 'error': 'Envío no encontrado o ya revisado'}
-
-        execute_query("""
-            UPDATE social_task_submissions
-            SET status='rejected', admin_note=%s, reviewed_at=NOW()
-            WHERE submission_id=%s
-        """, (admin_note, submission_id))
-        return {'success': True}
-    except Exception as e:
-        return {'success': False, 'error': str(e)}
-
-
-# ============================================================
-# FUNCIONES USUARIO
-# ============================================================
 
 def get_active_social_tasks(user_id=None):
+    """
+    Retorna tareas activas con cupos disponibles.
+    Si se pasa user_id, agrega el estado de envío del usuario en task.user_status.
+    """
     try:
-        rows = fetch_all("""
-            SELECT t.*
-            FROM social_tasks t
-            WHERE t.is_active = TRUE
-              AND t.current_completions < t.max_completions
-            ORDER BY t.created_at DESC
-        """) or []
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT t.*
+                FROM social_tasks t
+                WHERE t.is_active = 1
+                  AND t.current_completions < t.max_completions
+                ORDER BY t.created_at DESC
+            """)
+            tasks = cursor.fetchall()
 
-        if user_id:
-            # Marcar cuáles ya completó el usuario
-            subs = fetch_all("""
-                SELECT task_id, status FROM social_task_submissions
-                WHERE user_id = %s
-            """, (user_id,)) or []
-            sub_map = {s['task_id']: s['status'] for s in subs}
-            for t in rows:
-                t['user_status'] = sub_map.get(t['task_id'], None)
+        if user_id and tasks:
+            # Obtener submissions del usuario para estas tareas
+            task_ids = [t['task_id'] for t in tasks]
+            placeholders = ','.join(['%s'] * len(task_ids))
+            with get_cursor() as cursor:
+                cursor.execute(f"""
+                    SELECT task_id, status
+                    FROM social_task_submissions
+                    WHERE user_id = %s AND task_id IN ({placeholders})
+                """, [user_id] + task_ids)
+                subs = {r['task_id']: r['status'] for r in cursor.fetchall()}
 
-        return rows
+            for t in tasks:
+                t['user_status'] = subs.get(t['task_id'])
+
+        return tasks
     except Exception as e:
-        print(f"[SocialTasks] Error: {e}")
+        print(f"[social_tasks] get_active: {e}")
         return []
 
 
 def get_social_task(task_id):
     try:
-        return fetch_one("SELECT * FROM social_tasks WHERE task_id=%s", (task_id,))
-    except:
+        with get_cursor() as cursor:
+            cursor.execute("SELECT * FROM social_tasks WHERE task_id = %s", (task_id,))
+            return cursor.fetchone()
+    except Exception as e:
+        print(f"[social_tasks] get_task: {e}")
         return None
 
 
-def submit_social_task(task_id, user_id, screenshot_base64, user_note=''):
+def create_social_task(data):
+    """Crea una tarea social. Retorna task_id o None."""
     try:
-        task = fetch_one(
-            "SELECT * FROM social_tasks WHERE task_id=%s AND is_active=TRUE", (task_id,))
+        task_id = str(uuid.uuid4())
+        execute_query("""
+            INSERT INTO social_tasks
+                (task_id, title, description, platform, action_type,
+                 target_url, instructions, reward_amount, reward_currency,
+                 max_completions, requires_screenshot, is_active)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
+        """, (
+            task_id,
+            data.get('title', '').strip(),
+            data.get('description', '').strip() or None,
+            data.get('platform', 'other'),
+            data.get('action_type', 'follow'),
+            data.get('target_url', '').strip() or None,
+            data.get('instructions', '').strip() or None,
+            float(data.get('reward_amount', 1.0)),
+            data.get('reward_currency', 'se').lower(),
+            int(data.get('max_completions', 100)),
+            1 if data.get('requires_screenshot') else 0,
+        ))
+        return task_id
+    except Exception as e:
+        print(f"[social_tasks] create: {e}")
+        return None
+
+
+def update_social_task(task_id, data):
+    try:
+        execute_query("""
+            UPDATE social_tasks SET
+                title = %s, description = %s, platform = %s, action_type = %s,
+                target_url = %s, instructions = %s, reward_amount = %s,
+                reward_currency = %s, max_completions = %s, requires_screenshot = %s
+            WHERE task_id = %s
+        """, (
+            data.get('title', '').strip(),
+            data.get('description', '').strip() or None,
+            data.get('platform', 'other'),
+            data.get('action_type', 'follow'),
+            data.get('target_url', '').strip() or None,
+            data.get('instructions', '').strip() or None,
+            float(data.get('reward_amount', 1.0)),
+            data.get('reward_currency', 'se').lower(),
+            int(data.get('max_completions', 100)),
+            1 if data.get('requires_screenshot') else 0,
+            task_id,
+        ))
+        return True
+    except Exception as e:
+        print(f"[social_tasks] update: {e}")
+        return False
+
+
+def toggle_social_task(task_id, active: bool):
+    try:
+        execute_query(
+            "UPDATE social_tasks SET is_active = %s WHERE task_id = %s",
+            (1 if active else 0, task_id)
+        )
+        return True
+    except Exception as e:
+        print(f"[social_tasks] toggle: {e}")
+        return False
+
+
+def delete_social_task(task_id):
+    try:
+        execute_query("DELETE FROM social_task_submissions WHERE task_id = %s", (task_id,))
+        execute_query("DELETE FROM social_tasks WHERE task_id = %s", (task_id,))
+        return True
+    except Exception as e:
+        print(f"[social_tasks] delete: {e}")
+        return False
+
+
+# ============== SUBMISSIONS (USUARIOS) ==============
+
+def submit_social_task(task_id, user_id, screenshot_data=None, user_note=None):
+    """
+    El usuario envía la tarea.
+    Retorna (True, submission_id) o (False, 'motivo del error')
+    """
+    try:
+        # Verificar que la tarea existe y tiene cupos
+        task = get_social_task(task_id)
         if not task:
-            return {'success': False, 'error': 'Tarea no encontrada'}
-
+            return False, 'Tarea no encontrada'
+        if not task['is_active']:
+            return False, 'Tarea inactiva'
         if task['current_completions'] >= task['max_completions']:
-            return {'success': False, 'error': 'Esta tarea ya alcanzó el límite de completaciones'}
+            return False, 'Sin cupos disponibles'
 
-        # Verificar que no haya enviado antes
-        existing = fetch_one(
-            "SELECT * FROM social_task_submissions WHERE task_id=%s AND user_id=%s",
-            (task_id, user_id))
+        # Verificar que el usuario no haya enviado ya
+        with get_cursor() as cursor:
+            cursor.execute(
+                "SELECT submission_id, status FROM social_task_submissions WHERE task_id=%s AND user_id=%s",
+                (task_id, user_id)
+            )
+            existing = cursor.fetchone()
+
         if existing:
-            return {'success': False, 'error': 'Ya enviaste esta tarea', 'status': existing['status']}
+            if existing['status'] == 'pending':
+                return False, 'Ya tienes un envío pendiente para esta tarea'
+            elif existing['status'] == 'approved':
+                return False, 'Ya completaste esta tarea'
+            # rejected → permitir reenvío (eliminar el anterior)
+            execute_query(
+                "DELETE FROM social_task_submissions WHERE task_id=%s AND user_id=%s",
+                (task_id, user_id)
+            )
 
-        submission_id = f"sub_{uuid.uuid4().hex[:12]}"
-
+        submission_id = str(uuid.uuid4())
         execute_query("""
             INSERT INTO social_task_submissions
-            (submission_id, task_id, user_id, screenshot_data, user_note)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (submission_id, task_id, user_id, screenshot_base64, user_note))
+                (submission_id, task_id, user_id, screenshot_data, user_note, status)
+            VALUES (%s, %s, %s, %s, %s, 'pending')
+        """, (submission_id, task_id, user_id, screenshot_data, user_note))
 
-        return {'success': True, 'submission_id': submission_id}
+        return True, submission_id
+
     except Exception as e:
-        return {'success': False, 'error': str(e)}
+        print(f"[social_tasks] submit: {e}")
+        return False, 'Error interno'
 
 
 def get_user_submissions(user_id):
+    """Historial de submissions de un usuario."""
     try:
-        return fetch_all("""
-            SELECT s.*, t.title, t.platform, t.action_type, t.reward_amount, t.reward_currency
-            FROM social_task_submissions s
-            JOIN social_tasks t ON s.task_id = t.task_id
-            WHERE s.user_id = %s
-            ORDER BY s.submitted_at DESC
-        """, (user_id,)) or []
-    except:
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT s.*, t.title AS task_title, t.platform, t.action_type,
+                       t.reward_amount, t.reward_currency
+                FROM social_task_submissions s
+                JOIN social_tasks t ON t.task_id = s.task_id
+                WHERE s.user_id = %s
+                ORDER BY s.submitted_at DESC
+            """, (user_id,))
+            return cursor.fetchall()
+    except Exception as e:
+        print(f"[social_tasks] get_user_subs: {e}")
         return []
 
 
-def get_platforms():
-    return DEFAULT_PLATFORMS
+# ============== ADMIN: REVIEW SUBMISSIONS ==============
+
+def get_all_submissions(status=None, task_id=None):
+    """Submissions para el panel admin."""
+    try:
+        conditions = []
+        params = []
+        if status:
+            conditions.append("s.status = %s")
+            params.append(status)
+        if task_id:
+            conditions.append("s.task_id = %s")
+            params.append(task_id)
+
+        where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+
+        with get_cursor() as cursor:
+            cursor.execute(f"""
+                SELECT s.*,
+                       t.title AS task_title, t.platform, t.action_type,
+                       t.reward_amount, t.reward_currency,
+                       u.first_name, u.username
+                FROM social_task_submissions s
+                JOIN social_tasks t ON t.task_id = s.task_id
+                LEFT JOIN users u ON u.user_id = s.user_id
+                {where}
+                ORDER BY s.submitted_at DESC
+                LIMIT 200
+            """, params)
+            return cursor.fetchall()
+    except Exception as e:
+        print(f"[social_tasks] get_all_subs: {e}")
+        return []
 
 
-def get_actions():
-    return TASK_ACTIONS
+def approve_submission(submission_id, admin_note=None):
+    """
+    Aprueba un envío: da la recompensa al usuario y aumenta current_completions.
+    Retorna (True, mensaje) o (False, error)
+    """
+    try:
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT s.*, t.reward_amount, t.reward_currency, t.task_id
+                FROM social_task_submissions s
+                JOIN social_tasks t ON t.task_id = s.task_id
+                WHERE s.submission_id = %s
+            """, (submission_id,))
+            sub = cursor.fetchone()
+
+        if not sub:
+            return False, 'Envío no encontrado'
+        if sub['status'] != 'pending':
+            return False, f'Ya fue {sub["status"]}'
+
+        # Marcar como aprobado
+        execute_query("""
+            UPDATE social_task_submissions
+            SET status = 'approved', admin_note = %s, reviewed_at = NOW()
+            WHERE submission_id = %s
+        """, (admin_note, submission_id))
+
+        # Dar recompensa
+        update_balance(
+            user_id=sub['user_id'],
+            currency=sub['reward_currency'],
+            amount=float(sub['reward_amount']),
+            operation='add',
+            description=f"Tarea social completada (#{submission_id[:8]})"
+        )
+
+        # Incrementar contador
+        execute_query(
+            "UPDATE social_tasks SET current_completions = current_completions + 1 WHERE task_id = %s",
+            (sub['task_id'],)
+        )
+
+        return True, 'Aprobado y recompensa enviada'
+
+    except Exception as e:
+        print(f"[social_tasks] approve: {e}")
+        return False, 'Error interno'
+
+
+def reject_submission(submission_id, admin_note=None):
+    """Rechaza un envío."""
+    try:
+        execute_query("""
+            UPDATE social_task_submissions
+            SET status = 'rejected', admin_note = %s, reviewed_at = NOW()
+            WHERE submission_id = %s AND status = 'pending'
+        """, (admin_note, submission_id))
+        return True, 'Rechazado'
+    except Exception as e:
+        print(f"[social_tasks] reject: {e}")
+        return False, 'Error interno'
