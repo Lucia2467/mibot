@@ -10,22 +10,16 @@
         <h1 style="margin:0;font-size:1.4rem;font-weight:800;color:var(--color-text-primary);">
             Tareas
         </h1>
-        <div style="display:flex;align-items:center;gap:6px;">
-            <!-- Botón Crear Tarea -->
-            <a href="/promote?user_id={{ user_id }}"
-                style="display:flex;align-items:center;gap:5px;padding:7px 12px;background:rgba(0,163,255,0.08);border:1.5px solid rgba(0,163,255,0.25);border-radius:20px;color:#00A3FF;font-size:0.72rem;font-weight:700;text-decoration:none;white-space:nowrap;line-height:1;">
+        <div style="display:flex;align-items:center;gap:7px;">
+            <a href="/promote?user_id={{ user_id }}" class="hdr-btn hdr-btn-blue">
                 <i data-lucide="plus-circle" style="width:13px;height:13px;flex-shrink:0;"></i>
                 Crear
             </a>
-            <!-- Botón Historial -->
-            <button onclick="openHistoryModal()"
-                style="display:flex;align-items:center;gap:5px;padding:7px 12px;background:rgba(255,215,0,0.08);border:1.5px solid rgba(255,215,0,0.25);border-radius:20px;color:#FFD700;font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap;">
+            <button onclick="openHistoryModal()" class="hdr-btn hdr-btn-gold">
                 <i data-lucide="history" style="width:13px;height:13px;"></i>
                 Historial
             </button>
-            <!-- T&C -->
-            <button onclick="openRulesModal()"
-                style="padding:7px 12px;background:rgba(59,130,246,0.08);border:1.5px solid rgba(59,130,246,0.25);border-radius:20px;color:#3B82F6;font-size:0.72rem;font-weight:700;cursor:pointer;">
+            <button onclick="openRulesModal()" class="hdr-btn hdr-btn-indigo">
                 T&amp;C
             </button>
         </div>
@@ -360,6 +354,197 @@
 /* ══════════════════════════════════════
    TASK CARDS — 3D CINEMATIC PREMIUM
 ══════════════════════════════════════ */
+
+/* ── Header action buttons 3D ── */
+.hdr-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 13px;
+    border-radius: 14px;
+    font-size: 0.73rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    line-height: 1;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    position: relative;
+    overflow: hidden;
+    border: none;
+
+    /* 3D extrusion */
+    transform: translateZ(0) translateY(0);
+    transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s ease;
+}
+.hdr-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+    border-radius: inherit;
+    pointer-events: none;
+}
+.hdr-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 10%; right: 10%; height: 1px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 0 0 10px 10px;
+}
+.hdr-btn:active {
+    transform: translateZ(0) translateY(2px) scale(0.96);
+    transition: transform 0.07s ease, box-shadow 0.07s ease;
+}
+
+.hdr-btn-blue {
+    background: linear-gradient(145deg, #1a7fd4 0%, #0d5fa0 60%, #094d85 100%);
+    color: #e0f2ff;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 0 rgba(0,0,0,0.4) inset,
+        0 6px 20px rgba(0,100,200,0.45),
+        0 2px 6px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(30,120,220,0.5);
+}
+.hdr-btn-blue:active {
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.15) inset,
+        0 -1px 0 rgba(0,0,0,0.5) inset,
+        0 2px 8px rgba(0,100,200,0.3),
+        0 0 0 1px rgba(30,120,220,0.4);
+}
+
+.hdr-btn-gold {
+    background: linear-gradient(145deg, #c8960a 0%, #a07508 60%, #7d5c06 100%);
+    color: #fff8dc;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 0 rgba(0,0,0,0.4) inset,
+        0 6px 22px rgba(180,120,0,0.5),
+        0 2px 6px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(200,150,10,0.5);
+}
+.hdr-btn-gold:active {
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.15) inset,
+        0 -1px 0 rgba(0,0,0,0.5) inset,
+        0 2px 8px rgba(180,120,0,0.3),
+        0 0 0 1px rgba(200,150,10,0.4);
+}
+
+.hdr-btn-indigo {
+    background: linear-gradient(145deg, #3a5fd9 0%, #2b47b0 60%, #1f3490 100%);
+    color: #d0d8ff;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.2) inset,
+        0 -2px 0 rgba(0,0,0,0.4) inset,
+        0 6px 20px rgba(50,80,210,0.4),
+        0 2px 6px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(60,100,220,0.45);
+}
+.hdr-btn-indigo:active {
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.12) inset,
+        0 -1px 0 rgba(0,0,0,0.5) inset,
+        0 2px 8px rgba(50,80,210,0.25),
+        0 0 0 1px rgba(60,100,220,0.35);
+}
+
+/* ── Tabs 3D ── */
+.task-tab {
+    position: relative;
+    overflow: hidden;
+    transform: translateZ(0) translateY(0);
+    transition: transform 0.18s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.18s, background 0.18s, border-color 0.18s, color 0.18s !important;
+
+    background: linear-gradient(160deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%) !important;
+    border-top:    1px solid rgba(255,255,255,0.12) !important;
+    border-left:   1px solid rgba(255,255,255,0.07) !important;
+    border-right:  1px solid rgba(255,255,255,0.04) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.4) !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.06) inset,
+        0 -1px 0 rgba(0,0,0,0.35) inset,
+        0 4px 12px rgba(0,0,0,0.25),
+        0 1px 4px rgba(0,0,0,0.3) !important;
+}
+.task-tab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, transparent 55%);
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: 0.8;
+    transition: opacity 0.18s;
+}
+.task-tab:active {
+    transform: translateZ(0) translateY(2px) scale(0.95) !important;
+    transition: transform 0.07s ease !important;
+}
+
+/* Tab active states — solid colored 3D buttons */
+.task-tab[data-tab="all"].active {
+    background: linear-gradient(145deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.09) 100%) !important;
+    border-top-color: rgba(255,255,255,0.28) !important;
+    border-bottom-color: rgba(0,0,0,0.5) !important;
+    color: #fff !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.14) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 8px 24px rgba(0,0,0,0.4),
+        0 2px 6px rgba(0,0,0,0.35) !important;
+}
+.task-tab[data-tab="telegram"].active {
+    background: linear-gradient(145deg, rgba(42,171,238,0.5) 0%, rgba(20,130,190,0.4) 100%) !important;
+    border-top-color: rgba(120,210,255,0.4) !important;
+    border-bottom-color: rgba(0,0,0,0.5) !important;
+    color: #e0f6ff !important;
+    box-shadow:
+        0 2px 0 rgba(120,210,255,0.2) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 8px 28px rgba(42,171,238,0.35),
+        0 2px 6px rgba(0,0,0,0.3) !important;
+}
+.task-tab[data-tab="social"].active {
+    background: linear-gradient(145deg, rgba(225,48,108,0.5) 0%, rgba(180,30,80,0.4) 100%) !important;
+    border-top-color: rgba(255,120,160,0.4) !important;
+    border-bottom-color: rgba(0,0,0,0.5) !important;
+    color: #ffe0ec !important;
+    box-shadow:
+        0 2px 0 rgba(255,120,160,0.2) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 8px 28px rgba(225,48,108,0.35),
+        0 2px 6px rgba(0,0,0,0.3) !important;
+}
+.task-tab[data-tab="community"].active {
+    background: linear-gradient(145deg, rgba(0,163,255,0.5) 0%, rgba(0,120,200,0.4) 100%) !important;
+    border-top-color: rgba(80,200,255,0.4) !important;
+    border-bottom-color: rgba(0,0,0,0.5) !important;
+    color: #d0f0ff !important;
+    box-shadow:
+        0 2px 0 rgba(80,200,255,0.2) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 8px 28px rgba(0,163,255,0.35),
+        0 2px 6px rgba(0,0,0,0.3) !important;
+}
+.task-tab[data-tab="ads"].active {
+    background: linear-gradient(145deg, rgba(0,212,255,0.5) 0%, rgba(0,160,200,0.4) 100%) !important;
+    border-top-color: rgba(100,240,255,0.4) !important;
+    border-bottom-color: rgba(0,0,0,0.5) !important;
+    color: #d0fbff !important;
+    box-shadow:
+        0 2px 0 rgba(100,240,255,0.2) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 8px 28px rgba(0,212,255,0.35),
+        0 2px 6px rgba(0,0,0,0.3) !important;
+}
+.task-tab[data-tab="telegram"].active i { color: #9edfff !important; }
+.task-tab[data-tab="social"].active    i { color: #ffaac8 !important; }
+.task-tab[data-tab="community"].active i { color: #8dd8ff !important; }
+.task-tab[data-tab="ads"].active       i { color: #7ef5ff !important; }
+
 
 /* Root perspective context */
 #tab-content-all,
@@ -1586,11 +1771,27 @@ async function stModalSubmit() {
         });
     }, { passive: true });
 
+    // Light tilt for tabs
+    function bindTab(el) {
+        el.addEventListener('touchstart', e => {
+            el.style.transition = 'none';
+            el.style.transform = 'translateZ(0) translateY(1px) scale(0.95)';
+        }, { passive: true });
+        el.addEventListener('touchend', () => {
+            el.style.transition = '';
+            el.style.transform = '';
+        });
+    }
+
     // Bind all current + future cards
     function bindAllCards() {
         document.querySelectorAll('.task-row:not([data-tilt-bound])').forEach(card => {
             card.setAttribute('data-tilt-bound', '1');
             bindCard(card);
+        });
+        document.querySelectorAll('.task-tab:not([data-tilt-bound]), .hdr-btn:not([data-tilt-bound])').forEach(el => {
+            el.setAttribute('data-tilt-bound', '1');
+            bindTab(el);
         });
     }
 
