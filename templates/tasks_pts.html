@@ -10,22 +10,16 @@
         <h1 style="margin:0;font-size:1.4rem;font-weight:800;color:var(--color-text-primary);">
             Tareas
         </h1>
-        <div style="display:flex;align-items:center;gap:6px;">
-            <!-- Botón Crear Tarea -->
-            <a href="/promote?user_id={{ user_id }}"
-                style="display:flex;align-items:center;gap:5px;padding:7px 12px;background:rgba(0,163,255,0.08);border:1.5px solid rgba(0,163,255,0.25);border-radius:20px;color:#00A3FF;font-size:0.72rem;font-weight:700;text-decoration:none;white-space:nowrap;line-height:1;">
+        <div style="display:flex;align-items:center;gap:7px;">
+            <a href="/promote?user_id={{ user_id }}" class="hdr-btn hdr-btn-blue">
                 <i data-lucide="plus-circle" style="width:13px;height:13px;flex-shrink:0;"></i>
                 Crear
             </a>
-            <!-- Botón Historial -->
-            <button onclick="openHistoryModal()"
-                style="display:flex;align-items:center;gap:5px;padding:7px 12px;background:rgba(255,215,0,0.08);border:1.5px solid rgba(255,215,0,0.25);border-radius:20px;color:#FFD700;font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap;">
+            <button onclick="openHistoryModal()" class="hdr-btn hdr-btn-gold">
                 <i data-lucide="history" style="width:13px;height:13px;"></i>
                 Historial
             </button>
-            <!-- T&C -->
-            <button onclick="openRulesModal()"
-                style="padding:7px 12px;background:rgba(59,130,246,0.08);border:1.5px solid rgba(59,130,246,0.25);border-radius:20px;color:#3B82F6;font-size:0.72rem;font-weight:700;cursor:pointer;">
+            <button onclick="openRulesModal()" class="hdr-btn hdr-btn-indigo">
                 T&amp;C
             </button>
         </div>
@@ -357,71 +351,423 @@
 </div>
 
 <style>
-/* ── Task rows ── */
+/* ══════════════════════════════════════
+   TASK CARDS — 3D CINEMATIC PREMIUM
+══════════════════════════════════════ */
+
+/* ── Header action buttons 3D ── */
+.hdr-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 13px;
+    border-radius: 20px;
+    font-size: 0.73rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    line-height: 1;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transform: translateZ(0) translateY(0);
+    transition: transform 0.15s cubic-bezier(0.34,1.4,0.64,1), background 0.15s, box-shadow 0.15s;
+}
+.hdr-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.07) 0%, transparent 100%);
+    border-radius: inherit;
+    pointer-events: none;
+}
+.hdr-btn:active {
+    transform: translateZ(0) translateY(1px) scale(0.95);
+    transition: transform 0.07s ease;
+}
+
+.hdr-btn-blue {
+    background: rgba(0,163,255,0.08);
+    color: #60C8FF;
+    border: 1px solid rgba(0,163,255,0.22) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 14px rgba(0,163,255,0.12);
+}
+.hdr-btn-blue:active {
+    background: rgba(0,163,255,0.14);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 2px 6px rgba(0,163,255,0.08);
+}
+
+.hdr-btn-gold {
+    background: rgba(255,215,0,0.08);
+    color: #FFD700;
+    border: 1px solid rgba(255,215,0,0.22) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 14px rgba(255,180,0,0.12);
+}
+.hdr-btn-gold:active {
+    background: rgba(255,215,0,0.14);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 2px 6px rgba(255,180,0,0.08);
+}
+
+.hdr-btn-indigo {
+    background: rgba(99,120,255,0.08);
+    color: #8899FF;
+    border: 1px solid rgba(99,120,255,0.22) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 14px rgba(80,100,255,0.12);
+}
+.hdr-btn-indigo:active {
+    background: rgba(99,120,255,0.14);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 2px 6px rgba(80,100,255,0.08);
+}
+
+/* ── Tabs 3D ── */
+.task-tab {
+    position: relative;
+    overflow: hidden;
+    transform: translateZ(0) translateY(0);
+    transition: transform 0.18s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.18s, background 0.18s, border-color 0.18s, color 0.18s !important;
+
+    background: linear-gradient(160deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%) !important;
+    border-top:    1px solid rgba(255,255,255,0.12) !important;
+    border-left:   1px solid rgba(255,255,255,0.07) !important;
+    border-right:  1px solid rgba(255,255,255,0.04) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.4) !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.06) inset,
+        0 -1px 0 rgba(0,0,0,0.35) inset,
+        0 4px 12px rgba(0,0,0,0.25),
+        0 1px 4px rgba(0,0,0,0.3) !important;
+}
+.task-tab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, transparent 55%);
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: 0.8;
+    transition: opacity 0.18s;
+}
+.task-tab:active {
+    transform: translateZ(0) translateY(2px) scale(0.95) !important;
+    transition: transform 0.07s ease !important;
+}
+
+/* Tab active states — solid colored 3D buttons */
+.task-tab[data-tab="all"].active {
+    background: linear-gradient(145deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.09) 100%) !important;
+    border-top-color: rgba(255,255,255,0.28) !important;
+    border-bottom-color: rgba(0,0,0,0.5) !important;
+    color: #fff !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.14) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 8px 24px rgba(0,0,0,0.4),
+        0 2px 6px rgba(0,0,0,0.35) !important;
+}
+.task-tab[data-tab="telegram"].active {
+    background: linear-gradient(145deg, rgba(42,171,238,0.5) 0%, rgba(20,130,190,0.4) 100%) !important;
+    border-top-color: rgba(120,210,255,0.4) !important;
+    border-bottom-color: rgba(0,0,0,0.5) !important;
+    color: #e0f6ff !important;
+    box-shadow:
+        0 2px 0 rgba(120,210,255,0.2) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 8px 28px rgba(42,171,238,0.35),
+        0 2px 6px rgba(0,0,0,0.3) !important;
+}
+.task-tab[data-tab="social"].active {
+    background: linear-gradient(145deg, rgba(225,48,108,0.5) 0%, rgba(180,30,80,0.4) 100%) !important;
+    border-top-color: rgba(255,120,160,0.4) !important;
+    border-bottom-color: rgba(0,0,0,0.5) !important;
+    color: #ffe0ec !important;
+    box-shadow:
+        0 2px 0 rgba(255,120,160,0.2) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 8px 28px rgba(225,48,108,0.35),
+        0 2px 6px rgba(0,0,0,0.3) !important;
+}
+.task-tab[data-tab="community"].active {
+    background: linear-gradient(145deg, rgba(0,163,255,0.5) 0%, rgba(0,120,200,0.4) 100%) !important;
+    border-top-color: rgba(80,200,255,0.4) !important;
+    border-bottom-color: rgba(0,0,0,0.5) !important;
+    color: #d0f0ff !important;
+    box-shadow:
+        0 2px 0 rgba(80,200,255,0.2) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 8px 28px rgba(0,163,255,0.35),
+        0 2px 6px rgba(0,0,0,0.3) !important;
+}
+.task-tab[data-tab="ads"].active {
+    background: linear-gradient(145deg, rgba(0,212,255,0.5) 0%, rgba(0,160,200,0.4) 100%) !important;
+    border-top-color: rgba(100,240,255,0.4) !important;
+    border-bottom-color: rgba(0,0,0,0.5) !important;
+    color: #d0fbff !important;
+    box-shadow:
+        0 2px 0 rgba(100,240,255,0.2) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 8px 28px rgba(0,212,255,0.35),
+        0 2px 6px rgba(0,0,0,0.3) !important;
+}
+.task-tab[data-tab="telegram"].active i { color: #9edfff !important; }
+.task-tab[data-tab="social"].active    i { color: #ffaac8 !important; }
+.task-tab[data-tab="community"].active i { color: #8dd8ff !important; }
+.task-tab[data-tab="ads"].active       i { color: #7ef5ff !important; }
+
+
+/* Root perspective context */
+#tab-content-all,
+#tab-content-social,
+#tab-content-ads { perspective: 1200px; }
+
+/* ── Base card ── */
 .task-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 13px 14px;
-    background: var(--glass-ultra, rgba(255,255,255,0.04));
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 14px;
-    margin-bottom: 8px;
+    gap: 14px;
+    padding: 15px 16px;
+
+    /* Black gradient background */
+    background:
+        linear-gradient(145deg,
+            #1a1a2e 0%,
+            #0f0f1a 40%,
+            #080810 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    /* 3D border — top highlight + bottom shadow */
+    border-top:    1px solid rgba(255,255,255,0.12);
+    border-left:   1px solid rgba(255,255,255,0.08);
+    border-right:  1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(0,0,0,0.5);
+
+    border-radius: 18px;
+    margin-bottom: 10px;
     cursor: pointer;
-    transition: background .15s, border-color .15s;
+    position: relative;
+    overflow: hidden;
+
+    /* 3D lift + smooth transitions */
+    transform: translateZ(0) translateY(0) scale(1);
+    transform-style: preserve-3d;
+    transition:
+        transform 0.22s cubic-bezier(0.34,1.56,0.64,1),
+        box-shadow 0.22s ease,
+        border-color 0.18s ease;
+
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.05) inset,
+        0 -1px 0 rgba(0,0,0,0.4) inset,
+        0 4px 16px rgba(0,0,0,0.3),
+        0 1px 3px rgba(0,0,0,0.4);
+
     -webkit-tap-highlight-color: transparent;
+    will-change: transform, box-shadow;
 }
-.task-row:active { background: rgba(255,255,255,0.08); }
+
+/* Specular shimmer layer */
+.task-row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        115deg,
+        rgba(255,255,255,0.08) 0%,
+        rgba(255,255,255,0.03) 30%,
+        transparent 60%,
+        rgba(255,255,255,0.01) 100%
+    );
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.2s;
+}
+
+/* Ambient glow rim — unique per card via JS data attr */
+.task-row::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 19px;
+    background: transparent;
+    opacity: 0;
+    transition: opacity 0.25s;
+    pointer-events: none;
+}
+
+/* Press — deep push into screen */
+.task-row:active {
+    transform: translateZ(0) translateY(2px) scale(0.984);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.04) inset,
+        0 -1px 0 rgba(0,0,0,0.5) inset,
+        0 2px 8px rgba(0,0,0,0.4),
+        0 0 0 rgba(0,0,0,0);
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+/* Hover — float up */
+@media (hover: hover) {
+    .task-row:hover {
+        transform: translateZ(0) translateY(-3px) scale(1.008);
+        box-shadow:
+            0 2px 0 rgba(255,255,255,0.07) inset,
+            0 -1px 0 rgba(0,0,0,0.4) inset,
+            0 14px 40px rgba(0,0,0,0.45),
+            0 4px 12px rgba(0,0,0,0.3);
+    }
+    .task-row:hover::before { opacity: 1.5; }
+}
+
+/* ── Icon box — 3D raised cube ── */
 .task-row-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+
+    /* Extruded face effect */
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.15) inset,
+        0 -2px 0 rgba(0,0,0,0.4) inset,
+        2px 0 0 rgba(255,255,255,0.06) inset,
+        -2px 0 0 rgba(0,0,0,0.2) inset,
+        0 6px 20px rgba(0,0,0,0.4),
+        0 2px 6px rgba(0,0,0,0.3);
+
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s;
 }
-.task-row-body { flex: 1; min-width: 0; }
+.task-row:active .task-row-icon {
+    transform: scale(0.92) translateZ(-4px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.1) inset,
+        0 -1px 0 rgba(0,0,0,0.5) inset,
+        0 3px 10px rgba(0,0,0,0.4);
+}
+
+/* ── Body ── */
+.task-row-body {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    z-index: 2;
+}
 .task-row-title {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--color-text-primary, #fff);
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #fff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    letter-spacing: -0.01em;
 }
-.task-row-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.task-row-arrow { color: rgba(255,255,255,0.25); flex-shrink: 0; }
-.task-chip {
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.12);
+.task-row-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.task-row-arrow {
+    color: rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.2s, color 0.2s;
+}
+.task-row:hover .task-row-arrow,
+.task-row:active .task-row-arrow {
     color: rgba(255,255,255,0.5);
-    background: rgba(255,255,255,0.04);
+    transform: translateX(2px);
 }
-.task-chip-reward { color: #4D94FF; border-color: rgba(77,148,255,0.3); background: rgba(77,148,255,0.08); }
+
+/* ── Chips ── */
+.task-chip {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.05);
+
+    /* Chip has tiny 3D depth too */
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.08) inset,
+        0 -1px 0 rgba(0,0,0,0.3) inset,
+        0 2px 6px rgba(0,0,0,0.2);
+    letter-spacing: 0.01em;
+}
+.task-chip-reward {
+    color: #6BB8FF;
+    border-color: rgba(77,148,255,0.28);
+    background: rgba(77,148,255,0.10);
+    box-shadow:
+        0 1px 0 rgba(77,148,255,0.15) inset,
+        0 -1px 0 rgba(0,0,0,0.3) inset,
+        0 2px 10px rgba(77,148,255,0.15);
+}
+
+/* ── Check-in banner 3D ── */
+div[style*="linear-gradient(135deg,#001a66"] {
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.08) inset,
+        0 -2px 0 rgba(0,0,0,0.5) inset,
+        0 12px 40px rgba(0,50,200,0.35),
+        0 4px 12px rgba(0,0,0,0.4) !important;
+    transform: translateZ(0);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* ── Empty state ── */
 .tasks-empty {
     text-align: center;
-    padding: 40px 20px;
-    color: rgba(255,255,255,0.3);
+    padding: 50px 20px;
+    color: rgba(255,255,255,0.25);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     font-size: 0.85rem;
 }
+
+/* ── Utility ── */
+#tasks-tabs::-webkit-scrollbar { display: none; }
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+/* ── Card entrance animation ── */
+@keyframes cardIn {
+    from { opacity:0; transform: translateY(18px) scale(0.96); }
+    to   { opacity:1; transform: translateY(0)   scale(1); }
+}
+.task-row {
+    animation: cardIn 0.35s cubic-bezier(0.34,1.2,0.64,1) both;
+}
+.task-row:nth-child(1)  { animation-delay: 0.00s; }
+.task-row:nth-child(2)  { animation-delay: 0.06s; }
+.task-row:nth-child(3)  { animation-delay: 0.12s; }
+.task-row:nth-child(4)  { animation-delay: 0.18s; }
+.task-row:nth-child(5)  { animation-delay: 0.24s; }
+.task-row:nth-child(6)  { animation-delay: 0.30s; }
+.task-row:nth-child(7)  { animation-delay: 0.36s; }
+.task-row:nth-child(8)  { animation-delay: 0.40s; }
+
 /* Active tab */
 .task-tab.active {
     background: rgba(255,255,255,0.12) !important;
     border-color: rgba(255,255,255,0.35) !important;
     color: #fff !important;
 }
-#tasks-tabs::-webkit-scrollbar { display: none; }
-.spin { animation: spin 1s linear infinite; }
-@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 </style>
 
 <script>
@@ -1085,39 +1431,54 @@ let _stCurrentTask = null;
 let _stScreenshot = null;
 
 function stOpenModal(taskId) {
-    const key = 'window._stask_' + taskId.replace(/-/g,'_');
     const task = eval('window._stask_' + taskId.replace(/-/g,'_'));
     if (!task) return;
     _stCurrentTask = task;
     _stScreenshot = null;
 
-    // Reset fields
+    // Reset
     document.getElementById('stask-file-input').value = '';
     document.getElementById('stask-preview-img').style.display = 'none';
     document.getElementById('stask-upload-ph').style.display = 'flex';
-    document.getElementById('stask-upload-check').style.display = 'none';
-    document.getElementById('stask-upload-area').style.borderColor = 'rgba(255,255,255,0.1)';
+    document.getElementById('stask-upload-success').style.display = 'none';
+    document.getElementById('stask-upload-area').style.background = 'rgba(255,255,255,0.02)';
     document.getElementById('stask-post-link').value = '';
     document.getElementById('stask-username').value = '';
 
     const pc = task.pcolor;
-    const pname = task.pname;
+    const pn = task.pname;
 
-    // Header background
+    // Header
     document.getElementById('stask-modal-header').style.background =
-        `linear-gradient(135deg, ${pc}33 0%, ${pc}18 60%, #0d0d1a 100%)`;
+        `linear-gradient(155deg, ${pc}50 0%, ${pc}28 40%, #0c0c18 100%)`;
+    document.getElementById('stask-header-orb').style.background  = pc;
+    document.getElementById('stask-header-orb2').style.background = pc;
+    document.getElementById('stask-header-line').style.background =
+        `linear-gradient(90deg, transparent, ${pc}99 40%, ${pc}99 60%, transparent)`;
 
     // Icon
     const iconEl = document.getElementById('stask-modal-icon');
-    iconEl.style.background = pc + '22';
-    iconEl.style.border = `1.5px solid ${pc}44`;
-    iconEl.style.color = pc;
-    iconEl.innerHTML = stGetIcon(task.platform, pc);
+    iconEl.style.background = `linear-gradient(145deg, ${pc}cc, ${pc}88)`;
+    iconEl.style.border     = `1px solid ${pc}66`;
+    iconEl.innerHTML        = stGetIcon(task.platform, '#fff');
 
+    // Text
     document.getElementById('stask-modal-platform').style.color = pc;
-    document.getElementById('stask-modal-platform').textContent = pname;
-    document.getElementById('stask-modal-title').textContent = task.title;
-    document.getElementById('stask-modal-reward').textContent = task.reward;
+    document.getElementById('stask-modal-platform').textContent = pn;
+    document.getElementById('stask-modal-title').textContent    = task.title;
+
+    // Reward badge
+    const rb = document.getElementById('stask-modal-reward-badge');
+    rb.style.background  = pc + '25';
+    rb.style.borderColor = pc + '55';
+    rb.style.color       = '#fff';
+    rb.textContent       = task.reward;
+
+    // Step badges
+    ['stask-num1','stask-num2','stask-num3','stask-num4'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.style.background = pc + '30'; el.style.color = pc; }
+    });
 
     // Description
     const descWrap = document.getElementById('stask-modal-desc-wrap');
@@ -1129,40 +1490,57 @@ function stOpenModal(taskId) {
     // Instructions
     const instrWrap = document.getElementById('stask-modal-instr-wrap');
     if (task.instructions) {
+        instrWrap.style.background  = pc + '18';
+        instrWrap.style.borderColor = pc + '44';
+        document.getElementById('stask-instr-bg').style.background = pc;
+        document.getElementById('stask-instr-icon-wrap').style.background = pc + '40';
+        document.getElementById('stask-instr-label').style.color = pc;
         document.getElementById('stask-modal-instr').textContent = task.instructions;
         instrWrap.style.display = 'block';
     } else { instrWrap.style.display = 'none'; }
 
-    // Step 1: platform link
+    // Step 1
     const step1 = document.getElementById('stask-step1');
     if (task.target_url) {
-        document.getElementById('stask-modal-link').href = task.target_url;
-        document.getElementById('stask-modal-link').style.background = pc + '20';
-        document.getElementById('stask-modal-link').style.border = `1.5px solid ${pc}40`;
-        document.getElementById('stask-modal-link').style.color = pc;
-        document.getElementById('stask-modal-link-label').textContent = 'Ir a ' + pname;
+        const link = document.getElementById('stask-modal-link');
+        link.href                    = task.target_url;
+        link.style.background        = `linear-gradient(135deg, ${pc}40, ${pc}22)`;
+        link.style.border            = `1px solid ${pc}55`;
+        link.style.color             = '#fff';
+        document.getElementById('stask-modal-link-label').textContent = 'Ir a ' + pn;
         step1.style.display = 'block';
     } else { step1.style.display = 'none'; }
 
-    // Step 2: screenshot
+    // Step 2
     document.getElementById('stask-step2').style.display = task.requires_screenshot ? 'block' : 'none';
+    if (task.requires_screenshot) {
+        const up = document.getElementById('stask-upload-icon-wrap');
+        up.style.background = pc + '30';
+        const upIcon = up.querySelector('i');
+        if (upIcon) upIcon.style.color = pc;
+        document.getElementById('stask-upload-area').style.borderColor = pc + '40';
+    }
 
-    // Step 4 platform label
-    document.getElementById('stask-step4-platform').textContent = pname;
+    // Input icons
+    [document.getElementById('stask-link-row'), document.getElementById('stask-user-row')].forEach(el => {
+        if (el) { const ic = el.querySelector('i'); if (ic) ic.style.color = pc + '99'; }
+    });
 
-    // Submit button color
-    const submitBtn = document.getElementById('stask-modal-submit');
-    submitBtn.style.background = `linear-gradient(135deg, ${pc}, ${pc}cc)`;
-    submitBtn.style.color = '#fff';
-    submitBtn.style.boxShadow = `0 6px 20px ${pc}40`;
+    // Step 4
+    document.getElementById('stask-step4-platform').textContent = pn;
+    document.getElementById('stask-step4-platform').style.color = pc;
+
+    // Submit button
+    const btn = document.getElementById('stask-modal-submit');
+    btn.style.background = `linear-gradient(135deg, ${pc} 0%, ${pc}bb 100%)`;
+    btn.style.color      = '#fff';
+    btn.style.boxShadow  = `0 1px 0 rgba(255,255,255,0.2) inset, 0 -2px 0 rgba(0,0,0,0.3) inset, 0 8px 28px ${pc}55`;
 
     stCheckSubmit();
-
     document.getElementById('stask-modal').style.display = 'block';
     if (typeof lucide !== 'undefined') lucide.createIcons();
     document.body.style.overflow = 'hidden';
 }
-
 function stCloseModal() {
     document.getElementById('stask-modal').style.display = 'none';
     document.body.style.overflow = '';
@@ -1170,14 +1548,20 @@ function stCloseModal() {
 }
 
 function stGetIcon(platform, color) {
-    const icons = {
-        youtube:   'youtube', twitter: 'twitter', x: 'twitter',
-        instagram: 'instagram', facebook: 'facebook', telegram: 'send',
-        discord:   'gamepad-2', twitch: 'gamepad-2', tiktok: 'gamepad-2',
-        spotify:   'music', whatsapp: 'message-circle', linkedin: 'linkedin'
+    const svgs = {
+        instagram: `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="${color}" stroke="none"/></svg>`,
+        twitter:   `<svg viewBox="0 0 24 24" width="26" height="26" fill="${color}"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+        youtube:   `<svg viewBox="0 0 24 24" width="26" height="26" fill="${color}"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29.1 29.1 0 0 0 1 12a29.1 29.1 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96A29.1 29.1 0 0 0 23 12a29.1 29.1 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#000"/></svg>`,
+        facebook:  `<svg viewBox="0 0 24 24" width="26" height="26" fill="${color}"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>`,
+        telegram:  `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
+        tiktok:    `<svg viewBox="0 0 24 24" width="26" height="26" fill="${color}"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>`,
+        discord:   `<svg viewBox="0 0 24 24" width="26" height="26" fill="${color}"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.03.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>`,
+        spotify:   `<svg viewBox="0 0 24 24" width="26" height="26" fill="${color}"><circle cx="12" cy="12" r="10"/><path d="M8 13.5a7 7 0 0 1 8 0M7 10.5a9 9 0 0 1 10 0M9 16.5a5 5 0 0 1 6 0" stroke="#000" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>`,
+        whatsapp:  `<svg viewBox="0 0 24 24" width="26" height="26" fill="${color}"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>`,
+        linkedin:  `<svg viewBox="0 0 24 24" width="26" height="26" fill="${color}"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>`,
+        twitch:    `<svg viewBox="0 0 24 24" width="26" height="26" fill="${color}"><path d="M21 2H3v16h5v4l4-4h5l4-4V2zM11 11V7m4 4V7"/></svg>`,
     };
-    const name = icons[platform] || 'share-2';
-    return `<i data-lucide="${name}" style="width:22px;height:22px;color:${color};"></i>`;
+    return svgs[platform] || `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`;
 }
 
 function stModalPreview(input) {
@@ -1191,8 +1575,9 @@ function stModalPreview(input) {
         img.src = e.target.result;
         img.style.display = 'block';
         document.getElementById('stask-upload-ph').style.display = 'none';
-        document.getElementById('stask-upload-check').style.display = 'flex';
+        document.getElementById('stask-upload-success').style.display = 'flex';
         document.getElementById('stask-upload-area').style.borderColor = '#22c55e55';
+        document.getElementById('stask-upload-area').style.background = 'rgba(34,197,94,0.04)';
         if (typeof lucide !== 'undefined') lucide.createIcons();
         stCheckSubmit();
     };
@@ -1260,6 +1645,139 @@ async function stModalSubmit() {
         if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 }
+
+
+// ══════════════════════════════════
+// 3D TILT — Gyroscope + Touch
+// ══════════════════════════════════
+(function() {
+    const MAX_TILT = 8;       // degrees
+    const MAX_GLOW = 12;      // px glow spread
+
+    function applyTilt(card, rx, ry, px, py) {
+        const icon = card.querySelector('.task-row-icon');
+        const glow = card._glowColor || 'rgba(77,148,255,0.4)';
+
+        card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(6px)`;
+        card.style.boxShadow = `
+            0 2px 0 rgba(255,255,255,0.07) inset,
+            0 -1px 0 rgba(0,0,0,0.4) inset,
+            ${-ry * 1.5}px ${rx * 1.5}px 40px rgba(0,0,0,0.5),
+            0 ${MAX_GLOW + Math.abs(ry)}px ${30 + Math.abs(ry) * 2}px ${glow}
+        `;
+        // Specular highlight follows tilt
+        const shimX = 50 + ry * 3;
+        const shimY = 50 - rx * 3;
+        card.style.backgroundImage = `
+            radial-gradient(circle at ${shimX}% ${shimY}%,
+                rgba(255,255,255,0.10) 0%,
+                rgba(255,255,255,0.04) 30%,
+                transparent 70%),
+            linear-gradient(135deg,
+                rgba(255,255,255,0.07) 0%,
+                rgba(255,255,255,0.02) 50%,
+                rgba(255,255,255,0.04) 100%)
+        `;
+        if (icon) {
+            icon.style.transform = `translateZ(12px) translateX(${ry * 0.4}px) translateY(${-rx * 0.4}px)`;
+        }
+    }
+
+    function resetCard(card) {
+        card.style.transform = '';
+        card.style.boxShadow = '';
+        card.style.backgroundImage = '';
+        card.style.transition = 'transform 0.5s cubic-bezier(0.34,1,0.64,1), box-shadow 0.5s ease, background-image 0.3s';
+        const icon = card.querySelector('.task-row-icon');
+        if (icon) { icon.style.transform = ''; icon.style.transition = 'transform 0.5s'; }
+        setTimeout(() => { card.style.transition = ''; if(icon) icon.style.transition=''; }, 500);
+    }
+
+    // Touch tilt on cards
+    function bindCard(card) {
+        // Extract glow color from icon bg
+        const icon = card.querySelector('.task-row-icon');
+        if (icon) {
+            const bg = icon.style.background || '';
+            const match = bg.match(/rgba?\([^)]+\)/);
+            card._glowColor = match ? match[0].replace(/[\d.]+\)$/, '0.35)') : 'rgba(77,148,255,0.35)';
+        }
+
+        card.addEventListener('touchstart', e => {
+            card.style.transition = 'none';
+            const rect = card.getBoundingClientRect();
+            const t = e.touches[0];
+            const px = (t.clientX - rect.left) / rect.width;
+            const py = (t.clientY - rect.top)  / rect.height;
+            const ry =  (px - 0.5) * MAX_TILT * 2;
+            const rx = -(py - 0.5) * MAX_TILT;
+            applyTilt(card, rx, ry, px, py);
+        }, { passive: true });
+
+        card.addEventListener('touchmove', e => {
+            const rect = card.getBoundingClientRect();
+            const t = e.touches[0];
+            const px = (t.clientX - rect.left) / rect.width;
+            const py = (t.clientY - rect.top)  / rect.height;
+            const ry =  (px - 0.5) * MAX_TILT * 2;
+            const rx = -(py - 0.5) * MAX_TILT;
+            applyTilt(card, rx, ry, px, py);
+        }, { passive: true });
+
+        card.addEventListener('touchend', () => resetCard(card));
+        card.addEventListener('touchcancel', () => resetCard(card));
+    }
+
+    // Gyroscope global parallax
+    let gyroSupported = false;
+    window.addEventListener('deviceorientation', e => {
+        if (!gyroSupported && (e.gamma !== null)) {
+            gyroSupported = true;
+        }
+        if (!gyroSupported) return;
+        const ry = Math.max(-MAX_TILT, Math.min(MAX_TILT, (e.gamma || 0) * 0.35));
+        const rx = Math.max(-MAX_TILT, Math.min(MAX_TILT, ((e.beta || 0) - 45) * 0.2));
+
+        document.querySelectorAll('.task-row').forEach(card => {
+            // Only apply gyro if not being touched
+            if (!card._touching) {
+                card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(3px)`;
+            }
+        });
+    }, { passive: true });
+
+    // Light tilt for tabs
+    function bindTab(el) {
+        el.addEventListener('touchstart', e => {
+            el.style.transition = 'none';
+            el.style.transform = 'translateZ(0) translateY(1px) scale(0.95)';
+        }, { passive: true });
+        el.addEventListener('touchend', () => {
+            el.style.transition = '';
+            el.style.transform = '';
+        });
+    }
+
+    // Bind all current + future cards
+    function bindAllCards() {
+        document.querySelectorAll('.task-row:not([data-tilt-bound])').forEach(card => {
+            card.setAttribute('data-tilt-bound', '1');
+            bindCard(card);
+        });
+        document.querySelectorAll('.task-tab:not([data-tilt-bound]), .hdr-btn:not([data-tilt-bound])').forEach(el => {
+            el.setAttribute('data-tilt-bound', '1');
+            bindTab(el);
+        });
+    }
+
+    // Run after DOM + after JS renders dynamic cards
+    document.addEventListener('DOMContentLoaded', () => {
+        bindAllCards();
+        // Re-bind after dynamic renders (community tasks)
+        const observer = new MutationObserver(bindAllCards);
+        observer.observe(document.body, { childList: true, subtree: true });
+    });
+})();
 
 </script>
 
@@ -1432,124 +1950,213 @@ async function stModalSubmit() {
 </style>
 
 <!-- ══════════════════════════════════════════ -->
-<!-- MODAL TAREA SOCIAL - PREMIUM               -->
-<!-- ══════════════════════════════════════════ -->
+<!-- MODAL TAREA SOCIAL -->
 <div id="stask-modal" style="display:none;position:fixed;inset:0;z-index:9999;">
-    <!-- Backdrop -->
-    <div onclick="stCloseModal()" style="position:absolute;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);"></div>
+    <div onclick="stCloseModal()" style="position:absolute;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);"></div>
 
-    <!-- Sheet -->
-    <div id="stask-modal-sheet" style="position:absolute;bottom:0;left:0;right:0;max-height:92vh;display:flex;flex-direction:column;border-radius:24px 24px 0 0;overflow:hidden;transition:transform .3s cubic-bezier(.32,1,.45,1);">
+    <div id="stask-modal-sheet" style="
+        position:absolute;bottom:0;left:0;right:0;
+        max-height:93vh;display:flex;flex-direction:column;
+        border-radius:28px 28px 0 0;overflow:hidden;
+        box-shadow:0 -20px 60px rgba(0,0,0,0.7);
+    ">
+        <!-- ══ HEADER ══ -->
+        <div id="stask-modal-header" style="flex-shrink:0;position:relative;overflow:hidden;">
 
-        <!-- Colored header band -->
-        <div id="stask-modal-header" style="padding:0;flex-shrink:0;">
+            <!-- Soft radial glow — no grid -->
+            <div id="stask-header-orb" style="position:absolute;top:-100px;right:-80px;width:320px;height:320px;border-radius:50%;filter:blur(90px);opacity:0.4;pointer-events:none;"></div>
+            <div id="stask-header-orb2" style="position:absolute;bottom:-60px;left:-60px;width:200px;height:200px;border-radius:50%;filter:blur(70px);opacity:0.25;pointer-events:none;"></div>
+            <!-- Top edge shimmer line -->
+            <div id="stask-header-line" style="position:absolute;top:0;left:0;right:0;height:1px;opacity:0.6;pointer-events:none;"></div>
+
             <!-- Handle -->
-            <div style="display:flex;justify-content:center;padding:10px 0 0;">
-                <div style="width:40px;height:4px;background:rgba(255,255,255,0.2);border-radius:4px;"></div>
+            <div style="display:flex;justify-content:center;padding:14px 0 0;position:relative;">
+                <div style="width:36px;height:4px;background:rgba(255,255,255,0.2);border-radius:10px;"></div>
             </div>
-            <!-- Title row -->
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 16px;">
-                <div style="display:flex;align-items:center;gap:12px;">
-                    <div id="stask-modal-icon" style="width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"></div>
-                    <div>
-                        <div id="stask-modal-platform" style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2px;"></div>
-                        <div id="stask-modal-title" style="font-size:1rem;font-weight:800;color:#fff;line-height:1.2;"></div>
-                    </div>
+
+            <!-- Header content -->
+            <div style="position:relative;padding:16px 20px 22px;display:flex;align-items:center;gap:15px;">
+
+                <!-- Icon -->
+                <div id="stask-modal-icon" style="
+                    width:60px;height:60px;border-radius:18px;
+                    display:flex;align-items:center;justify-content:center;
+                    flex-shrink:0;
+                    box-shadow:0 8px 28px rgba(0,0,0,0.5), 0 2px 0 rgba(255,255,255,0.12) inset;
+                "></div>
+
+                <!-- Text -->
+                <div style="flex:1;min-width:0;">
+                    <div id="stask-modal-platform" style="font-size:0.62rem;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:5px;opacity:0.9;"></div>
+                    <div id="stask-modal-title" style="font-size:1.1rem;font-weight:800;color:#fff;line-height:1.2;margin-bottom:8px;"></div>
+                    <div id="stask-modal-reward-badge" style="
+                        display:inline-flex;align-items:center;
+                        padding:5px 12px;border-radius:20px;
+                        font-size:0.82rem;font-weight:800;
+                        border:1px solid;
+                        backdrop-filter:blur(6px);
+                    "></div>
                 </div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <div id="stask-modal-reward" style="font-size:1rem;font-weight:800;color:#4D94FF;"></div>
-                    <button onclick="stCloseModal()"
-                        style="width:32px;height:32px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
-                        <i data-lucide="x" style="width:15px;height:15px;color:rgba(255,255,255,0.7);"></i>
-                    </button>
-                </div>
+
+                <!-- Close -->
+                <button onclick="stCloseModal()" style="
+                    position:absolute;top:16px;right:18px;
+                    width:34px;height:34px;
+                    background:rgba(0,0,0,0.4);
+                    border:1px solid rgba(255,255,255,0.12);
+                    border-radius:50%;display:flex;align-items:center;justify-content:center;
+                    cursor:pointer;backdrop-filter:blur(10px);flex-shrink:0;
+                ">
+                    <i data-lucide="x" style="width:15px;height:15px;color:rgba(255,255,255,0.75);"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Scrollable body -->
-        <div id="stask-modal-body" style="flex:1;overflow-y:auto;background:#0d0d1a;padding:20px;display:flex;flex-direction:column;gap:14px;">
+        <!-- ══ BODY ══ -->
+        <div id="stask-modal-body" style="flex:1;overflow-y:auto;background:#0c0c18;padding:20px;display:flex;flex-direction:column;gap:12px;">
 
             <!-- Description -->
             <div id="stask-modal-desc-wrap" style="display:none;">
-                <p id="stask-modal-desc" style="margin:0;font-size:0.85rem;color:rgba(255,255,255,0.55);line-height:1.65;"></p>
+                <p id="stask-modal-desc" style="margin:0;font-size:0.86rem;color:rgba(255,255,255,0.45);line-height:1.7;"></p>
             </div>
 
             <!-- Instructions -->
-            <div id="stask-modal-instr-wrap" style="display:none;background:rgba(0,245,255,0.04);border:1px solid rgba(0,245,255,0.12);border-radius:14px;padding:14px;">
-                <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;">
-                    <i data-lucide="clipboard-list" style="width:14px;height:14px;color:#00f5ff;flex-shrink:0;"></i>
-                    <span style="font-size:0.75rem;font-weight:700;color:#00f5ff;letter-spacing:0.04em;text-transform:uppercase;">Instrucciones</span>
+            <div id="stask-modal-instr-wrap" style="display:none;border-radius:16px;padding:14px 16px;border:1px solid;position:relative;overflow:hidden;">
+                <div id="stask-instr-bg" style="position:absolute;inset:0;opacity:0.07;pointer-events:none;"></div>
+                <div style="position:relative;display:flex;gap:11px;align-items:flex-start;">
+                    <div id="stask-instr-icon-wrap" style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
+                        <i data-lucide="clipboard-list" style="width:16px;height:16px;color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div id="stask-instr-label" style="font-size:0.65rem;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">Instrucciones</div>
+                        <p id="stask-modal-instr" style="margin:0;font-size:0.85rem;color:rgba(255,255,255,0.6);line-height:1.65;"></p>
+                    </div>
                 </div>
-                <p id="stask-modal-instr" style="margin:0;font-size:0.84rem;color:rgba(255,255,255,0.6);line-height:1.6;"></p>
             </div>
 
-            <!-- Steps: numbered -->
-            <div style="display:flex;flex-direction:column;gap:10px;" id="stask-steps">
-                <!-- Step 1: Go to platform -->
-                <div id="stask-step1" style="display:none;">
-                    <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Paso 1 · Ir a la plataforma</div>
-                    <a id="stask-modal-link" href="#" target="_blank"
-                        style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:13px;font-size:0.88rem;font-weight:700;text-decoration:none;transition:opacity .2s;">
-                        <i data-lucide="external-link" style="width:16px;height:16px;"></i>
-                        <span id="stask-modal-link-label">Ir a la plataforma</span>
-                    </a>
-                </div>
+            <!-- Step 1 -->
+            <div id="stask-step1" style="display:none;">
+                <div class="sm-step-lbl"><span class="sm-step-n" id="stask-num1">1</span> Ir a la plataforma</div>
+                <a id="stask-modal-link" href="#" target="_blank" class="sm-go-btn">
+                    <i data-lucide="external-link" style="width:16px;height:16px;"></i>
+                    <span id="stask-modal-link-label">Ir a la plataforma</span>
+                    <i data-lucide="arrow-right" style="width:15px;height:15px;margin-left:auto;opacity:0.6;"></i>
+                </a>
+            </div>
 
-                <!-- Step 2: Screenshot -->
-                <div id="stask-step2" style="display:none;">
-                    <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Paso 2 · Captura de pantalla</div>
-                    <div id="stask-upload-area" onclick="document.getElementById('stask-file-input').click()"
-                         style="border:2px dashed rgba(255,255,255,0.1);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;background:rgba(255,255,255,0.02);transition:border-color .2s,background .2s;position:relative;overflow:hidden;">
-                        <img id="stask-preview-img" style="display:none;width:100%;max-height:200px;object-fit:contain;border-radius:10px;margin-bottom:10px;" alt="preview">
-                        <div id="stask-upload-ph" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-                            <i data-lucide="image-plus" style="width:32px;height:32px;color:rgba(255,255,255,0.25);"></i>
-                            <div style="font-size:0.83rem;font-weight:600;color:rgba(255,255,255,0.45);">Toca para subir captura</div>
-                            <div style="font-size:0.72rem;color:rgba(255,255,255,0.25);">JPG, PNG · máx 5MB</div>
+            <!-- Step 2 -->
+            <div id="stask-step2" style="display:none;">
+                <div class="sm-step-lbl">
+                    <span class="sm-step-n" id="stask-num2">2</span>
+                    Captura de pantalla
+                    <span class="sm-tag-req">Requerido</span>
+                </div>
+                <div id="stask-upload-area" onclick="document.getElementById('stask-file-input').click()" class="sm-upload-area">
+                    <img id="stask-preview-img" style="display:none;width:100%;max-height:220px;object-fit:cover;border-radius:14px;" alt="">
+                    <div id="stask-upload-ph" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:26px 16px;">
+                        <div id="stask-upload-icon-wrap" style="width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;">
+                            <i data-lucide="image-plus" style="width:26px;height:26px;"></i>
                         </div>
-                        <div id="stask-upload-check" style="display:none;position:absolute;top:10px;right:10px;width:26px;height:26px;background:#22c55e;border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                            <i data-lucide="check" style="width:14px;height:14px;color:#fff;"></i>
+                        <div style="text-align:center;">
+                            <div style="font-size:0.88rem;font-weight:700;color:rgba(255,255,255,0.65);">Toca para subir captura</div>
+                            <div style="font-size:0.72rem;color:rgba(255,255,255,0.25);margin-top:3px;">JPG · PNG · máx 5MB</div>
                         </div>
                     </div>
-                    <input type="file" id="stask-file-input" accept="image/*" onchange="stModalPreview(this)" style="display:none;">
-                </div>
-
-                <!-- Step 3: Post link -->
-                <div id="stask-step3">
-                    <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Paso 3 · Link de tu publicación <span style="color:rgba(255,255,255,0.2);font-weight:500;">(opcional)</span></div>
-                    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;">
-                        <i data-lucide="link-2" style="width:16px;height:16px;color:rgba(255,255,255,0.3);flex-shrink:0;"></i>
-                        <input id="stask-post-link" type="url" placeholder="https://..." autocomplete="off"
-                            style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:0.85rem;min-width:0;"
-                            oninput="stCheckSubmit()">
+                    <div id="stask-upload-success" style="display:none;position:absolute;bottom:10px;right:10px;padding:5px 11px;border-radius:10px;background:#22c55e;display:flex;align-items:center;gap:5px;box-shadow:0 4px 14px rgba(34,197,94,0.4);">
+                        <i data-lucide="check" style="width:13px;height:13px;color:#fff;"></i>
+                        <span style="font-size:0.7rem;font-weight:800;color:#fff;letter-spacing:0.04em;">SUBIDA</span>
                     </div>
                 </div>
+                <input type="file" id="stask-file-input" accept="image/*" onchange="stModalPreview(this)" style="display:none;">
+            </div>
 
-                <!-- Step 4: Username -->
-                <div id="stask-step4">
-                    <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Paso 4 · Tu usuario en <span id="stask-step4-platform"></span> <span style="color:rgba(255,255,255,0.2);font-weight:500;">(opcional)</span></div>
-                    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;">
-                        <i data-lucide="at-sign" style="width:16px;height:16px;color:rgba(255,255,255,0.3);flex-shrink:0;"></i>
-                        <input id="stask-username" type="text" placeholder="@tu_usuario" autocomplete="off"
-                            style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:0.85rem;min-width:0;"
-                            oninput="stCheckSubmit()">
-                    </div>
+            <!-- Step 3 -->
+            <div id="stask-step3">
+                <div class="sm-step-lbl"><span class="sm-step-n" id="stask-num3">3</span> Link de la publicación <span class="sm-tag-opt">Opcional</span></div>
+                <div class="sm-field" id="stask-link-row">
+                    <i data-lucide="link-2" style="width:17px;height:17px;flex-shrink:0;opacity:0.35;"></i>
+                    <input id="stask-post-link" type="url" placeholder="https://..." autocomplete="off"
+                        style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:0.9rem;min-width:0;" oninput="stCheckSubmit()">
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div id="stask-step4" style="padding-bottom:18px;">
+                <div class="sm-step-lbl"><span class="sm-step-n" id="stask-num4">4</span> Tu usuario en <b id="stask-step4-platform" style="font-weight:800;"></b> <span class="sm-tag-opt">Opcional</span></div>
+                <div class="sm-field" id="stask-user-row">
+                    <i data-lucide="at-sign" style="width:17px;height:17px;flex-shrink:0;opacity:0.35;"></i>
+                    <input id="stask-username" type="text" placeholder="@tu_usuario" autocomplete="off"
+                        style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:0.9rem;min-width:0;" oninput="stCheckSubmit()">
                 </div>
             </div>
 
         </div>
 
-        <!-- Footer -->
-        <div style="background:#0d0d1a;padding:16px 20px 28px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
-            <button id="stask-modal-submit" onclick="stModalSubmit()"
-                style="width:100%;padding:15px;border:none;border-radius:14px;font-size:0.92rem;font-weight:800;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:0.01em;">
-                <span style="display:inline-flex;align-items:center;gap:8px;">
-                    <i data-lucide="send" style="width:16px;height:16px;"></i>
-                    Enviar para revisión
-                </span>
+        <!-- ══ FOOTER ══ -->
+        <div style="background:#0c0c18;padding:14px 20px 30px;border-top:1px solid rgba(255,255,255,0.05);flex-shrink:0;">
+            <button id="stask-modal-submit" onclick="stModalSubmit()" style="
+                width:100%;padding:16px;border:none;border-radius:16px;
+                font-size:0.95rem;font-weight:800;cursor:pointer;
+                display:flex;align-items:center;justify-content:center;gap:9px;
+                transition:opacity .2s,transform .1s;letter-spacing:0.02em;
+                box-shadow:0 1px 0 rgba(255,255,255,0.2) inset, 0 -2px 0 rgba(0,0,0,0.3) inset;
+            ">
+                <i data-lucide="send" style="width:17px;height:17px;"></i>
+                Enviar para revisión
             </button>
         </div>
-
     </div>
 </div>
+
+<style>
+.sm-step-lbl {
+    display:flex;align-items:center;gap:8px;
+    font-size:0.7rem;font-weight:700;
+    color:rgba(255,255,255,0.35);letter-spacing:0.05em;text-transform:uppercase;
+    margin-bottom:8px;
+}
+.sm-step-n {
+    width:22px;height:22px;border-radius:7px;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:0.68rem;font-weight:900;
+    background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.4);
+    flex-shrink:0;
+}
+.sm-tag-req {
+    margin-left:auto;font-size:0.6rem;font-weight:800;
+    padding:2px 8px;border-radius:6px;
+    background:rgba(251,178,63,0.15);color:#FBB23F;
+    letter-spacing:0.06em;text-transform:uppercase;
+}
+.sm-tag-opt { font-size:0.65rem;font-weight:500;color:rgba(255,255,255,0.18);text-transform:none;letter-spacing:0; }
+.sm-go-btn {
+    display:flex;align-items:center;gap:9px;
+    padding:14px 16px;border-radius:14px;
+    font-size:0.9rem;font-weight:700;text-decoration:none;
+    transition:opacity .2s,transform .1s;
+    box-shadow:0 1px 0 rgba(255,255,255,0.1) inset, 0 -2px 0 rgba(0,0,0,0.3) inset, 0 6px 20px rgba(0,0,0,0.3);
+}
+.sm-go-btn:active { transform:scale(0.97); }
+.sm-upload-area {
+    border:2px dashed rgba(255,255,255,0.1);
+    border-radius:18px;cursor:pointer;
+    background:rgba(255,255,255,0.02);
+    transition:all .25s;position:relative;overflow:hidden;
+    min-height:120px;display:flex;align-items:center;justify-content:center;
+}
+.sm-field {
+    display:flex;align-items:center;gap:12px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.09);
+    border-radius:14px;padding:14px 16px;
+    transition:border-color .2s,background .2s;
+}
+.sm-field:focus-within {
+    border-color:rgba(255,255,255,0.2);
+    background:rgba(255,255,255,0.08);
+}
+#stask-modal-body::-webkit-scrollbar { display:none; }
+#stask-modal-body { scrollbar-width:none; }
+</style>
 
 {% endblock %}
