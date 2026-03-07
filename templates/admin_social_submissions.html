@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisión de Capturas - Admin</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #003D99, #0066FF, #3B82F6);
+            min-height: 100vh; padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .admin-header {
+            background: rgba(255,255,255,0.95); border-radius: 15px;
+            padding: 20px 25px; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .admin-header h1 { color: #003D99; font-size: 22px; }
+        .nav-btn {
+            padding: 9px 18px; background: linear-gradient(135deg, #003D99, #0066FF);
+            color: white; text-decoration: none; border-radius: 8px;
+            font-size: 13px; margin-left: 8px; display: inline-block;
+        }
+
+        /* Filter tabs */
+        .filter-tabs {
+            display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .filter-tab {
+            padding: 8px 20px; border-radius: 25px; font-size: 13px; font-weight: 600;
+            cursor: pointer; text-decoration: none; transition: all 0.2s;
+            background: rgba(255,255,255,0.3); color: white;
+        }
+        .filter-tab.active, .filter-tab:hover {
+            background: white; color: #003D99;
+        }
+        .badge {
+            background: #ef4444; color: white; border-radius: 20px;
+            padding: 1px 7px; font-size: 10px; margin-left: 5px;
+        }
+
+        /* Grid */
+        .submissions-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        /* Card */
+        .sub-card {
+            background: rgba(255,255,255,0.95); border-radius: 15px;
+            overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+        .sub-card:hover { transform: translateY(-3px); }
+
+        .sub-card-header {
+            padding: 15px 18px 10px;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .user-avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: linear-gradient(135deg, #003D99, #0066FF);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 700; font-size: 16px;
+        }
+        .user-name { font-weight: 600; color: #1f2937; font-size: 14px; }
+        .user-id   { font-size: 11px; color: #9ca3af; }
+
+        .status-badge {
+            padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
+        }
+        .status-pending  { background: #fef3c7; color: #d97706; }
+        .status-approved { background: #dcfce7; color: #15803d; }
+        .status-rejected { background: #fee2e2; color: #dc2626; }
+
+        /* Screenshot */
+        .screenshot-wrap {
+            position: relative; background: #0a0a0a; cursor: pointer;
+            overflow: hidden; max-height: 220px; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .screenshot-wrap img {
+            width: 100%; object-fit: contain; transition: transform 0.2s;
+            max-height: 220px;
+        }
+        .screenshot-wrap:hover img { transform: scale(1.02); }
+        .screenshot-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.4);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .screenshot-wrap:hover .screenshot-overlay { opacity: 1; }
+        .screenshot-overlay span {
+            color: white; font-size: 14px; font-weight: 600;
+            background: rgba(0,0,0,0.6); padding: 8px 16px; border-radius: 20px;
+        }
+
+        /* Details */
+        .sub-details {
+            padding: 12px 18px;
+        }
+        .task-info {
+            font-size: 12px; color: #6b7280; margin-bottom: 8px;
+        }
+        .task-title-text {
+            font-weight: 600; color: #1f2937; font-size: 13px; margin-bottom: 4px;
+        }
+        .user-note {
+            background: #f9fafb; border-left: 3px solid #0066FF;
+            padding: 8px 12px; border-radius: 0 8px 8px 0;
+            font-size: 12px; color: #4b5563; margin: 8px 0;
+            font-style: italic;
+        }
+        .time-info { font-size: 11px; color: #9ca3af; margin-top: 6px; }
+
+        /* Admin actions */
+        .sub-actions { padding: 12px 18px; border-top: 1px solid #f3f4f6; }
+        .admin-note-input {
+            width: 100%; padding: 8px 12px; border: 1px solid #d1d5db;
+            border-radius: 8px; font-size: 12px; margin-bottom: 10px;
+            resize: none; height: 55px;
+        }
+        .admin-note-input:focus { outline: none; border-color: #0066FF; }
+        .action-btns { display: flex; gap: 8px; }
+        .btn-approve {
+            flex: 1; padding: 10px; background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white; border: none; border-radius: 8px;
+            font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-reject {
+            flex: 1; padding: 10px; background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white; border: none; border-radius: 8px;
+            font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-approve:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(34,197,94,0.4); }
+        .btn-reject:hover  { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(239,68,68,0.4); }
+
+        .reviewed-info {
+            padding: 10px 18px 14px;
+            font-size: 12px; color: #6b7280;
+        }
+        .reviewed-info .admin-note-display {
+            background: #f9fafb; border-radius: 8px; padding: 8px 12px;
+            margin-top: 6px; font-size: 12px; color: #374151;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+            display: none; align-items: center; justify-content: center;
+            z-index: 2000; padding: 20px;
+        }
+        .lightbox.open { display: flex; }
+        .lightbox img {
+            max-width: 100%; max-height: 90vh; object-fit: contain;
+            border-radius: 8px;
+        }
+        .lightbox-close {
+            position: absolute; top: 20px; right: 20px;
+            color: white; font-size: 28px; cursor: pointer;
+            background: rgba(255,255,255,0.1); width: 40px; height: 40px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Empty */
+        .empty {
+            text-align: center; padding: 60px; color: white; grid-column: 1/-1;
+        }
+        .empty-icon { font-size: 64px; margin-bottom: 16px; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 20px; right: 20px;
+            color: white; padding: 12px 20px; border-radius: 10px;
+            font-size: 13px; z-index: 9999; opacity: 0; transform: translateY(10px);
+            transition: all 0.3s; pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: #22c55e; }
+        .toast.error   { background: #ef4444; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <div class="admin-header">
+        <h1>📋 Revisión de Capturas</h1>
+        <div>
+            <a href="/admin/social-tasks" class="nav-btn">⬅ Tareas</a>
+            <a href="/admin/dashboard" class="nav-btn">🏠 Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs">
+        <a href="/admin/social-tasks/submissions" class="filter-tab {{ 'active' if not current_status }}">
+            Todas
+        </a>
+        <a href="/admin/social-tasks/submissions?status=pending" class="filter-tab {{ 'active' if current_status == 'pending' }}">
+            ⏳ Pendientes
+            {% if pending_count > 0 %}<span class="badge">{{ pending_count }}</span>{% endif %}
+        </a>
+        <a href="/admin/social-tasks/submissions?status=approved" class="filter-tab {{ 'active' if current_status == 'approved' }}">
+            ✅ Aprobadas
+        </a>
+        <a href="/admin/social-tasks/submissions?status=rejected" class="filter-tab {{ 'active' if current_status == 'rejected' }}">
+            ❌ Rechazadas
+        </a>
+    </div>
+
+    <!-- Grid -->
+    <div class="submissions-grid">
+        {% if submissions %}
+            {% for sub in submissions %}
+            <div class="sub-card" id="card-{{ sub.submission_id }}">
+
+                <!-- Header -->
+                <div class="sub-card-header">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            {{ (sub.first_name or sub.user_id)|first|upper }}
+                        </div>
+                        <div>
+                            <div class="user-name">{{ sub.first_name or 'Usuario' }}{% if sub.username %} (@{{ sub.username }}){% endif %}</div>
+                            <div class="user-id">ID: {{ sub.user_id }}</div>
+                        </div>
+                    </div>
+                    <span class="status-badge status-{{ sub.status }}">
+                        {% if sub.status == 'pending' %}⏳ Pendiente
+                        {% elif sub.status == 'approved' %}✅ Aprobado
+                        {% else %}❌ Rechazado{% endif %}
+                    </span>
+                </div>
+
+                <!-- Screenshot -->
+                {% if sub.screenshot_data %}
+                <div class="screenshot-wrap" onclick="openLightbox('{{ sub.submission_id }}')">
+                    <img src="{{ sub.screenshot_data }}" alt="Captura" id="img-{{ sub.submission_id }}"
+                         onerror="this.parentElement.innerHTML='<div style=padding:30px;color:#666;text-align:center>📷 Imagen no disponible</div>'">
+                    <div class="screenshot-overlay"><span>🔍 Ver completa</span></div>
+                </div>
+                {% else %}
+                <div style="padding:20px;text-align:center;color:#9ca3af;background:#f9fafb;">
+                    📷 Sin captura
+                </div>
+                {% endif %}
+
+                <!-- Details -->
+                <div class="sub-details">
+                    <div class="task-info">
+                        {{ sub.platform|upper }} — {{ sub.action_type }}
+                    </div>
+                    <div class="task-title-text">{{ sub.task_title }}</div>
+                    <div class="task-info">💰 Recompensa: {{ sub.reward_amount }} {{ sub.reward_currency|upper }}</div>
+                    {% if sub.user_note %}
+                    <div class="user-note">💬 "{{ sub.user_note }}"</div>
+                    {% endif %}
+                    <div class="time-info">📅 {{ sub.submitted_at }}</div>
+                </div>
+
+                <!-- Actions -->
+                {% if sub.status == 'pending' %}
+                <div class="sub-actions">
+                    <textarea class="admin-note-input" id="note-{{ sub.submission_id }}"
+                              placeholder="Nota al usuario (opcional)..."></textarea>
+                    <div class="action-btns">
+                        <button class="btn-approve" onclick="approveSubmission('{{ sub.submission_id }}')">
+                            ✅ Aprobar
+                        </button>
+                        <button class="btn-reject" onclick="rejectSubmission('{{ sub.submission_id }}')">
+                            ❌ Rechazar
+                        </button>
+                    </div>
+                </div>
+                {% else %}
+                <div class="reviewed-info">
+                    Revisado: {{ sub.reviewed_at or '-' }}
+                    {% if sub.admin_note %}
+                    <div class="admin-note-display">📝 {{ sub.admin_note }}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <div class="empty-icon">📭</div>
+                <h3>No hay envíos aquí</h3>
+                <p style="margin-top:8px;opacity:0.7;">Los usuarios que completen tareas aparecerán aquí</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-close" onclick="closeLightbox()">✕</div>
+    <img id="lightbox-img" src="" alt="Captura">
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function openLightbox(subId) {
+    const img = document.getElementById(`img-${subId}`);
+    if (!img) return;
+    document.getElementById('lightbox-img').src = img.src;
+    document.getElementById('lightbox').classList.add('open');
+    event.stopPropagation();
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
+});
+
+async function approveSubmission(subId) {
+    const note = document.getElementById(`note-${subId}`)?.value || '';
+    const btn = event.target;
+    btn.disabled = true; btn.textContent = 'Procesando...';
+
+    const res = await fetch(`/admin/social-tasks/submissions/${subId}/approve`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({admin_note: note})
+    });
+    const data = await res.json();
+
+    if (data.success) {
+        showToast(`✅ Aprobado — +${data.rewarded} ${data.currency?.toUpperCase()} acreditado`);
+        const card = document.getElementById(`card-${subId}`);
+        card.style.transition = 'all 0.4s';
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.9)';
+        setTimeout(() => card.remove(), 400);
+    } else {
+        showToast(data.error || 'Error al aprobar', 'error');
+        btn.disabled = false; btn.textContent = '✅ Aprobar';
+    }
+}
+
+async function rejectSubmission(subId) {
+    const note = document.getElementById(`note-${subId}`)?.value || '';
+    if (!note && !confirm('¿Rechazar sin nota al usuario?')) return;
+
+    const btn = event.target;
+    btn.disabled = true; btn.textContent = 'Procesando...';
+
+    const res = await fetch(`/admin/social-tasks/submissions/${subId}/reject`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({admin_note: note})
+    });
+    const data = await res.json();
+
+    if (data.success) {
+        showToast('❌ Envío rechazado', 'error');
+        const card = document.getElementById(`card-${subId}`);
+        card.style.transition = 'all 0.4s';
+        card.style.opacity = '0';
+        setTimeout(() => card.remove(), 400);
+    } else {
+        showToast(data.error || 'Error al rechazar', 'error');
+        btn.disabled = false; btn.textContent = '❌ Rechazar';
+    }
+}
+</script>
+</body>
+</html>

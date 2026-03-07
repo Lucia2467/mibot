@@ -180,6 +180,99 @@
     </div>
     {% endif %}
 
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN: TAREAS SOCIALES CON CAPTURA -->
+    <!-- ============================================ -->
+    {% if social_tasks %}
+    <div style="display: flex; align-items: center; margin: var(--space-6) 0 var(--space-4);">
+        <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,102,255,0.3), transparent);"></div>
+        <span style="padding: 0 var(--space-4); font-size: 0.8rem; color: #E1306C; font-weight: 600;">📱 Tareas Sociales</span>
+        <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,102,255,0.3), transparent);"></div>
+    </div>
+
+    <div class="card" style="margin-bottom: var(--space-4);">
+        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,#E1306C22,#833AB422);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin-right:var(--space-3);font-size:1.3rem;">📱</div>
+            <div>
+                <h2 style="font-size:1.1rem;font-weight:700;color:var(--color-text-primary);margin:0;">Tareas Sociales</h2>
+                <p style="font-size:0.8rem;color:var(--color-text-tertiary);margin:0;">Sigue, da like o comenta y sube tu captura</p>
+            </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+        {% for task in social_tasks %}
+        {% set plat_colors = {'tiktok':'#010101','twitter':'#1DA1F2','instagram':'#E1306C','facebook':'#1877F2','youtube':'#FF0000','binance':'#F0B90B','telegram':'#2AABEE','discord':'#5865F2','other':'#666'} %}
+        {% set plat_icons  = {'tiktok':'🎵','twitter':'🐦','instagram':'📷','facebook':'📘','youtube':'▶️','binance':'🔶','telegram':'✈️','discord':'🎮','other':'🔗'} %}
+        {% set pcolor = plat_colors.get(task.platform, '#0066FF') %}
+        {% set picon  = plat_icons.get(task.platform, '🔗') %}
+        {% set user_status = task.get('user_status', None) %}
+
+        <div style="background:var(--glass-ultra);border-radius:var(--radius-lg);border:1px solid var(--glass-border);overflow:hidden;" id="stask-{{ task.task_id }}">
+            <!-- Task header -->
+            <div style="padding:var(--space-3) var(--space-4);display:flex;align-items:center;gap:var(--space-3);">
+                <div style="width:44px;height:44px;border-radius:var(--radius-md);background:{{ pcolor }}22;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">{{ picon }}</div>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-weight:700;color:var(--color-text-primary);font-size:0.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ task.title }}</div>
+                    <div style="font-size:0.75rem;color:var(--color-text-tertiary);">{{ task.platform|capitalize }} · {{ task.action_type }}</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div style="font-weight:700;color:#FFD700;font-size:0.9rem;">+{{ task.reward_amount }}</div>
+                    <div style="font-size:0.65rem;color:var(--color-text-tertiary);">{{ task.reward_currency|upper }}</div>
+                </div>
+            </div>
+
+            {% if user_status == 'approved' %}
+            <div style="padding:var(--space-2) var(--space-4);background:rgba(34,197,94,0.08);color:#22c55e;font-size:0.8rem;font-weight:600;">✅ Completado — Recompensa acreditada</div>
+            {% elif user_status == 'pending' %}
+            <div style="padding:var(--space-2) var(--space-4);background:rgba(251,191,36,0.08);color:#d97706;font-size:0.8rem;font-weight:600;">⏳ Enviado — En revisión</div>
+            {% else %}
+            <!-- Expandable form -->
+            <div id="stask-body-{{ task.task_id }}" style="display:none;padding:0 var(--space-4) var(--space-4);">
+                {% if task.instructions %}
+                <div style="background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.15);border-radius:var(--radius-md);padding:var(--space-3);margin-bottom:var(--space-3);font-size:0.8rem;color:var(--color-text-secondary);line-height:1.6;">
+                    <strong style="color:var(--color-neon-cyan);">📋 Instrucciones:</strong><br>{{ task.instructions }}
+                </div>
+                {% endif %}
+
+                {% if task.target_url %}
+                <a href="{{ task.target_url }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:var(--space-2) var(--space-4);background:rgba(0,102,255,0.1);border:1px solid rgba(0,102,255,0.3);border-radius:var(--radius-full);color:var(--color-blue-primary);font-size:0.8rem;font-weight:600;text-decoration:none;margin-bottom:var(--space-3);">
+                    🔗 Ir a {{ task.platform|capitalize }}
+                </a>
+                {% endif %}
+
+                {% if task.requires_screenshot %}
+                <div id="upload-area-{{ task.task_id }}" onclick="document.getElementById('file-st-{{ task.task_id }}').click()"
+                     style="border:2px dashed rgba(0,102,255,0.4);border-radius:var(--radius-lg);padding:var(--space-4);text-align:center;cursor:pointer;margin-bottom:var(--space-3);background:rgba(0,102,255,0.03);">
+                    <img id="preview-st-{{ task.task_id }}" style="display:none;width:100%;max-height:180px;object-fit:contain;border-radius:var(--radius-md);margin-bottom:var(--space-2);" alt="preview">
+                    <div id="upload-ph-{{ task.task_id }}">
+                        <div style="font-size:1.8rem;margin-bottom:6px;">📸</div>
+                        <div style="font-size:0.8rem;color:var(--color-text-secondary);">Toca para subir captura de pantalla</div>
+                        <div style="font-size:0.7rem;color:var(--color-text-muted);margin-top:4px;">JPG, PNG — máx 5MB</div>
+                    </div>
+                </div>
+                <input type="file" id="file-st-{{ task.task_id }}" accept="image/*" onchange="stPreview('{{ task.task_id }}', this)">
+                {% endif %}
+
+                <button id="stsubmit-{{ task.task_id }}"
+                        onclick="stSubmit('{{ task.task_id }}', {{ task.requires_screenshot|tojson }})"
+                        {% if task.requires_screenshot %}disabled{% endif %}
+                        style="width:100%;padding:var(--space-3);background:var(--gradient-primary);border:none;border-radius:var(--radius-lg);color:white;font-size:0.9rem;font-weight:700;cursor:pointer;opacity:{% if task.requires_screenshot %}0.5{% else %}1{% endif %};">
+                    📤 Enviar para revisión
+                </button>
+            </div>
+
+            <button onclick="stToggle('{{ task.task_id }}')" id="stbtn-{{ task.task_id }}"
+                    style="width:100%;padding:var(--space-2) var(--space-4);background:var(--gradient-primary);border:none;color:white;font-size:0.8rem;font-weight:600;cursor:pointer;">
+                Ver tarea →
+            </button>
+            {% endif %}
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- SEPARADOR: ANUNCIOS -->
     <div style="display: flex; align-items: center; margin: var(--space-6) 0;">
         <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.2), transparent);"></div>
@@ -620,6 +713,75 @@ function translateModalElements(modal) {
 }
 
 document.addEventListener('DOMContentLoaded',()=>{PTS.init();if(typeof lucide!=='undefined')lucide.createIcons();loadUserTasks()});
+
+// ============ SOCIAL TASKS JS ============
+const stScreenshots = {};
+
+function stToggle(taskId) {
+    const body = document.getElementById('stask-body-' + taskId);
+    const btn  = document.getElementById('stbtn-' + taskId);
+    const open = body.style.display === 'none';
+    body.style.display = open ? 'block' : 'none';
+    btn.textContent    = open ? 'Cerrar ✕' : 'Ver tarea →';
+}
+
+function stPreview(taskId, input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5000000) { showToast('Imagen muy grande (máx 5MB)', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        stScreenshots[taskId] = e.target.result;
+        const preview = document.getElementById('preview-st-' + taskId);
+        const ph      = document.getElementById('upload-ph-' + taskId);
+        preview.src   = e.target.result;
+        preview.style.display = 'block';
+        ph.style.display      = 'none';
+        const submitBtn = document.getElementById('stsubmit-' + taskId);
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+    };
+    reader.readAsDataURL(file);
+}
+
+async function stSubmit(taskId, requiresScreenshot) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('user_id');
+    if (!userId) { showToast('Usuario no identificado', 'error'); return; }
+    if (requiresScreenshot && !stScreenshots[taskId]) {
+        showToast('Sube una captura primero', 'error'); return;
+    }
+    const btn = document.getElementById('stsubmit-' + taskId);
+    btn.disabled = true; btn.textContent = '⏳ Enviando...';
+
+    try {
+        const res = await fetch('/api/social-tasks/submit', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                user_id: userId,
+                task_id: taskId,
+                screenshot: stScreenshots[taskId] || '',
+                note: ''
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast('✅ Enviado — quedará en revisión');
+            const body = document.getElementById('stask-body-' + taskId);
+            const toggleBtn = document.getElementById('stbtn-' + taskId);
+            if (body) body.style.display = 'none';
+            if (toggleBtn) toggleBtn.outerHTML = '<div style="padding:var(--space-2) var(--space-4);background:rgba(251,191,36,0.08);color:#d97706;font-size:0.8rem;font-weight:600;">⏳ Enviado — En revisión</div>';
+            if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        } else {
+            showToast(data.error || 'Error al enviar', 'error');
+            btn.disabled = false; btn.textContent = '📤 Enviar para revisión';
+        }
+    } catch(e) {
+        showToast('Error de conexión', 'error');
+        btn.disabled = false; btn.textContent = '📤 Enviar para revisión';
+    }
+}
 </script>
 
 <!-- MODAL DE REGLAS -->

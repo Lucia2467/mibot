@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas Sociales - Admin</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #3B82F6 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* Header */
+        .admin-header {
+            background: rgba(255,255,255,0.95); border-radius: 15px;
+            padding: 20px 25px; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .admin-header h1 { color: #003D99; font-size: 22px; }
+        .nav-btn {
+            padding: 9px 18px;
+            background: linear-gradient(135deg, #003D99, #0066FF);
+            color: white; text-decoration: none; border-radius: 8px;
+            font-size: 13px; margin-left: 8px; display: inline-block;
+        }
+        .nav-btn.orange { background: linear-gradient(135deg, #FF6B35, #FF4500); }
+        .nav-btn.green  { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .nav-btn.red    { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        /* Stats bar */
+        .stats-bar {
+            display: grid; grid-template-columns: repeat(4,1fr);
+            gap: 15px; margin-bottom: 20px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.9); border-radius: 12px;
+            padding: 18px; text-align: center;
+        }
+        .stat-card .val { font-size: 28px; font-weight: 700; color: #003D99; }
+        .stat-card .lbl { font-size: 12px; color: #666; margin-top: 4px; }
+
+        /* Main grid */
+        .main-grid {
+            display: grid; grid-template-columns: 1fr 420px; gap: 20px;
+        }
+
+        /* Panel */
+        .panel {
+            background: rgba(255,255,255,0.95); border-radius: 15px;
+            padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        .panel-title {
+            font-size: 16px; font-weight: 700; color: #003D99;
+            margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+        }
+
+        /* Task list */
+        .task-item {
+            border: 1px solid #e5e7eb; border-radius: 10px;
+            padding: 15px; margin-bottom: 12px; transition: all 0.2s;
+        }
+        .task-item:hover { border-color: #0066FF; background: #f0f5ff; }
+        .task-item.inactive { opacity: 0.5; }
+        .task-header {
+            display: flex; justify-content: space-between;
+            align-items: flex-start; margin-bottom: 8px;
+        }
+        .task-platform {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .platform-badge {
+            padding: 3px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 600; color: white;
+        }
+        .task-title { font-weight: 600; color: #1f2937; font-size: 14px; }
+        .task-meta {
+            display: flex; gap: 15px; font-size: 12px; color: #6b7280;
+            margin-top: 6px; flex-wrap: wrap;
+        }
+        .task-meta span { display: flex; align-items: center; gap: 4px; }
+        .progress-bar-wrap {
+            height: 6px; background: #e5e7eb; border-radius: 10px;
+            margin-top: 10px; overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%; background: linear-gradient(90deg, #003D99, #0066FF);
+            border-radius: 10px; transition: width 0.3s;
+        }
+        .task-actions { display: flex; gap: 6px; margin-top: 10px; }
+        .btn-sm {
+            padding: 5px 12px; border-radius: 6px; font-size: 12px;
+            cursor: pointer; border: none; font-weight: 600; transition: all 0.2s;
+        }
+        .btn-edit   { background: #dbeafe; color: #1d4ed8; }
+        .btn-toggle { background: #dcfce7; color: #15803d; }
+        .btn-toggle.off { background: #fee2e2; color: #dc2626; }
+        .btn-del    { background: #fee2e2; color: #dc2626; }
+        .btn-view   { background: #f3e8ff; color: #7c3aed; }
+        .btn-sm:hover { filter: brightness(0.9); transform: translateY(-1px); }
+
+        /* Create form */
+        .form-group { margin-bottom: 14px; }
+        .form-label {
+            display: block; font-size: 12px; font-weight: 600;
+            color: #374151; margin-bottom: 5px;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 9px 12px;
+            border: 1px solid #d1d5db; border-radius: 8px;
+            font-size: 13px; color: #1f2937;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none; border-color: #0066FF;
+            box-shadow: 0 0 0 3px rgba(0,102,255,0.1);
+        }
+        .form-textarea { resize: vertical; min-height: 70px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* Currency toggle */
+        .currency-toggle {
+            display: flex; gap: 8px;
+        }
+        .currency-btn {
+            flex: 1; padding: 8px; border: 2px solid #d1d5db;
+            border-radius: 8px; background: white; cursor: pointer;
+            font-weight: 600; font-size: 13px; transition: all 0.2s; text-align: center;
+        }
+        .currency-btn.active {
+            border-color: #0066FF; background: #dbeafe; color: #1d4ed8;
+        }
+
+        /* Submit btn */
+        .btn-create {
+            width: 100%; padding: 12px; background: linear-gradient(135deg, #003D99, #0066FF);
+            color: white; border: none; border-radius: 10px;
+            font-size: 14px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s; margin-top: 5px;
+        }
+        .btn-create:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,102,255,0.3); }
+
+        /* Pending badge */
+        .pending-badge {
+            background: #ef4444; color: white; border-radius: 20px;
+            padding: 2px 8px; font-size: 11px; font-weight: 700;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: white; border-radius: 15px; padding: 25px;
+            max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto;
+        }
+        .modal-title {
+            font-size: 16px; font-weight: 700; color: #003D99;
+            margin-bottom: 15px;
+        }
+        .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-approve {
+            flex: 1; padding: 10px; background: #22c55e; color: white;
+            border: none; border-radius: 8px; font-weight: 700; cursor: pointer;
+        }
+        .btn-reject {
+            flex: 1; padding: 10px; background: #ef4444; color: white;
+            border: none; border-radius: 8px; font-weight: 700; cursor: pointer;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 20px; right: 20px;
+            background: #1f2937; color: white; padding: 12px 20px;
+            border-radius: 10px; font-size: 13px; z-index: 9999;
+            opacity: 0; transform: translateY(10px);
+            transition: all 0.3s; pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: #22c55e; }
+        .toast.error   { background: #ef4444; }
+
+        /* Empty */
+        .empty { text-align: center; padding: 40px; color: #9ca3af; }
+
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .stats-bar { grid-template-columns: repeat(2,1fr); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <div class="admin-header">
+        <h1>📱 Tareas Sociales</h1>
+        <div>
+            <a href="/admin/social-tasks/submissions" class="nav-btn orange">
+                📋 Revisiones
+                {% if pending_count > 0 %}
+                <span style="background:#ef4444;border-radius:20px;padding:1px 6px;font-size:11px;margin-left:4px;">{{ pending_count }}</span>
+                {% endif %}
+            </a>
+            <a href="/admin/dashboard" class="nav-btn">⬅ Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="val">{{ tasks|length }}</div>
+            <div class="lbl">Total Tareas</div>
+        </div>
+        <div class="stat-card">
+            <div class="val">{{ tasks|selectattr('is_active')|list|length }}</div>
+            <div class="lbl">Activas</div>
+        </div>
+        <div class="stat-card">
+            <div class="val" style="color:#ef4444;">{{ pending_count }}</div>
+            <div class="lbl">Pendientes</div>
+        </div>
+        <div class="stat-card">
+            <div class="val">{{ tasks|sum(attribute='current_completions') }}</div>
+            <div class="lbl">Completaciones</div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main-grid">
+
+        <!-- Task list -->
+        <div class="panel">
+            <div class="panel-title">📋 Tareas Creadas</div>
+
+            {% if tasks %}
+                {% for task in tasks %}
+                {% set progress = (task.current_completions / task.max_completions * 100)|int if task.max_completions > 0 else 0 %}
+                {% set plat = platforms|selectattr('id','equalto',task.platform)|first %}
+                <div class="task-item {% if not task.is_active %}inactive{% endif %}" id="task-{{ task.task_id }}">
+                    <div class="task-header">
+                        <div class="task-platform">
+                            <span class="platform-badge" style="background:{{ plat.color if plat else '#666' }}">
+                                {{ plat.icon if plat else '🔗' }} {{ plat.name if plat else task.platform }}
+                            </span>
+                            <span class="task-title">{{ task.title }}</span>
+                        </div>
+                        <span style="font-size:12px;color:{% if task.is_active %}#22c55e{% else %}#ef4444{% endif %};">
+                            {% if task.is_active %}● Activa{% else %}● Inactiva{% endif %}
+                        </span>
+                    </div>
+                    <div class="task-meta">
+                        <span>💰 {{ task.reward_amount }} {{ task.reward_currency|upper }}</span>
+                        <span>👥 {{ task.current_completions }}/{{ task.max_completions }}</span>
+                        <span>{% for a in actions %}{% if a.id == task.action_type %}{{ a.name }}{% endif %}{% endfor %}</span>
+                        {% if task.requires_screenshot %}<span>📸 Requiere captura</span>{% endif %}
+                    </div>
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-fill" style="width:{{ progress }}%"></div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn-sm btn-edit" onclick="openEditModal('{{ task.task_id }}', {{ task|tojson|safe }})">✏️ Editar</button>
+                        <button class="btn-sm btn-toggle {% if not task.is_active %}off{% endif %}"
+                                onclick="toggleTask('{{ task.task_id }}', {{ 'false' if task.is_active else 'true' }})">
+                            {% if task.is_active %}⏸ Pausar{% else %}▶️ Activar{% endif %}
+                        </button>
+                        <button class="btn-sm btn-view" onclick="window.location='/admin/social-tasks/submissions?task_id={{ task.task_id }}'">📋 Ver envíos</button>
+                        <button class="btn-sm btn-del" onclick="deleteTask('{{ task.task_id }}')">🗑️</button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty">
+                    <div style="font-size:48px;margin-bottom:12px;">📭</div>
+                    <p>No hay tareas creadas todavía</p>
+                    <p style="font-size:12px;margin-top:6px;">Crea tu primera tarea con el formulario</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Create form -->
+        <div class="panel">
+            <div class="panel-title">➕ Crear Nueva Tarea</div>
+
+            <div class="form-group">
+                <label class="form-label">Plataforma *</label>
+                <select class="form-select" id="f-platform">
+                    {% for p in platforms %}
+                    <option value="{{ p.id }}">{{ p.icon }} {{ p.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Acción requerida *</label>
+                <select class="form-select" id="f-action">
+                    {% for a in actions %}
+                    <option value="{{ a.id }}">{{ a.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Título de la tarea *</label>
+                <input class="form-input" id="f-title" placeholder="Ej: Síguenos en TikTok @micanal">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Descripción</label>
+                <textarea class="form-textarea" id="f-desc" placeholder="Instrucciones adicionales..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">URL del perfil / publicación *</label>
+                <input class="form-input" id="f-url" placeholder="https://tiktok.com/@usuario">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Usuario / Canal objetivo</label>
+                <input class="form-input" id="f-username" placeholder="@usuario">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Instrucciones para el usuario</label>
+                <textarea class="form-textarea" id="f-instructions" placeholder="Ej: Entra al perfil, presiona Seguir, toma captura mostrando el botón Siguiendo"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Recompensa *</label>
+                    <input class="form-input" id="f-reward" type="number" step="0.01" min="0.01" value="1.00">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Moneda</label>
+                    <div class="currency-toggle">
+                        <div class="currency-btn active" id="btn-se" onclick="setCurrency('se')">S-E</div>
+                        <div class="currency-btn" id="btn-doge" onclick="setCurrency('doge')">DOGE</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Cupos máximos *</label>
+                <input class="form-input" id="f-cupos" type="number" min="1" value="100">
+            </div>
+
+            <div class="form-group" style="display:flex;align-items:center;gap:10px;">
+                <input type="checkbox" id="f-screenshot" checked style="width:18px;height:18px;accent-color:#0066FF;">
+                <label for="f-screenshot" style="font-size:13px;cursor:pointer;">Requiere captura de pantalla</label>
+            </div>
+
+            <button class="btn-create" onclick="createTask()">➕ Crear Tarea</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <div class="modal-title">✏️ Editar Tarea</div>
+        <input type="hidden" id="edit-task-id">
+
+        <div class="form-group">
+            <label class="form-label">Título</label>
+            <input class="form-input" id="edit-title">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-textarea" id="edit-desc"></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label">URL</label>
+            <input class="form-input" id="edit-url">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Instrucciones</label>
+            <textarea class="form-textarea" id="edit-instructions"></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Recompensa</label>
+                <input class="form-input" id="edit-reward" type="number" step="0.01">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cupos</label>
+                <input class="form-input" id="edit-cupos" type="number">
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-approve" onclick="saveEdit()">💾 Guardar</button>
+            <button class="btn-reject" onclick="closeEdit()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let selectedCurrency = 'se';
+
+function setCurrency(c) {
+    selectedCurrency = c;
+    document.getElementById('btn-se').classList.toggle('active', c === 'se');
+    document.getElementById('btn-doge').classList.toggle('active', c === 'doge');
+}
+
+function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+async function createTask() {
+    const body = {
+        platform:         document.getElementById('f-platform').value,
+        action_type:      document.getElementById('f-action').value,
+        title:            document.getElementById('f-title').value.trim(),
+        description:      document.getElementById('f-desc').value.trim(),
+        target_url:       document.getElementById('f-url').value.trim(),
+        target_username:  document.getElementById('f-username').value.trim(),
+        instructions:     document.getElementById('f-instructions').value.trim(),
+        reward_amount:    parseFloat(document.getElementById('f-reward').value),
+        reward_currency:  selectedCurrency,
+        max_completions:  parseInt(document.getElementById('f-cupos').value),
+        requires_screenshot: document.getElementById('f-screenshot').checked
+    };
+    if (!body.title || !body.target_url) {
+        showToast('Título y URL son obligatorios', 'error'); return;
+    }
+    const res = await fetch('/admin/social-tasks/create', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (data.success) {
+        showToast('✅ Tarea creada correctamente');
+        setTimeout(() => location.reload(), 1000);
+    } else {
+        showToast(data.error || 'Error al crear', 'error');
+    }
+}
+
+async function toggleTask(taskId, newState) {
+    const res = await fetch(`/admin/social-tasks/${taskId}/toggle`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({is_active: newState === 'true'})
+    });
+    const data = await res.json();
+    if (data.success) { showToast('Estado actualizado'); setTimeout(() => location.reload(), 800); }
+    else showToast(data.error || 'Error', 'error');
+}
+
+async function deleteTask(taskId) {
+    if (!confirm('¿Desactivar esta tarea?')) return;
+    const res = await fetch(`/admin/social-tasks/${taskId}/delete`, { method:'POST' });
+    const data = await res.json();
+    if (data.success) { showToast('Tarea desactivada'); setTimeout(() => location.reload(), 800); }
+    else showToast(data.error || 'Error', 'error');
+}
+
+function openEditModal(taskId, task) {
+    document.getElementById('edit-task-id').value = taskId;
+    document.getElementById('edit-title').value = task.title;
+    document.getElementById('edit-desc').value = task.description || '';
+    document.getElementById('edit-url').value = task.target_url || '';
+    document.getElementById('edit-instructions').value = task.instructions || '';
+    document.getElementById('edit-reward').value = task.reward_amount;
+    document.getElementById('edit-cupos').value = task.max_completions;
+    document.getElementById('editModal').classList.add('open');
+}
+
+function closeEdit() {
+    document.getElementById('editModal').classList.remove('open');
+}
+
+async function saveEdit() {
+    const taskId = document.getElementById('edit-task-id').value;
+    const body = {
+        title:       document.getElementById('edit-title').value.trim(),
+        description: document.getElementById('edit-desc').value.trim(),
+        target_url:  document.getElementById('edit-url').value.trim(),
+        instructions:document.getElementById('edit-instructions').value.trim(),
+        reward_amount: parseFloat(document.getElementById('edit-reward').value),
+        max_completions: parseInt(document.getElementById('edit-cupos').value),
+    };
+    const res = await fetch(`/admin/social-tasks/${taskId}/update`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (data.success) {
+        showToast('✅ Tarea actualizada'); closeEdit();
+        setTimeout(() => location.reload(), 800);
+    } else showToast(data.error || 'Error', 'error');
+}
+</script>
+</body>
+</html>

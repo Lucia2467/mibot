@@ -1,0 +1,418 @@
+{% extends "base.html" %}
+{% block title %}Tareas Sociales{% endblock %}
+{% block content %}
+<style>
+.st-container { padding: var(--space-4); max-width: 100%; }
+
+/* Header */
+.st-header { text-align: center; margin-bottom: var(--space-6); }
+.st-header h1 {
+    font-size: 1.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: var(--space-2);
+}
+.st-header p { color: var(--color-text-secondary); font-size: 0.875rem; }
+
+/* Tabs */
+.st-tabs {
+    display: flex; gap: var(--space-2); margin-bottom: var(--space-5);
+    background: var(--glass-ultra); border-radius: var(--radius-lg);
+    padding: var(--space-1);
+}
+.st-tab {
+    flex: 1; padding: var(--space-3); background: transparent;
+    border: none; border-radius: var(--radius-md);
+    color: var(--color-text-secondary); font-weight: 600;
+    font-size: 0.875rem; cursor: pointer; transition: all 0.2s;
+    position: relative;
+}
+.st-tab.active { background: var(--gradient-primary); color: white; }
+.st-tab .tab-badge {
+    position: absolute; top: 4px; right: 4px;
+    background: #ef4444; color: white; border-radius: 20px;
+    padding: 1px 5px; font-size: 10px; font-weight: 700;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Task card */
+.st-task-card {
+    background: var(--glass-ultra); border: var(--glass-border);
+    border-radius: var(--radius-lg); margin-bottom: var(--space-4);
+    overflow: hidden; transition: all 0.2s;
+}
+.st-task-card:hover { border-color: var(--color-neon-pink); }
+
+.st-task-card-header {
+    padding: var(--space-4) var(--space-4) var(--space-3);
+    display: flex; align-items: center; gap: var(--space-3);
+}
+.platform-icon-wrap {
+    width: 48px; height: 48px; border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; flex-shrink: 0;
+}
+.task-card-info { flex: 1; }
+.task-card-title {
+    font-weight: 700; color: var(--color-text-primary);
+    font-size: 0.95rem; margin-bottom: 4px;
+}
+.task-card-platform {
+    font-size: 0.75rem; color: var(--color-text-tertiary);
+    display: flex; align-items: center; gap: 6px;
+}
+.task-reward-badge {
+    font-size: 0.875rem; font-weight: 700; color: #FFD700;
+    text-align: right; flex-shrink: 0;
+}
+.task-reward-label { font-size: 0.65rem; color: var(--color-text-tertiary); }
+
+.task-card-body { padding: 0 var(--space-4) var(--space-3); }
+.task-description {
+    color: var(--color-text-secondary); font-size: 0.8rem;
+    line-height: 1.5; margin-bottom: var(--space-3);
+}
+.task-url-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: var(--space-2) var(--space-4);
+    background: rgba(0,102,255,0.1); border: 1px solid rgba(0,102,255,0.3);
+    border-radius: var(--radius-full); color: var(--color-blue-primary);
+    font-size: 0.8rem; font-weight: 600; text-decoration: none;
+    transition: all 0.2s; margin-bottom: var(--space-3);
+}
+.task-url-btn:hover { background: rgba(0,102,255,0.2); }
+
+/* Progress */
+.task-progress-row {
+    display: flex; justify-content: space-between;
+    font-size: 0.75rem; color: var(--color-text-tertiary);
+    margin-bottom: 5px;
+}
+.task-progress-bar {
+    height: 5px; background: rgba(255,255,255,0.1);
+    border-radius: 10px; overflow: hidden;
+}
+.task-progress-fill {
+    height: 100%; background: var(--gradient-primary); border-radius: 10px;
+}
+
+/* Instructions box */
+.instructions-box {
+    background: rgba(0,245,255,0.05); border: 1px solid rgba(0,245,255,0.15);
+    border-radius: var(--radius-md); padding: var(--space-3);
+    margin: var(--space-3) 0; font-size: 0.8rem;
+    color: var(--color-text-secondary); line-height: 1.6;
+}
+.instructions-box strong { color: var(--color-neon-cyan); }
+
+/* Upload area */
+.upload-area {
+    border: 2px dashed rgba(0,102,255,0.4); border-radius: var(--radius-lg);
+    padding: var(--space-5); text-align: center; cursor: pointer;
+    transition: all 0.2s; margin: var(--space-3) 0;
+    background: rgba(0,102,255,0.03);
+}
+.upload-area:hover { border-color: var(--color-blue-primary); background: rgba(0,102,255,0.08); }
+.upload-area.has-image { border-style: solid; border-color: #22c55e; }
+.upload-icon { font-size: 2rem; margin-bottom: var(--space-2); }
+.upload-text { font-size: 0.85rem; color: var(--color-text-secondary); }
+.upload-preview {
+    width: 100%; border-radius: var(--radius-md);
+    max-height: 200px; object-fit: contain; display: none;
+}
+
+input[type="file"] { display: none; }
+
+/* Submit btn */
+.task-submit-btn {
+    width: 100%; padding: var(--space-4);
+    background: var(--gradient-primary); border: none;
+    border-radius: var(--radius-lg); color: white;
+    font-size: 0.95rem; font-weight: 700; cursor: pointer;
+    transition: all 0.2s; display: flex;
+    align-items: center; justify-content: center; gap: 8px;
+}
+.task-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,102,255,0.3); }
+.task-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* Status badges */
+.user-status-row {
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8rem; font-weight: 600;
+}
+.user-status-row.pending  { color: #d97706; background: rgba(251,191,36,0.08); }
+.user-status-row.approved { color: #22c55e; background: rgba(34,197,94,0.08); }
+.user-status-row.rejected { color: #ef4444; background: rgba(239,68,68,0.08); }
+
+/* My submissions */
+.submission-card {
+    background: var(--glass-ultra); border: var(--glass-border);
+    border-radius: var(--radius-lg); padding: var(--space-4);
+    margin-bottom: var(--space-3); display: flex;
+    align-items: center; gap: var(--space-3);
+}
+.sub-thumb {
+    width: 56px; height: 56px; border-radius: var(--radius-md);
+    object-fit: cover; flex-shrink: 0; background: rgba(255,255,255,0.05);
+}
+.sub-info { flex: 1; }
+.sub-task-title { font-weight: 600; font-size: 0.9rem; color: var(--color-text-primary); }
+.sub-meta { font-size: 0.75rem; color: var(--color-text-tertiary); margin-top: 3px; }
+.sub-status {
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+}
+.sub-status.pending  { background: rgba(251,191,36,0.15); color: #d97706; }
+.sub-status.approved { background: rgba(34,197,94,0.15);  color: #22c55e; }
+.sub-status.rejected { background: rgba(239,68,68,0.15);  color: #ef4444; }
+
+.admin-note-box {
+    margin-top: 6px; padding: 6px 10px;
+    background: rgba(239,68,68,0.08); border-radius: var(--radius-sm);
+    font-size: 0.75rem; color: #ef4444;
+}
+
+.empty-state { text-align: center; padding: var(--space-10); color: var(--color-text-tertiary); }
+.empty-state .big { font-size: 3rem; margin-bottom: var(--space-3); }
+</style>
+
+<div class="st-container">
+    <!-- Header -->
+    <div class="st-header">
+        <h1>📱 Tareas Sociales</h1>
+        <p>Completa tareas en redes sociales y gana recompensas</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="st-tabs">
+        <button class="st-tab active" onclick="switchTab('available')">
+            Disponibles
+        </button>
+        <button class="st-tab" onclick="switchTab('my')">
+            Mis Tareas
+            {% set pending_subs = submissions|selectattr('status','equalto','pending')|list %}
+            {% if pending_subs %}
+            <span class="tab-badge">{{ pending_subs|length }}</span>
+            {% endif %}
+        </button>
+    </div>
+
+    <!-- Available tasks -->
+    <div id="tab-available" class="tab-content active">
+        {% if tasks %}
+            {% for task in tasks %}
+            {% set plat = platforms.get(task.platform, {'icon':'🔗','color':'#666','name': task.platform}) %}
+            {% set progress = (task.current_completions / task.max_completions * 100)|int if task.max_completions > 0 else 0 %}
+            <div class="st-task-card" id="stask-{{ task.task_id }}">
+
+                <div class="st-task-card-header">
+                    <div class="platform-icon-wrap" style="background:{{ plat.color }}22;">
+                        {{ plat.icon }}
+                    </div>
+                    <div class="task-card-info">
+                        <div class="task-card-title">{{ task.title }}</div>
+                        <div class="task-card-platform">
+                            <span>{{ plat.name }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="task-reward-badge">+{{ task.reward_amount }}</div>
+                        <div class="task-reward-label">{{ task.reward_currency|upper }}</div>
+                    </div>
+                </div>
+
+                {% if task.user_status %}
+                    <!-- Already submitted -->
+                    <div class="user-status-row {{ task.user_status }}">
+                        {% if task.user_status == 'pending' %}
+                            ⏳ Enviado — En revisión
+                        {% elif task.user_status == 'approved' %}
+                            ✅ Completado — Recompensa acreditada
+                        {% else %}
+                            ❌ Rechazado — Revisa tus envíos
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <!-- Task details + form -->
+                    <div class="task-card-body">
+                        {% if task.description %}
+                        <div class="task-description">{{ task.description }}</div>
+                        {% endif %}
+
+                        {% if task.target_url %}
+                        <a href="{{ task.target_url }}" target="_blank" class="task-url-btn">
+                            🔗 Ir a {{ plat.name }}
+                        </a>
+                        {% endif %}
+
+                        {% if task.instructions %}
+                        <div class="instructions-box">
+                            <strong>📋 Instrucciones:</strong><br>
+                            {{ task.instructions }}
+                        </div>
+                        {% endif %}
+
+                        <div class="task-progress-row">
+                            <span>{{ task.current_completions }} completadas</span>
+                            <span>{{ task.max_completions - task.current_completions }} cupos restantes</span>
+                        </div>
+                        <div class="task-progress-bar">
+                            <div class="task-progress-fill" style="width:{{ progress }}%"></div>
+                        </div>
+
+                        {% if task.requires_screenshot %}
+                        <!-- Upload screenshot -->
+                        <div class="upload-area" id="upload-{{ task.task_id }}"
+                             onclick="document.getElementById('file-{{ task.task_id }}').click()">
+                            <img class="upload-preview" id="preview-{{ task.task_id }}" alt="preview">
+                            <div id="upload-placeholder-{{ task.task_id }}">
+                                <div class="upload-icon">📸</div>
+                                <div class="upload-text">Toca para subir captura de pantalla<br>
+                                    <small style="opacity:0.6;">JPG, PNG — máx 5MB</small>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="file" id="file-{{ task.task_id }}" accept="image/*"
+                               onchange="previewImage('{{ task.task_id }}', this)">
+                        {% endif %}
+
+                        <button class="task-submit-btn" id="submit-btn-{{ task.task_id }}"
+                                onclick="submitTask('{{ task.task_id }}', {{ task.requires_screenshot|tojson }})"
+                                {% if task.requires_screenshot %}disabled{% endif %}>
+                            📤 Enviar para revisión
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="big">📭</div>
+                <p>No hay tareas disponibles por ahora</p>
+                <p style="font-size:0.8rem;margin-top:8px;opacity:0.6;">Vuelve más tarde</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- My submissions -->
+    <div id="tab-my" class="tab-content">
+        {% if submissions %}
+            {% for sub in submissions %}
+            {% set plat = platforms.get(sub.platform, {'icon':'🔗','name':sub.platform}) %}
+            <div class="submission-card">
+                {% if sub.screenshot_data %}
+                <img class="sub-thumb" src="{{ sub.screenshot_data }}" alt="captura">
+                {% else %}
+                <div class="sub-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;">
+                    {{ plat.icon }}
+                </div>
+                {% endif %}
+                <div class="sub-info">
+                    <div class="sub-task-title">{{ sub.title }}</div>
+                    <div class="sub-meta">
+                        {{ plat.name }} · {{ sub.reward_amount }} {{ sub.reward_currency|upper }}
+                        · {{ sub.submitted_at|string|truncate(16, True, '') }}
+                    </div>
+                    {% if sub.admin_note and sub.status == 'rejected' %}
+                    <div class="admin-note-box">📝 {{ sub.admin_note }}</div>
+                    {% endif %}
+                </div>
+                <div class="sub-status {{ sub.status }}">
+                    {% if sub.status == 'pending' %}⏳ Revisión
+                    {% elif sub.status == 'approved' %}✅ Aprobado
+                    {% else %}❌ Rechazado{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="big">📋</div>
+                <p>No has completado ninguna tarea todavía</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+const userId = '{{ user_id }}';
+const screenshots = {};  // task_id -> base64
+
+function switchTab(tab) {
+    document.querySelectorAll('.st-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById(`tab-${tab}`).classList.add('active');
+}
+
+function previewImage(taskId, input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5_000_000) {
+        showToast('La imagen es muy grande (máx 5MB)', 'error'); return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        screenshots[taskId] = e.target.result;
+        const preview = document.getElementById(`preview-${taskId}`);
+        const placeholder = document.getElementById(`upload-placeholder-${taskId}`);
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+        document.getElementById(`upload-${taskId}`).classList.add('has-image');
+        document.getElementById(`submit-btn-${taskId}`).disabled = false;
+    };
+    reader.readAsDataURL(file);
+}
+
+async function submitTask(taskId, requiresScreenshot) {
+    if (requiresScreenshot && !screenshots[taskId]) {
+        showToast('Sube una captura de pantalla primero', 'error'); return;
+    }
+    const btn = document.getElementById(`submit-btn-${taskId}`);
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Enviando...';
+
+    try {
+        const res = await fetch('/api/social-tasks/submit', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                user_id: userId,
+                task_id: taskId,
+                screenshot: screenshots[taskId] || '',
+                note: ''
+            })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            showToast('✅ Enviado correctamente — en revisión');
+            // Update UI
+            const card = document.getElementById(`stask-${taskId}`);
+            const body = card.querySelector('.task-card-body');
+            if (body) {
+                body.outerHTML = `
+                    <div class="user-status-row pending">
+                        ⏳ Enviado — En revisión
+                    </div>`;
+            }
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+        } else {
+            showToast(data.error || 'Error al enviar', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '📤 Enviar para revisión';
+        }
+    } catch (e) {
+        showToast('Error de conexión', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '📤 Enviar para revisión';
+    }
+}
+</script>
+{% endblock %}
