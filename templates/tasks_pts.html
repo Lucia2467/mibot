@@ -108,9 +108,11 @@
         </div>
 
         <!-- Tareas comunidad -->
-        <div data-filter="community" id="user-tasks-list">
-            <div style="text-align:center;padding:var(--space-5);color:var(--color-text-tertiary);">
-                <i data-lucide="loader" class="spin" style="width:24px;height:24px;"></i>
+        <div data-filter="community">
+            <div id="user-tasks-list">
+                <div style="text-align:center;padding:var(--space-5);color:var(--color-text-tertiary);">
+                    <i data-lucide="loader" class="spin" style="width:24px;height:24px;"></i>
+                </div>
             </div>
         </div>
 
@@ -812,41 +814,48 @@ async function stSubmit(taskId, requiresScreenshot) {
 }
 // ── Tab switching ──
 function switchTab(tab) {
-    // Update button styles
-    document.querySelectorAll('.task-tab').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    const activeBtn = document.querySelector(`.task-tab[data-tab="${tab}"]`);
+    document.querySelectorAll('.task-tab').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.querySelector('.task-tab[data-tab="' + tab + '"]');
     if (activeBtn) activeBtn.classList.add('active');
 
-    // Show/hide content
-    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+    const allEl        = document.getElementById('tab-content-all');
+    const socialEl     = document.getElementById('tab-content-social');
+    const adsEl        = document.getElementById('tab-content-ads');
+    const telegramWrap = document.querySelector('#tab-content-all [data-filter="telegram"]');
+    const communityWrap= document.querySelector('#tab-content-all [data-filter="community"]');
+    const comp         = document.getElementById('completed-section');
 
-    if (tab === 'all' || tab === 'telegram' || tab === 'community') {
-        document.getElementById('tab-content-all').style.display = 'block';
-        // Filter rows inside
-        const telegramRows = document.querySelectorAll('#tab-content-all [data-filter="telegram"] .task-row, #tab-content-all [data-filter="telegram"] > div');
-        const communityEl  = document.getElementById('user-tasks-list');
-        const telegramWrap = document.querySelector('#tab-content-all [data-filter="telegram"]');
-        if (tab === 'telegram') {
-            if (telegramWrap) telegramWrap.style.display = 'block';
-            if (communityEl && communityEl.parentElement) communityEl.parentElement.style.display = 'none';
-        } else if (tab === 'community') {
-            if (telegramWrap) telegramWrap.style.display = 'none';
-            if (communityEl && communityEl.parentElement) communityEl.parentElement.style.display = 'block';
-        } else {
-            if (telegramWrap) telegramWrap.style.display = 'block';
-            if (communityEl && communityEl.parentElement) communityEl.parentElement.style.display = 'block';
-        }
+    // Reset
+    [allEl, socialEl, adsEl].forEach(el => { if(el) el.style.display = 'none'; });
+
+    if (tab === 'all') {
+        if (allEl)        allEl.style.display    = 'block';
+        if (socialEl)     socialEl.style.display = 'block';
+        if (adsEl)        adsEl.style.display    = 'block';
+        if (telegramWrap)  telegramWrap.style.display  = 'block';
+        if (communityWrap) communityWrap.style.display = 'block';
+        if (comp) comp.style.display = 'block';
+
+    } else if (tab === 'telegram') {
+        if (allEl) allEl.style.display = 'block';
+        if (telegramWrap)  telegramWrap.style.display  = 'block';
+        if (communityWrap) communityWrap.style.display = 'none';
+        if (comp) comp.style.display = 'block';
+
     } else if (tab === 'social') {
-        document.getElementById('tab-content-social').style.display = 'block';
-    } else if (tab === 'ads') {
-        document.getElementById('tab-content-ads').style.display = 'block';
-    }
+        if (socialEl) socialEl.style.display = 'block';
+        if (comp) comp.style.display = 'none';
 
-    // Show/hide completed section
-    const comp = document.getElementById('completed-section');
-    if (comp) comp.style.display = (tab === 'all' || tab === 'telegram') ? 'block' : 'none';
+    } else if (tab === 'community') {
+        if (allEl) allEl.style.display = 'block';
+        if (telegramWrap)  telegramWrap.style.display  = 'none';
+        if (communityWrap) communityWrap.style.display = 'block';
+        if (comp) comp.style.display = 'none';
+
+    } else if (tab === 'ads') {
+        if (adsEl) adsEl.style.display = 'block';
+        if (comp) comp.style.display = 'none';
+    }
 }
 
 // ── Social task drawer ──
