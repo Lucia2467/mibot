@@ -714,10 +714,14 @@ def tasks():
     print(f"[tasks] Disponibles: {list(available_tasks.keys())}, Completadas: {list(completed_tasks.keys())}")
 
     # Usar el nuevo template con sistema PTS
+    # Social tasks with screenshot
+    social_tasks = get_active_social_tasks(user_id=user_id)
+
     return render_template('tasks_pts.html',
                          user=user,
                          available_tasks=available_tasks,
                          completed_tasks=completed_tasks,
+                         social_tasks=social_tasks,
                          user_id=user_id,
                          show_support_button=True)
 
@@ -6500,10 +6504,13 @@ except Exception as e:
 # ============== USER TASKS PROMOTION SYSTEM ==============
 try:
     from user_tasks_routes import user_tasks_bp
+from social_tasks_routes import social_tasks_bp
+from social_tasks_system import get_active_social_tasks
     from user_tasks_system import init_user_tasks_table
 
     # Registrar el blueprint
     app.register_blueprint(user_tasks_bp)
+app.register_blueprint(social_tasks_bp)
 
     # Inicializar tablas
     with app.app_context():
