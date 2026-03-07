@@ -6173,15 +6173,7 @@ def api_admin_users_stats():
             'error': str(e)
         })
 
-# ============== ERROR HANDLERS ==============
-
-@app.errorhandler(404)
-def not_found(e):
-    return render_template('telegram_required.html'), 404
-
-@app.errorhandler(500)
-def server_error(e):
-    return jsonify({'error': 'Internal server error'}), 500
+# ============== ERROR HANDLERS (removidos - ya definidos arriba) ==============
 
 # ============== MÓDULO DE MISIONES DE REFERIDOS ==============
 # Importar y registrar el blueprint de misiones de referidos
