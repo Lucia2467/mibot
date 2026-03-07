@@ -152,11 +152,15 @@ def api_my_submissions():
 @_admin_required
 def admin_social_tasks_page():
     tasks = get_all_social_tasks()
+    # Contar envíos pendientes para el badge
+    pending_submissions = get_all_submissions(status='pending')
+    pending_count = len(pending_submissions)
     return render_template(
         'admin_social_tasks.html',
         tasks=tasks,
         platforms=SOCIAL_PLATFORMS,
         actions=SOCIAL_ACTIONS,
+        pending_count=pending_count,
     )
 
 
@@ -166,12 +170,14 @@ def admin_social_submissions_page():
     status = request.args.get('status')
     task_id = request.args.get('task_id')
     submissions = get_all_submissions(status=status, task_id=task_id)
+    pending_count = len(get_all_submissions(status='pending'))
 
     return render_template(
         'admin_social_submissions.html',
         submissions=submissions,
         current_status=status,
         current_task_id=task_id,
+        pending_count=pending_count,
     )
 
 
