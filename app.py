@@ -715,7 +715,7 @@ def tasks():
 
     # Usar el nuevo template con sistema PTS
     # Social tasks with screenshot
-    social_tasks = get_active_social_tasks(user_id=user_id)
+    social_tasks = get_active_social_tasks(user_id=user_id) if globals().get("SOCIAL_TASKS_AVAILABLE") else []
 
     return render_template('tasks_pts.html',
                          user=user,
@@ -6496,29 +6496,36 @@ except Exception as e:
 # ============== USER TASKS PROMOTION SYSTEM ==============
 try:
     from user_tasks_routes import user_tasks_bp
-    from social_tasks_routes import social_tasks_bp
-    from social_tasks_system import get_active_social_tasks, init_social_tasks_tables
     from user_tasks_system import init_user_tasks_table
-
-    # Registrar blueprints
     app.register_blueprint(user_tasks_bp)
-    app.register_blueprint(social_tasks_bp)
-
-    # Inicializar tablas
     with app.app_context():
         init_user_tasks_table()
-        init_social_tasks_tables()
-
-    logger.info("✅ User Tasks Promotion system loaded successfully")
+    logger.info("✅ User Tasks system loaded successfully")
     USER_TASKS_AVAILABLE = True
 except ImportError as e:
-    logger.warning(f"⚠️ User Tasks Promotion system not available: {e}")
+    logger.warning(f"⚠️ User Tasks system not available: {e}")
     USER_TASKS_AVAILABLE = False
 except Exception as e:
-    logger.error(f"❌ Error loading User Tasks Promotion system: {e}")
-    import traceback
-    traceback.print_exc()
+    logger.error(f"❌ Error loading User Tasks system: {e}")
+    import traceback; traceback.print_exc()
     USER_TASKS_AVAILABLE = False
+
+# ============== SOCIAL TASKS SYSTEM ==============
+try:
+    from social_tasks_routes import social_tasks_bp
+    from social_tasks_system import get_active_social_tasks, init_social_tasks_tables
+    app.register_blueprint(social_tasks_bp)
+    with app.app_context():
+        init_social_tasks_tables()
+    logger.info("✅ Social Tasks system loaded successfully")
+    SOCIAL_TASKS_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"⚠️ Social Tasks system not available: {e}")
+    SOCIAL_TASKS_AVAILABLE = False
+except Exception as e:
+    logger.error(f"❌ Error loading Social Tasks system: {e}")
+    import traceback; traceback.print_exc()
+    SOCIAL_TASKS_AVAILABLE = False
 
 
 # ============================================
