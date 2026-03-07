@@ -430,12 +430,13 @@ const PTS = {
                 
                 if (d.checkin_done) {
                     cb.disabled = true;
-                    cb.style.background = 'linear-gradient(135deg,rgba(34,197,94,0.3),rgba(22,163,74,0.4))';
-                    cb.style.boxShadow = '0 4px 15px rgba(34,197,94,0.2)';
-                    cb.style.border = '1px solid rgba(34,197,94,0.4)';
+                    cb.style.background = 'rgba(255,255,255,0.08)';
+                    cb.style.boxShadow = 'none';
+                    cb.style.border = 'none';
+                    cb.style.color = 'rgba(255,255,255,0.45)';
+                    cb.style.cursor = 'default';
                     const lbl = document.getElementById('checkin-btn-label');
-                    if (lbl) lbl.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;"><i data-lucide=\'check-circle\' style=\'width:14px;height:14px;\'></i> Check-in Completado</span>';
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                    if (lbl) lbl.textContent = 'Completado';
                     if (!d.checkin_doubled) {
                         db.style.display = 'flex';
                     } else {
