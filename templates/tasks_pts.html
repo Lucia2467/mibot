@@ -534,7 +534,7 @@
         linear-gradient(145deg,
             #1a1a2e 0%,
             #0f0f1a 40%,
-            #080810 100%);
+            #080810 100%) !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
 
@@ -566,6 +566,7 @@
 
     -webkit-tap-highlight-color: transparent;
     will-change: transform, box-shadow;
+    animation: cardIn 0.35s cubic-bezier(0.34,1.2,0.64,1) both;
 }
 
 /* Specular shimmer layer */
@@ -750,9 +751,7 @@ div[style*="linear-gradient(135deg,#001a66"] {
     from { opacity:0; transform: translateY(18px) scale(0.96); }
     to   { opacity:1; transform: translateY(0)   scale(1); }
 }
-.task-row {
-    animation: cardIn 0.35s cubic-bezier(0.34,1.2,0.64,1) both;
-}
+/* animation merged above */
 .task-row:nth-child(1)  { animation-delay: 0.00s; }
 .task-row:nth-child(2)  { animation-delay: 0.06s; }
 .task-row:nth-child(3)  { animation-delay: 0.12s; }
