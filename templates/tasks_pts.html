@@ -71,39 +71,93 @@
     </div>
 
     <!-- TABS -->
-    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:var(--space-4);scrollbar-width:none;" id="tasks-tabs">
+    <div id="tasks-tabs" style="display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;margin-bottom:var(--space-4);scrollbar-width:none;">
 
-        <button class="task-tab active" data-tab="all" onclick="switchTab('all')"
-            style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;">
-            <i data-lucide="layout-grid" style="width:14px;height:14px;"></i>
+        <button class="task-tab active" data-tab="all" onclick="switchTab('all')">
+            <i data-lucide="layout-grid" style="width:13px;height:13px;"></i>
             Todas
         </button>
 
-        <button class="task-tab" data-tab="telegram" onclick="switchTab('telegram')"
-            style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:1.5px solid rgba(42,171,238,0.3);background:rgba(42,171,238,0.08);color:rgba(255,255,255,0.5);font-size:0.82rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;">
-            <i data-lucide="send" style="width:14px;height:14px;color:#2AABEE;"></i>
+        <button class="task-tab" data-tab="telegram" onclick="switchTab('telegram')" data-color="#2AABEE">
+            <i data-lucide="send" style="width:13px;height:13px;"></i>
             Telegram
         </button>
 
-        <button class="task-tab" data-tab="social" onclick="switchTab('social')"
-            style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:1.5px solid rgba(225,48,108,0.3);background:rgba(225,48,108,0.08);color:rgba(255,255,255,0.5);font-size:0.82rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;">
-            <i data-lucide="share-2" style="width:14px;height:14px;color:#E1306C;"></i>
+        <button class="task-tab" data-tab="social" onclick="switchTab('social')" data-color="#E1306C">
+            <i data-lucide="share-2" style="width:13px;height:13px;"></i>
             Sociales
         </button>
 
-        <button class="task-tab" data-tab="community" onclick="switchTab('community')"
-            style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:1.5px solid rgba(0,163,255,0.3);background:rgba(0,163,255,0.08);color:rgba(255,255,255,0.5);font-size:0.82rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;">
-            <i data-lucide="users" style="width:14px;height:14px;color:#00A3FF;"></i>
+        <button class="task-tab" data-tab="community" onclick="switchTab('community')" data-color="#00A3FF">
+            <i data-lucide="users" style="width:13px;height:13px;"></i>
             Comunidad
         </button>
 
-        <button class="task-tab" data-tab="ads" onclick="switchTab('ads')"
-            style="display:flex;align-items:center;gap=6px;padding:8px 16px;border-radius:20px;border:1.5px solid rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);color:rgba(255,255,255,0.5);font-size:0.82rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;">
-            <i data-lucide="tv-2" style="width:14px;height:14px;color:#00D4FF;"></i>
+        <button class="task-tab" data-tab="ads" onclick="switchTab('ads')" data-color="#00D4FF">
+            <i data-lucide="tv-2" style="width:13px;height:13px;"></i>
             Anuncios
         </button>
 
     </div>
+
+    <style>
+    /* ── Premium filter tabs ── */
+    #tasks-tabs::-webkit-scrollbar { display: none; }
+
+    .task-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.04);
+        color: rgba(255,255,255,0.4);
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: background 0.18s, border-color 0.18s, color 0.18s, box-shadow 0.18s;
+        letter-spacing: 0.01em;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .task-tab::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.06), transparent);
+        opacity: 0;
+        transition: opacity 0.18s;
+    }
+
+    .task-tab:active { transform: scale(0.96); }
+
+    /* Active: solid glassy pill */
+    .task-tab.active {
+        background: rgba(255,255,255,0.12) !important;
+        border-color: rgba(255,255,255,0.22) !important;
+        color: #fff !important;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
+        font-weight: 700;
+    }
+    .task-tab.active::before { opacity: 1; }
+
+    /* Per-tab accent when active */
+    .task-tab[data-tab="all"].active       { background: rgba(255,255,255,0.13) !important; border-color: rgba(255,255,255,0.25) !important; }
+    .task-tab[data-tab="telegram"].active  { background: rgba(42,171,238,0.18) !important;  border-color: rgba(42,171,238,0.45) !important;  color: #5BC8F5 !important; box-shadow: 0 2px 16px rgba(42,171,238,0.2); }
+    .task-tab[data-tab="social"].active    { background: rgba(225,48,108,0.18) !important;  border-color: rgba(225,48,108,0.45) !important;  color: #F06292 !important; box-shadow: 0 2px 16px rgba(225,48,108,0.2); }
+    .task-tab[data-tab="community"].active { background: rgba(0,163,255,0.18) !important;   border-color: rgba(0,163,255,0.45) !important;   color: #4DB8FF !important; box-shadow: 0 2px 16px rgba(0,163,255,0.2); }
+    .task-tab[data-tab="ads"].active       { background: rgba(0,212,255,0.18) !important;   border-color: rgba(0,212,255,0.45) !important;   color: #4DDFFF !important; box-shadow: 0 2px 16px rgba(0,212,255,0.2); }
+
+    /* Icon color matches tab accent when active */
+    .task-tab[data-tab="telegram"].active  i { color: #5BC8F5 !important; }
+    .task-tab[data-tab="social"].active    i { color: #F06292 !important; }
+    .task-tab[data-tab="community"].active i { color: #4DB8FF !important; }
+    .task-tab[data-tab="ads"].active       i { color: #4DDFFF !important; }
+    </style>
 
     <!-- ══ TAB: TELEGRAM + COMUNIDAD (all / telegram / community) ══ -->
     <div id="tab-content-all" class="tab-content">
