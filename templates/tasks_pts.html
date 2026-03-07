@@ -184,56 +184,159 @@
     <!-- ============================================ -->
     <!-- SECCIÓN: TAREAS SOCIALES CON CAPTURA -->
     <!-- ============================================ -->
-    {% if social_tasks %}
-    <div style="display: flex; align-items: center; margin: var(--space-6) 0 var(--space-4);">
-        <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,102,255,0.3), transparent);"></div>
-        <span style="padding: 0 var(--space-4); font-size: 0.8rem; color: #E1306C; font-weight: 600;">📱 Tareas Sociales</span>
-        <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,102,255,0.3), transparent);"></div>
+    {% set visible_tasks = social_tasks | selectattr('user_status', '!=', 'approved') | list if social_tasks else [] %}
+    {% if visible_tasks %}
+    <div style="display:flex;align-items:center;margin:var(--space-6) 0 var(--space-4);">
+        <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(225,48,108,0.4),transparent);"></div>
+        <span style="padding:0 var(--space-3);font-size:0.75rem;color:#E1306C;font-weight:700;letter-spacing:.05em;text-transform:uppercase;">📱 Tareas Sociales</span>
+        <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(225,48,108,0.4),transparent);"></div>
     </div>
 
-    <div class="card" style="margin-bottom: var(--space-4);">
-        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-            <div style="width:40px;height:40px;background:linear-gradient(135deg,#E1306C22,#833AB422);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin-right:var(--space-3);font-size:1.3rem;">📱</div>
-            <div>
-                <h2 style="font-size:1.1rem;font-weight:700;color:var(--color-text-primary);margin:0;">Tareas Sociales</h2>
-                <p style="font-size:0.8rem;color:var(--color-text-tertiary);margin:0;">Sigue, da like o comenta y sube tu captura</p>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:var(--space-5);">
+    {% for task in visible_tasks %}
+    {# ---- Platform data ---- #}
+    {% if task.platform == 'tiktok' %}
+        {% set pcolor = '#010101' %}
+        {% set pborder = '#2d2d2d' %}
+        {% set psvg %}
+<svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px;"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.16 8.16 0 0 0 4.77 1.52V7.12a4.85 4.85 0 0 1-1-.43z"/></svg>
+        {% endset %}
+    {% elif task.platform == 'twitter' %}
+        {% set pcolor = '#000000' %}
+        {% set pborder = '#333' %}
+        {% set psvg %}
+<svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        {% endset %}
+    {% elif task.platform == 'instagram' %}
+        {% set pcolor = '#E1306C' %}
+        {% set pborder = '#c13584' %}
+        {% set psvg %}
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:22px;height:22px;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        {% endset %}
+    {% elif task.platform == 'youtube' %}
+        {% set pcolor = '#FF0000' %}
+        {% set pborder = '#cc0000' %}
+        {% set psvg %}
+<svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        {% endset %}
+    {% elif task.platform == 'telegram' %}
+        {% set pcolor = '#2AABEE' %}
+        {% set pborder = '#229ED9' %}
+        {% set psvg %}
+<svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px;"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        {% endset %}
+    {% elif task.platform == 'facebook' %}
+        {% set pcolor = '#1877F2' %}
+        {% set pborder = '#0d65d9' %}
+        {% set psvg %}
+<svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px;"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        {% endset %}
+    {% elif task.platform == 'discord' %}
+        {% set pcolor = '#5865F2' %}
+        {% set pborder = '#4752c4' %}
+        {% set psvg %}
+<svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px;"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+        {% endset %}
+    {% else %}
+        {% set pcolor = '#6B7280' %}
+        {% set pborder = '#4B5563' %}
+        {% set psvg %}
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        {% endset %}
+    {% endif %}
+    {# ---- End platform data ---- #}
+
+    <div class="social-task-card" id="stask-{{ task.task_id }}"
+         style="background:linear-gradient(145deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.07);border-radius:16px;overflow:hidden;transition:border-color .2s;">
+
+        {# ---- Header row ---- #}
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;">
+            {# Platform icon #}
+            <div style="width:46px;height:46px;border-radius:12px;background:{{ pcolor }}22;border:1.5px solid {{ pcolor }}44;display:flex;align-items:center;justify-content:center;color:{{ pcolor }};flex-shrink:0;">
+                {{ psvg }}
+            </div>
+            {# Title + meta #}
+            <div style="flex:1;min-width:0;">
+                <div style="font-weight:700;font-size:0.92rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ task.title }}</div>
+                <div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-top:2px;display:flex;align-items:center;gap:6px;">
+                    <span style="color:{{ pcolor }};font-weight:600;">{{ task.platform|capitalize }}</span>
+                    <span>·</span>
+                    <span>{{ task.action_type|capitalize }}</span>
+                    <span>·</span>
+                    <span>{{ task.max_completions - task.current_completions }} cupos</span>
+                </div>
+            </div>
+            {# Reward badge #}
+            <div style="flex-shrink:0;text-align:right;">
+                <div style="font-weight:800;font-size:1rem;color:#FFD700;line-height:1;">+{{ '%.2f'|format(task.reward_amount|float) }}</div>
+                <div style="font-size:0.62rem;color:rgba(255,255,255,0.4);margin-top:1px;">{{ task.reward_currency|upper }}</div>
             </div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:var(--space-3);">
-        {% for task in social_tasks %}
-        {% set plat_colors = {'tiktok':'#010101','twitter':'#1DA1F2','instagram':'#E1306C','facebook':'#1877F2','youtube':'#FF0000','binance':'#F0B90B','telegram':'#2AABEE','discord':'#5865F2','other':'#666'} %}
-        {% set plat_icons  = {'tiktok':'🎵','twitter':'🐦','instagram':'📷','facebook':'📘','youtube':'▶️','binance':'🔶','telegram':'✈️','discord':'🎮','other':'🔗'} %}
-        {% set pcolor = plat_colors.get(task.platform, '#0066FF') %}
-        {% set picon  = plat_icons.get(task.platform, '🔗') %}
-        {% set user_status = task.get('user_status', None) %}
+        {# ---- Status or action ---- #}
+        {% if task.user_status == 'pending' %}
+        <div style="margin:0 16px 14px;padding:10px 14px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:10px;display:flex;align-items:center;gap:8px;">
+            <span style="font-size:1.1rem;">⏳</span>
+            <div>
+                <div style="font-weight:700;font-size:0.82rem;color:#FBB23F;">En revisión</div>
+                <div style="font-size:0.72rem;color:rgba(255,255,255,0.4);">El admin revisará tu envío pronto</div>
+            </div>
+        </div>
+        {% else %}
+        {# Toggle button #}
+        <button onclick="stToggle('{{ task.task_id }}')" id="stbtn-{{ task.task_id }}"
+                style="display:flex;align-items:center;justify-content:center;gap:6px;width:calc(100% - 32px);margin:0 16px 14px;padding:11px;background:linear-gradient(135deg,{{ pcolor }},{{ pcolor }}cc);border:none;border-radius:10px;color:#fff;font-size:0.85rem;font-weight:700;cursor:pointer;transition:opacity .15s;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:15px;height:15px;"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Ver tarea
+        </button>
 
-        <div style="background:var(--glass-ultra);border-radius:var(--radius-lg);border:1px solid var(--glass-border);overflow:hidden;" id="stask-{{ task.task_id }}">
-            <!-- Task header -->
-            <div style="padding:var(--space-3) var(--space-4);display:flex;align-items:center;gap:var(--space-3);">
-                <div style="width:44px;height:44px;border-radius:var(--radius-md);background:{{ pcolor }}22;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">{{ picon }}</div>
-                <div style="flex:1;min-width:0;">
-                    <div style="font-weight:700;color:var(--color-text-primary);font-size:0.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ task.title }}</div>
-                    <div style="font-size:0.75rem;color:var(--color-text-tertiary);">{{ task.platform|capitalize }} · {{ task.action_type }}</div>
-                </div>
-                <div style="text-align:right;flex-shrink:0;">
-                    <div style="font-weight:700;color:#FFD700;font-size:0.9rem;">+{{ task.reward_amount }}</div>
-                    <div style="font-size:0.65rem;color:var(--color-text-tertiary);">{{ task.reward_currency|upper }}</div>
+        {# Expandable body #}
+        <div id="stask-body-{{ task.task_id }}" style="display:none;padding:0 16px 14px;">
+
+            {% if task.description %}
+            <div style="font-size:0.8rem;color:rgba(255,255,255,0.55);line-height:1.6;margin-bottom:10px;">{{ task.description }}</div>
+            {% endif %}
+
+            {% if task.instructions %}
+            <div style="background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.12);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:0.78rem;color:rgba(255,255,255,0.65);line-height:1.6;">
+                <span style="color:#00f5ff;font-weight:700;">📋 Instrucciones:</span><br>{{ task.instructions }}
+            </div>
+            {% endif %}
+
+            {% if task.target_url %}
+            <a href="{{ task.target_url }}" target="_blank"
+               style="display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:{{ pcolor }}18;border:1.5px solid {{ pcolor }}44;border-radius:10px;color:{{ pcolor }};font-size:0.82rem;font-weight:700;text-decoration:none;margin-bottom:10px;">
+                {{ psvg }}
+                Ir a {{ task.platform|capitalize }}
+            </a>
+            {% endif %}
+
+            {% if task.requires_screenshot %}
+            <div id="upload-area-{{ task.task_id }}"
+                 onclick="document.getElementById('file-st-{{ task.task_id }}').click()"
+                 style="border:2px dashed rgba(255,255,255,0.15);border-radius:12px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;background:rgba(255,255,255,0.02);transition:border-color .2s;">
+                <img id="preview-st-{{ task.task_id }}" style="display:none;width:100%;max-height:160px;object-fit:contain;border-radius:8px;margin-bottom:8px;" alt="preview">
+                <div id="upload-ph-{{ task.task_id }}">
+                    <div style="font-size:1.6rem;margin-bottom:6px;">📸</div>
+                    <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);">Toca para subir captura</div>
+                    <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:3px;">JPG, PNG — máx 5 MB</div>
                 </div>
             </div>
+            <input type="file" id="file-st-{{ task.task_id }}" accept="image/*" onchange="stPreview('{{ task.task_id }}', this)" style="display:none;">
+            {% endif %}
 
-            {% if user_status == 'approved' %}
-            <div style="padding:var(--space-2) var(--space-4);background:rgba(34,197,94,0.08);color:#22c55e;font-size:0.8rem;font-weight:600;">✅ Completado — Recompensa acreditada</div>
-            {% elif user_status == 'pending' %}
-            <div style="padding:var(--space-2) var(--space-4);background:rgba(251,191,36,0.08);color:#d97706;font-size:0.8rem;font-weight:600;">⏳ Enviado — En revisión</div>
-            {% else %}
-            <!-- Expandable form -->
-            <div id="stask-body-{{ task.task_id }}" style="display:none;padding:0 var(--space-4) var(--space-4);">
-                {% if task.instructions %}
-                <div style="background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.15);border-radius:var(--radius-md);padding:var(--space-3);margin-bottom:var(--space-3);font-size:0.8rem;color:var(--color-text-secondary);line-height:1.6;">
-                    <strong style="color:var(--color-neon-cyan);">📋 Instrucciones:</strong><br>{{ task.instructions }}
-                </div>
-                {% endif %}
+            <button id="stsubmit-{{ task.task_id }}"
+                    onclick="stSubmit('{{ task.task_id }}', {{ task.requires_screenshot|tojson }})"
+                    {% if task.requires_screenshot %}disabled{% endif %}
+                    style="width:100%;padding:12px;background:linear-gradient(135deg,#0066FF,#0044BB);border:none;border-radius:10px;color:#fff;font-size:0.88rem;font-weight:700;cursor:pointer;opacity:{% if task.requires_screenshot %}0.45{% else %}1{% endif %};transition:opacity .2s;">
+                📤 Enviar para revisión
+            </button>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    </div>
+    {% endif %}
 
                 {% if task.target_url %}
                 <a href="{{ task.target_url }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:var(--space-2) var(--space-4);background:rgba(0,102,255,0.1);border:1px solid rgba(0,102,255,0.3);border-radius:var(--radius-full);color:var(--color-blue-primary);font-size:0.8rem;font-weight:600;text-decoration:none;margin-bottom:var(--space-3);">
@@ -722,7 +825,16 @@ function stToggle(taskId) {
     const btn  = document.getElementById('stbtn-' + taskId);
     const open = body.style.display === 'none';
     body.style.display = open ? 'block' : 'none';
-    btn.textContent    = open ? 'Cerrar ✕' : 'Ver tarea →';
+    if (btn) {
+        const arrow = btn.querySelector('svg');
+        if (open) {
+            btn.innerHTML = btn.innerHTML.replace('Ver tarea', 'Cerrar');
+            if (arrow) arrow.style.transform = 'rotate(90deg)';
+        } else {
+            btn.innerHTML = btn.innerHTML.replace('Cerrar', 'Ver tarea');
+            if (arrow) arrow.style.transform = '';
+        }
+    }
 }
 
 function stPreview(taskId, input) {
@@ -734,9 +846,11 @@ function stPreview(taskId, input) {
         stScreenshots[taskId] = e.target.result;
         const preview = document.getElementById('preview-st-' + taskId);
         const ph      = document.getElementById('upload-ph-' + taskId);
+        const area    = document.getElementById('upload-area-' + taskId);
         preview.src   = e.target.result;
         preview.style.display = 'block';
         ph.style.display      = 'none';
+        if (area) area.style.borderColor = 'rgba(0,102,255,0.5)';
         const submitBtn = document.getElementById('stsubmit-' + taskId);
         submitBtn.disabled = false;
         submitBtn.style.opacity = '1';
@@ -767,12 +881,23 @@ async function stSubmit(taskId, requiresScreenshot) {
         });
         const data = await res.json();
         if (data.success) {
-            showToast('✅ Enviado — quedará en revisión');
-            const body = document.getElementById('stask-body-' + taskId);
-            const toggleBtn = document.getElementById('stbtn-' + taskId);
-            if (body) body.style.display = 'none';
-            if (toggleBtn) toggleBtn.outerHTML = '<div style="padding:var(--space-2) var(--space-4);background:rgba(251,191,36,0.08);color:#d97706;font-size:0.8rem;font-weight:600;">⏳ Enviado — En revisión</div>';
+            showToast('✅ Enviado para revisión');
             if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            // Replace card content with pending state
+            const card = document.getElementById('stask-' + taskId);
+            if (card) {
+                const body = document.getElementById('stask-body-' + taskId);
+                const toggleBtn = document.getElementById('stbtn-' + taskId);
+                if (body) body.style.display = 'none';
+                if (toggleBtn) toggleBtn.outerHTML = `
+                    <div style="margin:0 16px 14px;padding:10px 14px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:10px;display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:1.1rem;">⏳</span>
+                        <div>
+                            <div style="font-weight:700;font-size:0.82rem;color:#FBB23F;">En revisión</div>
+                            <div style="font-size:0.72rem;color:rgba(255,255,255,0.4);">El admin revisará tu envío pronto</div>
+                        </div>
+                    </div>`;
+            }
         } else {
             showToast(data.error || 'Error al enviar', 'error');
             btn.disabled = false; btn.textContent = '📤 Enviar para revisión';
