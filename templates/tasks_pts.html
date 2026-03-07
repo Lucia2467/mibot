@@ -222,29 +222,21 @@
             {% else %}{% set pcolor='#6B7280' %}{% set pname=task.platform|capitalize %}
             {% endif %}
 
-            <div class="task-row" id="stask-row-{{ task.task_id }}" onclick="stOpen('{{ task.task_id }}')">
+            <!-- Task Row → opens modal -->
+            <div class="task-row {% if task.user_status == 'pending' %}task-row-pending{% endif %}"
+                 onclick="{% if task.user_status != 'pending' %}stOpenModal('{{ task.task_id }}'){% endif %}"
+                 style="{% if task.user_status == 'pending' %}cursor:default;opacity:0.75;{% endif %}">
                 <div class="task-row-icon" style="background:{{ pcolor }}22;color:{{ pcolor }};">
-                    {% if task.platform == 'youtube' %}
-                        <i data-lucide="youtube" style="width:20px;height:20px;"></i>
-                    {% elif task.platform in ['twitter','x'] %}
-                        <i data-lucide="twitter" style="width:20px;height:20px;"></i>
-                    {% elif task.platform == 'instagram' %}
-                        <i data-lucide="instagram" style="width:20px;height:20px;"></i>
-                    {% elif task.platform == 'facebook' %}
-                        <i data-lucide="facebook" style="width:20px;height:20px;"></i>
-                    {% elif task.platform == 'telegram' %}
-                        <i data-lucide="send" style="width:20px;height:20px;"></i>
-                    {% elif task.platform in ['discord','twitch','tiktok'] %}
-                        <i data-lucide="gamepad-2" style="width:20px;height:20px;"></i>
-                    {% elif task.platform == 'spotify' %}
-                        <i data-lucide="music" style="width:20px;height:20px;"></i>
-                    {% elif task.platform == 'whatsapp' %}
-                        <i data-lucide="message-circle" style="width:20px;height:20px;"></i>
-                    {% elif task.platform == 'linkedin' %}
-                        <i data-lucide="linkedin" style="width:20px;height:20px;"></i>
-                    {% else %}
-                        <i data-lucide="share-2" style="width:20px;height:20px;"></i>
-                    {% endif %}
+                    {% if task.platform == 'youtube' %}<i data-lucide="youtube" style="width:20px;height:20px;"></i>
+                    {% elif task.platform in ['twitter','x'] %}<i data-lucide="twitter" style="width:20px;height:20px;"></i>
+                    {% elif task.platform == 'instagram' %}<i data-lucide="instagram" style="width:20px;height:20px;"></i>
+                    {% elif task.platform == 'facebook' %}<i data-lucide="facebook" style="width:20px;height:20px;"></i>
+                    {% elif task.platform == 'telegram' %}<i data-lucide="send" style="width:20px;height:20px;"></i>
+                    {% elif task.platform in ['discord','twitch','tiktok'] %}<i data-lucide="gamepad-2" style="width:20px;height:20px;"></i>
+                    {% elif task.platform == 'spotify' %}<i data-lucide="music" style="width:20px;height:20px;"></i>
+                    {% elif task.platform == 'whatsapp' %}<i data-lucide="message-circle" style="width:20px;height:20px;"></i>
+                    {% elif task.platform == 'linkedin' %}<i data-lucide="linkedin" style="width:20px;height:20px;"></i>
+                    {% else %}<i data-lucide="share-2" style="width:20px;height:20px;"></i>{% endif %}
                 </div>
                 <div class="task-row-body">
                     <div class="task-row-title">{{ task.title }}</div>
@@ -252,7 +244,9 @@
                         <span class="task-chip task-chip-reward">+{{ '%.2f'|format(task.reward_amount|float) }} {{ task.reward_currency|upper }}</span>
                         <span class="task-chip" style="color:{{ pcolor }};">{{ pname }}</span>
                         {% if task.user_status == 'pending' %}
-                        <span class="task-chip" style="color:#FBB23F;border-color:rgba(251,178,63,0.3);display:inline-flex;align-items:center;gap:4px;"><i data-lucide="clock" style="width:11px;height:11px;"></i> En revisión</span>
+                        <span class="task-chip" style="color:#FBB23F;border-color:rgba(251,178,63,0.3);display:inline-flex;align-items:center;gap:4px;">
+                            <i data-lucide="clock" style="width:11px;height:11px;"></i> En revisión
+                        </span>
                         {% endif %}
                     </div>
                 </div>
@@ -265,42 +259,21 @@
                 </div>
             </div>
 
-            <!-- DRAWER de tarea social -->
-            <div id="stask-drawer-{{ task.task_id }}" style="display:none;margin-bottom:4px;border-radius:0 0 14px 14px;background:rgba(255,255,255,0.03);border:1px solid {{ pcolor }}22;border-top:none;padding:16px;">
-                {% if task.description %}
-                <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);margin:0 0 12px;line-height:1.6;">{{ task.description }}</p>
-                {% endif %}
-                {% if task.instructions %}
-                <div style="background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.15);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:0.78rem;color:rgba(255,255,255,0.6);line-height:1.6;">
-                    <strong style="color:#00f5ff;display:inline-flex;align-items:center;gap:5px;"><i data-lucide="clipboard-list" style="width:13px;height:13px;"></i> Instrucciones:</strong><br>{{ task.instructions }}
-                </div>
-                {% endif %}
-                {% if task.target_url %}
-                <a href="{{ task.target_url }}" target="_blank"
-                   style="display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:{{ pcolor }}18;border:1.5px solid {{ pcolor }}33;border-radius:10px;color:{{ pcolor }};font-size:0.82rem;font-weight:700;text-decoration:none;margin-bottom:12px;">
-                    <span style="display:inline-flex;align-items:center;gap:6px;"><i data-lucide="external-link" style="width:14px;height:14px;"></i> Ir a {{ pname }}</span>
-                </a>
-                {% endif %}
-                {% if task.requires_screenshot %}
-                <div id="upload-area-{{ task.task_id }}" onclick="document.getElementById('file-st-{{ task.task_id }}').click()"
-                     style="border:2px dashed rgba(255,255,255,0.12);border-radius:10px;padding:18px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(255,255,255,0.02);">
-                    <img id="preview-st-{{ task.task_id }}" style="display:none;width:100%;max-height:150px;object-fit:contain;border-radius:8px;margin-bottom:8px;" alt="preview">
-                    <div id="upload-ph-{{ task.task_id }}">
-                        <i data-lucide="camera" style="width:28px;height:28px;color:rgba(255,255,255,0.4);margin-bottom:6px;"></i>
-                        <div style="font-size:0.78rem;color:rgba(255,255,255,0.4);">Toca para subir captura (máx 5MB)</div>
-                    </div>
-                </div>
-                <input type="file" id="file-st-{{ task.task_id }}" accept="image/*" onchange="stPreview('{{ task.task_id }}', this)" style="display:none;">
-                {% endif %}
-                {% if task.user_status != 'pending' %}
-                <button id="stsubmit-{{ task.task_id }}"
-                        onclick="stSubmit('{{ task.task_id }}', {{ task.requires_screenshot|tojson }})"
-                        {% if task.requires_screenshot %}disabled{% endif %}
-                        style="width:100%;padding:11px;background:linear-gradient(135deg,{{ pcolor }},{{ pcolor }}bb);border:none;border-radius:10px;color:#fff;font-size:0.85rem;font-weight:700;cursor:pointer;opacity:{% if task.requires_screenshot %}0.4{% else %}1{% endif %};">
-                    <span style="display:inline-flex;align-items:center;gap:6px;"><i data-lucide="upload" style="width:15px;height:15px;"></i> Enviar para revisión</span>
-                </button>
-                {% endif %}
-            </div>
+            <!-- MODAL DATA (hidden) -->
+            <script>
+            window._stask_{{ task.task_id | replace('-','_') }} = {
+                id: "{{ task.task_id }}",
+                title: {{ task.title | tojson }},
+                pname: "{{ pname }}",
+                pcolor: "{{ pcolor }}",
+                platform: "{{ task.platform }}",
+                description: {{ (task.description or '') | tojson }},
+                instructions: {{ (task.instructions or '') | tojson }},
+                target_url: {{ (task.target_url or '') | tojson }},
+                requires_screenshot: {{ task.requires_screenshot | tojson }},
+                reward: "+{{ '%.2f'|format(task.reward_amount|float) }} {{ task.reward_currency|upper }}"
+            };
+            </script>
 
             {% endfor %}
         {% else %}
@@ -1106,6 +1079,188 @@ function renderHistory(tab) {
     }).join('');
 }
 
+
+// ══ SOCIAL TASK MODAL ══
+let _stCurrentTask = null;
+let _stScreenshot = null;
+
+function stOpenModal(taskId) {
+    const key = 'window._stask_' + taskId.replace(/-/g,'_');
+    const task = eval('window._stask_' + taskId.replace(/-/g,'_'));
+    if (!task) return;
+    _stCurrentTask = task;
+    _stScreenshot = null;
+
+    // Reset fields
+    document.getElementById('stask-file-input').value = '';
+    document.getElementById('stask-preview-img').style.display = 'none';
+    document.getElementById('stask-upload-ph').style.display = 'flex';
+    document.getElementById('stask-upload-check').style.display = 'none';
+    document.getElementById('stask-upload-area').style.borderColor = 'rgba(255,255,255,0.1)';
+    document.getElementById('stask-post-link').value = '';
+    document.getElementById('stask-username').value = '';
+
+    const pc = task.pcolor;
+    const pname = task.pname;
+
+    // Header background
+    document.getElementById('stask-modal-header').style.background =
+        `linear-gradient(135deg, ${pc}33 0%, ${pc}18 60%, #0d0d1a 100%)`;
+
+    // Icon
+    const iconEl = document.getElementById('stask-modal-icon');
+    iconEl.style.background = pc + '22';
+    iconEl.style.border = `1.5px solid ${pc}44`;
+    iconEl.style.color = pc;
+    iconEl.innerHTML = stGetIcon(task.platform, pc);
+
+    document.getElementById('stask-modal-platform').style.color = pc;
+    document.getElementById('stask-modal-platform').textContent = pname;
+    document.getElementById('stask-modal-title').textContent = task.title;
+    document.getElementById('stask-modal-reward').textContent = task.reward;
+
+    // Description
+    const descWrap = document.getElementById('stask-modal-desc-wrap');
+    if (task.description) {
+        document.getElementById('stask-modal-desc').textContent = task.description;
+        descWrap.style.display = 'block';
+    } else { descWrap.style.display = 'none'; }
+
+    // Instructions
+    const instrWrap = document.getElementById('stask-modal-instr-wrap');
+    if (task.instructions) {
+        document.getElementById('stask-modal-instr').textContent = task.instructions;
+        instrWrap.style.display = 'block';
+    } else { instrWrap.style.display = 'none'; }
+
+    // Step 1: platform link
+    const step1 = document.getElementById('stask-step1');
+    if (task.target_url) {
+        document.getElementById('stask-modal-link').href = task.target_url;
+        document.getElementById('stask-modal-link').style.background = pc + '20';
+        document.getElementById('stask-modal-link').style.border = `1.5px solid ${pc}40`;
+        document.getElementById('stask-modal-link').style.color = pc;
+        document.getElementById('stask-modal-link-label').textContent = 'Ir a ' + pname;
+        step1.style.display = 'block';
+    } else { step1.style.display = 'none'; }
+
+    // Step 2: screenshot
+    document.getElementById('stask-step2').style.display = task.requires_screenshot ? 'block' : 'none';
+
+    // Step 4 platform label
+    document.getElementById('stask-step4-platform').textContent = pname;
+
+    // Submit button color
+    const submitBtn = document.getElementById('stask-modal-submit');
+    submitBtn.style.background = `linear-gradient(135deg, ${pc}, ${pc}cc)`;
+    submitBtn.style.color = '#fff';
+    submitBtn.style.boxShadow = `0 6px 20px ${pc}40`;
+
+    stCheckSubmit();
+
+    document.getElementById('stask-modal').style.display = 'block';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    document.body.style.overflow = 'hidden';
+}
+
+function stCloseModal() {
+    document.getElementById('stask-modal').style.display = 'none';
+    document.body.style.overflow = '';
+    _stCurrentTask = null;
+}
+
+function stGetIcon(platform, color) {
+    const icons = {
+        youtube:   'youtube', twitter: 'twitter', x: 'twitter',
+        instagram: 'instagram', facebook: 'facebook', telegram: 'send',
+        discord:   'gamepad-2', twitch: 'gamepad-2', tiktok: 'gamepad-2',
+        spotify:   'music', whatsapp: 'message-circle', linkedin: 'linkedin'
+    };
+    const name = icons[platform] || 'share-2';
+    return `<i data-lucide="${name}" style="width:22px;height:22px;color:${color};"></i>`;
+}
+
+function stModalPreview(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5000000) { showToast('Imagen muy grande (máx 5MB)', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+        _stScreenshot = e.target.result;
+        const img = document.getElementById('stask-preview-img');
+        img.src = e.target.result;
+        img.style.display = 'block';
+        document.getElementById('stask-upload-ph').style.display = 'none';
+        document.getElementById('stask-upload-check').style.display = 'flex';
+        document.getElementById('stask-upload-area').style.borderColor = '#22c55e55';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        stCheckSubmit();
+    };
+    reader.readAsDataURL(file);
+}
+
+function stCheckSubmit() {
+    if (!_stCurrentTask) return;
+    const btn = document.getElementById('stask-modal-submit');
+    const needsScreenshot = _stCurrentTask.requires_screenshot;
+    const hasScreenshot = !!_stScreenshot;
+    const ok = !needsScreenshot || hasScreenshot;
+    btn.style.opacity = ok ? '1' : '0.45';
+    btn.style.cursor = ok ? 'pointer' : 'not-allowed';
+}
+
+async function stModalSubmit() {
+    if (!_stCurrentTask) return;
+    const needsScreenshot = _stCurrentTask.requires_screenshot;
+    if (needsScreenshot && !_stScreenshot) {
+        showToast('Sube una captura primero', 'error'); return;
+    }
+    const userId = new URLSearchParams(window.location.search).get('user_id');
+    if (!userId) { showToast('Usuario no identificado', 'error'); return; }
+
+    const btn = document.getElementById('stask-modal-submit');
+    btn.disabled = true;
+    btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><i data-lucide="loader" class="spin" style="width:16px;height:16px;"></i> Enviando...</span>';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    const postLink = document.getElementById('stask-post-link').value.trim();
+    const username = document.getElementById('stask-username').value.trim();
+    const note = [
+        postLink ? 'Link: ' + postLink : '',
+        username ? 'Usuario: ' + username : ''
+    ].filter(Boolean).join(' | ');
+
+    try {
+        const res = await fetch('/api/social-tasks/submit', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                user_id: userId,
+                task_id: _stCurrentTask.id,
+                screenshot: _stScreenshot || '',
+                note: note
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast('Enviado para revisión', 'success');
+            if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            stCloseModal();
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showToast(data.error || 'Error al enviar', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><i data-lucide=\'send\' style=\'width:16px;height:16px;\'></i> Enviar para revisión</span>';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+    } catch(e) {
+        showToast('Error de conexión', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><i data-lucide=\'send\' style=\'width:16px;height:16px;\'></i> Enviar para revisión</span>';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+}
+
 </script>
 
 <!-- MODAL DE REGLAS -->
@@ -1275,5 +1430,126 @@ function renderHistory(tab) {
     color: #fff !important;
 }
 </style>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- MODAL TAREA SOCIAL - PREMIUM               -->
+<!-- ══════════════════════════════════════════ -->
+<div id="stask-modal" style="display:none;position:fixed;inset:0;z-index:9999;">
+    <!-- Backdrop -->
+    <div onclick="stCloseModal()" style="position:absolute;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);"></div>
+
+    <!-- Sheet -->
+    <div id="stask-modal-sheet" style="position:absolute;bottom:0;left:0;right:0;max-height:92vh;display:flex;flex-direction:column;border-radius:24px 24px 0 0;overflow:hidden;transition:transform .3s cubic-bezier(.32,1,.45,1);">
+
+        <!-- Colored header band -->
+        <div id="stask-modal-header" style="padding:0;flex-shrink:0;">
+            <!-- Handle -->
+            <div style="display:flex;justify-content:center;padding:10px 0 0;">
+                <div style="width:40px;height:4px;background:rgba(255,255,255,0.2);border-radius:4px;"></div>
+            </div>
+            <!-- Title row -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 16px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div id="stask-modal-icon" style="width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"></div>
+                    <div>
+                        <div id="stask-modal-platform" style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2px;"></div>
+                        <div id="stask-modal-title" style="font-size:1rem;font-weight:800;color:#fff;line-height:1.2;"></div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div id="stask-modal-reward" style="font-size:1rem;font-weight:800;color:#4D94FF;"></div>
+                    <button onclick="stCloseModal()"
+                        style="width:32px;height:32px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+                        <i data-lucide="x" style="width:15px;height:15px;color:rgba(255,255,255,0.7);"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scrollable body -->
+        <div id="stask-modal-body" style="flex:1;overflow-y:auto;background:#0d0d1a;padding:20px;display:flex;flex-direction:column;gap:14px;">
+
+            <!-- Description -->
+            <div id="stask-modal-desc-wrap" style="display:none;">
+                <p id="stask-modal-desc" style="margin:0;font-size:0.85rem;color:rgba(255,255,255,0.55);line-height:1.65;"></p>
+            </div>
+
+            <!-- Instructions -->
+            <div id="stask-modal-instr-wrap" style="display:none;background:rgba(0,245,255,0.04);border:1px solid rgba(0,245,255,0.12);border-radius:14px;padding:14px;">
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;">
+                    <i data-lucide="clipboard-list" style="width:14px;height:14px;color:#00f5ff;flex-shrink:0;"></i>
+                    <span style="font-size:0.75rem;font-weight:700;color:#00f5ff;letter-spacing:0.04em;text-transform:uppercase;">Instrucciones</span>
+                </div>
+                <p id="stask-modal-instr" style="margin:0;font-size:0.84rem;color:rgba(255,255,255,0.6);line-height:1.6;"></p>
+            </div>
+
+            <!-- Steps: numbered -->
+            <div style="display:flex;flex-direction:column;gap:10px;" id="stask-steps">
+                <!-- Step 1: Go to platform -->
+                <div id="stask-step1" style="display:none;">
+                    <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Paso 1 · Ir a la plataforma</div>
+                    <a id="stask-modal-link" href="#" target="_blank"
+                        style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:13px;font-size:0.88rem;font-weight:700;text-decoration:none;transition:opacity .2s;">
+                        <i data-lucide="external-link" style="width:16px;height:16px;"></i>
+                        <span id="stask-modal-link-label">Ir a la plataforma</span>
+                    </a>
+                </div>
+
+                <!-- Step 2: Screenshot -->
+                <div id="stask-step2" style="display:none;">
+                    <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Paso 2 · Captura de pantalla</div>
+                    <div id="stask-upload-area" onclick="document.getElementById('stask-file-input').click()"
+                         style="border:2px dashed rgba(255,255,255,0.1);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;background:rgba(255,255,255,0.02);transition:border-color .2s,background .2s;position:relative;overflow:hidden;">
+                        <img id="stask-preview-img" style="display:none;width:100%;max-height:200px;object-fit:contain;border-radius:10px;margin-bottom:10px;" alt="preview">
+                        <div id="stask-upload-ph" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+                            <i data-lucide="image-plus" style="width:32px;height:32px;color:rgba(255,255,255,0.25);"></i>
+                            <div style="font-size:0.83rem;font-weight:600;color:rgba(255,255,255,0.45);">Toca para subir captura</div>
+                            <div style="font-size:0.72rem;color:rgba(255,255,255,0.25);">JPG, PNG · máx 5MB</div>
+                        </div>
+                        <div id="stask-upload-check" style="display:none;position:absolute;top:10px;right:10px;width:26px;height:26px;background:#22c55e;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                            <i data-lucide="check" style="width:14px;height:14px;color:#fff;"></i>
+                        </div>
+                    </div>
+                    <input type="file" id="stask-file-input" accept="image/*" onchange="stModalPreview(this)" style="display:none;">
+                </div>
+
+                <!-- Step 3: Post link -->
+                <div id="stask-step3">
+                    <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Paso 3 · Link de tu publicación <span style="color:rgba(255,255,255,0.2);font-weight:500;">(opcional)</span></div>
+                    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;">
+                        <i data-lucide="link-2" style="width:16px;height:16px;color:rgba(255,255,255,0.3);flex-shrink:0;"></i>
+                        <input id="stask-post-link" type="url" placeholder="https://..." autocomplete="off"
+                            style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:0.85rem;min-width:0;"
+                            oninput="stCheckSubmit()">
+                    </div>
+                </div>
+
+                <!-- Step 4: Username -->
+                <div id="stask-step4">
+                    <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Paso 4 · Tu usuario en <span id="stask-step4-platform"></span> <span style="color:rgba(255,255,255,0.2);font-weight:500;">(opcional)</span></div>
+                    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;">
+                        <i data-lucide="at-sign" style="width:16px;height:16px;color:rgba(255,255,255,0.3);flex-shrink:0;"></i>
+                        <input id="stask-username" type="text" placeholder="@tu_usuario" autocomplete="off"
+                            style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:0.85rem;min-width:0;"
+                            oninput="stCheckSubmit()">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div style="background:#0d0d1a;padding:16px 20px 28px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
+            <button id="stask-modal-submit" onclick="stModalSubmit()"
+                style="width:100%;padding:15px;border:none;border-radius:14px;font-size:0.92rem;font-weight:800;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:0.01em;">
+                <span style="display:inline-flex;align-items:center;gap:8px;">
+                    <i data-lucide="send" style="width:16px;height:16px;"></i>
+                    Enviar para revisión
+                </span>
+            </button>
+        </div>
+
+    </div>
+</div>
 
 {% endblock %}
