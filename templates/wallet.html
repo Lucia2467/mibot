@@ -239,41 +239,46 @@ SALLY-E | Wallet{% endblock %}
 
     <!-- Withdrawal Methods -->
     <div class="card">
-        <h2 class="section-title" data-i18n="withdrawal_methods">Withdrawal Methods</h2>
+        <h2 class="section-title" data-i18n="withdrawal_methods">Métodos de Retiro</h2>
 
-        <div class="item-list">
-            <div class="item" onclick="selectMethod('USDT')" style="cursor: pointer;">
-                <div class="item-icon" style="background: linear-gradient(135deg, #26A17B 0%, #1E8E6A 100%);">
-                    <i data-lucide="circle-dollar-sign"></i>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+
+            <!-- USDT -->
+            <div onclick="selectMethod('USDT')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:linear-gradient(160deg,#0c0c22,#090918,#060616);border-top:2px solid rgba(38,161,123,0.45);border-left:1px solid rgba(38,161,123,0.22);border-right:1px solid rgba(0,0,0,0.80);border-bottom:3px solid rgba(0,0,0,0.95);border-radius:14px;cursor:pointer;box-shadow:0 2px 0 rgba(38,161,123,0.10) inset,0 -3px 0 rgba(0,0,0,0.92) inset,0 6px 18px rgba(0,0,0,0.65);">
+                <div style="width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#26A17B,#1a7a5a);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:12px;box-shadow:0 2px 0 rgba(255,255,255,0.14) inset,0 -2px 0 rgba(0,0,0,0.45) inset;">
+                    <i data-lucide="circle-dollar-sign" style="width:22px;height:22px;color:#fff;"></i>
                 </div>
-                <div class="item-content">
-                    <div class="item-title">USDT (BEP20)</div>
-                    <div class="item-subtitle"><span data-i18n="minimum">Minimum</span>: 0.5 USDT</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700;font-size:0.95rem;color:#fff;margin-bottom:2px;">USDT (BEP20)</div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.45);"><span data-i18n="minimum">Mínimo</span>: 0.5 USDT</div>
                 </div>
-                <i data-lucide="chevron-right" style="width: 20px; height: 20px; color: var(--color-text-tertiary);"></i>
+                <i data-lucide="chevron-right" style="width:18px;height:18px;color:rgba(255,255,255,0.30);flex-shrink:0;"></i>
             </div>
 
-            <div class="item" onclick="selectMethod('DOGE')" style="cursor: pointer;">
-                <div class="item-icon" style="background: linear-gradient(135deg, #C9A635 0%, #A88F2C 100%);">
-                    <i data-lucide="coins"></i>
+            <!-- DOGE -->
+            <div onclick="selectMethod('DOGE')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:linear-gradient(160deg,#0c0c22,#090918,#060616);border-top:2px solid rgba(201,166,53,0.45);border-left:1px solid rgba(201,166,53,0.22);border-right:1px solid rgba(0,0,0,0.80);border-bottom:3px solid rgba(0,0,0,0.95);border-radius:14px;cursor:pointer;box-shadow:0 2px 0 rgba(201,166,53,0.10) inset,0 -3px 0 rgba(0,0,0,0.92) inset,0 6px 18px rgba(0,0,0,0.65);">
+                <div style="width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#C9A635,#9a7e28);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:12px;box-shadow:0 2px 0 rgba(255,255,255,0.14) inset,0 -2px 0 rgba(0,0,0,0.45) inset;">
+                    <i data-lucide="coins" style="width:22px;height:22px;color:#fff;"></i>
                 </div>
-                <div class="item-content">
-                    <div class="item-title">Dogecoin (BEP20)</div>
-                    <div class="item-subtitle"><span data-i18n="minimum">Minimum</span>: 1 DOGE</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700;font-size:0.95rem;color:#fff;margin-bottom:2px;">Dogecoin (BEP20)</div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.45);"><span data-i18n="minimum">Mínimo</span>: 1 DOGE</div>
                 </div>
-                <i data-lucide="chevron-right" style="width: 20px; height: 20px; color: var(--color-text-tertiary);"></i>
+                <i data-lucide="chevron-right" style="width:18px;height:18px;color:rgba(255,255,255,0.30);flex-shrink:0;"></i>
             </div>
 
-            <div class="item" onclick="selectMethod('TON')" style="cursor: pointer;">
-                <div class="item-icon" style="background: linear-gradient(135deg, #0098EA 0%, #0077B6 100%);">
-                    <i data-lucide="diamond"></i>
+            <!-- TON -->
+            <div onclick="selectMethod('TON')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:linear-gradient(160deg,#0c0c22,#090918,#060616);border-top:2px solid rgba(0,152,234,0.45);border-left:1px solid rgba(0,152,234,0.22);border-right:1px solid rgba(0,0,0,0.80);border-bottom:3px solid rgba(0,0,0,0.95);border-radius:14px;cursor:pointer;box-shadow:0 2px 0 rgba(0,152,234,0.10) inset,0 -3px 0 rgba(0,0,0,0.92) inset,0 6px 18px rgba(0,0,0,0.65);">
+                <div style="width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#0098EA,#0060b0);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:12px;box-shadow:0 2px 0 rgba(255,255,255,0.14) inset,0 -2px 0 rgba(0,0,0,0.45) inset;">
+                    <i data-lucide="diamond" style="width:22px;height:22px;color:#fff;"></i>
                 </div>
-                <div class="item-content">
-                    <div class="item-title">TON (TON Network)</div>
-                    <div class="item-subtitle"><span data-i18n="minimum">Minimum</span>: 0.1 TON</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700;font-size:0.95rem;color:#fff;margin-bottom:2px;">TON (TON Network)</div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.45);"><span data-i18n="minimum">Mínimo</span>: 0.1 TON</div>
                 </div>
-                <i data-lucide="chevron-right" style="width: 20px; height: 20px; color: var(--color-text-tertiary);"></i>
+                <i data-lucide="chevron-right" style="width:18px;height:18px;color:rgba(255,255,255,0.30);flex-shrink:0;"></i>
             </div>
+
         </div>
     </div>
 
@@ -306,15 +311,15 @@ SALLY-E | Wallet{% endblock %}
     {% endif %}
 
     <!-- Info Card -->
-    <div class="card" style="background: rgba(6, 182, 212, 0.05); border-color: rgba(6, 182, 212, 0.1);">
-        <div style="display: flex; align-items: flex-start; gap: var(--space-4);">
-            <div style="flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(6, 182, 212, 0.1); border-radius: var(--radius-md);">
-                <i data-lucide="shield-check" style="width: 20px; height: 20px; color: var(--color-info);"></i>
+    <div class="card">
+        <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#0e7490,#0a5a70);border-top:1px solid rgba(255,255,255,0.20);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:12px;box-shadow:0 2px 0 rgba(255,255,255,0.12) inset,0 -2px 0 rgba(0,0,0,0.45) inset;">
+                <i data-lucide="shield-check" style="width:20px;height:20px;color:#fff;"></i>
             </div>
-            <div style="flex: 1;">
-                <div style="font-weight: 600; margin-bottom: var(--space-2);"><span data-i18n="secure_withdrawals">Secure Withdrawals</span></div>
-                <div style="font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.6;" data-i18n="withdrawals_info">
-                    All withdrawals are processed securely in 24-48 hours. Verify your address before confirming.
+            <div style="flex:1;">
+                <div style="font-weight:700;font-size:0.95rem;color:#fff;margin-bottom:6px;" data-i18n="secure_withdrawals">Retiros Seguros</div>
+                <div style="font-size:0.82rem;color:rgba(255,255,255,0.50);line-height:1.6;" data-i18n="withdrawals_info">
+                    Los retiros se procesan en 24-48 horas. Asegúrate de que tu dirección de wallet sea correcta antes de confirmar.
                 </div>
             </div>
         </div>
