@@ -567,85 +567,92 @@ document.addEventListener('DOMContentLoaded', async function() {
         </div>
     </div>
 
-    <!-- Mining Card - PREMIUM -->
-    <div class="mining-card-premium">
-        <div class="mining-header">
+    <!-- Activity Summary Card -->
+    <div class="mining-card-premium" style="padding: 22px 20px;">
+
+        <!-- Header -->
+        <div class="mining-header" style="margin-bottom: 18px;">
             <div class="mining-title-section">
-                <h2 data-i18n="mining_station">Mining Station ⚡</h2>
-                <p data-i18n="unclaimed_earnings">Ganancias sin reclamar</p>
+                <h2 style="font-size:1.05rem;font-weight:800;color:#fff;margin:0 0 2px;">Actividad Semanal</h2>
+                <p style="font-size:0.75rem;color:rgba(255,255,255,0.42);margin:0;">Tu resumen de esta semana</p>
             </div>
             <div class="mining-icon-box">
-                <i data-lucide="cpu"></i>
+                <i data-lucide="bar-chart-2"></i>
             </div>
         </div>
 
-        <!-- INDICADOR DE MINERÍA ACTIVA -->
-        <div class="mining-status">
-            <div class="mining-status-dot"></div>
-            <span class="mining-status-text" data-i18n="mining_active">Minando activamente</span>
-            <span class="mining-status-rate">+{{ mining_rate or user.mining_power or 0.02 }} PXC/h</span>
+        <!-- 3 Stat rows -->
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
+
+            <!-- PXC Ganados -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:linear-gradient(160deg,#0d0d22,#090918);border-top:1px solid rgba(60,130,255,0.35);border-bottom:2px solid rgba(0,0,0,0.90);border-left:none;border-right:none;border-radius:12px;box-shadow:0 1px 0 rgba(80,140,255,0.10) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#1a6fff,#003fbf);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:9px;box-shadow:0 1px 0 rgba(255,255,255,0.14) inset,0 -2px 0 rgba(0,0,0,0.45) inset;flex-shrink:0;">
+                        <i data-lucide="coins" style="width:16px;height:16px;color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:0.72rem;color:rgba(255,255,255,0.40);font-weight:600;letter-spacing:0.05em;">PXC ACUMULADOS</div>
+                        <div style="font-size:0.82rem;color:rgba(255,255,255,0.70);">Balance actual</div>
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:1.15rem;font-weight:800;color:#fff;line-height:1;">{{ "%.2f"|format(user.se_balance or 0) }}</div>
+                    <div style="font-size:0.68rem;color:rgba(255,255,255,0.35);margin-top:1px;">PXC</div>
+                </div>
+            </div>
+
+            <!-- Referidos -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:linear-gradient(160deg,#0d0d22,#090918);border-top:1px solid rgba(60,130,255,0.35);border-bottom:2px solid rgba(0,0,0,0.90);border-left:none;border-right:none;border-radius:12px;box-shadow:0 1px 0 rgba(80,140,255,0.10) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#7c3aed,#4c1d95);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:9px;box-shadow:0 1px 0 rgba(255,255,255,0.14) inset,0 -2px 0 rgba(0,0,0,0.45) inset;flex-shrink:0;">
+                        <i data-lucide="users" style="width:16px;height:16px;color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:0.72rem;color:rgba(255,255,255,0.40);font-weight:600;letter-spacing:0.05em;">REFERIDOS</div>
+                        <div style="font-size:0.82rem;color:rgba(255,255,255,0.70);">Amigos invitados</div>
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:1.15rem;font-weight:800;color:#fff;line-height:1;">{{ user.referral_count or 0 }}</div>
+                    <div style="font-size:0.68rem;color:rgba(255,255,255,0.35);margin-top:1px;">usuarios</div>
+                </div>
+            </div>
+
+            <!-- Nivel / Poder de minería -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:linear-gradient(160deg,#0d0d22,#090918);border-top:1px solid rgba(60,130,255,0.35);border-bottom:2px solid rgba(0,0,0,0.90);border-left:none;border-right:none;border-radius:12px;box-shadow:0 1px 0 rgba(80,140,255,0.10) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#d97706,#92400e);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:9px;box-shadow:0 1px 0 rgba(255,255,255,0.14) inset,0 -2px 0 rgba(0,0,0,0.45) inset;flex-shrink:0;">
+                        <i data-lucide="zap" style="width:16px;height:16px;color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:0.72rem;color:rgba(255,255,255,0.40);font-weight:600;letter-spacing:0.05em;">NIVEL</div>
+                        <div style="font-size:0.82rem;color:rgba(255,255,255,0.70);">{{ mining_rate or user.mining_power or 1.0 }} PXC/hora</div>
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:1.15rem;font-weight:800;color:#fff;line-height:1;">{{ user.mining_level or 1 }}</div>
+                    <div style="font-size:0.68rem;color:rgba(255,255,255,0.35);margin-top:1px;">nivel</div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- Indicador de Boost Activo -->
-        <div id="boost-active-indicator" style="display: none; text-align: center; margin-bottom: var(--space-4);"></div>
-
-        <div class="mining-amount-display">
-            <div class="mining-amount-value" id="unclaimed-balance">{{ "%.4f"|format(unclaimed or 0) }}</div>
-            <div class="mining-amount-label" data-i18n="pending_se">PXC pendientes</div>
+        <!-- Bottom CTA row — links to key sections -->
+        <div style="display:flex;gap:8px;">
+            <a href="/tasks?user_id={{ user_id }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:linear-gradient(180deg,#1a6fff,#003fbf);border-top:1px solid rgba(255,255,255,0.25);border-bottom:2px solid rgba(0,0,0,0.55);border-radius:11px;text-decoration:none;box-shadow:0 2px 0 rgba(255,255,255,0.16) inset,0 -2px 0 rgba(0,0,0,0.48) inset,0 4px 12px rgba(0,50,200,0.28);font-size:0.78rem;font-weight:700;color:#fff;letter-spacing:0.02em;">
+                <i data-lucide="check-square" style="width:14px;height:14px;"></i>
+                Tareas
+            </a>
+            <a href="/ranking?user_id={{ user_id }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:linear-gradient(180deg,#131328,#0a0a1e);border-top:1px solid rgba(255,255,255,0.14);border-bottom:2px solid rgba(0,0,0,0.75);border-radius:11px;text-decoration:none;box-shadow:0 2px 0 rgba(255,255,255,0.06) inset,0 -2px 0 rgba(0,0,0,0.70) inset,0 4px 12px rgba(0,0,0,0.40);font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.75);letter-spacing:0.02em;">
+                <i data-lucide="trophy" style="width:14px;height:14px;color:#FFD700;"></i>
+                TOP
+            </a>
+            <a href="/referidos?user_id={{ user_id }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:linear-gradient(180deg,#131328,#0a0a1e);border-top:1px solid rgba(255,255,255,0.14);border-bottom:2px solid rgba(0,0,0,0.75);border-radius:11px;text-decoration:none;box-shadow:0 2px 0 rgba(255,255,255,0.06) inset,0 -2px 0 rgba(0,0,0,0.70) inset,0 4px 12px rgba(0,0,0,0.40);font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.75);letter-spacing:0.02em;">
+                <i data-lucide="user-plus" style="width:14px;height:14px;color:#a78bfa;"></i>
+                Invitar
+            </a>
         </div>
 
-        <div class="mining-progress-premium">
-            <div class="mining-progress-bar" id="mining-progress" style="width: 0%"></div>
-        </div>
-
-        <button class="btn btn-primary btn-lg btn-block" onclick="claimReward()" style="
-            background: linear-gradient(180deg, #1a6fff 0%, #0055ee 60%, #003fbf 100%);
-            border: none;
-            border-top: 1px solid rgba(255,255,255,0.28);
-            border-bottom: 3px solid rgba(0,0,0,0.55);
-            border-radius: 14px;
-            padding: 18px 24px;
-            font-size: 1.05rem;
-            font-weight: 800;
-            letter-spacing: 0.06em;
-            box-shadow:
-                0 2px 0 rgba(255,255,255,0.20) inset,
-                0 -3px 0 rgba(0,0,0,0.50) inset,
-                0 4px 14px rgba(0,60,200,0.30);
-            transform: translateZ(0);
-            transition: transform 0.15s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.15s;
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-        " ontouchstart="this.style.transform='translateY(3px) scale(0.98)';this.style.boxShadow='0 1px 0 rgba(255,255,255,0.12) inset,0 -1px 0 rgba(0,0,0,0.40) inset,0 2px 6px rgba(0,60,200,0.20)'" ontouchend="this.style.transform='';this.style.boxShadow=''">
-            <i data-lucide="arrow-down-to-line" style="width: 22px; height: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>
-            <span data-i18n="claim" style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);">Reclamar</span>
-        </button>
-        
-        <!-- Botón de Boost x2 -->
-        <button id="boost-trigger-button" class="boost-trigger-btn" onclick="openBoostModal()" style="
-            margin-top: 12px; width: 100%;
-            background: linear-gradient(145deg, #0d0e28 0%, #090a1e 100%);
-            border-top: 1px solid rgba(0,163,255,0.32);
-            border-left: 1px solid rgba(0,163,255,0.20);
-            border-right: 1px solid rgba(0,0,0,0.3);
-            border-bottom: 2px solid rgba(0,0,0,0.55);
-            border-radius: 16px;
-            padding: 15px 24px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            box-shadow:
-                0 2px 0 rgba(0,120,255,0.12) inset,
-                0 -2px 0 rgba(0,0,0,0.4) inset,
-                0 8px 28px rgba(0,102,255,0.22);
-            transform: translateZ(0);
-            transition: transform 0.18s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.18s;
-        " ontouchstart="this.style.transform='translateY(2px) scale(0.98)'" ontouchend="this.style.transform=''">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="filter:drop-shadow(0 0 6px rgba(0,200,255,0.7))">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-            </svg>
-            <span>Activar Boost x2</span>
-        </button>
     </div>
 
     <!-- Quick Actions - PREMIUM -->
