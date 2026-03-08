@@ -112,83 +112,102 @@ SALLY-E | Wallet{% endblock %}
         </button>
     </div>
 
-    <!-- Balance Hero -->
-    <div class="card balance-card card-highlight" style="background:linear-gradient(155deg,#060616,#040412,#020210) !important;border-top:2px solid rgba(0,140,255,0.35) !important;border-bottom:4px solid rgba(0,0,0,0.85) !important;box-shadow:0 4px 0 rgba(0,140,255,0.10) inset,0 -5px 0 rgba(0,0,0,0.75) inset,0 35px 90px rgba(0,0,0,0.80) !important;">
-        <div class="balance-label" data-i18n="available_balances">Available Balances</div>
+    <!-- ── BALANCE HERO (Binance style) ── -->
+    <div class="card balance-card card-highlight" style="background:linear-gradient(155deg,#060616,#040412,#020210) !important;border-top:2px solid rgba(0,140,255,0.35) !important;border-bottom:4px solid rgba(0,0,0,0.85) !important;box-shadow:0 4px 0 rgba(0,140,255,0.10) inset,0 -5px 0 rgba(0,0,0,0.75) inset,0 35px 90px rgba(0,0,0,0.80) !important;text-align:center;padding:28px 20px 24px;">
 
-        <!-- S-E Balance -->
-        <div class="balance-amount" id="se-balance" style="margin-bottom: 15px; {% if user.se_balance < 0 %}color: #ef4444 !important;{% endif %}">{{ "%.2f"|format(user.se_balance) }}</div>
-        <div class="balance-currency" style="margin-bottom: 20px;" data-i18n="se_tokens">S-E Tokens</div>
-        
-        <!-- Alerta de deuda si hay saldo negativo -->
+        <!-- Label -->
+        <div class="balance-label" style="font-size:0.75rem;letter-spacing:0.08em;color:rgba(255,255,255,0.45);text-transform:uppercase;margin-bottom:6px;" data-i18n="available_balances">Balances Disponibles</div>
+
+        <!-- PXC Amount -->
+        <div class="balance-amount" id="se-balance" style="font-size:2.6rem;font-weight:900;letter-spacing:-0.02em;line-height:1;margin-bottom:4px;{% if user.se_balance < 0 %}color:#ef4444 !important;{% endif %}">{{ "%.2f"|format(user.se_balance) }}</div>
+        <div class="balance-currency" style="font-size:0.8rem;font-weight:600;letter-spacing:0.12em;color:rgba(255,255,255,0.45);margin-bottom:22px;" data-i18n="se_tokens">TOKENS PXC</div>
+
+        <!-- Alerta deuda -->
         {% if user.se_balance < 0 or user.usdt_balance < 0 or user.doge_balance < 0 or user.ton_balance < 0 %}
-        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 12px; padding: 12px 16px; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <i data-lucide="alert-triangle" style="width: 20px; height: 20px; color: #ef4444;"></i>
-                <div>
-                    <div style="font-weight: 700; color: #ef4444; font-size: 0.9rem;" data-i18n="debt_warning">⚠️ Tienes deuda pendiente</div>
-                    <div style="font-size: 0.75rem; color: rgba(239, 68, 68, 0.8);" data-i18n="debt_warning_desc">Debes pagar tu deuda antes de poder retirar</div>
-                </div>
+        <div style="background:rgba(239,68,68,0.15);border-top:1px solid rgba(239,68,68,0.40);border-bottom:2px solid rgba(0,0,0,0.55);border-radius:10px;padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;gap:10px;">
+            <i data-lucide="alert-triangle" style="width:18px;height:18px;color:#ef4444;flex-shrink:0;"></i>
+            <div>
+                <div style="font-weight:700;color:#ef4444;font-size:0.85rem;" data-i18n="debt_warning">⚠️ Tienes deuda pendiente</div>
+                <div style="font-size:0.72rem;color:rgba(239,68,68,0.75);" data-i18n="debt_warning_desc">Debes pagar tu deuda antes de poder retirar</div>
             </div>
         </div>
         {% endif %}
 
-        <!-- USDT & DOGE & TON Balances -->
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-bottom: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <div style="text-align: center;">
-                <div style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 5px;">USDT</div>
-                <div style="font-size: 1.25rem; font-weight: 700; {% if user.usdt_balance < 0 %}color: #ef4444 !important;{% else %}color: #26A17B;{% endif %}" id="usdt-balance">{{ "%.4f"|format(user.usdt_balance|default(0)) }}</div>
-            </div>
-            <div style="text-align: center;">
-                <div style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 5px;">DOGE</div>
-                <div style="font-size: 1.25rem; font-weight: 700; {% if user.doge_balance < 0 %}color: #ef4444 !important;{% else %}color: #C9A635;{% endif %}" id="doge-balance">{{ "%.4f"|format(user.doge_balance|default(0)) }}</div>
-            </div>
-            <div style="text-align: center;">
-                <div style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 5px;">TON</div>
-                <div style="font-size: 1.25rem; font-weight: 700; {% if user.ton_balance < 0 %}color: #ef4444 !important;{% else %}color: #0098EA;{% endif %}" id="ton-balance">{{ "%.4f"|format(user.ton_balance|default(0)) }}</div>
-            </div>
-        </div>
+        <!-- Divider -->
+        <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);margin-bottom:18px;"></div>
 
-        <!-- Action Buttons -->
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); position: relative; z-index: 1;">
-            <button class="btn btn-primary" onclick="openDepositModal()" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">
-                <i data-lucide="arrow-down-left"></i>
-                <span data-i18n="deposit">Deposit</span>
-            </button>
-            <button class="btn btn-primary" onclick="openWithdrawModal()">
-                <i data-lucide="arrow-up-right"></i>
-                <span data-i18n="withdraw">Withdraw</span>
-            </button>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-top: var(--space-3); position: relative; z-index: 1;">
-            <button class="btn btn-secondary" onclick="openSwapModal()">
-                <i data-lucide="repeat"></i>
-                <span data-i18n="swap">Swap</span>
-            </button>
-            <button class="btn btn-secondary" onclick="openLinkWalletModal()">
-                <i data-lucide="link"></i>
-                <span data-i18n="link">Link</span>
-            </button>
-        </div>
-
-        <div style="margin-top: var(--space-3); position: relative; z-index: 1;">
-            <a href="/historial?user_id={{ user_id }}" class="btn btn-secondary" style="width: 100%;">
-                <i data-lucide="clock"></i>
-                <span data-i18n="history">History</span>
-            </a>
+        <!-- Crypto balances — fila horizontal -->
+        <div style="display:flex;justify-content:space-around;align-items:center;margin-bottom:0;">
+            <div style="text-align:center;">
+                <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.38);margin-bottom:3px;">USDT</div>
+                <div style="font-size:1.05rem;font-weight:700;{% if user.usdt_balance < 0 %}color:#ef4444;{% else %}color:#26A17B;{% endif %}" id="usdt-balance">{{ "%.4f"|format(user.usdt_balance|default(0)) }}</div>
+            </div>
+            <div style="width:1px;height:32px;background:rgba(255,255,255,0.07);"></div>
+            <div style="text-align:center;">
+                <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.38);margin-bottom:3px;">DOGE</div>
+                <div style="font-size:1.05rem;font-weight:700;{% if user.doge_balance < 0 %}color:#ef4444;{% else %}color:#C9A635;{% endif %}" id="doge-balance">{{ "%.4f"|format(user.doge_balance|default(0)) }}</div>
+            </div>
+            <div style="width:1px;height:32px;background:rgba(255,255,255,0.07);"></div>
+            <div style="text-align:center;">
+                <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.38);margin-bottom:3px;">TON</div>
+                <div style="font-size:1.05rem;font-weight:700;{% if user.ton_balance < 0 %}color:#ef4444;{% else %}color:#0098EA;{% endif %}" id="ton-balance">{{ "%.4f"|format(user.ton_balance|default(0)) }}</div>
+            </div>
         </div>
     </div>
 
-    <!-- Stats -->
+    <!-- ── ACTION BUTTONS — estilo Binance (íconos circulares + label) ── -->
+    <div style="display:flex;justify-content:space-around;align-items:flex-start;padding:6px 4px 18px;margin-top:-4px;">
+
+        <!-- Depositar -->
+        <button onclick="openDepositModal()" style="display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:none;cursor:pointer;min-width:56px;">
+            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#22c55e,#15803d);border-top:1px solid rgba(255,255,255,0.25);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:50%;box-shadow:0 2px 0 rgba(255,255,255,0.18) inset,0 -2px 0 rgba(0,0,0,0.45) inset,0 4px 12px rgba(0,100,50,0.30);">
+                <i data-lucide="arrow-down-to-line" style="width:20px;height:20px;color:#fff;"></i>
+            </div>
+            <span style="font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.70);text-align:center;line-height:1.2;" data-i18n="deposit">Depositar</span>
+        </button>
+
+        <!-- Retirar -->
+        <button onclick="openWithdrawModal()" style="display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:none;cursor:pointer;min-width:56px;">
+            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#1a6fff,#003fbf);border-top:1px solid rgba(255,255,255,0.25);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:50%;box-shadow:0 2px 0 rgba(255,255,255,0.18) inset,0 -2px 0 rgba(0,0,0,0.45) inset,0 4px 12px rgba(0,50,200,0.30);">
+                <i data-lucide="arrow-up-from-line" style="width:20px;height:20px;color:#fff;"></i>
+            </div>
+            <span style="font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.70);text-align:center;line-height:1.2;" data-i18n="withdraw">Retirar</span>
+        </button>
+
+        <!-- Cambiar -->
+        <button onclick="openSwapModal()" style="display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:none;cursor:pointer;min-width:56px;">
+            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#131328,#0a0a1e);border-top:1px solid rgba(255,255,255,0.16);border-bottom:2px solid rgba(0,0,0,0.70);border-radius:50%;box-shadow:0 2px 0 rgba(255,255,255,0.08) inset,0 -2px 0 rgba(0,0,0,0.65) inset,0 4px 12px rgba(0,0,0,0.40);">
+                <i data-lucide="repeat-2" style="width:20px;height:20px;color:rgba(255,255,255,0.80);"></i>
+            </div>
+            <span style="font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.70);text-align:center;line-height:1.2;" data-i18n="swap">Cambiar</span>
+        </button>
+
+        <!-- Vincular -->
+        <button onclick="openLinkWalletModal()" style="display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:none;cursor:pointer;min-width:56px;">
+            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#131328,#0a0a1e);border-top:1px solid rgba(255,255,255,0.16);border-bottom:2px solid rgba(0,0,0,0.70);border-radius:50%;box-shadow:0 2px 0 rgba(255,255,255,0.08) inset,0 -2px 0 rgba(0,0,0,0.65) inset,0 4px 12px rgba(0,0,0,0.40);">
+                <i data-lucide="link-2" style="width:20px;height:20px;color:rgba(255,255,255,0.80);"></i>
+            </div>
+            <span style="font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.70);text-align:center;line-height:1.2;" data-i18n="link">Vincular</span>
+        </button>
+
+        <!-- Historial -->
+        <a href="/historial?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:7px;text-decoration:none;min-width:56px;">
+            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#131328,#0a0a1e);border-top:1px solid rgba(255,255,255,0.16);border-bottom:2px solid rgba(0,0,0,0.70);border-radius:50%;box-shadow:0 2px 0 rgba(255,255,255,0.08) inset,0 -2px 0 rgba(0,0,0,0.65) inset,0 4px 12px rgba(0,0,0,0.40);">
+                <i data-lucide="clock" style="width:20px;height:20px;color:rgba(255,255,255,0.80);"></i>
+            </div>
+            <span style="font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.70);text-align:center;line-height:1.2;" data-i18n="history">Historial</span>
+        </a>
+    </div>
+
+    <!-- ── STATS ── -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-value">{{ total_withdrawn | default(0) }}</div>
-            <div class="stat-label" data-i18n="withdrawn">Withdrawn</div>
+            <div class="stat-label" data-i18n="withdrawn">Retirado</div>
         </div>
         <div class="stat-card">
             <div class="stat-value">{{ total_earned | default(0) }}</div>
-            <div class="stat-label" data-i18n="earned">Earned</div>
+            <div class="stat-label" data-i18n="earned">Ganado</div>
         </div>
     </div>
 
