@@ -368,21 +368,21 @@ body::after {
 /* ==================== CARDS ULTRA PRO ==================== */
 .card {
     position: relative;
-    background: linear-gradient(145deg, #060614 0%, #040410 55%, #02020c 100%);
-    border-top:    2px solid rgba(255,255,255,0.14);
-    border-left:   1px solid rgba(255,255,255,0.09);
-    border-right:  1px solid rgba(0,0,0,0.70);
-    border-bottom: 5px solid rgba(0,0,0,0.95);
+    background: linear-gradient(160deg, #0c0c22 0%, #080818 50%, #050514 100%);
+    border-top:    2px solid rgba(60, 130, 255, 0.45);
+    border-left:   1px solid rgba(40, 100, 255, 0.25);
+    border-right:  1px solid rgba(0, 0, 0, 0.80);
+    border-bottom: 4px solid rgba(0, 0, 0, 0.95);
     border-radius: var(--radius-2xl);
     padding: var(--space-6);
     margin-bottom: var(--space-5);
     overflow: hidden;
     box-shadow:
-        0 5px 0 rgba(255,255,255,0.07) inset,
-        0 -6px 0 rgba(0,0,0,0.92) inset,
-        0 30px 80px rgba(0,0,0,0.90),
-        0 8px 20px rgba(0,0,0,0.75),
-        0 0 0 1px rgba(255,255,255,0.04);
+        0 3px 0 rgba(80,140,255,0.12) inset,
+        0 -4px 0 rgba(0,0,0,0.95) inset,
+        0 8px 32px rgba(0,0,0,0.80),
+        0 2px 8px rgba(0,0,0,0.60),
+        0 0 0 1px rgba(50,100,255,0.15);
     transform: translateZ(0);
 }
 
@@ -391,7 +391,7 @@ body::after {
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, rgba(80,160,255,0.70) 50%, transparent 100%);
     pointer-events: none;
     z-index: 2;
 }
@@ -409,24 +409,27 @@ body::after {
 .balance-card {
     text-align: center;
     padding: var(--space-8) var(--space-6);
-    background: linear-gradient(155deg, #070718 0%, #040412 50%, #020210 100%);
-    border-top:    2px solid rgba(0,150,255,0.40);
-    border-left:   1px solid rgba(0,120,255,0.22);
-    border-right:  1px solid rgba(0,0,0,0.65);
-    border-bottom: 5px solid rgba(0,0,0,0.92);
+    background: linear-gradient(160deg, #0e0e28 0%, #0a0a20 50%, #060618 100%);
+    border-top:    3px solid rgba(60, 140, 255, 0.65);
+    border-left:   1px solid rgba(40, 120, 255, 0.35);
+    border-right:  1px solid rgba(0, 0, 0, 0.85);
+    border-bottom: 5px solid rgba(0, 0, 0, 0.98);
     position: relative;
     overflow: hidden;
     box-shadow:
-        0 5px 0 rgba(0,150,255,0.14) inset,
-        0 -6px 0 rgba(0,0,0,0.85) inset,
-        0 40px 100px rgba(0,0,0,0.85),
-        0 0 140px rgba(0,50,220,0.14);
+        0 4px 0 rgba(80,150,255,0.18) inset,
+        0 -5px 0 rgba(0,0,0,0.98) inset,
+        0 12px 40px rgba(0,0,0,0.80),
+        0 2px 10px rgba(0,0,0,0.60),
+        0 0 0 1px rgba(50,110,255,0.28),
+        0 0 40px rgba(0,80,220,0.12);
 }
 
 .balance-card::before {
     height: 3px;
-    background: linear-gradient(90deg, #002299, #0066FF, #00D4FF, #0066FF, #002299) !important;
+    background: linear-gradient(90deg, #0033cc, #0088ff, #00d4ff, #0088ff, #0033cc) !important;
     opacity: 1;
+    box-shadow: 0 0 12px rgba(0, 170, 255, 0.6);
 }
 
 .balance-card::after {
@@ -476,21 +479,22 @@ body::after {
 
 .stat-card {
     position: relative;
-    background: linear-gradient(145deg, #050512 0%, #030310 55%, #02020a 100%);
-    border-top:    2px solid rgba(0,160,255,0.38);
-    border-left:   1px solid rgba(0,140,255,0.22);
-    border-right:  1px solid rgba(0,0,0,0.75);
-    border-bottom: 5px solid rgba(0,0,0,0.98);
+    background: linear-gradient(160deg, #0d0d24 0%, #090920 55%, #060618 100%);
+    border-top:    2px solid rgba(60, 140, 255, 0.55);
+    border-left:   1px solid rgba(40, 120, 255, 0.30);
+    border-right:  1px solid rgba(0, 0, 0, 0.85);
+    border-bottom: 4px solid rgba(0, 0, 0, 0.98);
     border-radius: var(--radius-xl);
     padding: var(--space-5) var(--space-4);
     text-align: center;
     overflow: hidden;
     box-shadow:
-        0 5px 0 rgba(255,255,255,0.08) inset,
-        0 -6px 0 rgba(0,0,0,0.95) inset,
-        0 22px 60px rgba(0,0,0,0.90),
-        0 6px 16px rgba(0,0,0,0.80),
-        0 0 0 1px rgba(0,100,255,0.08);
+        0 3px 0 rgba(80,150,255,0.14) inset,
+        0 -4px 0 rgba(0,0,0,0.98) inset,
+        0 8px 28px rgba(0,0,0,0.75),
+        0 2px 8px rgba(0,0,0,0.60),
+        0 0 0 1px rgba(50,110,255,0.22),
+        0 0 20px rgba(0,80,255,0.08);
     transform: translateZ(0);
     transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1), box-shadow 0.22s;
 }
@@ -504,7 +508,7 @@ body::after {
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(0,180,255,0.65), transparent);
+    background: linear-gradient(90deg, transparent, rgba(60,160,255,0.90), transparent);
     opacity: 1;
 }
 
@@ -621,17 +625,17 @@ body::after {
     align-items: center;
     gap: var(--space-4);
     padding: var(--space-4);
-    background: linear-gradient(145deg, #050512 0%, #030310 60%, #02020c 100%);
-    border-top:    2px solid rgba(255,255,255,0.12);
-    border-left:   1px solid rgba(255,255,255,0.07);
-    border-right:  1px solid rgba(0,0,0,0.70);
-    border-bottom: 4px solid rgba(0,0,0,0.95);
+    background: linear-gradient(160deg, #0c0c22 0%, #090918 55%, #060616 100%);
+    border-top:    2px solid rgba(50, 120, 255, 0.38);
+    border-left:   1px solid rgba(30, 100, 255, 0.22);
+    border-right:  1px solid rgba(0, 0, 0, 0.80);
+    border-bottom: 3px solid rgba(0, 0, 0, 0.95);
     border-radius: var(--radius-lg);
     box-shadow:
-        0 4px 0 rgba(255,255,255,0.06) inset,
-        0 -5px 0 rgba(0,0,0,0.90) inset,
-        0 18px 50px rgba(0,0,0,0.85),
-        0 4px 12px rgba(0,0,0,0.70);
+        0 2px 0 rgba(70,130,255,0.10) inset,
+        0 -3px 0 rgba(0,0,0,0.95) inset,
+        0 6px 20px rgba(0,0,0,0.65),
+        0 0 0 1px rgba(40,100,255,0.14);
     transform: translateZ(0);
     transition: transform 0.2s cubic-bezier(0.34,1.4,0.64,1);
 }
