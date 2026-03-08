@@ -537,302 +537,429 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 </script>
 
-<div class="container" style="padding-bottom: 100px;">
+<div class="container" style="padding:0;overflow:hidden;min-height:calc(100vh - 120px);display:flex;flex-direction:column;">
 
-    <!-- ── TOP: Balance + mini stats ── -->
-    <div style="text-align:center; padding: 18px 0 8px;">
-        <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.38);text-transform:uppercase;margin-bottom:6px;">Balance Total</div>
-        <div id="tap-balance-display" style="font-size:2.8rem;font-weight:900;letter-spacing:-0.03em;color:#fff;line-height:1;{% if user.se_balance < 0 %}color:#ef4444 !important;{% endif %}">{{ "%.4f"|format(user.se_balance or 0) }}</div>
-        <div style="font-size:0.78rem;font-weight:700;letter-spacing:0.14em;color:rgba(255,255,255,0.38);margin-top:4px;">PXC</div>
+<!-- ══════════════════════════════════════════
+     AMBIENT BACKGROUND LAYER
+══════════════════════════════════════════ -->
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+    <!-- deep radial ambient -->
+    <div style="position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(ellipse at center,rgba(0,60,200,0.18) 0%,rgba(0,20,80,0.10) 40%,transparent 70%);border-radius:50%;"></div>
+    <!-- tap glow (activates on tap via JS) -->
+    <div id="ambient-glow" style="position:absolute;top:20%;left:50%;transform:translateX(-50%);width:420px;height:420px;background:radial-gradient(ellipse at center,rgba(255,200,0,0.0) 0%,transparent 70%);border-radius:50%;transition:background 0.3s ease;pointer-events:none;"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1 — BALANCE HERO (top)
+══════════════════════════════════════════ -->
+<div style="position:relative;z-index:1;text-align:center;padding:20px 20px 0;">
+
+    <!-- row: level badge + balance + pts badge -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+
+        <!-- Level pill -->
+        <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:linear-gradient(160deg,#0d0d24,#090920);border-top:1px solid rgba(60,130,255,0.40);border-bottom:2px solid rgba(0,0,0,0.90);border-radius:20px;box-shadow:0 1px 0 rgba(80,140,255,0.10) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
+            <i data-lucide="shield" style="width:13px;height:13px;color:#a78bfa;"></i>
+            <span style="font-size:0.68rem;font-weight:800;color:#a78bfa;letter-spacing:0.06em;">NVL {{ user.mining_level or 1 }}</span>
+        </div>
+
+        <!-- Main balance -->
+        <div style="text-align:center;flex:1;padding:0 10px;">
+            <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.14em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:2px;">Balance Total</div>
+            <div id="tap-balance-display" style="font-size:2.1rem;font-weight:900;letter-spacing:-0.03em;color:#fff;line-height:1;{% if user.se_balance < 0 %}color:#ef4444!important;{% endif %}">{{ "%.2f"|format(user.se_balance or 0) }}</div>
+            <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.16em;color:rgba(255,255,255,0.30);margin-top:1px;">PXC TOKENS</div>
+        </div>
+
+        <!-- Rate pill -->
+        <div style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:linear-gradient(160deg,#061a0e,#040e08);border-top:1px solid rgba(0,255,136,0.35);border-bottom:2px solid rgba(0,0,0,0.90);border-radius:20px;box-shadow:0 1px 0 rgba(0,255,136,0.10) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#00FF88;box-shadow:0 0 7px rgba(0,255,136,0.9);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
+            <span style="font-size:0.68rem;font-weight:800;color:#00FF88;letter-spacing:0.04em;">{{ mining_rate or user.mining_power or 0.1 }}/h</span>
+        </div>
     </div>
 
-    <!-- mini stats row -->
-    <div style="display:flex;justify-content:center;gap:0;margin-bottom:22px;">
-        <div style="text-align:center;padding:8px 18px;border-right:1px solid rgba(255,255,255,0.07);">
-            <div style="font-size:1rem;font-weight:800;color:#fff;">{{ user.mining_level or 1 }}</div>
-            <div style="font-size:0.65rem;color:rgba(255,255,255,0.35);letter-spacing:0.06em;">NIVEL</div>
-        </div>
-        <div style="text-align:center;padding:8px 18px;border-right:1px solid rgba(255,255,255,0.07);">
-            <div style="font-size:1rem;font-weight:800;color:#00FF88;">{{ mining_rate or user.mining_power or 0.1 }}</div>
-            <div style="font-size:0.65rem;color:rgba(255,255,255,0.35);letter-spacing:0.06em;">PXC/HORA</div>
-        </div>
-        <div style="text-align:center;padding:8px 18px;">
-            <div style="font-size:1rem;font-weight:800;color:#a78bfa;">{{ user.referral_count or 0 }}</div>
-            <div style="font-size:0.65rem;color:rgba(255,255,255,0.35);letter-spacing:0.06em;">REFERIDOS</div>
-        </div>
+    <!-- referrals sub-line -->
+    <div style="display:flex;justify-content:center;gap:4px;align-items:center;margin-bottom:4px;">
+        <i data-lucide="users" style="width:11px;height:11px;color:rgba(255,255,255,0.28);"></i>
+        <span style="font-size:0.62rem;color:rgba(255,255,255,0.28);font-weight:600;">{{ user.referral_count or 0 }} referidos</span>
     </div>
+</div>
 
-    <!-- ── ENERGY BAR ── -->
-    <div style="margin-bottom:20px;padding:0 4px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-            <div style="display:flex;align-items:center;gap:5px;">
-                <i data-lucide="zap" style="width:13px;height:13px;color:#FFD700;"></i>
-                <span style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.55);">Energía</span>
-            </div>
-            <span id="energy-label" style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.55);">500 / 500</span>
+<!-- ══════════════════════════════════════════
+     SECTION 2 — TAP ARENA (center stage)
+══════════════════════════════════════════ -->
+<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:10px 0 16px;">
+
+    <!-- float label zone -->
+    <div id="tap-fx-container" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:280px;height:80px;pointer-events:none;overflow:visible;z-index:10;"></div>
+
+    <!-- ── ORBITAL RING SYSTEM ── -->
+    <div style="position:relative;width:260px;height:260px;display:flex;align-items:center;justify-content:center;">
+
+        <!-- Ring 1 — slow outer -->
+        <div style="position:absolute;inset:-28px;border-radius:50%;border:1px solid rgba(60,130,255,0.12);animation:orbitRing1 12s linear infinite;"></div>
+        <!-- Ring 1 spark -->
+        <div style="position:absolute;top:-29px;left:50%;margin-left:-3px;width:6px;height:6px;border-radius:50%;background:rgba(80,160,255,0.70);box-shadow:0 0 8px rgba(80,160,255,0.9);animation:orbitRing1 12s linear infinite;"></div>
+
+        <!-- Ring 2 — medium, tilted -->
+        <div style="position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(255,200,0,0.10);animation:orbitRing2 8s linear infinite reverse;transform:rotate(45deg);"></div>
+        <!-- Ring 2 spark -->
+        <div style="position:absolute;inset:-14px;border-radius:50%;animation:orbitRing2 8s linear infinite reverse;">
+            <div style="position:absolute;top:-4px;left:50%;margin-left:-3px;width:5px;height:5px;border-radius:50%;background:rgba(255,200,0,0.75);box-shadow:0 0 7px rgba(255,200,0,0.9);transform:rotate(-45deg);"></div>
         </div>
-        <div style="height:6px;background:rgba(255,255,255,0.07);border-radius:10px;overflow:hidden;">
-            <div id="energy-bar" style="height:100%;width:100%;background:linear-gradient(90deg,#FFD700,#FFA500);border-radius:10px;transition:width 0.3s ease;"></div>
-        </div>
-    </div>
 
-    <!-- ── TAP BUTTON ── -->
-    <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:24px;">
+        <!-- Ring 3 — inner glow ring -->
+        <div style="position:absolute;inset:8px;border-radius:50%;border:1px solid rgba(160,120,255,0.10);animation:orbitRing3 16s linear infinite;"></div>
 
-        <!-- +PXC float label container -->
-        <div id="tap-fx-container" style="position:relative;height:40px;width:200px;margin-bottom:4px;pointer-events:none;overflow:visible;"></div>
-
-        <!-- The big tap button -->
+        <!-- ── THE SPHERE BUTTON ── -->
         <div id="tap-btn"
              ontouchstart="handleTap(event)"
              onclick="handleTap(event)"
              style="
-                width:190px;height:190px;
-                border-radius:50%;
-                background:linear-gradient(160deg,#0e0e28,#0a0a20,#060618);
-                border-top:3px solid rgba(60,140,255,0.65);
-                border-left:2px solid rgba(40,110,255,0.30);
-                border-right:2px solid rgba(0,0,0,0.85);
-                border-bottom:6px solid rgba(0,0,0,0.98);
-                box-shadow:
-                    0 4px 0 rgba(80,150,255,0.18) inset,
-                    0 -6px 0 rgba(0,0,0,0.98) inset,
-                    0 0 0 1px rgba(50,110,255,0.28),
-                    0 16px 50px rgba(0,0,0,0.85),
-                    0 0 60px rgba(0,80,255,0.12);
-                display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-                cursor:pointer;
-                user-select:none;
-                -webkit-user-select:none;
-                transition:transform 0.08s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.08s;
                 position:relative;
+                width:210px;height:210px;border-radius:50%;
+                cursor:pointer;user-select:none;-webkit-user-select:none;
+                /* 3D sphere illusion: light from top-left */
+                background:
+                    radial-gradient(ellipse 55% 40% at 38% 30%, rgba(255,255,255,0.18) 0%, transparent 60%),
+                    radial-gradient(ellipse 80% 80% at 50% 45%, #1a1a40 0%, #0d0d28 45%, #060614 100%);
+                border:none;
+                box-shadow:
+                    /* top highlight ring */
+                    0 0 0 2px rgba(70,120,255,0.55),
+                    /* outer 3D shadow — bottom-right heavy */
+                    6px 12px 40px rgba(0,0,0,0.90),
+                    -2px -4px 20px rgba(0,0,0,0.60),
+                    /* colored ambient bounce */
+                    0 20px 80px rgba(0,30,180,0.30),
+                    /* inner top light */
+                    0 -6px 30px rgba(80,140,255,0.25) inset,
+                    /* inner bottom shadow */
+                    0 10px 40px rgba(0,0,0,0.80) inset;
+                transition:transform 0.10s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.10s;
+                display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
                 overflow:hidden;
              ">
-            <!-- inner glow ring -->
-            <div style="position:absolute;inset:12px;border-radius:50%;border:1px solid rgba(80,160,255,0.15);pointer-events:none;"></div>
-            <!-- coin icon -->
-            <div style="width:72px;height:72px;background:linear-gradient(180deg,#FFD700,#E6A800);border-top:2px solid rgba(255,255,255,0.35);border-bottom:3px solid rgba(0,0,0,0.45);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(255,255,255,0.25) inset,0 -3px 0 rgba(0,0,0,0.40) inset,0 8px 24px rgba(255,180,0,0.30);">
-                <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.55)" stroke-width="2" stroke-linecap="round">
-                    <circle cx="12" cy="12" r="8"/><path d="M12 6v2m0 8v2M9 12h6"/>
-                </svg>
+
+            <!-- specular highlight blob (top-left) -->
+            <div style="position:absolute;top:22px;left:30px;width:70px;height:40px;background:radial-gradient(ellipse,rgba(255,255,255,0.22) 0%,transparent 70%);border-radius:50%;pointer-events:none;transform:rotate(-20deg);"></div>
+
+            <!-- bottom rim glow -->
+            <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:120px;height:20px;background:radial-gradient(ellipse,rgba(60,100,255,0.35) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
+
+            <!-- COIN — 3D golden disc -->
+            <div style="
+                width:80px;height:80px;border-radius:50%;
+                background:
+                    radial-gradient(ellipse 55% 40% at 38% 28%, rgba(255,255,220,0.60) 0%, transparent 55%),
+                    radial-gradient(ellipse 80% 80% at 50% 50%, #FFD700 0%, #E6A800 50%, #B87800 100%);
+                border:none;
+                box-shadow:
+                    0 0 0 2px rgba(255,255,255,0.18),
+                    3px 6px 20px rgba(0,0,0,0.70),
+                    0 -4px 18px rgba(255,230,80,0.50) inset,
+                    0 6px 24px rgba(100,60,0,0.60) inset;
+                display:flex;align-items:center;justify-content:center;
+                position:relative;
+                overflow:hidden;
+            ">
+                <!-- coin shine -->
+                <div style="position:absolute;top:8px;left:10px;width:28px;height:16px;background:radial-gradient(ellipse,rgba(255,255,255,0.50) 0%,transparent 70%);border-radius:50%;transform:rotate(-20deg);"></div>
+                <!-- PXC letter -->
+                <span style="font-size:1.1rem;font-weight:900;color:rgba(80,40,0,0.80);letter-spacing:-0.02em;position:relative;z-index:1;">P</span>
             </div>
-            <div style="font-size:0.72rem;font-weight:800;letter-spacing:0.10em;color:rgba(255,255,255,0.45);text-transform:uppercase;">Toca para ganar</div>
+
+            <!-- label -->
+            <div style="font-size:0.65rem;font-weight:800;letter-spacing:0.14em;color:rgba(255,255,255,0.40);text-transform:uppercase;position:relative;z-index:1;">TOCA PARA GANAR</div>
         </div>
 
-        <!-- tap reward indicator -->
-        <div style="margin-top:14px;display:flex;align-items:center;gap:6px;padding:6px 14px;background:linear-gradient(160deg,#0c0c22,#090918);border-top:1px solid rgba(255,215,0,0.35);border-bottom:2px solid rgba(0,0,0,0.80);border-radius:20px;box-shadow:0 1px 0 rgba(255,215,0,0.10) inset,0 -2px 0 rgba(0,0,0,0.75) inset;">
-            <i data-lucide="zap" style="width:13px;height:13px;color:#FFD700;"></i>
-            <span style="font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.60);">+<span id="tap-reward-label">0.001</span> PXC por tap</span>
-        </div>
+        <!-- shadow ellipse under sphere -->
+        <div style="position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);width:160px;height:18px;background:radial-gradient(ellipse,rgba(0,0,0,0.65) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
     </div>
 
-    <!-- ── PENDING + CLAIM ── -->
-    <div class="mining-card-premium" style="padding:18px 20px;">
+    <!-- +PXC badge below button -->
+    <div style="margin-top:22px;display:flex;align-items:center;gap:7px;padding:7px 18px;background:linear-gradient(160deg,#0c0c22,#090918);border-top:1px solid rgba(255,215,0,0.35);border-bottom:2px solid rgba(0,0,0,0.85);border-left:1px solid rgba(255,215,0,0.15);border-right:1px solid rgba(0,0,0,0.60);border-radius:24px;box-shadow:0 1px 0 rgba(255,215,0,0.08) inset,0 -2px 0 rgba(0,0,0,0.80) inset,0 4px 16px rgba(0,0,0,0.50);">
+        <i data-lucide="zap" style="width:13px;height:13px;color:#FFD700;filter:drop-shadow(0 0 4px rgba(255,215,0,0.8));"></i>
+        <span style="font-size:0.72rem;font-weight:800;color:rgba(255,255,255,0.65);">+<span id="tap-reward-label">0.001</span> PXC por tap</span>
+        <span style="font-size:0.62rem;color:rgba(255,255,255,0.28);margin-left:2px;">· {{ user.referral_count or 0 }} refs</span>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 3 — ENERGY BAR
+══════════════════════════════════════════ -->
+<div style="position:relative;z-index:1;padding:0 20px 14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+        <div style="display:flex;align-items:center;gap:5px;">
+            <i data-lucide="zap" style="width:12px;height:12px;color:#FFD700;"></i>
+            <span style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;">ENERGÍA</span>
+        </div>
+        <span id="energy-label" style="font-size:0.68rem;font-weight:800;color:rgba(255,255,255,0.50);font-variant-numeric:tabular-nums;">500 / 500</span>
+    </div>
+    <!-- bar track -->
+    <div style="height:7px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,0.60) inset;">
+        <div id="energy-bar" style="height:100%;width:100%;background:linear-gradient(90deg,#FFD700,#FFA500);border-radius:10px;transition:width 0.35s ease,background 0.5s ease;box-shadow:0 0 8px rgba(255,180,0,0.55);"></div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 4 — PENDING + CLAIM CARD
+══════════════════════════════════════════ -->
+<div style="position:relative;z-index:1;padding:0 16px 14px;">
+    <div style="background:linear-gradient(160deg,#0c0c22 0%,#080818 55%,#050514 100%);border-top:2px solid rgba(60,130,255,0.50);border-left:1px solid rgba(40,100,255,0.25);border-right:1px solid rgba(0,0,0,0.80);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:20px;padding:18px 18px 16px;box-shadow:0 3px 0 rgba(80,140,255,0.12) inset,0 -4px 0 rgba(0,0,0,0.95) inset,0 8px 32px rgba(0,0,0,0.80),0 0 0 1px rgba(50,100,255,0.18);position:relative;overflow:hidden;">
+        <!-- top highlight line -->
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(80,160,255,0.65),transparent);pointer-events:none;"></div>
+
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
             <div>
-                <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.38);text-transform:uppercase;margin-bottom:3px;">Pendiente de reclamar</div>
-                <div style="display:flex;align-items:baseline;gap:6px;">
-                    <span id="unclaimed-display" style="font-size:1.6rem;font-weight:900;color:#fff;">{{ "%.4f"|format(unclaimed or 0) }}</span>
-                    <span style="font-size:0.75rem;color:rgba(255,255,255,0.35);font-weight:600;">PXC</span>
+                <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:4px;">Pendiente de reclamar</div>
+                <div style="display:flex;align-items:baseline;gap:7px;">
+                    <span id="unclaimed-display" style="font-size:1.75rem;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;">{{ "%.4f"|format(unclaimed or 0) }}</span>
+                    <span style="font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.32);">PXC</span>
                 </div>
             </div>
-            <!-- active dot -->
-            <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(0,255,136,0.08);border-top:1px solid rgba(0,255,136,0.25);border-bottom:2px solid rgba(0,0,0,0.55);border-radius:20px;">
-                <div style="width:7px;height:7px;border-radius:50%;background:#00FF88;box-shadow:0 0 8px rgba(0,255,136,0.8);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
-                <span style="font-size:0.68rem;font-weight:700;color:#00FF88;">{{ mining_rate or user.mining_power or 0.1 }}/h</span>
+            <!-- active indicator -->
+            <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:linear-gradient(160deg,#061a0e,#040e08);border-top:1px solid rgba(0,255,136,0.32);border-bottom:2px solid rgba(0,0,0,0.80);border-radius:20px;box-shadow:0 1px 0 rgba(0,255,136,0.08) inset,0 -2px 0 rgba(0,0,0,0.75) inset;">
+                <div style="width:7px;height:7px;border-radius:50%;background:#00FF88;box-shadow:0 0 10px rgba(0,255,136,0.9);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
+                <span style="font-size:0.68rem;font-weight:800;color:#00FF88;">{{ mining_rate or user.mining_power or 0.1 }}/h</span>
             </div>
         </div>
 
-        <!-- Claim button -->
-        <button onclick="claimReward()" style="
-            width:100%;padding:16px;
-            background:linear-gradient(180deg,#1a6fff,#0055ee,#003fbf);
+        <!-- Claim CTA -->
+        <button onclick="claimReward(event)" style="
+            width:100%;padding:15px;
+            background:linear-gradient(180deg,#1a6fff 0%,#0055ee 60%,#003fbf 100%);
             border:none;
             border-top:1px solid rgba(255,255,255,0.28);
-            border-bottom:3px solid rgba(0,0,0,0.55);
+            border-bottom:3px solid rgba(0,0,0,0.60);
             border-radius:14px;
-            font-size:1rem;font-weight:800;letter-spacing:0.05em;color:#fff;
-            box-shadow:0 2px 0 rgba(255,255,255,0.20) inset,0 -3px 0 rgba(0,0,0,0.50) inset,0 4px 14px rgba(0,60,200,0.30);
-            display:flex;align-items:center;justify-content:center;gap:8px;
+            font-size:0.95rem;font-weight:800;letter-spacing:0.06em;color:#fff;
+            box-shadow:0 2px 0 rgba(255,255,255,0.20) inset,0 -3px 0 rgba(0,0,0,0.55) inset,0 4px 18px rgba(0,60,200,0.35);
+            display:flex;align-items:center;justify-content:center;gap:9px;
             cursor:pointer;
-            transition:transform 0.08s cubic-bezier(0.34,1.4,0.64,1),box-shadow 0.08s;
+            transition:transform 0.10s cubic-bezier(0.34,1.4,0.64,1),box-shadow 0.10s;
         "
         ontouchstart="this.style.transform='translateY(3px) scale(0.98)';this.style.boxShadow='0 1px 0 rgba(255,255,255,0.12) inset,0 -1px 0 rgba(0,0,0,0.40) inset,0 2px 6px rgba(0,60,200,0.20)'"
         ontouchend="this.style.transform='';this.style.boxShadow=''">
-            <i data-lucide="arrow-down-to-line" style="width:20px;height:20px;"></i>
+            <i data-lucide="arrow-down-to-line" style="width:19px;height:19px;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.40));"></i>
             <span>Reclamar PXC</span>
         </button>
     </div>
+</div>
 
-    <!-- ── QUICK NAV PILLS ── -->
-    <div style="display:flex;justify-content:space-around;padding:18px 0 4px;">
-        <a href="/tasks?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;">
-            <div style="width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0c0c22,#090918);border-top:2px solid rgba(60,130,255,0.40);border-bottom:3px solid rgba(0,0,0,0.90);border-radius:14px;box-shadow:0 2px 0 rgba(80,140,255,0.10) inset,0 -3px 0 rgba(0,0,0,0.88) inset;">
-                <i data-lucide="check-square" style="width:20px;height:20px;color:rgba(255,255,255,0.75);"></i>
-            </div>
-            <span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.45);">Tareas</span>
-        </a>
-        <a href="/explore?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;">
-            <div style="width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0c0c22,#090918);border-top:2px solid rgba(60,130,255,0.40);border-bottom:3px solid rgba(0,0,0,0.90);border-radius:14px;box-shadow:0 2px 0 rgba(80,140,255,0.10) inset,0 -3px 0 rgba(0,0,0,0.88) inset;">
-                <i data-lucide="compass" style="width:20px;height:20px;color:rgba(255,255,255,0.75);"></i>
-            </div>
-            <span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.45);">Explorar</span>
-        </a>
-        <a href="/ranking?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;">
-            <div style="width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0c0c22,#090918);border-top:2px solid rgba(255,215,0,0.40);border-bottom:3px solid rgba(0,0,0,0.90);border-radius:14px;box-shadow:0 2px 0 rgba(255,215,0,0.10) inset,0 -3px 0 rgba(0,0,0,0.88) inset;">
-                <i data-lucide="trophy" style="width:20px;height:20px;color:#FFD700;"></i>
-            </div>
-            <span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.45);">TOP</span>
-        </a>
-        <a href="/referidos?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;">
-            <div style="width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0c0c22,#090918);border-top:2px solid rgba(167,139,250,0.40);border-bottom:3px solid rgba(0,0,0,0.90);border-radius:14px;box-shadow:0 2px 0 rgba(167,139,250,0.10) inset,0 -3px 0 rgba(0,0,0,0.88) inset;">
-                <i data-lucide="user-plus" style="width:20px;height:20px;color:#a78bfa;"></i>
-            </div>
-            <span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.45);">Invitar</span>
-        </a>
-        <a href="/wallet?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;">
-            <div style="width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0c0c22,#090918);border-top:2px solid rgba(38,161,123,0.40);border-bottom:3px solid rgba(0,0,0,0.90);border-radius:14px;box-shadow:0 2px 0 rgba(38,161,123,0.10) inset,0 -3px 0 rgba(0,0,0,0.88) inset;">
-                <i data-lucide="wallet" style="width:20px;height:20px;color:#26A17B;"></i>
-            </div>
-            <span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.45);">Wallet</span>
-        </a>
-    </div>
+<!-- ══════════════════════════════════════════
+     SECTION 5 — QUICK NAV ICONS
+══════════════════════════════════════════ -->
+<div style="position:relative;z-index:1;display:flex;justify-content:space-around;padding:2px 12px 24px;">
+    <a href="/tasks?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;">
+        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0d0d24,#090920);border-top:2px solid rgba(60,130,255,0.42);border-bottom:3px solid rgba(0,0,0,0.92);border-radius:15px;box-shadow:0 2px 0 rgba(80,140,255,0.10) inset,0 -3px 0 rgba(0,0,0,0.90) inset,0 6px 18px rgba(0,0,0,0.60);">
+            <i data-lucide="check-square" style="width:21px;height:21px;color:rgba(255,255,255,0.70);"></i>
+        </div>
+        <span style="font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.04em;">Tareas</span>
+    </a>
+    <a href="/explore?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;">
+        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0d0d24,#090920);border-top:2px solid rgba(60,130,255,0.42);border-bottom:3px solid rgba(0,0,0,0.92);border-radius:15px;box-shadow:0 2px 0 rgba(80,140,255,0.10) inset,0 -3px 0 rgba(0,0,0,0.90) inset,0 6px 18px rgba(0,0,0,0.60);">
+            <i data-lucide="compass" style="width:21px;height:21px;color:rgba(255,255,255,0.70);"></i>
+        </div>
+        <span style="font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.04em;">Explorar</span>
+    </a>
+    <a href="/ranking?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;">
+        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#110f00,#0a0800);border-top:2px solid rgba(255,215,0,0.45);border-bottom:3px solid rgba(0,0,0,0.92);border-radius:15px;box-shadow:0 2px 0 rgba(255,215,0,0.12) inset,0 -3px 0 rgba(0,0,0,0.90) inset,0 6px 18px rgba(0,0,0,0.60);">
+            <i data-lucide="trophy" style="width:21px;height:21px;color:#FFD700;filter:drop-shadow(0 0 4px rgba(255,215,0,0.60));"></i>
+        </div>
+        <span style="font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.04em;">TOP</span>
+    </a>
+    <a href="/referidos?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;">
+        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0e0b1e,#090618);border-top:2px solid rgba(167,139,250,0.45);border-bottom:3px solid rgba(0,0,0,0.92);border-radius:15px;box-shadow:0 2px 0 rgba(167,139,250,0.12) inset,0 -3px 0 rgba(0,0,0,0.90) inset,0 6px 18px rgba(0,0,0,0.60);">
+            <i data-lucide="user-plus" style="width:21px;height:21px;color:#a78bfa;filter:drop-shadow(0 0 4px rgba(167,139,250,0.55));"></i>
+        </div>
+        <span style="font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.04em;">Invitar</span>
+    </a>
+    <a href="/wallet?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;">
+        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#050f0a,#030a06);border-top:2px solid rgba(38,161,123,0.45);border-bottom:3px solid rgba(0,0,0,0.92);border-radius:15px;box-shadow:0 2px 0 rgba(38,161,123,0.12) inset,0 -3px 0 rgba(0,0,0,0.90) inset,0 6px 18px rgba(0,0,0,0.60);">
+            <i data-lucide="wallet" style="width:21px;height:21px;color:#26A17B;filter:drop-shadow(0 0 4px rgba(38,161,123,0.55));"></i>
+        </div>
+        <span style="font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.04em;">Wallet</span>
+    </a>
+</div>
 
 </div>
 
-<script>
-// ── TAP SYSTEM ──
-const TAP_REWARD    = {{ (mining_rate or user.mining_power or 0.1)|float / 100 }};
-const MAX_ENERGY    = 500;
-const REGEN_RATE    = 1;   // energy per second
-const REGEN_TICK    = 1000;
+<!-- ══════════════════════════════════════════
+     STYLES & KEYFRAMES
+══════════════════════════════════════════ -->
+<style>
+@keyframes orbitRing1 {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+@keyframes orbitRing2 {
+    from { transform: rotate(45deg); }
+    to   { transform: rotate(405deg); }
+}
+@keyframes orbitRing3 {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(-360deg); }
+}
+@keyframes floatUp {
+    0%   { opacity:1; transform:translateX(-50%) translateY(0) scale(1.1); }
+    70%  { opacity:0.9; }
+    100% { opacity:0; transform:translateX(-50%) translateY(-64px) scale(0.80); }
+}
+@keyframes tapGoldPulse {
+    0%   { transform:scale(1); }
+    40%  { transform:scale(1.06); }
+    100% { transform:scale(1); }
+}
+</style>
 
-let currentBalance  = {{ (user.se_balance or 0)|float }};
-let energy          = MAX_ENERGY;
-let tapAccumulated  = 0;
-let isAnimating     = false;
+<!-- ══════════════════════════════════════════
+     TAP ENGINE JS
+══════════════════════════════════════════ -->
+<script>
+const TAP_REWARD  = parseFloat(( {{ (mining_rate or user.mining_power or 0.1)|float }} / 100 ).toFixed(6));
+const MAX_ENERGY  = 500;
+const REGEN_RATE  = 1;
+
+let currentBalance = {{ (user.se_balance or 0)|float }};
+let energy         = MAX_ENERGY;
+let isAnimating    = false;
 
 document.getElementById('tap-reward-label').textContent = TAP_REWARD.toFixed(4);
 
+// ── Energy UI ──
 function updateEnergyUI() {
     const pct = (energy / MAX_ENERGY) * 100;
-    document.getElementById('energy-bar').style.width = pct + '%';
-    document.getElementById('energy-label').textContent = Math.floor(energy) + ' / ' + MAX_ENERGY;
-    // color shift: green → yellow → red
     const bar = document.getElementById('energy-bar');
-    if (pct > 50) bar.style.background = 'linear-gradient(90deg,#FFD700,#FFA500)';
-    else if (pct > 20) bar.style.background = 'linear-gradient(90deg,#FF8C00,#FF6000)';
-    else bar.style.background = 'linear-gradient(90deg,#ef4444,#b91c1c)';
+    document.getElementById('energy-label').textContent = Math.floor(energy) + ' / ' + MAX_ENERGY;
+    bar.style.width = pct + '%';
+    if      (pct > 50) bar.style.background = 'linear-gradient(90deg,#FFD700,#FFA500)';
+    else if (pct > 20) bar.style.background = 'linear-gradient(90deg,#FF8000,#FF5000)';
+    else               bar.style.background = 'linear-gradient(90deg,#ef4444,#b91c1c)';
+    bar.style.boxShadow = pct > 20
+        ? '0 0 8px rgba(255,180,0,0.55)'
+        : '0 0 8px rgba(239,68,68,0.60)';
 }
 
+// ── Balance UI ──
 function updateBalanceUI() {
-    document.getElementById('tap-balance-display').textContent = currentBalance.toFixed(4);
+    document.getElementById('tap-balance-display').textContent = currentBalance.toFixed(2);
 }
 
-function spawnFloatLabel(x, y, text) {
+// ── Float label ──
+function spawnFloat(value, multiTap) {
     const container = document.getElementById('tap-fx-container');
     const el = document.createElement('div');
-    el.textContent = text;
+    const offset = (Math.random() - 0.5) * 80;
+    el.textContent = '+' + value.toFixed(4) + ' PXC';
     el.style.cssText = `
         position:absolute;
-        left:${x}px; top:${y}px;
-        font-size:1.1rem; font-weight:900; color:#FFD700;
-        text-shadow:0 0 12px rgba(255,215,0,0.8);
+        left:calc(50% + ${offset}px);
+        bottom:0;
+        font-size:${multiTap ? '1.15' : '0.95'}rem;
+        font-weight:900;
+        color:#FFD700;
+        text-shadow:0 0 14px rgba(255,215,0,0.90), 0 2px 4px rgba(0,0,0,0.70);
         pointer-events:none;
-        animation:floatUp 0.9s ease-out forwards;
+        animation:floatUp 0.85s ease-out forwards;
         white-space:nowrap;
         transform:translateX(-50%);
     `;
     container.appendChild(el);
-    setTimeout(() => el.remove(), 900);
+    setTimeout(() => el.remove(), 850);
 }
 
+// ── Ambient glow flash ──
+function flashAmbient() {
+    const glow = document.getElementById('ambient-glow');
+    glow.style.background = 'radial-gradient(ellipse at center,rgba(255,200,0,0.12) 0%,transparent 70%)';
+    setTimeout(() => glow.style.background = 'radial-gradient(ellipse at center,rgba(255,200,0,0.0) 0%,transparent 70%)', 300);
+}
+
+// ── Main tap handler ──
 function handleTap(e) {
     e.preventDefault();
-    if (energy < 1) return;
+    if (energy < 1) {
+        // empty energy shake
+        const btn = document.getElementById('tap-btn');
+        btn.style.transform = 'translateX(-6px)';
+        setTimeout(() => { btn.style.transform = 'translateX(6px)'; }, 80);
+        setTimeout(() => { btn.style.transform = ''; }, 160);
+        return;
+    }
 
     const touches = e.touches ? e.touches : [e];
-    const taps = Math.min(touches.length, Math.floor(energy));
+    const taps    = Math.min(touches.length, Math.floor(energy));
+    const gained  = TAP_REWARD * taps;
 
-    for (let i = 0; i < taps; i++) {
-        energy = Math.max(0, energy - 1);
-        tapAccumulated += TAP_REWARD;
-        currentBalance += TAP_REWARD;
-    }
+    energy         = Math.max(0, energy - taps);
+    currentBalance += gained;
 
     updateBalanceUI();
     updateEnergyUI();
+    spawnFloat(gained, taps > 1);
+    flashAmbient();
 
-    // Float label
-    const rect = document.getElementById('tap-btn').getBoundingClientRect();
-    const containerRect = document.getElementById('tap-fx-container').getBoundingClientRect();
-    const relX = 100 + (Math.random() - 0.5) * 60;
-    const relY = 20 + (Math.random() - 0.5) * 20;
-    spawnFloatLabel(relX, relY, '+' + (TAP_REWARD * taps).toFixed(4));
-
-    // Button press effect
-    const btn = document.getElementById('tap-btn');
+    // Sphere press
     if (!isAnimating) {
         isAnimating = true;
-        btn.style.transform = 'scale(0.93) translateY(4px)';
-        btn.style.boxShadow = '0 1px 0 rgba(80,150,255,0.10) inset,0 -2px 0 rgba(0,0,0,0.98) inset,0 0 0 1px rgba(50,110,255,0.20),0 8px 20px rgba(0,0,0,0.85),0 0 30px rgba(0,80,255,0.08)';
+        const btn = document.getElementById('tap-btn');
+        btn.style.transform = 'scale(0.91) translateY(5px)';
+        btn.style.boxShadow = `
+            0 0 0 2px rgba(70,120,255,0.35),
+            2px 5px 18px rgba(0,0,0,0.95),
+            0 10px 50px rgba(0,20,160,0.20),
+            0 -3px 15px rgba(80,140,255,0.15) inset,
+            0 6px 30px rgba(0,0,0,0.90) inset
+        `;
         setTimeout(() => {
             btn.style.transform = '';
             btn.style.boxShadow = '';
             isAnimating = false;
-        }, 120);
+        }, 130);
     }
 
-    // Haptic
-    if (navigator.vibrate) navigator.vibrate(8);
+    if (navigator.vibrate) navigator.vibrate(10);
 }
 
-// Energy regen
+// ── Energy regen ──
 setInterval(() => {
     if (energy < MAX_ENERGY) {
         energy = Math.min(MAX_ENERGY, energy + REGEN_RATE);
         updateEnergyUI();
     }
-}, REGEN_TICK);
+}, 1000);
 
-// Float animation keyframe
-const styleEl = document.createElement('style');
-styleEl.textContent = `
-@keyframes floatUp {
-    0%   { opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
-    80%  { opacity:0.8; }
-    100% { opacity:0; transform:translateX(-50%) translateY(-55px) scale(0.85); }
-}
-`;
-document.head.appendChild(styleEl);
-
-// Claim function (uses existing /api/claim endpoint)
-async function claimReward() {
-    try {
-        const res = await fetch('/api/claim', { method: 'POST' });
-        const data = await res.json();
-        if (data.success) {
-            currentBalance = data.new_balance;
-            tapAccumulated = 0;
-            updateBalanceUI();
-            document.getElementById('unclaimed-display').textContent = '0.0000';
-            // quick flash feedback
-            const btn = event.currentTarget;
-            btn.style.background = 'linear-gradient(180deg,#22c55e,#15803d)';
-            setTimeout(() => btn.style.background = '', 600);
-        }
-    } catch(e) {
-        console.error('Claim error', e);
-    }
-}
-
-// Live unclaimed ticker (matches backend rate)
+// ── Unclaimed live ticker ──
 const ratePerSec = {{ (mining_rate or user.mining_power or 0.1)|float }} / 3600;
 let unclaimedLocal = {{ (unclaimed or 0)|float }};
 setInterval(() => {
     unclaimedLocal += ratePerSec;
     document.getElementById('unclaimed-display').textContent = unclaimedLocal.toFixed(4);
 }, 1000);
+
+// ── Claim ──
+async function claimReward(e) {
+    const btn = e.currentTarget;
+    try {
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+        const res  = await fetch('/api/claim', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            currentBalance = data.new_balance;
+            unclaimedLocal = 0;
+            updateBalanceUI();
+            document.getElementById('unclaimed-display').textContent = '0.0000';
+            btn.style.background = 'linear-gradient(180deg,#22c55e,#15803d)';
+            setTimeout(() => btn.style.background = '', 700);
+        }
+    } catch(err) {
+        console.error('Claim error', err);
+    } finally {
+        btn.disabled = false;
+        btn.style.opacity = '';
+    }
+}
 
 updateEnergyUI();
 updateBalanceUI();
