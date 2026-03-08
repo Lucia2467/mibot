@@ -747,40 +747,129 @@ document.addEventListener('DOMContentLoaded', async function() {
 </div>
 
 <!-- ══════════════════════════════════════════
-     SECTION 5 — QUICK NAV ICONS
+     SECTION 5 — LIVE STATS TICKER
 ══════════════════════════════════════════ -->
-<div style="position:relative;z-index:1;display:flex;justify-content:space-around;padding:2px 12px 24px;">
-    <a href="/tasks?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;">
-        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0d0d24,#090920);border-top:2px solid rgba(60,130,255,0.42);border-bottom:3px solid rgba(0,0,0,0.92);border-radius:15px;box-shadow:0 2px 0 rgba(80,140,255,0.10) inset,0 -3px 0 rgba(0,0,0,0.90) inset,0 6px 18px rgba(0,0,0,0.60);">
-            <i data-lucide="check-square" style="width:21px;height:21px;color:rgba(255,255,255,0.70);"></i>
+<div style="position:relative;z-index:1;padding:0 16px 24px;">
+    <div style="background:linear-gradient(160deg,#0c0c22 0%,#080818 55%,#050514 100%);border-top:2px solid rgba(60,130,255,0.45);border-left:1px solid rgba(40,100,255,0.22);border-right:1px solid rgba(0,0,0,0.80);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:20px;overflow:hidden;box-shadow:0 3px 0 rgba(80,140,255,0.10) inset,0 -4px 0 rgba(0,0,0,0.95) inset,0 8px 32px rgba(0,0,0,0.80),0 0 0 1px rgba(50,100,255,0.15);position:relative;">
+
+        <!-- top shimmer line -->
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(80,160,255,0.60),transparent);pointer-events:none;"></div>
+
+        <!-- header row -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px 10px;">
+            <div style="display:flex;align-items:center;gap:7px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:#00FF88;box-shadow:0 0 8px rgba(0,255,136,0.9);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
+                <span style="font-size:0.65rem;font-weight:800;letter-spacing:0.12em;color:rgba(255,255,255,0.40);text-transform:uppercase;">En vivo</span>
+            </div>
+            <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);letter-spacing:0.08em;">ESTADÍSTICAS</span>
         </div>
-        <span style="font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.04em;">Tareas</span>
-    </a>
-    <a href="/explore?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;">
-        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0d0d24,#090920);border-top:2px solid rgba(60,130,255,0.42);border-bottom:3px solid rgba(0,0,0,0.92);border-radius:15px;box-shadow:0 2px 0 rgba(80,140,255,0.10) inset,0 -3px 0 rgba(0,0,0,0.90) inset,0 6px 18px rgba(0,0,0,0.60);">
-            <i data-lucide="compass" style="width:21px;height:21px;color:rgba(255,255,255,0.70);"></i>
+
+        <!-- 3 stat columns -->
+        <div style="display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;padding:2px 0 16px;">
+
+            <!-- COL 1: Taps hoy -->
+            <div style="text-align:center;padding:8px 10px;">
+                <div style="font-size:0.60rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.30);text-transform:uppercase;margin-bottom:6px;">Taps Hoy</div>
+                <div id="stat-taps" style="font-size:1.30rem;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;transition:transform 0.15s ease;">0</div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:3px;margin-top:4px;">
+                    <i data-lucide="trending-up" style="width:10px;height:10px;color:#00FF88;"></i>
+                    <span style="font-size:0.58rem;font-weight:700;color:#00FF88;" id="stat-taps-pxc">+0.0000</span>
+                </div>
+            </div>
+
+            <!-- divider -->
+            <div style="background:rgba(255,255,255,0.06);margin:8px 0;"></div>
+
+            <!-- COL 2: Multiplicador (nivel) -->
+            <div style="text-align:center;padding:8px 10px;">
+                <div style="font-size:0.60rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.30);text-transform:uppercase;margin-bottom:6px;">Multiplicador</div>
+                <div style="font-size:1.30rem;font-weight:900;line-height:1;">
+                    <span style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">x{{ user.mining_level or 1 }}.0</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:3px;margin-top:4px;">
+                    <i data-lucide="zap" style="width:10px;height:10px;color:#FFD700;"></i>
+                    <span style="font-size:0.58rem;font-weight:700;color:#FFD700;">Nivel {{ user.mining_level or 1 }}</span>
+                </div>
+            </div>
+
+            <!-- divider -->
+            <div style="background:rgba(255,255,255,0.06);margin:8px 0;"></div>
+
+            <!-- COL 3: Próximo nivel barra -->
+            <div style="text-align:center;padding:8px 10px;">
+                <div style="font-size:0.60rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.30);text-transform:uppercase;margin-bottom:6px;">Próx. Nivel</div>
+                <div style="font-size:1.30rem;font-weight:900;color:#a78bfa;line-height:1;font-variant-numeric:tabular-nums;">
+                    <span id="stat-next-pct">—</span>
+                </div>
+                <div style="margin-top:6px;height:4px;background:rgba(255,255,255,0.08);border-radius:6px;overflow:hidden;margin-left:8px;margin-right:8px;">
+                    <div id="stat-next-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:6px;transition:width 1.2s cubic-bezier(0.34,1.2,0.64,1);box-shadow:0 0 6px rgba(167,139,250,0.60);"></div>
+                </div>
+            </div>
         </div>
-        <span style="font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.04em;">Explorar</span>
-    </a>
-    <a href="/ranking?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;">
-        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#110f00,#0a0800);border-top:2px solid rgba(255,215,0,0.45);border-bottom:3px solid rgba(0,0,0,0.92);border-radius:15px;box-shadow:0 2px 0 rgba(255,215,0,0.12) inset,0 -3px 0 rgba(0,0,0,0.90) inset,0 6px 18px rgba(0,0,0,0.60);">
-            <i data-lucide="trophy" style="width:21px;height:21px;color:#FFD700;filter:drop-shadow(0 0 4px rgba(255,215,0,0.60));"></i>
+
+        <!-- scrolling ticker bottom -->
+        <div style="border-top:1px solid rgba(255,255,255,0.05);padding:8px 0;overflow:hidden;position:relative;">
+            <div id="ticker-track" style="display:flex;gap:0;white-space:nowrap;animation:tickerScroll 18s linear infinite;">
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);padding:0 18px;">⚡ Minería activa · </span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(0,255,136,0.55);padding:0 8px;">+{{ mining_rate or user.mining_power or 0.1 }} PXC/hora</span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);padding:0 18px;">· 🏆 Ranking activo · </span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,215,0,0.55);padding:0 8px;">{{ user.referral_count or 0 }} referidos confirmados</span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);padding:0 18px;">· 💎 PixieLand BETA · </span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(167,139,250,0.55);padding:0 8px;">Gana, tapea, sube de nivel</span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);padding:0 18px;">⚡ Minería activa · </span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(0,255,136,0.55);padding:0 8px;">+{{ mining_rate or user.mining_power or 0.1 }} PXC/hora</span>
+            </div>
         </div>
-        <span style="font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.04em;">TOP</span>
-    </a>
-    <a href="/referidos?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;">
-        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0e0b1e,#090618);border-top:2px solid rgba(167,139,250,0.45);border-bottom:3px solid rgba(0,0,0,0.92);border-radius:15px;box-shadow:0 2px 0 rgba(167,139,250,0.12) inset,0 -3px 0 rgba(0,0,0,0.90) inset,0 6px 18px rgba(0,0,0,0.60);">
-            <i data-lucide="user-plus" style="width:21px;height:21px;color:#a78bfa;filter:drop-shadow(0 0 4px rgba(167,139,250,0.55));"></i>
-        </div>
-        <span style="font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.04em;">Invitar</span>
-    </a>
-    <a href="/wallet?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;">
-        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#050f0a,#030a06);border-top:2px solid rgba(38,161,123,0.45);border-bottom:3px solid rgba(0,0,0,0.92);border-radius:15px;box-shadow:0 2px 0 rgba(38,161,123,0.12) inset,0 -3px 0 rgba(0,0,0,0.90) inset,0 6px 18px rgba(0,0,0,0.60);">
-            <i data-lucide="wallet" style="width:21px;height:21px;color:#26A17B;filter:drop-shadow(0 0 4px rgba(38,161,123,0.55));"></i>
-        </div>
-        <span style="font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.04em;">Wallet</span>
-    </a>
+    </div>
 </div>
+
+<style>
+@keyframes tickerScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+@keyframes statPop {
+    0%   { transform:scale(1); }
+    40%  { transform:scale(1.18); color:#FFD700; }
+    100% { transform:scale(1); }
+}
+</style>
+<script>
+// Live stat updates driven by tap engine
+let sessionTaps = 0;
+let sessionPxc  = 0;
+// Progress to next level: simple formula — each level costs 100 PXC more
+const LVL      = {{ user.mining_level or 1 }};
+const BAL      = {{ (user.se_balance or 0)|float }};
+const threshold = LVL * 100;  // 100 per level
+const pct       = Math.min(100, Math.round((BAL % threshold) / threshold * 100));
+document.getElementById('stat-next-pct').textContent = pct + '%';
+setTimeout(() => {
+    document.getElementById('stat-next-bar').style.width = pct + '%';
+}, 400);
+
+function updateStatTaps() {
+    const el = document.getElementById('stat-taps');
+    el.textContent = sessionTaps;
+    el.style.animation = 'none';
+    el.offsetHeight; // reflow
+    el.style.animation = 'statPop 0.25s ease-out';
+    document.getElementById('stat-taps-pxc').textContent = '+' + sessionPxc.toFixed(4);
+}
+
+// Hook into tap handler — patch after load
+const _origHandleTap = handleTap;
+window.handleTap = function(e) {
+    const before = currentBalance;
+    _origHandleTap(e);
+    const gained = currentBalance - before;
+    if (gained > 0) {
+        sessionTaps++;
+        sessionPxc += gained;
+        updateStatTaps();
+    }
+};
+</script>
 
 </div>
 
