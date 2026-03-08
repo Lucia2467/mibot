@@ -72,7 +72,8 @@ a.task-row {
             <!-- Right: buttons -->
             <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex-shrink:0;">
                 <button id="checkin-btn" onclick="PTS.doCheckin()"
-                    style="padding:10px 20px;background:linear-gradient(135deg,#4D94FF,#0066FF);border:none;border-radius:12px;color:#fff;font-size:0.82rem;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 4px 15px rgba(0,102,255,0.4);letter-spacing:0.01em;">
+                    style="padding:10px 20px;background:linear-gradient(180deg,#3a8fff,#0055ee,#003fbf);border:none;border-top:1px solid rgba(255,255,255,0.30);border-bottom:3px solid rgba(0,0,0,0.55);border-radius:12px;color:#fff;font-size:0.82rem;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 0 rgba(255,255,255,0.22) inset,0 -3px 0 rgba(0,0,0,0.50) inset,0 4px 14px rgba(0,60,200,0.30);letter-spacing:0.01em;transform:translateZ(0);transition:transform 0.12s cubic-bezier(0.34,1.4,0.64,1);"
+                    ontouchstart="this.style.transform='translateY(2px) scale(0.97)'" ontouchend="this.style.transform=''">
                     <span id="checkin-btn-label">Hacer Check-in</span>
                 </button>
                 <button id="checkin-double-btn" onclick="PTS.doubleCheckin()"
@@ -391,55 +392,57 @@ a.task-row {
     letter-spacing: 0.01em;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     transform: translateZ(0) translateY(0);
-    transition: transform 0.15s cubic-bezier(0.34,1.4,0.64,1), background 0.15s, box-shadow 0.15s;
+    transition: transform 0.15s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.15s;
+    border-top: 1px solid rgba(255,255,255,0.18) !important;
+    border-bottom: 2px solid rgba(0,0,0,0.55) !important;
+    border-left: none !important;
+    border-right: none !important;
 }
 .hdr-btn::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; height: 50%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.07) 0%, transparent 100%);
-    border-radius: inherit;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.30), transparent);
     pointer-events: none;
+    z-index: 2;
 }
 .hdr-btn:active {
-    transform: translateZ(0) translateY(1px) scale(0.95);
+    transform: translateZ(0) translateY(2px) scale(0.96);
     transition: transform 0.07s ease;
 }
 
 .hdr-btn-blue {
-    background: rgba(0,163,255,0.08);
+    background: linear-gradient(180deg, rgba(0,163,255,0.18) 0%, rgba(0,100,200,0.10) 100%);
     color: #60C8FF;
-    border: 1px solid rgba(0,163,255,0.22) !important;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 14px rgba(0,163,255,0.12);
+    border-color: rgba(0,163,255,0.40) !important;
+    box-shadow: 0 2px 0 rgba(0,200,255,0.12) inset, 0 -2px 0 rgba(0,0,0,0.55) inset, 0 4px 14px rgba(0,100,200,0.18);
 }
 .hdr-btn-blue:active {
-    background: rgba(0,163,255,0.14);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 2px 6px rgba(0,163,255,0.08);
+    background: rgba(0,163,255,0.10);
+    box-shadow: 0 1px 0 rgba(0,200,255,0.08) inset, 0 -1px 0 rgba(0,0,0,0.40) inset;
 }
 
 .hdr-btn-gold {
-    background: rgba(255,215,0,0.08);
+    background: linear-gradient(180deg, rgba(255,200,0,0.18) 0%, rgba(180,130,0,0.10) 100%);
     color: #FFD700;
-    border: 1px solid rgba(255,215,0,0.22) !important;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 14px rgba(255,180,0,0.12);
+    border-color: rgba(255,200,0,0.42) !important;
+    box-shadow: 0 2px 0 rgba(255,220,0,0.14) inset, 0 -2px 0 rgba(0,0,0,0.55) inset, 0 4px 14px rgba(200,140,0,0.18);
 }
 .hdr-btn-gold:active {
-    background: rgba(255,215,0,0.14);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 2px 6px rgba(255,180,0,0.08);
+    background: rgba(255,200,0,0.10);
+    box-shadow: 0 1px 0 rgba(255,220,0,0.08) inset, 0 -1px 0 rgba(0,0,0,0.40) inset;
 }
 
 .hdr-btn-indigo {
-    background: rgba(99,120,255,0.08);
+    background: linear-gradient(180deg, rgba(99,120,255,0.18) 0%, rgba(60,80,200,0.10) 100%);
     color: #8899FF;
-    border: 1px solid rgba(99,120,255,0.22) !important;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 14px rgba(80,100,255,0.12);
+    border-color: rgba(99,120,255,0.42) !important;
+    box-shadow: 0 2px 0 rgba(120,140,255,0.14) inset, 0 -2px 0 rgba(0,0,0,0.55) inset, 0 4px 14px rgba(60,80,200,0.18);
 }
 .hdr-btn-indigo:active {
-    background: rgba(99,120,255,0.14);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 2px 6px rgba(80,100,255,0.08);
+    background: rgba(99,120,255,0.10);
+    box-shadow: 0 1px 0 rgba(120,140,255,0.08) inset, 0 -1px 0 rgba(0,0,0,0.40) inset;
 }
 
 /* ── Tabs 3D ── */
