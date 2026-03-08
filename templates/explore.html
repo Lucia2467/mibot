@@ -1,11 +1,95 @@
 {% extends "base.html" %}
 
-{% block title %}SALLY-E | Explorar{% endblock %}
+{% block title %}
+
+{% block extra_head %}
+<style>
+/* ══ 3D PREMIUM OVERRIDE ══ */
+.card, .balance-card {
+    background: linear-gradient(145deg, #060614 0%, #040410 60%, #02020c 100%) !important;
+    border-top:  2px solid rgba(255,255,255,0.14) !important;
+    border-left: 1px solid rgba(255,255,255,0.09) !important;
+    border-right:  1px solid rgba(0,0,0,0.70) !important;
+    border-bottom: 5px solid rgba(0,0,0,0.96) !important;
+    border-radius: 20px !important;
+    box-shadow:
+        0 5px 0 rgba(255,255,255,0.07) inset,
+        0 -6px 0 rgba(0,0,0,0.92) inset,
+        0 30px 80px rgba(0,0,0,0.90),
+        0 8px 20px rgba(0,0,0,0.75),
+        0 0 0 1px rgba(255,255,255,0.04) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+.card::before, .balance-card::before {
+    content: '' !important;
+    position: absolute !important; top:0;left:0;right:0;height:2px !important;
+    background: linear-gradient(90deg,transparent,rgba(255,255,255,0.14),transparent) !important;
+    pointer-events:none !important; z-index:1 !important;
+}
+.stat-card {
+    background: linear-gradient(145deg, #050512 0%, #030310 60%, #02020a 100%) !important;
+    border-top:  2px solid rgba(0,160,255,0.38) !important;
+    border-left: 1px solid rgba(0,140,255,0.22) !important;
+    border-right:  1px solid rgba(0,0,0,0.75) !important;
+    border-bottom: 5px solid rgba(0,0,0,0.98) !important;
+    border-radius: 18px !important;
+    box-shadow:
+        0 5px 0 rgba(255,255,255,0.08) inset,
+        0 -6px 0 rgba(0,0,0,0.95) inset,
+        0 22px 60px rgba(0,0,0,0.90),
+        0 6px 16px rgba(0,0,0,0.80),
+        0 0 0 1px rgba(0,100,255,0.08) !important;
+}
+.btn-primary {
+    background: linear-gradient(155deg,#0044cc,#0066ff,#0099ff) !important;
+    border-top: 1px solid rgba(255,255,255,0.22) !important;
+    border-bottom: 3px solid rgba(0,0,0,0.40) !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.18) inset,
+        0 -3px 0 rgba(0,0,0,0.35) inset,
+        0 10px 32px rgba(0,100,255,0.50),
+        0 3px 8px rgba(0,0,0,0.45) !important;
+    border-radius: 14px !important;
+    transform: translateZ(0) !important;
+    transition: transform .18s cubic-bezier(.34,1.4,.64,1), box-shadow .18s !important;
+}
+.btn-primary:active {
+    transform: translateY(3px) scale(0.98) !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.12) inset,
+        0 -1px 0 rgba(0,0,0,0.3) inset,
+        0 4px 14px rgba(0,100,255,0.30) !important;
+    transition: transform .07s ease !important;
+}
+.btn-secondary {
+    background: linear-gradient(145deg, #0c0c22 0%, #07071a 100%) !important;
+    border-top: 1px solid rgba(255,255,255,0.10) !important;
+    border-bottom: 2px solid rgba(0,0,0,0.55) !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.05) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 6px 20px rgba(0,0,0,0.45) !important;
+    border-radius: 14px !important;
+    transform: translateZ(0) !important;
+    transition: transform .18s cubic-bezier(.34,1.4,.64,1) !important;
+}
+.btn-secondary:active { transform: translateY(2px) scale(0.98) !important; }
+@keyframes pgIn {
+    from{opacity:0;transform:translateY(18px) scale(0.96)}
+    to{opacity:1;transform:translateY(0) scale(1)}
+}
+.card    { animation: pgIn .38s cubic-bezier(.34,1.2,.64,1) both; }
+.stat-card { animation: pgIn .38s cubic-bezier(.34,1.2,.64,1) .08s both; }
+</style>
+{% endblock %}
+
+SALLY-E | Explorar{% endblock %}
 
 {% block content %}
 <div class="container">
     <!-- Hero Section -->
-    <div class="card" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.08) 0%, rgba(0, 82, 204, 0.08) 50%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(0, 245, 255, 0.2); position: relative; overflow: hidden;">
+    <div class="card" style="background: linear-gradient(155deg, #07071a 0%, #040414 50%, #020210 100%); border-top: 2px solid rgba(0,200,255,0.30); border-left: 1px solid rgba(0,160,255,0.16); border-right: 1px solid rgba(0,0,0,0.5); border-bottom: 3px solid rgba(0,0,0,0.80); box-shadow: 0 3px 0 rgba(0,200,255,0.08) inset, 0 -4px 0 rgba(0,0,0,0.70) inset, 0 24px 65px rgba(0,0,0,0.70); position: relative; overflow: hidden;">
         <!-- Elementos de fondo -->
         <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0, 245, 255, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite;"></div>
         <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(0, 82, 204, 0.12) 0%, transparent 70%); border-radius: 50%; animation: float 10s ease-in-out infinite reverse;"></div>
@@ -160,7 +244,7 @@
     </div>
 
     <!-- Info Card -->
-    <div class="card" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(0, 245, 255, 0.15); margin-top: var(--space-4);">
+    <div class="card" style="background: linear-gradient(145deg, #080818, #060614); border-top: 1px solid rgba(0,200,255,0.20); border-bottom: 2px solid rgba(0,0,0,0.60); margin-top: var(--space-4);">
         <div style="display: flex; align-items: center; gap: var(--space-3);">
             <div style="flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(0, 245, 255, 0.1); border-radius: 12px;">
                 <i data-lucide="sparkles" style="width: 22px; height: 22px; color: #00D4FF;"></i>
@@ -201,14 +285,34 @@
     }
 }
 
-/* Efecto hover en cards */
-.explore-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+/* 3D Explore cards */
+.explore-card {
+    background: linear-gradient(145deg, #09091c 0%, #060616 60%, #040412 100%) !important;
+    border-top:  2px solid rgba(255,255,255,0.10) !important;
+    border-left: 1px solid rgba(255,255,255,0.06) !important;
+    border-right:  1px solid rgba(0,0,0,0.45) !important;
+    border-bottom: 3px solid rgba(0,0,0,0.80) !important;
+    box-shadow:
+        0 3px 0 rgba(255,255,255,0.05) inset,
+        0 -4px 0 rgba(0,0,0,0.70) inset,
+        0 18px 55px rgba(0,0,0,0.65),
+        0 4px 10px rgba(0,0,0,0.5) !important;
+    transform: translateZ(0);
+    transition: transform .22s cubic-bezier(.34,1.5,.64,1), box-shadow .22s !important;
 }
-
-.explore-card:active {
-    transform: translateY(-2px);
+.explore-card:hover {
+    transform: translateY(-5px) scale(1.02) !important;
+    box-shadow:
+        0 3px 0 rgba(255,255,255,0.07) inset,
+        0 -4px 0 rgba(0,0,0,0.70) inset,
+        0 28px 70px rgba(0,0,0,0.70),
+        0 0 60px rgba(0,100,200,0.18) !important;
+}
+.explore-card:active { transform: translateY(2px) scale(0.97) !important; transition: transform .07s ease !important; }
+.explore-card > div[style*="flex-shrink: 0"] {
+    box-shadow: 0 2px 0 rgba(255,255,255,0.12) inset, 0 -2px 0 rgba(0,0,0,0.4) inset, 0 8px 24px rgba(0,0,0,0.5) !important;
+    border-top: 1px solid rgba(255,255,255,0.18) !important;
+    border-bottom: 2px solid rgba(0,0,0,0.45) !important;
 }
 
 /* Efectos de brillo */

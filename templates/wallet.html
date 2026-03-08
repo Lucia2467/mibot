@@ -1,6 +1,90 @@
 {% extends "base.html" %}
 
-{% block title %}SALLY-E | Wallet{% endblock %}
+{% block title %}
+
+{% block extra_head %}
+<style>
+/* ══ 3D PREMIUM OVERRIDE ══ */
+.card, .balance-card {
+    background: linear-gradient(145deg, #060614 0%, #040410 60%, #02020c 100%) !important;
+    border-top:  2px solid rgba(255,255,255,0.14) !important;
+    border-left: 1px solid rgba(255,255,255,0.09) !important;
+    border-right:  1px solid rgba(0,0,0,0.70) !important;
+    border-bottom: 5px solid rgba(0,0,0,0.96) !important;
+    border-radius: 20px !important;
+    box-shadow:
+        0 5px 0 rgba(255,255,255,0.07) inset,
+        0 -6px 0 rgba(0,0,0,0.92) inset,
+        0 30px 80px rgba(0,0,0,0.90),
+        0 8px 20px rgba(0,0,0,0.75),
+        0 0 0 1px rgba(255,255,255,0.04) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+.card::before, .balance-card::before {
+    content: '' !important;
+    position: absolute !important; top:0;left:0;right:0;height:2px !important;
+    background: linear-gradient(90deg,transparent,rgba(255,255,255,0.14),transparent) !important;
+    pointer-events:none !important; z-index:1 !important;
+}
+.stat-card {
+    background: linear-gradient(145deg, #050512 0%, #030310 60%, #02020a 100%) !important;
+    border-top:  2px solid rgba(0,160,255,0.38) !important;
+    border-left: 1px solid rgba(0,140,255,0.22) !important;
+    border-right:  1px solid rgba(0,0,0,0.75) !important;
+    border-bottom: 5px solid rgba(0,0,0,0.98) !important;
+    border-radius: 18px !important;
+    box-shadow:
+        0 5px 0 rgba(255,255,255,0.08) inset,
+        0 -6px 0 rgba(0,0,0,0.95) inset,
+        0 22px 60px rgba(0,0,0,0.90),
+        0 6px 16px rgba(0,0,0,0.80),
+        0 0 0 1px rgba(0,100,255,0.08) !important;
+}
+.btn-primary {
+    background: linear-gradient(155deg,#0044cc,#0066ff,#0099ff) !important;
+    border-top: 1px solid rgba(255,255,255,0.22) !important;
+    border-bottom: 3px solid rgba(0,0,0,0.40) !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.18) inset,
+        0 -3px 0 rgba(0,0,0,0.35) inset,
+        0 10px 32px rgba(0,100,255,0.50),
+        0 3px 8px rgba(0,0,0,0.45) !important;
+    border-radius: 14px !important;
+    transform: translateZ(0) !important;
+    transition: transform .18s cubic-bezier(.34,1.4,.64,1), box-shadow .18s !important;
+}
+.btn-primary:active {
+    transform: translateY(3px) scale(0.98) !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.12) inset,
+        0 -1px 0 rgba(0,0,0,0.3) inset,
+        0 4px 14px rgba(0,100,255,0.30) !important;
+    transition: transform .07s ease !important;
+}
+.btn-secondary {
+    background: linear-gradient(145deg, #0c0c22 0%, #07071a 100%) !important;
+    border-top: 1px solid rgba(255,255,255,0.10) !important;
+    border-bottom: 2px solid rgba(0,0,0,0.55) !important;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.05) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 6px 20px rgba(0,0,0,0.45) !important;
+    border-radius: 14px !important;
+    transform: translateZ(0) !important;
+    transition: transform .18s cubic-bezier(.34,1.4,.64,1) !important;
+}
+.btn-secondary:active { transform: translateY(2px) scale(0.98) !important; }
+@keyframes pgIn {
+    from{opacity:0;transform:translateY(18px) scale(0.96)}
+    to{opacity:1;transform:translateY(0) scale(1)}
+}
+.card    { animation: pgIn .38s cubic-bezier(.34,1.2,.64,1) both; }
+.stat-card { animation: pgIn .38s cubic-bezier(.34,1.2,.64,1) .08s both; }
+</style>
+{% endblock %}
+
+SALLY-E | Wallet{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -25,7 +109,7 @@
     </div>
 
     <!-- Balance Hero -->
-    <div class="card balance-card card-highlight">
+    <div class="card balance-card card-highlight" style="background:linear-gradient(155deg,#060616,#040412,#020210) !important;border-top:2px solid rgba(0,140,255,0.35) !important;border-bottom:4px solid rgba(0,0,0,0.85) !important;box-shadow:0 4px 0 rgba(0,140,255,0.10) inset,0 -5px 0 rgba(0,0,0,0.75) inset,0 35px 90px rgba(0,0,0,0.80) !important;">
         <div class="balance-label" data-i18n="available_balances">Available Balances</div>
 
         <!-- S-E Balance -->
@@ -106,7 +190,7 @@
 
     <!-- Wallet Status -->
     {% if user.wallet_address or user.ton_wallet_address %}
-    <div class="card" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.2);">
+    <div class="card" style="background: linear-gradient(145deg,#060f0a,#040c08); border-top:2px solid rgba(34,197,94,0.25); border-bottom:3px solid rgba(0,0,0,0.75); box-shadow:0 3px 0 rgba(34,197,94,0.08) inset,0 -4px 0 rgba(0,0,0,0.65) inset,0 18px 50px rgba(0,0,0,0.60);">
         <div style="display: flex; align-items: flex-start; gap: var(--space-4);">
             <div style="flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(34, 197, 94, 0.2); border-radius: var(--radius-md);">
                 <i data-lucide="check-circle" style="width: 20px; height: 20px; color: #22c55e;"></i>
