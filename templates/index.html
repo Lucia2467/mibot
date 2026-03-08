@@ -537,527 +537,357 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 </script>
 
-<div class="container" style="padding:0;overflow:hidden;min-height:calc(100vh - 120px);display:flex;flex-direction:column;">
+<div class="container" style="padding:0;overflow:hidden;">
 
-<!-- ══════════════════════════════════════════
-     AMBIENT BACKGROUND LAYER
-══════════════════════════════════════════ -->
-<div style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
-    <!-- deep radial ambient -->
-    <div style="position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(ellipse at center,rgba(0,60,200,0.18) 0%,rgba(0,20,80,0.10) 40%,transparent 70%);border-radius:50%;"></div>
-    <!-- tap glow (activates on tap via JS) -->
-    <div id="ambient-glow" style="position:absolute;top:20%;left:50%;transform:translateX(-50%);width:420px;height:420px;background:radial-gradient(ellipse at center,rgba(255,200,0,0.0) 0%,transparent 70%);border-radius:50%;transition:background 0.3s ease;pointer-events:none;"></div>
+<!-- ══ FIXED DEEP ATMOSPHERE ══ -->
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;">
+    <div style="position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:110vw;height:110vw;background:radial-gradient(ellipse at 50% 40%,rgba(30,60,255,0.13) 0%,rgba(10,20,100,0.07) 35%,transparent 65%);"></div>
+    <div id="ambient-glow" style="position:absolute;top:15%;left:50%;transform:translateX(-50%);width:70vw;height:70vw;border-radius:50%;background:radial-gradient(ellipse,rgba(255,180,0,0) 0%,transparent 70%);transition:background 0.4s ease;"></div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SECTION 1 — BALANCE HERO (top)
-══════════════════════════════════════════ -->
-<div style="position:relative;z-index:1;text-align:center;padding:20px 20px 0;">
+<!-- ══════════════════════════════════════
+     HERO: balance pill at top
+══════════════════════════════════════ -->
+<div style="position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:16px 18px 0;">
 
-    <!-- row: level badge + balance + pts badge -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-
-        <!-- Level pill -->
-        <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:linear-gradient(160deg,#0d0d24,#090920);border-top:1px solid rgba(60,130,255,0.40);border-bottom:2px solid rgba(0,0,0,0.90);border-radius:20px;box-shadow:0 1px 0 rgba(80,140,255,0.10) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
-            <i data-lucide="shield" style="width:13px;height:13px;color:#a78bfa;"></i>
-            <span style="font-size:0.68rem;font-weight:800;color:#a78bfa;letter-spacing:0.06em;">NVL {{ user.mining_level or 1 }}</span>
-        </div>
-
-        <!-- Main balance -->
-        <div style="text-align:center;flex:1;padding:0 10px;">
-            <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.14em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:2px;">Balance Total</div>
-            <div id="tap-balance-display" style="font-size:2.1rem;font-weight:900;letter-spacing:-0.03em;color:#fff;line-height:1;{% if user.se_balance < 0 %}color:#ef4444!important;{% endif %}">{{ "%.2f"|format(user.se_balance or 0) }}</div>
-            <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.16em;color:rgba(255,255,255,0.30);margin-top:1px;">PXC TOKENS</div>
-        </div>
-
-        <!-- Rate pill -->
-        <div style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:linear-gradient(160deg,#061a0e,#040e08);border-top:1px solid rgba(0,255,136,0.35);border-bottom:2px solid rgba(0,0,0,0.90);border-radius:20px;box-shadow:0 1px 0 rgba(0,255,136,0.10) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
-            <div style="width:6px;height:6px;border-radius:50%;background:#00FF88;box-shadow:0 0 7px rgba(0,255,136,0.9);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
-            <span style="font-size:0.68rem;font-weight:800;color:#00FF88;letter-spacing:0.04em;">{{ mining_rate or user.mining_power or 0.1 }}/h</span>
-        </div>
+    <!-- left: level badge -->
+    <div style="display:flex;align-items:center;gap:5px;padding:5px 11px 5px 8px;background:linear-gradient(160deg,#0f0f28,#080818);border-top:1px solid rgba(167,139,250,0.38);border-bottom:2px solid rgba(0,0,0,0.85);border-radius:30px;box-shadow:0 1px 0 rgba(167,139,250,0.10) inset,0 -2px 0 rgba(0,0,0,0.80) inset;">
+        <div style="width:22px;height:22px;background:linear-gradient(180deg,#7c3aed,#4c1d95);border-radius:50%;border-top:1px solid rgba(255,255,255,0.20);display:flex;align-items:center;justify-content:center;font-size:0.60rem;font-weight:900;color:#fff;">{{ user.mining_level or 1 }}</div>
+        <span style="font-size:0.65rem;font-weight:800;color:rgba(167,139,250,0.85);letter-spacing:0.05em;">NIVEL</span>
     </div>
 
-    <!-- sub-row: referidos centered -->
-    {% if user.referral_count and user.referral_count > 0 %}
-    <div style="display:flex;justify-content:center;margin-top:6px;margin-bottom:-2px;">
-        <div style="display:flex;align-items:center;gap:5px;padding:4px 12px;background:linear-gradient(160deg,#0e0b1e,#090618);border-top:1px solid rgba(167,139,250,0.28);border-bottom:2px solid rgba(0,0,0,0.80);border-radius:20px;box-shadow:0 1px 0 rgba(167,139,250,0.08) inset,0 -2px 0 rgba(0,0,0,0.75) inset;">
-            <i data-lucide="users" style="width:11px;height:11px;color:#a78bfa;"></i>
-            <span style="font-size:0.65rem;font-weight:800;color:#a78bfa;letter-spacing:0.05em;">{{ user.referral_count }} referidos activos</span>
-        </div>
+    <!-- center: balance -->
+    <div style="text-align:center;flex:1;padding:0 12px;">
+        <div style="font-size:0.58rem;font-weight:700;letter-spacing:0.16em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:1px;">Balance Total</div>
+        <div id="tap-balance-display" style="font-size:2.2rem;font-weight:900;letter-spacing:-0.04em;color:#fff;line-height:1;{% if user.se_balance < 0 %}color:#ef4444!important;{% endif %}">{{ "%.2f"|format(user.se_balance or 0) }}</div>
+        <div style="font-size:0.60rem;font-weight:700;letter-spacing:0.18em;color:rgba(255,255,255,0.22);margin-top:1px;">PXC</div>
     </div>
-    {% endif %}
 
-
+    <!-- right: mining rate -->
+    <div style="display:flex;align-items:center;gap:5px;padding:5px 11px 5px 8px;background:linear-gradient(160deg,#061808,#030e05);border-top:1px solid rgba(0,255,136,0.32);border-bottom:2px solid rgba(0,0,0,0.85);border-radius:30px;box-shadow:0 1px 0 rgba(0,255,136,0.08) inset,0 -2px 0 rgba(0,0,0,0.80) inset;">
+        <div style="width:7px;height:7px;border-radius:50%;background:#00FF88;box-shadow:0 0 8px rgba(0,255,136,0.95);animation:mining-pulse 1.5s ease-in-out infinite;flex-shrink:0;"></div>
+        <span style="font-size:0.65rem;font-weight:800;color:#00FF88;letter-spacing:0.04em;white-space:nowrap;">{{ mining_rate or user.mining_power or 0.1 }}/h</span>
+    </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SECTION 2 — TAP ARENA (center stage)
-══════════════════════════════════════════ -->
-<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:10px 0 16px;">
+<!-- ══════════════════════════════════════
+     TAP ARENA — full stage
+══════════════════════════════════════ -->
+<div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:8px 0 0;">
 
-    <!-- float label zone -->
-    <div id="tap-fx-container" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:280px;height:80px;pointer-events:none;overflow:visible;z-index:10;"></div>
+    <!-- float fx zone -->
+    <div id="tap-fx-container" style="position:absolute;top:10px;left:50%;transform:translateX(-50%);width:300px;height:90px;pointer-events:none;overflow:visible;z-index:20;"></div>
 
-    <!-- ── ORBITAL RING SYSTEM ── -->
-    <div style="position:relative;width:260px;height:260px;display:flex;align-items:center;justify-content:center;">
+    <!-- orbital system -->
+    <div style="position:relative;width:270px;height:270px;display:flex;align-items:center;justify-content:center;">
 
-        <!-- Ring 1 — slow outer -->
-        <div style="position:absolute;inset:-28px;border-radius:50%;border:1px solid rgba(60,130,255,0.12);animation:orbitRing1 12s linear infinite;"></div>
-        <!-- Ring 1 spark -->
-        <div style="position:absolute;top:-29px;left:50%;margin-left:-3px;width:6px;height:6px;border-radius:50%;background:rgba(80,160,255,0.70);box-shadow:0 0 8px rgba(80,160,255,0.9);animation:orbitRing1 12s linear infinite;"></div>
-
-        <!-- Ring 2 — medium, tilted -->
-        <div style="position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(255,200,0,0.10);animation:orbitRing2 8s linear infinite reverse;transform:rotate(45deg);"></div>
-        <!-- Ring 2 spark -->
-        <div style="position:absolute;inset:-14px;border-radius:50%;animation:orbitRing2 8s linear infinite reverse;">
-            <div style="position:absolute;top:-4px;left:50%;margin-left:-3px;width:5px;height:5px;border-radius:50%;background:rgba(255,200,0,0.75);box-shadow:0 0 7px rgba(255,200,0,0.9);transform:rotate(-45deg);"></div>
+        <!-- Outer ring — slow blue -->
+        <div style="position:absolute;inset:-22px;border-radius:50%;border:1.5px solid rgba(50,100,255,0.14);animation:orbitRing1 14s linear infinite;"></div>
+        <div style="position:absolute;inset:-22px;border-radius:50%;animation:orbitRing1 14s linear infinite;">
+            <div style="position:absolute;top:0;left:50%;margin-left:-4px;width:8px;height:8px;border-radius:50%;background:rgba(80,160,255,0.80);box-shadow:0 0 12px rgba(80,160,255,1),0 0 24px rgba(80,160,255,0.40);margin-top:-4px;"></div>
         </div>
 
-        <!-- Ring 3 — inner glow ring -->
-        <div style="position:absolute;inset:8px;border-radius:50%;border:1px solid rgba(160,120,255,0.10);animation:orbitRing3 16s linear infinite;"></div>
+        <!-- Mid ring — gold tilted -->
+        <div style="position:absolute;inset:-8px;border-radius:50%;border:1px dashed rgba(255,200,0,0.10);animation:orbitRing2 9s linear infinite;"></div>
+        <div style="position:absolute;inset:-8px;border-radius:50%;animation:orbitRing2 9s linear infinite;">
+            <div style="position:absolute;top:0;left:50%;margin-left:-3px;width:6px;height:6px;border-radius:50%;background:rgba(255,200,0,0.85);box-shadow:0 0 10px rgba(255,200,0,0.90),0 0 20px rgba(255,150,0,0.35);margin-top:-3px;"></div>
+        </div>
 
-        <!-- ── THE SPHERE BUTTON ── -->
+        <!-- Inner ring — purple slow reverse -->
+        <div style="position:absolute;inset:12px;border-radius:50%;border:1px solid rgba(150,100,255,0.08);animation:orbitRing3 20s linear infinite reverse;"></div>
+
+        <!-- ══ THE SPHERE ══ -->
         <div id="tap-btn"
              ontouchstart="handleTap(event)"
              onclick="handleTap(event)"
              style="
                 position:relative;
-                width:210px;height:210px;border-radius:50%;
+                width:220px;height:220px;border-radius:50%;
                 cursor:pointer;user-select:none;-webkit-user-select:none;
-                /* 3D sphere illusion: light from top-left */
                 background:
-                    radial-gradient(ellipse 55% 40% at 38% 30%, rgba(255,255,255,0.18) 0%, transparent 60%),
-                    radial-gradient(ellipse 80% 80% at 50% 45%, #1a1a40 0%, #0d0d28 45%, #060614 100%);
-                border:none;
+                    radial-gradient(ellipse 50% 35% at 35% 25%, rgba(255,255,255,0.20) 0%, transparent 55%),
+                    radial-gradient(ellipse 70% 60% at 55% 70%, rgba(40,0,120,0.35) 0%, transparent 60%),
+                    radial-gradient(ellipse 90% 90% at 50% 48%, #18183c 0%, #0e0e26 40%, #07070f 100%);
                 box-shadow:
-                    /* top highlight ring */
-                    0 0 0 2px rgba(70,120,255,0.55),
-                    /* outer 3D shadow — bottom-right heavy */
-                    6px 12px 40px rgba(0,0,0,0.90),
-                    -2px -4px 20px rgba(0,0,0,0.60),
-                    /* colored ambient bounce */
-                    0 20px 80px rgba(0,30,180,0.30),
-                    /* inner top light */
-                    0 -6px 30px rgba(80,140,255,0.25) inset,
-                    /* inner bottom shadow */
-                    0 10px 40px rgba(0,0,0,0.80) inset;
-                transition:transform 0.10s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.10s;
-                display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+                    0 0 0 1.5px rgba(80,130,255,0.50),
+                    0 0 0 3px rgba(40,80,200,0.18),
+                    8px 16px 50px rgba(0,0,0,0.95),
+                    -3px -6px 25px rgba(0,0,0,0.55),
+                    0 25px 80px rgba(0,20,160,0.28),
+                    0 -8px 35px rgba(90,150,255,0.22) inset,
+                    0 12px 50px rgba(0,0,0,0.85) inset;
+                transition:transform 0.12s cubic-bezier(0.34,1.4,0.64,1),box-shadow 0.12s;
+                display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
                 overflow:hidden;
              ">
 
-            <!-- specular highlight blob (top-left) -->
-            <div style="position:absolute;top:22px;left:30px;width:70px;height:40px;background:radial-gradient(ellipse,rgba(255,255,255,0.22) 0%,transparent 70%);border-radius:50%;pointer-events:none;transform:rotate(-20deg);"></div>
+            <!-- specular top-left -->
+            <div style="position:absolute;top:26px;left:34px;width:80px;height:48px;background:radial-gradient(ellipse,rgba(255,255,255,0.20) 0%,transparent 65%);border-radius:50%;transform:rotate(-25deg);pointer-events:none;"></div>
 
-            <!-- bottom rim glow -->
-            <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:120px;height:20px;background:radial-gradient(ellipse,rgba(60,100,255,0.35) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
+            <!-- bottom blue rim -->
+            <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:140px;height:28px;background:radial-gradient(ellipse,rgba(60,100,255,0.28) 0%,transparent 70%);pointer-events:none;"></div>
 
-            <!-- COIN — 3D golden disc -->
-            <div style="
-                width:80px;height:80px;border-radius:50%;
+            <!-- ── GOLD COIN 3D ── -->
+            <div id="coin-el" style="
+                width:90px;height:90px;border-radius:50%;flex-shrink:0;
                 background:
-                    radial-gradient(ellipse 55% 40% at 38% 28%, rgba(255,255,220,0.60) 0%, transparent 55%),
-                    radial-gradient(ellipse 80% 80% at 50% 50%, #FFD700 0%, #E6A800 50%, #B87800 100%);
-                border:none;
+                    radial-gradient(ellipse 52% 38% at 36% 26%, rgba(255,255,230,0.75) 0%, transparent 50%),
+                    radial-gradient(ellipse 90% 90% at 50% 50%, #FFE033 0%, #FFAA00 45%, #CC7700 75%, #8B4A00 100%);
                 box-shadow:
-                    0 0 0 2px rgba(255,255,255,0.18),
-                    3px 6px 20px rgba(0,0,0,0.70),
-                    0 -4px 18px rgba(255,230,80,0.50) inset,
-                    0 6px 24px rgba(100,60,0,0.60) inset;
-                display:flex;align-items:center;justify-content:center;
-                position:relative;
-                overflow:hidden;
+                    0 0 0 2px rgba(255,255,255,0.22),
+                    0 0 0 4px rgba(255,180,0,0.14),
+                    4px 8px 24px rgba(0,0,0,0.75),
+                    0 -5px 22px rgba(255,240,80,0.60) inset,
+                    0 8px 30px rgba(120,60,0,0.70) inset;
+                position:relative;overflow:hidden;
+                animation:coinBreath 3s ease-in-out infinite;
             ">
-                <!-- coin shine -->
-                <div style="position:absolute;top:8px;left:10px;width:28px;height:16px;background:radial-gradient(ellipse,rgba(255,255,255,0.50) 0%,transparent 70%);border-radius:50%;transform:rotate(-20deg);"></div>
-                <!-- PXC letter -->
-                <span style="font-size:1.1rem;font-weight:900;color:rgba(80,40,0,0.80);letter-spacing:-0.02em;position:relative;z-index:1;">P</span>
-            </div>
-
-            <!-- label -->
-            <div style="font-size:0.65rem;font-weight:800;letter-spacing:0.14em;color:rgba(255,255,255,0.40);text-transform:uppercase;position:relative;z-index:1;">TOCA PARA GANAR</div>
-        </div>
-
-        <!-- shadow ellipse under sphere -->
-        <div style="position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);width:160px;height:18px;background:radial-gradient(ellipse,rgba(0,0,0,0.65) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
-    </div>
-
-    <!-- +PXC badge below button -->
-    <div style="margin-top:22px;display:flex;align-items:center;gap:7px;padding:7px 18px;background:linear-gradient(160deg,#0c0c22,#090918);border-top:1px solid rgba(255,215,0,0.35);border-bottom:2px solid rgba(0,0,0,0.85);border-left:1px solid rgba(255,215,0,0.15);border-right:1px solid rgba(0,0,0,0.60);border-radius:24px;box-shadow:0 1px 0 rgba(255,215,0,0.08) inset,0 -2px 0 rgba(0,0,0,0.80) inset,0 4px 16px rgba(0,0,0,0.50);">
-        <i data-lucide="zap" style="width:13px;height:13px;color:#FFD700;filter:drop-shadow(0 0 4px rgba(255,215,0,0.8));"></i>
-        <span style="font-size:0.72rem;font-weight:800;color:rgba(255,255,255,0.65);">+<span id="tap-reward-label">0.001</span> PXC por tap</span>
-
-    </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SECTION 3 — ENERGY BAR
-══════════════════════════════════════════ -->
-<div style="position:relative;z-index:1;padding:0 20px 14px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
-        <div style="display:flex;align-items:center;gap:5px;">
-            <i data-lucide="zap" style="width:12px;height:12px;color:#FFD700;"></i>
-            <span style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;">ENERGÍA</span>
-        </div>
-        <span id="energy-label" style="font-size:0.68rem;font-weight:800;color:rgba(255,255,255,0.50);font-variant-numeric:tabular-nums;">500 / 500</span>
-    </div>
-    <!-- bar track -->
-    <div style="height:7px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,0.60) inset;">
-        <div id="energy-bar" style="height:100%;width:100%;background:linear-gradient(90deg,#FFD700,#FFA500);border-radius:10px;transition:width 0.35s ease,background 0.5s ease;box-shadow:0 0 8px rgba(255,180,0,0.55);"></div>
-    </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SECTION 4 — PENDING + CLAIM CARD
-══════════════════════════════════════════ -->
-<div style="position:relative;z-index:1;padding:0 16px 14px;">
-    <div style="background:linear-gradient(160deg,#0c0c22 0%,#080818 55%,#050514 100%);border-top:2px solid rgba(60,130,255,0.50);border-left:1px solid rgba(40,100,255,0.25);border-right:1px solid rgba(0,0,0,0.80);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:20px;padding:18px 18px 16px;box-shadow:0 3px 0 rgba(80,140,255,0.12) inset,0 -4px 0 rgba(0,0,0,0.95) inset,0 8px 32px rgba(0,0,0,0.80),0 0 0 1px rgba(50,100,255,0.18);position:relative;overflow:hidden;">
-        <!-- top highlight line -->
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(80,160,255,0.65),transparent);pointer-events:none;"></div>
-
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-            <div>
-                <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:4px;">Pendiente de reclamar</div>
-                <div style="display:flex;align-items:baseline;gap:7px;">
-                    <span id="unclaimed-display" style="font-size:1.75rem;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;">{{ "%.4f"|format(unclaimed or 0) }}</span>
-                    <span style="font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.32);">PXC</span>
+                <!-- coin top shine -->
+                <div style="position:absolute;top:10px;left:12px;width:32px;height:18px;background:radial-gradient(ellipse,rgba(255,255,255,0.60) 0%,transparent 70%);border-radius:50%;transform:rotate(-22deg);pointer-events:none;"></div>
+                <!-- coin face -->
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+                    <span style="font-size:1.5rem;font-weight:900;color:rgba(80,35,0,0.75);letter-spacing:-0.04em;position:relative;z-index:1;text-shadow:0 1px 2px rgba(255,220,80,0.40);">P</span>
                 </div>
             </div>
-            <!-- active indicator -->
-            <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:linear-gradient(160deg,#061a0e,#040e08);border-top:1px solid rgba(0,255,136,0.32);border-bottom:2px solid rgba(0,0,0,0.80);border-radius:20px;box-shadow:0 1px 0 rgba(0,255,136,0.08) inset,0 -2px 0 rgba(0,0,0,0.75) inset;">
-                <div style="width:7px;height:7px;border-radius:50%;background:#00FF88;box-shadow:0 0 10px rgba(0,255,136,0.9);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
-                <span style="font-size:0.68rem;font-weight:800;color:#00FF88;">{{ mining_rate or user.mining_power or 0.1 }}/h</span>
+
+            <!-- tap label -->
+            <div style="font-size:0.58rem;font-weight:800;letter-spacing:0.18em;color:rgba(255,255,255,0.32);text-transform:uppercase;position:relative;z-index:1;">TOCA PARA GANAR</div>
+        </div>
+
+        <!-- ground shadow -->
+        <div style="position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);width:170px;height:16px;background:radial-gradient(ellipse,rgba(0,0,100,0.50) 0%,transparent 70%);pointer-events:none;"></div>
+    </div>
+
+    <!-- tap rate pill — minimal, tight -->
+    <div style="margin-top:16px;display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:30px;backdrop-filter:blur(8px);">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="#FFD700" style="filter:drop-shadow(0 0 4px rgba(255,215,0,0.8));flex-shrink:0;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <span id="tap-reward-label" style="font-size:0.70rem;font-weight:800;color:rgba(255,255,255,0.55);letter-spacing:0.04em;">0.0010 PXC / tap</span>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ENERGY BAR — slim, integrated
+══════════════════════════════════════ -->
+<div style="position:relative;z-index:2;padding:14px 20px 12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="display:flex;align-items:center;gap:4px;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="#FFD700" style="filter:drop-shadow(0 0 3px rgba(255,215,0,0.7));"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <span style="font-size:0.62rem;font-weight:800;color:rgba(255,255,255,0.38);letter-spacing:0.10em;text-transform:uppercase;">Energía</span>
+        </div>
+        <span id="energy-label" style="font-size:0.62rem;font-weight:800;color:rgba(255,255,255,0.38);font-variant-numeric:tabular-nums;">500 / 500</span>
+    </div>
+    <div style="height:5px;background:rgba(255,255,255,0.05);border-radius:10px;overflow:hidden;">
+        <div id="energy-bar" style="height:100%;width:100%;background:linear-gradient(90deg,#FFD700,#FF9000);border-radius:10px;transition:width 0.3s ease;box-shadow:0 0 8px rgba(255,160,0,0.60);"></div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     BOTTOM PANEL: claim + stats row
+══════════════════════════════════════ -->
+<div style="position:relative;z-index:2;padding:0 14px 20px;display:flex;flex-direction:column;gap:10px;">
+
+    <!-- CLAIM CARD -->
+    <div style="background:linear-gradient(160deg,#0c0c22,#080818,#050514);border-top:2px solid rgba(60,130,255,0.48);border-left:1px solid rgba(40,100,255,0.22);border-right:1px solid rgba(0,0,0,0.80);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:18px;padding:14px 16px;box-shadow:0 3px 0 rgba(80,140,255,0.10) inset,0 -4px 0 rgba(0,0,0,0.95) inset,0 8px 30px rgba(0,0,0,0.75),0 0 0 1px rgba(50,100,255,0.15);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(100,170,255,0.55),transparent);"></div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div>
+                <div style="font-size:0.58rem;font-weight:700;letter-spacing:0.14em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:3px;">Pendiente</div>
+                <div style="display:flex;align-items:baseline;gap:5px;">
+                    <span id="unclaimed-display" style="font-size:1.65rem;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;">{{ "%.4f"|format(unclaimed or 0) }}</span>
+                    <span style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.28);">PXC</span>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;padding:6px 11px;background:linear-gradient(160deg,#040e06,#020a04);border-top:1px solid rgba(0,255,136,0.28);border-bottom:2px solid rgba(0,0,0,0.80);border-radius:20px;box-shadow:0 1px 0 rgba(0,255,136,0.07) inset,0 -2px 0 rgba(0,0,0,0.75) inset;">
+                <div style="width:6px;height:6px;border-radius:50%;background:#00FF88;box-shadow:0 0 8px rgba(0,255,136,0.95);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
+                <span style="font-size:0.65rem;font-weight:800;color:#00FF88;">{{ mining_rate or user.mining_power or 0.1 }}/h</span>
             </div>
         </div>
 
-        <!-- Claim CTA -->
-        <button onclick="claimReward(event)" style="
-            width:100%;padding:15px;
-            background:linear-gradient(180deg,#1a6fff 0%,#0055ee 60%,#003fbf 100%);
-            border:none;
-            border-top:1px solid rgba(255,255,255,0.28);
-            border-bottom:3px solid rgba(0,0,0,0.60);
-            border-radius:14px;
-            font-size:0.95rem;font-weight:800;letter-spacing:0.06em;color:#fff;
-            box-shadow:0 2px 0 rgba(255,255,255,0.20) inset,0 -3px 0 rgba(0,0,0,0.55) inset,0 4px 18px rgba(0,60,200,0.35);
-            display:flex;align-items:center;justify-content:center;gap:9px;
-            cursor:pointer;
-            transition:transform 0.10s cubic-bezier(0.34,1.4,0.64,1),box-shadow 0.10s;
-        "
-        ontouchstart="this.style.transform='translateY(3px) scale(0.98)';this.style.boxShadow='0 1px 0 rgba(255,255,255,0.12) inset,0 -1px 0 rgba(0,0,0,0.40) inset,0 2px 6px rgba(0,60,200,0.20)'"
-        ontouchend="this.style.transform='';this.style.boxShadow=''">
-            <i data-lucide="arrow-down-to-line" style="width:19px;height:19px;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.40));"></i>
-            <span>Reclamar PXC</span>
+        <button onclick="claimReward(event)"
+            style="width:100%;padding:13px;background:linear-gradient(180deg,#2070ff 0%,#0055ee 55%,#003cc8 100%);border:none;border-top:1px solid rgba(255,255,255,0.26);border-bottom:3px solid rgba(0,0,0,0.65);border-radius:12px;font-size:0.88rem;font-weight:800;letter-spacing:0.07em;color:#fff;box-shadow:0 2px 0 rgba(255,255,255,0.18) inset,0 -3px 0 rgba(0,0,0,0.55) inset,0 4px 16px rgba(0,50,200,0.35);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:transform 0.10s,box-shadow 0.10s;"
+            ontouchstart="this.style.transform='translateY(3px) scale(0.98)';this.style.boxShadow='0 0px 0 rgba(255,255,255,0.10) inset,0 0px 0 rgba(0,0,0,0.40) inset,0 2px 6px rgba(0,40,180,0.20)'"
+            ontouchend="this.style.transform='';this.style.boxShadow=''">
+            <i data-lucide="arrow-down-to-line" style="width:17px;height:17px;"></i>
+            RECLAMAR PXC
         </button>
     </div>
-</div>
 
-<!-- ══════════════════════════════════════════
-     SECTION 5 — LIVE STATS TICKER
-══════════════════════════════════════════ -->
-<div style="position:relative;z-index:1;padding:0 16px 24px;">
-    <div style="background:linear-gradient(160deg,#0c0c22 0%,#080818 55%,#050514 100%);border-top:2px solid rgba(60,130,255,0.45);border-left:1px solid rgba(40,100,255,0.22);border-right:1px solid rgba(0,0,0,0.80);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:20px;overflow:hidden;box-shadow:0 3px 0 rgba(80,140,255,0.10) inset,0 -4px 0 rgba(0,0,0,0.95) inset,0 8px 32px rgba(0,0,0,0.80),0 0 0 1px rgba(50,100,255,0.15);position:relative;">
+    <!-- STATS ROW — 3 pills horizontal -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
 
-        <!-- top shimmer line -->
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(80,160,255,0.60),transparent);pointer-events:none;"></div>
-
-        <!-- header row -->
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px 10px;">
-            <div style="display:flex;align-items:center;gap:7px;">
-                <div style="width:6px;height:6px;border-radius:50%;background:#00FF88;box-shadow:0 0 8px rgba(0,255,136,0.9);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
-                <span style="font-size:0.65rem;font-weight:800;letter-spacing:0.12em;color:rgba(255,255,255,0.40);text-transform:uppercase;">En vivo</span>
-            </div>
-            <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);letter-spacing:0.08em;">ESTADÍSTICAS</span>
+        <!-- Taps sesión -->
+        <div style="background:linear-gradient(160deg,#0d0d22,#090918);border-top:1px solid rgba(60,130,255,0.30);border-bottom:2px solid rgba(0,0,0,0.90);border-radius:14px;padding:10px 8px;text-align:center;box-shadow:0 1px 0 rgba(80,140,255,0.08) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
+            <div style="font-size:0.55rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:4px;">Taps</div>
+            <div id="stat-taps" style="font-size:1.20rem;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;">0</div>
+            <div style="font-size:0.55rem;font-weight:700;color:#00FF88;margin-top:3px;" id="stat-taps-pxc">+0.0000</div>
         </div>
 
-        <!-- 3 stat columns -->
-        <div style="display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;padding:2px 0 16px;">
-
-            <!-- COL 1: Taps hoy -->
-            <div style="text-align:center;padding:8px 10px;">
-                <div style="font-size:0.60rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.30);text-transform:uppercase;margin-bottom:6px;">Taps Hoy</div>
-                <div id="stat-taps" style="font-size:1.30rem;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;transition:transform 0.15s ease;">0</div>
-                <div style="display:flex;align-items:center;justify-content:center;gap:3px;margin-top:4px;">
-                    <i data-lucide="trending-up" style="width:10px;height:10px;color:#00FF88;"></i>
-                    <span style="font-size:0.58rem;font-weight:700;color:#00FF88;" id="stat-taps-pxc">+0.0000</span>
-                </div>
-            </div>
-
-            <!-- divider -->
-            <div style="background:rgba(255,255,255,0.06);margin:8px 0;"></div>
-
-            <!-- COL 2: Multiplicador (nivel) -->
-            <div style="text-align:center;padding:8px 10px;">
-                <div style="font-size:0.60rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.30);text-transform:uppercase;margin-bottom:6px;">Multiplicador</div>
-                <div style="font-size:1.30rem;font-weight:900;line-height:1;">
-                    <span style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">x{{ user.mining_level or 1 }}.0</span>
-                </div>
-                <div style="display:flex;align-items:center;justify-content:center;gap:3px;margin-top:4px;">
-                    <i data-lucide="zap" style="width:10px;height:10px;color:#FFD700;"></i>
-                    <span style="font-size:0.58rem;font-weight:700;color:#FFD700;">Nivel {{ user.mining_level or 1 }}</span>
-                </div>
-            </div>
-
-            <!-- divider -->
-            <div style="background:rgba(255,255,255,0.06);margin:8px 0;"></div>
-
-            <!-- COL 3: Próximo nivel barra -->
-            <div style="text-align:center;padding:8px 10px;">
-                <div style="font-size:0.60rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.30);text-transform:uppercase;margin-bottom:6px;">Próx. Nivel</div>
-                <div style="font-size:1.30rem;font-weight:900;color:#a78bfa;line-height:1;font-variant-numeric:tabular-nums;">
-                    <span id="stat-next-pct">—</span>
-                </div>
-                <div style="margin-top:6px;height:4px;background:rgba(255,255,255,0.08);border-radius:6px;overflow:hidden;margin-left:8px;margin-right:8px;">
-                    <div id="stat-next-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:6px;transition:width 1.2s cubic-bezier(0.34,1.2,0.64,1);box-shadow:0 0 6px rgba(167,139,250,0.60);"></div>
-                </div>
-            </div>
+        <!-- Multiplicador -->
+        <div style="background:linear-gradient(160deg,#100e00,#0a0800);border-top:1px solid rgba(255,215,0,0.30);border-bottom:2px solid rgba(0,0,0,0.90);border-radius:14px;padding:10px 8px;text-align:center;box-shadow:0 1px 0 rgba(255,215,0,0.08) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
+            <div style="font-size:0.55rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:4px;">Multi</div>
+            <div style="font-size:1.20rem;font-weight:900;line-height:1;background:linear-gradient(135deg,#FFE033,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">x{{ user.mining_level or 1 }}</div>
+            <div style="font-size:0.55rem;font-weight:700;color:rgba(255,215,0,0.55);margin-top:3px;">Nivel {{ user.mining_level or 1 }}</div>
         </div>
 
-        <!-- scrolling ticker bottom -->
-        <div style="border-top:1px solid rgba(255,255,255,0.05);padding:8px 0;overflow:hidden;position:relative;">
-            <div id="ticker-track" style="display:flex;gap:0;white-space:nowrap;animation:tickerScroll 18s linear infinite;">
-                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);padding:0 18px;">⚡ Minería activa · </span>
-                <span style="font-size:0.60rem;font-weight:700;color:rgba(0,255,136,0.55);padding:0 8px;">+{{ mining_rate or user.mining_power or 0.1 }} PXC/hora</span>
-                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);padding:0 18px;">· 🏆 Ranking activo · </span>
-                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,215,0,0.55);padding:0 8px;">{{ user.referral_count or 0 }} referidos confirmados</span>
-                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);padding:0 18px;">· 💎 PixieLand BETA · </span>
-                <span style="font-size:0.60rem;font-weight:700;color:rgba(167,139,250,0.55);padding:0 8px;">Gana, tapea, sube de nivel</span>
-                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);padding:0 18px;">⚡ Minería activa · </span>
-                <span style="font-size:0.60rem;font-weight:700;color:rgba(0,255,136,0.55);padding:0 8px;">+{{ mining_rate or user.mining_power or 0.1 }} PXC/hora</span>
+        <!-- Progreso -->
+        <div style="background:linear-gradient(160deg,#0d0a1e,#090616);border-top:1px solid rgba(167,139,250,0.30);border-bottom:2px solid rgba(0,0,0,0.90);border-radius:14px;padding:10px 8px;text-align:center;box-shadow:0 1px 0 rgba(167,139,250,0.08) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
+            <div style="font-size:0.55rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:4px;">Progreso</div>
+            <div id="stat-next-pct" style="font-size:1.20rem;font-weight:900;color:#a78bfa;line-height:1;">—</div>
+            <div style="margin-top:5px;height:3px;background:rgba(255,255,255,0.07);border-radius:6px;overflow:hidden;">
+                <div id="stat-next-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#6d28d9,#a78bfa);border-radius:6px;transition:width 1.4s cubic-bezier(0.34,1.2,0.64,1);"></div>
             </div>
         </div>
     </div>
+
 </div>
 
+</div>
+
+<!-- ══ KEYFRAMES ══ -->
 <style>
-@keyframes tickerScroll {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+@keyframes orbitRing1 { to { transform:rotate(360deg); } }
+@keyframes orbitRing2 { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes orbitRing3 { to { transform:rotate(-360deg); } }
+@keyframes floatUp {
+    0%   { opacity:1; transform:translateX(-50%) translateY(0) scale(1.05); }
+    100% { opacity:0; transform:translateX(-50%) translateY(-72px) scale(0.82); }
+}
+@keyframes coinBreath {
+    0%,100% { transform:scale(1); box-shadow:0 0 0 2px rgba(255,255,255,0.22),0 0 0 4px rgba(255,180,0,0.14),4px 8px 24px rgba(0,0,0,0.75),0 -5px 22px rgba(255,240,80,0.60) inset,0 8px 30px rgba(120,60,0,0.70) inset; }
+    50%      { transform:scale(1.04); box-shadow:0 0 0 2px rgba(255,255,255,0.28),0 0 0 6px rgba(255,180,0,0.20),4px 8px 28px rgba(0,0,0,0.80),0 -6px 28px rgba(255,240,80,0.75) inset,0 10px 36px rgba(120,60,0,0.75) inset; }
 }
 @keyframes statPop {
-    0%   { transform:scale(1); }
-    40%  { transform:scale(1.18); color:#FFD700; }
-    100% { transform:scale(1); }
-}
-</style>
-<script>
-// Live stat updates driven by tap engine
-let sessionTaps = 0;
-let sessionPxc  = 0;
-// Progress to next level: simple formula — each level costs 100 PXC more
-const LVL      = {{ user.mining_level or 1 }};
-const BAL      = {{ (user.se_balance or 0)|float }};
-const threshold = LVL * 100;  // 100 per level
-const pct       = Math.min(100, Math.round((BAL % threshold) / threshold * 100));
-document.getElementById('stat-next-pct').textContent = pct + '%';
-setTimeout(() => {
-    document.getElementById('stat-next-bar').style.width = pct + '%';
-}, 400);
-
-function updateStatTaps() {
-    const el = document.getElementById('stat-taps');
-    el.textContent = sessionTaps;
-    el.style.animation = 'none';
-    el.offsetHeight; // reflow
-    el.style.animation = 'statPop 0.25s ease-out';
-    document.getElementById('stat-taps-pxc').textContent = '+' + sessionPxc.toFixed(4);
-}
-
-// Hook into tap handler — patch after load
-const _origHandleTap = handleTap;
-window.handleTap = function(e) {
-    const before = currentBalance;
-    _origHandleTap(e);
-    const gained = currentBalance - before;
-    if (gained > 0) {
-        sessionTaps++;
-        sessionPxc += gained;
-        updateStatTaps();
-    }
-};
-</script>
-
-</div>
-
-<!-- ══════════════════════════════════════════
-     STYLES & KEYFRAMES
-══════════════════════════════════════════ -->
-<style>
-@keyframes orbitRing1 {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-}
-@keyframes orbitRing2 {
-    from { transform: rotate(45deg); }
-    to   { transform: rotate(405deg); }
-}
-@keyframes orbitRing3 {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(-360deg); }
-}
-@keyframes floatUp {
-    0%   { opacity:1; transform:translateX(-50%) translateY(0) scale(1.1); }
-    70%  { opacity:0.9; }
-    100% { opacity:0; transform:translateX(-50%) translateY(-64px) scale(0.80); }
-}
-@keyframes tapGoldPulse {
-    0%   { transform:scale(1); }
-    40%  { transform:scale(1.06); }
-    100% { transform:scale(1); }
+    0%  { transform:scale(1); }
+    40% { transform:scale(1.20); }
+    100%{ transform:scale(1); }
 }
 </style>
 
-<!-- ══════════════════════════════════════════
-     TAP ENGINE JS
-══════════════════════════════════════════ -->
+<!-- ══ TAP ENGINE ══ -->
 <script>
-const TAP_REWARD  = parseFloat(( {{ (mining_rate or user.mining_power or 0.1)|float }} / 100 ).toFixed(6));
-const MAX_ENERGY  = 500;
-const REGEN_RATE  = 1;
-
+const TAP_REWARD = parseFloat(({{ (mining_rate or user.mining_power or 0.1)|float }} / 100).toFixed(6));
+const MAX_ENERGY = 500;
 let currentBalance = {{ (user.se_balance or 0)|float }};
-let energy         = MAX_ENERGY;
-let isAnimating    = false;
+let energy = MAX_ENERGY;
+let isAnimating = false;
+let sessionTaps = 0, sessionPxc = 0;
 
-document.getElementById('tap-reward-label').textContent = TAP_REWARD.toFixed(4);
+// init UI
+document.getElementById('tap-reward-label').textContent = TAP_REWARD.toFixed(4) + ' PXC / tap';
 
-// ── Energy UI ──
+// level progress
+const LVL = {{ user.mining_level or 1 }};
+const BAL = {{ (user.se_balance or 0)|float }};
+const threshold = LVL * 100;
+const lvlPct = Math.min(100, Math.round((BAL % threshold) / threshold * 100));
+document.getElementById('stat-next-pct').textContent = lvlPct + '%';
+setTimeout(() => { document.getElementById('stat-next-bar').style.width = lvlPct + '%'; }, 500);
+
 function updateEnergyUI() {
     const pct = (energy / MAX_ENERGY) * 100;
     const bar = document.getElementById('energy-bar');
     document.getElementById('energy-label').textContent = Math.floor(energy) + ' / ' + MAX_ENERGY;
     bar.style.width = pct + '%';
-    if      (pct > 50) bar.style.background = 'linear-gradient(90deg,#FFD700,#FFA500)';
-    else if (pct > 20) bar.style.background = 'linear-gradient(90deg,#FF8000,#FF5000)';
-    else               bar.style.background = 'linear-gradient(90deg,#ef4444,#b91c1c)';
-    bar.style.boxShadow = pct > 20
-        ? '0 0 8px rgba(255,180,0,0.55)'
-        : '0 0 8px rgba(239,68,68,0.60)';
+    bar.style.background = pct > 50
+        ? 'linear-gradient(90deg,#FFD700,#FF9000)'
+        : pct > 20
+            ? 'linear-gradient(90deg,#FF7000,#FF4000)'
+            : 'linear-gradient(90deg,#ef4444,#991b1b)';
+    bar.style.boxShadow = pct > 20 ? '0 0 8px rgba(255,150,0,0.55)' : '0 0 8px rgba(239,68,68,0.60)';
 }
 
-// ── Balance UI ──
 function updateBalanceUI() {
     document.getElementById('tap-balance-display').textContent = currentBalance.toFixed(2);
 }
 
-// ── Float label ──
-function spawnFloat(value, multiTap) {
-    const container = document.getElementById('tap-fx-container');
+function spawnFloat(val) {
+    const c = document.getElementById('tap-fx-container');
     const el = document.createElement('div');
-    const offset = (Math.random() - 0.5) * 80;
-    el.textContent = '+' + value.toFixed(4) + ' PXC';
+    const ox = (Math.random() - 0.5) * 100;
+    el.textContent = '+' + val.toFixed(4);
     el.style.cssText = `
-        position:absolute;
-        left:calc(50% + ${offset}px);
-        bottom:0;
-        font-size:${multiTap ? '1.15' : '0.95'}rem;
-        font-weight:900;
-        color:#FFD700;
-        text-shadow:0 0 14px rgba(255,215,0,0.90), 0 2px 4px rgba(0,0,0,0.70);
-        pointer-events:none;
-        animation:floatUp 0.85s ease-out forwards;
-        white-space:nowrap;
-        transform:translateX(-50%);
+        position:absolute;left:calc(50% + ${ox}px);bottom:0;
+        font-size:1.05rem;font-weight:900;
+        color:#FFE033;text-shadow:0 0 16px rgba(255,220,0,0.95),0 2px 5px rgba(0,0,0,0.70);
+        pointer-events:none;animation:floatUp 0.90s ease-out forwards;
+        white-space:nowrap;transform:translateX(-50%);
     `;
-    container.appendChild(el);
-    setTimeout(() => el.remove(), 850);
+    c.appendChild(el);
+    setTimeout(() => el.remove(), 900);
 }
 
-// ── Ambient glow flash ──
 function flashAmbient() {
-    const glow = document.getElementById('ambient-glow');
-    glow.style.background = 'radial-gradient(ellipse at center,rgba(255,200,0,0.12) 0%,transparent 70%)';
-    setTimeout(() => glow.style.background = 'radial-gradient(ellipse at center,rgba(255,200,0,0.0) 0%,transparent 70%)', 300);
+    const g = document.getElementById('ambient-glow');
+    g.style.background = 'radial-gradient(ellipse,rgba(255,190,0,0.14) 0%,transparent 70%)';
+    setTimeout(() => g.style.background = 'radial-gradient(ellipse,rgba(255,190,0,0) 0%,transparent 70%)', 350);
 }
 
-// ── Main tap handler ──
 function handleTap(e) {
     e.preventDefault();
     if (energy < 1) {
-        // empty energy shake
         const btn = document.getElementById('tap-btn');
-        btn.style.transform = 'translateX(-6px)';
-        setTimeout(() => { btn.style.transform = 'translateX(6px)'; }, 80);
-        setTimeout(() => { btn.style.transform = ''; }, 160);
+        btn.style.transform = 'translateX(-7px) scale(0.97)';
+        setTimeout(()=>{ btn.style.transform='translateX(7px) scale(0.97)'; },80);
+        setTimeout(()=>{ btn.style.transform=''; },160);
         return;
     }
-
-    const touches = e.touches ? e.touches : [e];
-    const taps    = Math.min(touches.length, Math.floor(energy));
-    const gained  = TAP_REWARD * taps;
-
+    const taps   = Math.min(e.touches ? e.touches.length : 1, Math.floor(energy));
+    const gained = TAP_REWARD * taps;
     energy         = Math.max(0, energy - taps);
     currentBalance += gained;
-
+    sessionTaps    += taps;
+    sessionPxc     += gained;
     updateBalanceUI();
     updateEnergyUI();
-    spawnFloat(gained, taps > 1);
+    spawnFloat(gained);
     flashAmbient();
 
-    // Sphere press
+    // sphere press
     if (!isAnimating) {
         isAnimating = true;
         const btn = document.getElementById('tap-btn');
-        btn.style.transform = 'scale(0.91) translateY(5px)';
-        btn.style.boxShadow = `
-            0 0 0 2px rgba(70,120,255,0.35),
-            2px 5px 18px rgba(0,0,0,0.95),
-            0 10px 50px rgba(0,20,160,0.20),
-            0 -3px 15px rgba(80,140,255,0.15) inset,
-            0 6px 30px rgba(0,0,0,0.90) inset
-        `;
-        setTimeout(() => {
-            btn.style.transform = '';
-            btn.style.boxShadow = '';
-            isAnimating = false;
-        }, 130);
+        btn.style.transform = 'scale(0.90) translateY(6px)';
+        btn.style.boxShadow = '0 0 0 1px rgba(60,110,255,0.30),3px 7px 22px rgba(0,0,0,0.98),0 15px 50px rgba(0,15,140,0.18),0 -3px 16px rgba(80,140,255,0.12) inset,0 8px 36px rgba(0,0,0,0.92) inset';
+        setTimeout(()=>{ btn.style.transform=''; btn.style.boxShadow=''; isAnimating=false; },130);
     }
 
-    if (navigator.vibrate) navigator.vibrate(10);
+    // stat update
+    const tEl = document.getElementById('stat-taps');
+    tEl.textContent = sessionTaps;
+    tEl.style.animation='none'; tEl.offsetHeight; tEl.style.animation='statPop 0.22s ease-out';
+    document.getElementById('stat-taps-pxc').textContent = '+' + sessionPxc.toFixed(4);
+
+    if (navigator.vibrate) navigator.vibrate(9);
 }
 
-// ── Energy regen ──
-setInterval(() => {
-    if (energy < MAX_ENERGY) {
-        energy = Math.min(MAX_ENERGY, energy + REGEN_RATE);
-        updateEnergyUI();
-    }
-}, 1000);
+// regen
+setInterval(()=>{ if(energy<MAX_ENERGY){ energy=Math.min(MAX_ENERGY,energy+1); updateEnergyUI(); } }, 1000);
 
-// ── Unclaimed live ticker ──
+// unclaimed ticker
 const ratePerSec = {{ (mining_rate or user.mining_power or 0.1)|float }} / 3600;
 let unclaimedLocal = {{ (unclaimed or 0)|float }};
-setInterval(() => {
-    unclaimedLocal += ratePerSec;
-    document.getElementById('unclaimed-display').textContent = unclaimedLocal.toFixed(4);
-}, 1000);
+setInterval(()=>{ unclaimedLocal+=ratePerSec; document.getElementById('unclaimed-display').textContent=unclaimedLocal.toFixed(4); }, 1000);
 
-// ── Claim ──
+// claim
 async function claimReward(e) {
     const btn = e.currentTarget;
+    btn.disabled=true; btn.style.opacity='0.65';
     try {
-        btn.disabled = true;
-        btn.style.opacity = '0.7';
-        const res  = await fetch('/api/claim', { method: 'POST' });
-        const data = await res.json();
-        if (data.success) {
-            currentBalance = data.new_balance;
-            unclaimedLocal = 0;
+        const r = await fetch('/api/claim',{method:'POST'});
+        const d = await r.json();
+        if (d.success) {
+            currentBalance=d.new_balance; unclaimedLocal=0;
             updateBalanceUI();
-            document.getElementById('unclaimed-display').textContent = '0.0000';
-            btn.style.background = 'linear-gradient(180deg,#22c55e,#15803d)';
-            setTimeout(() => btn.style.background = '', 700);
+            document.getElementById('unclaimed-display').textContent='0.0000';
+            btn.style.background='linear-gradient(180deg,#22c55e,#15803d)';
+            setTimeout(()=>btn.style.background='',750);
         }
-    } catch(err) {
-        console.error('Claim error', err);
-    } finally {
-        btn.disabled = false;
-        btn.style.opacity = '';
-    }
+    } catch(err){ console.error(err); }
+    finally { btn.disabled=false; btn.style.opacity=''; }
 }
 
-updateEnergyUI();
-updateBalanceUI();
+updateEnergyUI(); updateBalanceUI();
 </script>
 
 <!-- ========================================== -->
