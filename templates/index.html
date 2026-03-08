@@ -350,30 +350,43 @@ body {
 /* ── MINING CARD ── */
 .mining-card-premium {
     background: linear-gradient(145deg, #060614 0%, #040412 60%, #020210 100%);
-    border-top:  2px solid rgba(0,255,136,0.32);
-    border-left: 1px solid rgba(0,220,100,0.18);
+    border-top:  2px solid rgba(0,120,255,0.32);
+    border-left: 1px solid rgba(0,100,255,0.18);
     border-right:  1px solid rgba(0,0,0,0.55);
     border-bottom: 4px solid rgba(0,0,0,0.85);
     border-radius: 24px; padding:24px; margin-bottom:20px;
     position:relative; overflow:hidden;
     box-shadow:
-        0 4px 0 rgba(0,255,136,0.10) inset,
+        0 4px 0 rgba(0,80,255,0.10) inset,
         0 -5px 0 rgba(0,0,0,0.75) inset,
         0 32px 80px rgba(0,0,0,0.75),
-        0 0 110px rgba(0,200,100,0.08);
+        0 0 110px rgba(0,60,200,0.08);
 }
 .mining-card-premium::before {
     content:''; position:absolute;top:0;left:0;right:0;height:3px;
-    background: linear-gradient(90deg, #006633, #00FF88, #00D4FF, #00FF88, #006633);
-    opacity:0.8;
+    background: linear-gradient(90deg, #003399, #0066FF, #00D4FF, #0066FF, #003399);
+    opacity:0.85;
 }
 .mining-card-premium::after {
     content:''; position:absolute;top:0;left:0;right:0;bottom:0;
-    background: linear-gradient(135deg, rgba(0,255,136,0.04) 0%, transparent 50%, rgba(0,80,200,0.03) 100%);
+    background: linear-gradient(135deg, rgba(0,80,200,0.04) 0%, transparent 50%, rgba(0,60,180,0.03) 100%);
     pointer-events:none;
 }
 
 /* ── MINING ICON ── */
+.mining-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.mining-title-section h2 {
+    font-size: 1.15rem; font-weight: 700;
+    color: var(--color-text-primary); margin: 0 0 4px 0;
+}
+.mining-title-section p {
+    font-size: .8rem; color: var(--color-text-tertiary); margin: 0;
+}
 .mining-icon-box {
     width:50px;height:50px;
     background: linear-gradient(145deg, rgba(0,255,136,0.25) 0%, rgba(0,160,80,0.14) 100%);
