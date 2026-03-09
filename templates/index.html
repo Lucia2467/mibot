@@ -23,6 +23,7 @@
 /* Zoom global -17% */
 body {
     zoom: 0.83;
+    padding-top: 22px;
 }
 
 /* Excluir barras de navegación del zoom */
@@ -537,7 +538,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 </script>
 
-<div class="container" style="padding:0;overflow:hidden;min-height:calc(100vh - 120px);display:flex;flex-direction:column;">
+<div class="container" style="padding:0;padding-top:28px;overflow:hidden;min-height:calc(100vh - 120px);display:flex;flex-direction:column;">
 
 <!-- ══════════════════════════════════════════
      AMBIENT BACKGROUND LAYER
@@ -552,7 +553,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 <!-- ══════════════════════════════════════════
      SECTION 1 — BALANCE HERO (top)
 ══════════════════════════════════════════ -->
-<div style="position:relative;z-index:1;text-align:center;padding:20px 20px 0;">
+<div style="position:relative;z-index:1;text-align:center;padding:40px 20px 0;">
 
     <!-- row: level badge + balance + pts badge -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
@@ -577,17 +578,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         </div>
     </div>
 
-    <!-- sub-row: referidos centered -->
-    {% if user.referral_count and user.referral_count > 0 %}
-    <div style="display:flex;justify-content:center;margin-top:6px;margin-bottom:-2px;">
-        <div style="display:flex;align-items:center;gap:5px;padding:4px 12px;background:linear-gradient(160deg,#0e0b1e,#090618);border-top:1px solid rgba(167,139,250,0.28);border-bottom:2px solid rgba(0,0,0,0.80);border-radius:20px;box-shadow:0 1px 0 rgba(167,139,250,0.08) inset,0 -2px 0 rgba(0,0,0,0.75) inset;">
-            <i data-lucide="users" style="width:11px;height:11px;color:#a78bfa;"></i>
-            <span style="font-size:0.65rem;font-weight:800;color:#a78bfa;letter-spacing:0.05em;">{{ user.referral_count }} referidos activos</span>
-        </div>
+    <!-- referrals sub-line -->
+    <div style="display:flex;justify-content:center;gap:4px;align-items:center;margin-bottom:4px;">
+        <i data-lucide="users" style="width:11px;height:11px;color:rgba(255,255,255,0.28);"></i>
+        <span style="font-size:0.62rem;color:rgba(255,255,255,0.28);font-weight:600;">{{ user.referral_count or 0 }} referidos</span>
     </div>
-    {% endif %}
-
-
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -686,7 +681,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     <div style="margin-top:22px;display:flex;align-items:center;gap:7px;padding:7px 18px;background:linear-gradient(160deg,#0c0c22,#090918);border-top:1px solid rgba(255,215,0,0.35);border-bottom:2px solid rgba(0,0,0,0.85);border-left:1px solid rgba(255,215,0,0.15);border-right:1px solid rgba(0,0,0,0.60);border-radius:24px;box-shadow:0 1px 0 rgba(255,215,0,0.08) inset,0 -2px 0 rgba(0,0,0,0.80) inset,0 4px 16px rgba(0,0,0,0.50);">
         <i data-lucide="zap" style="width:13px;height:13px;color:#FFD700;filter:drop-shadow(0 0 4px rgba(255,215,0,0.8));"></i>
         <span style="font-size:0.72rem;font-weight:800;color:rgba(255,255,255,0.65);">+<span id="tap-reward-label">0.001</span> PXC por tap</span>
-
+        <span style="font-size:0.62rem;color:rgba(255,255,255,0.28);margin-left:2px;">· {{ user.referral_count or 0 }} refs</span>
     </div>
 </div>
 
