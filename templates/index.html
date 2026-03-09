@@ -669,21 +669,238 @@ button[onclick*="claimReward"] {
 </div>
 
 <!-- ══════════════════════════════════════════
-     SECTION 3 — ENERGY BAR
+     SECTION 3 — ENERGY BAR ULTRA PREMIUM
 ══════════════════════════════════════════ -->
-<div style="position:relative;z-index:1;padding:4px 20px 14px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
-        <div style="display:flex;align-items:center;gap:5px;">
-            <i data-lucide="zap" style="width:12px;height:12px;color:#FFD700;"></i>
-            <span style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;">ENERGÍA</span>
+<style>
+/* ═══ ENERGY BAR ULTRA PREMIUM ═══ */
+.energy-wrap {
+    position: relative; z-index: 1;
+    padding: 4px 16px 14px;
+}
+.energy-card {
+    background: linear-gradient(145deg, #0a0a1e 0%, #07071a 60%, #050514 100%);
+    border-radius: 20px;
+    border-top: 1px solid rgba(255,200,0,0.22);
+    border-left: 1px solid rgba(255,180,0,0.10);
+    border-right: 1px solid rgba(0,0,0,0.5);
+    border-bottom: 2px solid rgba(0,0,0,0.85);
+    padding: 14px 16px 16px;
+    box-shadow:
+        0 2px 0 rgba(255,200,0,0.06) inset,
+        0 -3px 0 rgba(0,0,0,0.80) inset,
+        0 8px 28px rgba(0,0,0,0.65),
+        0 0 0 1px rgba(255,180,0,0.06);
+    position: relative; overflow: hidden;
+}
+.energy-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.45), rgba(255,160,0,0.45), transparent);
+}
+.energy-header-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+}
+.energy-left { display: flex; align-items: center; gap: 7px; }
+.energy-zap-icon {
+    width: 26px; height: 26px; border-radius: 8px;
+    background: linear-gradient(145deg, rgba(255,200,0,0.20), rgba(255,140,0,0.12));
+    border: 1px solid rgba(255,200,0,0.25);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 12px rgba(255,200,0,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.energy-zap-icon svg { width: 13px; height: 13px; color: #FFD700; filter: drop-shadow(0 0 5px rgba(255,215,0,0.9)); }
+.energy-title { font-size: 0.65rem; font-weight: 800; color: rgba(255,255,255,0.50); letter-spacing: 0.12em; text-transform: uppercase; }
+.energy-right { display: flex; align-items: center; gap: 8px; }
+.energy-count-box {
+    font-size: 0.68rem; font-weight: 800;
+    color: rgba(255,255,255,0.60);
+    font-variant-numeric: tabular-nums;
+    background: rgba(255,255,255,0.05);
+    padding: 3px 9px; border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+.energy-pct-text {
+    font-size: 0.62rem; font-weight: 700;
+    color: #FFD700;
+    text-shadow: 0 0 8px rgba(255,215,0,0.7);
+}
+
+/* TRACK */
+.energy-track-outer {
+    position: relative;
+    height: 12px;
+    background: rgba(0,0,0,0.55);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.7), inset 0 1px 0 rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+
+/* Segmentos de fondo decorativos */
+.energy-track-outer::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 18px,
+        rgba(255,255,255,0.025) 18px,
+        rgba(255,255,255,0.025) 19px
+    );
+    border-radius: inherit;
+    z-index: 1; pointer-events: none;
+}
+
+#energy-bar {
+    height: 100%; width: 100%;
+    background: linear-gradient(90deg,
+        #FF6B00 0%,
+        #FFB300 30%,
+        #FFD700 60%,
+        #FFF176 85%,
+        #FFFFFF 100%
+    );
+    border-radius: 20px;
+    transition: width 0.45s cubic-bezier(0.34,1.2,0.64,1), background 0.6s ease;
+    position: relative; overflow: hidden;
+    box-shadow:
+        0 0 14px rgba(255,200,0,0.7),
+        0 0 30px rgba(255,160,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.45),
+        inset 0 -1px 0 rgba(0,0,0,0.25);
+}
+
+/* Shine sweep */
+#energy-bar::before {
+    content: '';
+    position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.50), transparent);
+    animation: energySweep 2.2s ease-in-out infinite;
+    border-radius: inherit;
+}
+
+/* Pulsing edge glow */
+#energy-bar::after {
+    content: '';
+    position: absolute; top: -2px; right: -4px; width: 12px; height: calc(100% + 4px);
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.9) 0%, rgba(255,220,0,0.6) 40%, transparent 75%);
+    animation: energyEdgePulse 1.4s ease-in-out infinite;
+    filter: blur(2px);
+}
+
+@keyframes energySweep {
+    0% { left: -60%; opacity: 0.8; }
+    60%, 100% { left: 140%; opacity: 0.4; }
+}
+@keyframes energyEdgePulse {
+    0%, 100% { opacity: 0.6; transform: scaleY(0.9); }
+    50% { opacity: 1; transform: scaleY(1.1); }
+}
+
+/* MICRO TICKS below bar */
+.energy-ticks {
+    display: flex; justify-content: space-between;
+    margin-top: 5px; padding: 0 2px;
+}
+.energy-tick {
+    width: 1px; height: 4px;
+    background: rgba(255,255,255,0.10);
+    border-radius: 1px;
+}
+.energy-tick.active { background: rgba(255,215,0,0.45); }
+.energy-tick.major { height: 6px; background: rgba(255,255,255,0.18); }
+.energy-tick.major.active { background: rgba(255,215,0,0.70); }
+
+/* Regen label */
+.energy-regen-row {
+    display: flex; justify-content: flex-end; align-items: center;
+    margin-top: 6px; gap: 4px;
+}
+.energy-regen-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #00FF88;
+    box-shadow: 0 0 7px rgba(0,255,136,0.9);
+    animation: regenPulse 1.8s ease-in-out infinite;
+}
+@keyframes regenPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.6} }
+.energy-regen-text {
+    font-size: 0.55rem; font-weight: 700;
+    color: rgba(0,255,136,0.60); letter-spacing: 0.06em;
+}
+</style>
+
+<div class="energy-wrap">
+    <div class="energy-card">
+        <div class="energy-header-row">
+            <div class="energy-left">
+                <div class="energy-zap-icon">
+                    <i data-lucide="zap"></i>
+                </div>
+                <span class="energy-title">ENERGÍA</span>
+            </div>
+            <div class="energy-right">
+                <span id="energy-pct" class="energy-pct-text">100%</span>
+                <span id="energy-label" class="energy-count-box">500 / 500</span>
+            </div>
         </div>
-        <span id="energy-label" style="font-size:0.68rem;font-weight:800;color:rgba(255,255,255,0.50);font-variant-numeric:tabular-nums;">500 / 500</span>
-    </div>
-    <!-- bar track -->
-    <div style="height:7px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,0.60) inset;">
-        <div id="energy-bar" style="height:100%;width:100%;background:linear-gradient(90deg,#FFD700,#FFA500);border-radius:10px;transition:width 0.35s ease,background 0.5s ease;box-shadow:0 0 8px rgba(255,180,0,0.55);"></div>
+
+        <!-- Main bar -->
+        <div class="energy-track-outer">
+            <div id="energy-bar"></div>
+        </div>
+
+        <!-- Tick marks -->
+        <div class="energy-ticks" id="energy-ticks"></div>
+
+        <!-- Regen indicator -->
+        <div class="energy-regen-row">
+            <div class="energy-regen-dot"></div>
+            <span class="energy-regen-text">+1 / seg</span>
+        </div>
     </div>
 </div>
+
+<script>
+// Generar ticks
+(function(){
+    const container = document.getElementById('energy-ticks');
+    if (!container) return;
+    const TOTAL = 25;
+    for (let i = 0; i < TOTAL; i++) {
+        const d = document.createElement('div');
+        const isMajor = (i % 5 === 0);
+        d.className = 'energy-tick' + (isMajor ? ' major' : '') + ' active';
+        d.dataset.index = i;
+        container.appendChild(d);
+    }
+})();
+
+// Actualizar ticks + porcentaje al cambiar energía
+const _origUpdateEnergyUI = updateEnergyUI;
+window.updateEnergyUI = function() {
+    _origUpdateEnergyUI();
+    const pct = (energy / MAX_ENERGY) * 100;
+    // porcentaje
+    const pctEl = document.getElementById('energy-pct');
+    if (pctEl) pctEl.textContent = Math.floor(pct) + '%';
+    // ticks
+    const ticks = document.querySelectorAll('#energy-ticks .energy-tick');
+    const activeTicks = Math.round((pct / 100) * ticks.length);
+    ticks.forEach((t, i) => {
+        if (i < activeTicks) t.classList.add('active');
+        else t.classList.remove('active');
+    });
+    // color de porcentaje
+    if (pctEl) {
+        if (pct > 50) { pctEl.style.color = '#FFD700'; pctEl.style.textShadow = '0 0 8px rgba(255,215,0,0.7)'; }
+        else if (pct > 20) { pctEl.style.color = '#FF9500'; pctEl.style.textShadow = '0 0 8px rgba(255,149,0,0.7)'; }
+        else { pctEl.style.color = '#ef4444'; pctEl.style.textShadow = '0 0 8px rgba(239,68,68,0.7)'; }
+    }
+};
+// Init
+setTimeout(() => { if (typeof updateEnergyUI === 'function') updateEnergyUI(); }, 200);
+</script>
 
 <!-- ══════════════════════════════════════════
      SECTION 4 — PENDING + CLAIM CARD
