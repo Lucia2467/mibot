@@ -670,7 +670,8 @@ def index():
                          user_id=user_id,
                          bot_username=BOT_USERNAME,
                          show_promo_fab=show_promo_fab,
-                         show_support_button=True)
+                         show_support_button=True,
+                         hide_header=True)
 
 @app.route('/tasks')
 def tasks():
