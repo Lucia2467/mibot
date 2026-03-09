@@ -744,9 +744,9 @@
     <!-- ❄️ Snow Effect Container -->
     <div class="snow-container" id="snow-container"></div>
 
-    <div class="app-shell{% if user %} has-top-header{% endif %}">
+    <div class="app-shell{% if user and not hide_header %} has-top-header{% endif %}">
         <!-- ========== TOP HEADER - USER PROFILE ========== -->
-        {% if user %}
+        {% if user and not hide_header %}
         <header class="app-top-header" id="app-top-header">
             <div class="header-inner">
                 <!-- Avatar del usuario -->
@@ -832,7 +832,7 @@
                 </div>
 
                 <!-- Tareas -->
-                <div class="nav-item {% if request.endpoint == 'tasks' %}active{% endif %}" data-nav="tareas" data-href="/tasks?user_id={{ user_id }}">
+                <div class="nav-item {% if request.endpoint in ['tasks', 'social_tasks_page', 'promote_page'] %}active{% endif %}" data-nav="tareas" data-href="/tasks?user_id={{ user_id }}">
                     <span class="nav-icon">
                         <i data-lucide="check-square"></i>
                     </span>
