@@ -530,8 +530,6 @@ button[onclick*="claimReward"] {
     <!-- deep radial ambient -->
     <div style="position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(ellipse at center,rgba(0,60,200,0.18) 0%,rgba(0,20,80,0.10) 40%,transparent 70%);border-radius:50%;"></div>
     <!-- tap glow (activates on tap via JS) -->
-    <canvas id="star-canvas" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.55;pointer-events:none;z-index:0;"></canvas>
-    <div id="plasma-bg" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);width:500px;height:500px;border-radius:50%;background:radial-gradient(ellipse,rgba(80,0,255,0.0) 0%,transparent 70%);transition:background 0.5s ease,transform 0.5s ease;pointer-events:none;"></div>
     <div id="ambient-glow" style="position:absolute;top:20%;left:50%;transform:translateX(-50%);width:420px;height:420px;background:radial-gradient(ellipse at center,rgba(255,200,0,0.0) 0%,transparent 70%);border-radius:50%;transition:background 0.3s ease;pointer-events:none;"></div>
 </div>
 
@@ -573,348 +571,117 @@ button[onclick*="claimReward"] {
 <!-- ══════════════════════════════════════════
      SECTION 2 — TAP ARENA (center stage)
 ══════════════════════════════════════════ -->
-<!-- ═══════════════════════════════════════════════════
-     TAP ARENA — full cinematic stage
-═══════════════════════════════════════════════════ -->
-<div style="position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;padding:0;flex:1;justify-content:flex-end;padding-bottom:18px;">
+<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:30px 0 16px;">
 
-    <!-- float FX zone -->
-    <div id="tap-fx-container" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:320px;height:100px;pointer-events:none;overflow:visible;z-index:30;"></div>
+    <!-- float label zone -->
+    <div id="tap-fx-container" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:280px;height:80px;pointer-events:none;overflow:visible;z-index:10;"></div>
 
-    <!-- shockwave container -->
-    <div id="shockwave-container" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:0;height:0;pointer-events:none;z-index:5;overflow:visible;"></div>
+    <!-- ── ORBITAL RING SYSTEM ── -->
+    <div style="position:relative;width:260px;height:260px;display:flex;align-items:center;justify-content:center;">
 
-    <!-- ── ORBITAL SYSTEM ── -->
-    <div style="position:relative;width:230px;height:230px;display:flex;align-items:center;justify-content:center;">
+        <!-- Ring 1 — slow outer -->
+        <div style="position:absolute;inset:-28px;border-radius:50%;border:1px solid rgba(60,130,255,0.12);animation:orbitRing1 12s linear infinite;"></div>
+        <!-- Ring 1 spark -->
+        <div style="position:absolute;top:-29px;left:50%;margin-left:-3px;width:6px;height:6px;border-radius:50%;background:rgba(80,160,255,0.70);box-shadow:0 0 8px rgba(80,160,255,0.9);animation:orbitRing1 12s linear infinite;"></div>
 
-        <!-- Ring 1: outer blue — slow -->
-        <div style="position:absolute;inset:-20px;border-radius:50%;border:1px solid transparent;
-            background:linear-gradient(#0a0a18,#0a0a18) padding-box,
-                        linear-gradient(var(--r1-angle,0deg),rgba(60,120,255,0.0),rgba(60,120,255,0.55),rgba(60,120,255,0.0)) border-box;
-            animation:spinBorder1 10s linear infinite;">
-        </div>
-        <!-- spark on ring 1 -->
-        <div style="position:absolute;inset:-20px;border-radius:50%;animation:spinBorder1 10s linear infinite;pointer-events:none;">
-            <div style="position:absolute;top:0;left:50%;transform:translate(-50%,-50%);
-                width:10px;height:10px;border-radius:50%;
-                background:#60a0ff;box-shadow:0 0 14px 4px rgba(80,150,255,0.90),0 0 30px rgba(60,100,255,0.45);"></div>
+        <!-- Ring 2 — medium, tilted -->
+        <div style="position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(255,200,0,0.10);animation:orbitRing2 8s linear infinite reverse;transform:rotate(45deg);"></div>
+        <!-- Ring 2 spark -->
+        <div style="position:absolute;inset:-14px;border-radius:50%;animation:orbitRing2 8s linear infinite reverse;">
+            <div style="position:absolute;top:-4px;left:50%;margin-left:-3px;width:5px;height:5px;border-radius:50%;background:rgba(255,200,0,0.75);box-shadow:0 0 7px rgba(255,200,0,0.9);transform:rotate(-45deg);"></div>
         </div>
 
-        <!-- Ring 2: mid gold — reverse medium -->
-        <div style="position:absolute;inset:-8px;border-radius:50%;border:1px solid transparent;
-            background:linear-gradient(#0a0a18,#0a0a18) padding-box,
-                        linear-gradient(var(--r2-angle,120deg),rgba(255,180,0,0.0),rgba(255,180,0,0.50),rgba(255,180,0,0.0)) border-box;
-            animation:spinBorder2 7s linear infinite reverse;">
-        </div>
-        <div style="position:absolute;inset:-8px;border-radius:50%;animation:spinBorder2 7s linear infinite reverse;pointer-events:none;">
-            <div style="position:absolute;top:0;left:50%;transform:translate(-50%,-50%);
-                width:8px;height:8px;border-radius:50%;
-                background:#ffcc00;box-shadow:0 0 12px 3px rgba(255,200,0,0.90),0 0 28px rgba(255,150,0,0.40);"></div>
-        </div>
+        <!-- Ring 3 — inner glow ring -->
+        <div style="position:absolute;inset:8px;border-radius:50%;border:1px solid rgba(160,120,255,0.10);animation:orbitRing3 16s linear infinite;"></div>
 
-        <!-- Ring 3: inner violet — slow reverse -->
-        <div style="position:absolute;inset:6px;border-radius:50%;border:1px dashed rgba(150,80,255,0.12);animation:spinBorder3 18s linear infinite;"></div>
-
-        <!-- ══════════════════════
-             THE ORB — holographic sphere
-        ══════════════════════ -->
+        <!-- ── THE SPHERE BUTTON ── -->
         <div id="tap-btn"
              ontouchstart="handleTap(event)"
              onclick="handleTap(event)"
              style="
                 position:relative;
-                width:180px;height:180px;border-radius:50%;
+                width:210px;height:210px;border-radius:50%;
                 cursor:pointer;user-select:none;-webkit-user-select:none;
-                /* multi-layer sphere illusion */
+                /* 3D sphere illusion: light from top-left */
                 background:
-                    radial-gradient(ellipse 48% 32% at 32% 22%, rgba(255,255,255,0.28) 0%, transparent 48%),
-                    radial-gradient(ellipse 60% 45% at 70% 75%, rgba(100,20,255,0.30) 0%, transparent 55%),
-                    radial-gradient(ellipse 100% 100% at 50% 50%, #1c1060 0%, #110c40 30%, #090720 60%, #040312 100%);
+                    radial-gradient(ellipse 55% 40% at 38% 30%, rgba(255,255,255,0.18) 0%, transparent 60%),
+                    radial-gradient(ellipse 80% 80% at 50% 45%, #1a1a40 0%, #0d0d28 45%, #060614 100%);
                 border:none;
                 box-shadow:
-                    0 0 0 1px rgba(100,140,255,0.45),
-                    0 0 0 3px rgba(60,90,255,0.15),
-                    0 0 0 12px rgba(40,60,200,0.06),
-                    10px 20px 60px rgba(0,0,0,0.98),
-                    -4px -8px 30px rgba(0,0,0,0.60),
-                    0 30px 90px rgba(0,10,150,0.30),
-                    0 -10px 40px rgba(100,150,255,0.28) inset,
-                    0 15px 60px rgba(0,0,0,0.90) inset,
-                    0 0 80px rgba(60,0,200,0.12) inset;
-                transition:transform 0.12s cubic-bezier(0.34,1.5,0.64,1),box-shadow 0.12s;
+                    /* top highlight ring */
+                    0 0 0 2px rgba(70,120,255,0.55),
+                    /* outer 3D shadow — bottom-right heavy */
+                    6px 12px 40px rgba(0,0,0,0.90),
+                    -2px -4px 20px rgba(0,0,0,0.60),
+                    /* colored ambient bounce */
+                    0 20px 80px rgba(0,30,180,0.30),
+                    /* inner top light */
+                    0 -6px 30px rgba(80,140,255,0.25) inset,
+                    /* inner bottom shadow */
+                    0 10px 40px rgba(0,0,0,0.80) inset;
+                transition:transform 0.10s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.10s;
                 display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
                 overflow:hidden;
              ">
 
-            <!-- specular highlight top-left -->
-            <div style="position:absolute;top:20px;left:26px;width:70px;height:42px;
-                background:radial-gradient(ellipse,rgba(255,255,255,0.26) 0%,transparent 62%);
-                border-radius:50%;transform:rotate(-28deg);pointer-events:none;"></div>
+            <!-- specular highlight blob (top-left) -->
+            <div style="position:absolute;top:22px;left:30px;width:70px;height:40px;background:radial-gradient(ellipse,rgba(255,255,255,0.22) 0%,transparent 70%);border-radius:50%;pointer-events:none;transform:rotate(-20deg);"></div>
 
-            <!-- secondary specular smaller -->
-            <div style="position:absolute;top:48px;left:52px;width:40px;height:22px;
-                background:radial-gradient(ellipse,rgba(255,255,255,0.16) 0%,transparent 70%);
-                border-radius:50%;transform:rotate(-20deg);pointer-events:none;"></div>
+            <!-- bottom rim glow -->
+            <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:120px;height:20px;background:radial-gradient(ellipse,rgba(60,100,255,0.35) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
 
-            <!-- bottom blue rim light -->
-            <div style="position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
-                width:120px;height:28px;
-                background:radial-gradient(ellipse,rgba(80,120,255,0.35) 0%,transparent 68%);
-                pointer-events:none;"></div>
-
-            <!-- plasma core -->
-            <div id="plasma-core" style="position:absolute;inset:30px;border-radius:50%;
-                background:radial-gradient(ellipse,rgba(120,60,255,0.20) 0%,rgba(60,20,180,0.12) 50%,transparent 70%);
-                animation:plasmaBreath 4s ease-in-out infinite;pointer-events:none;"></div>
-
-            <!-- ── HOLOGRAPHIC COIN ── -->
-            <div id="coin-el" style="
-                position:relative;z-index:2;
-                width:76px;height:76px;border-radius:50%;flex-shrink:0;
+            <!-- COIN — 3D golden disc -->
+            <div style="
+                width:80px;height:80px;border-radius:50%;
                 background:
-                    radial-gradient(ellipse 50% 36% at 33% 24%, rgba(255,255,210,0.80) 0%, transparent 45%),
-                    radial-gradient(ellipse 100% 100% at 50% 50%, #FFE844 0%, #FFB800 35%, #E07000 65%, #8B3E00 90%, #3D1500 100%);
+                    radial-gradient(ellipse 55% 40% at 38% 28%, rgba(255,255,220,0.60) 0%, transparent 55%),
+                    radial-gradient(ellipse 80% 80% at 50% 50%, #FFD700 0%, #E6A800 50%, #B87800 100%);
+                border:none;
                 box-shadow:
-                    0 0 0 1.5px rgba(255,230,100,0.50),
-                    0 0 0 3px rgba(255,180,0,0.18),
-                    0 0 0 8px rgba(255,140,0,0.06),
-                    5px 10px 30px rgba(0,0,0,0.80),
-                    -2px -4px 12px rgba(0,0,0,0.40),
-                    0 -6px 28px rgba(255,240,80,0.75) inset,
-                    0 10px 36px rgba(100,40,0,0.80) inset;
+                    0 0 0 2px rgba(255,255,255,0.18),
+                    3px 6px 20px rgba(0,0,0,0.70),
+                    0 -4px 18px rgba(255,230,80,0.50) inset,
+                    0 6px 24px rgba(100,60,0,0.60) inset;
+                display:flex;align-items:center;justify-content:center;
+                position:relative;
                 overflow:hidden;
-                animation:coinPulse 3.5s ease-in-out infinite;
             ">
-                <!-- coin top shine -->
-                <div style="position:absolute;top:11px;left:13px;width:36px;height:20px;
-                    background:radial-gradient(ellipse,rgba(255,255,255,0.72) 0%,transparent 65%);
-                    border-radius:50%;transform:rotate(-25deg);"></div>
-                <!-- coin micro rim -->
-                <div style="position:absolute;inset:4px;border-radius:50%;border:1px solid rgba(255,200,50,0.25);"></div>
-                <!-- PXC glyph -->
-                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-                    <span style="font-size:1.3rem;font-weight:900;
-                        color:rgba(60,25,0,0.78);
-                        text-shadow:0 1px 2px rgba(255,200,60,0.40);
-                        letter-spacing:-0.05em;position:relative;z-index:1;">P</span>
-                </div>
+                <!-- coin shine -->
+                <div style="position:absolute;top:8px;left:10px;width:28px;height:16px;background:radial-gradient(ellipse,rgba(255,255,255,0.50) 0%,transparent 70%);border-radius:50%;transform:rotate(-20deg);"></div>
+                <!-- PXC letter -->
+                <span style="font-size:1.1rem;font-weight:900;color:rgba(80,40,0,0.80);letter-spacing:-0.02em;position:relative;z-index:1;">P</span>
             </div>
 
-            <!-- tap label -->
-            <div style="font-size:0.52rem;font-weight:800;letter-spacing:0.20em;
-                color:rgba(180,210,255,0.35);text-transform:uppercase;
-                position:relative;z-index:2;">TOCA PARA GANAR</div>
-
-            <!-- holographic scanlines overlay -->
-            <div style="position:absolute;inset:0;border-radius:50%;
-                background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(100,150,255,0.015) 3px,rgba(100,150,255,0.015) 4px);
-                pointer-events:none;"></div>
+            <!-- label -->
+            <div style="font-size:0.65rem;font-weight:800;letter-spacing:0.14em;color:rgba(255,255,255,0.40);text-transform:uppercase;position:relative;z-index:1;">TOCA PARA GANAR</div>
         </div>
 
-        <!-- ground shadow ellipse -->
-        <div style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);
-            width:150px;height:12px;
-            background:radial-gradient(ellipse,rgba(0,0,80,0.60) 0%,transparent 70%);
-            pointer-events:none;filter:blur(2px);"></div>
+        <!-- shadow ellipse under sphere -->
+        <div style="position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);width:160px;height:18px;background:radial-gradient(ellipse,rgba(0,0,0,0.65) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
     </div>
 
-    <!-- tap rate pill — minimal -->
-    <div style="margin-top:10px;display:inline-flex;align-items:center;gap:7px;
-        padding:5px 16px;
-        background:rgba(60,100,255,0.06);
-        border:1px solid rgba(100,150,255,0.14);
-        border-radius:30px;backdrop-filter:blur(12px);">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="#FFD700" style="filter:drop-shadow(0 0 5px rgba(255,215,0,0.85));flex-shrink:0;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        <span id="tap-reward-label" style="font-size:0.65rem;font-weight:800;color:rgba(180,210,255,0.55);letter-spacing:0.06em;">0.0010 PXC / tap</span>
+    <!-- +PXC badge below button -->
+    <div style="margin-top:55px;display:flex;align-items:center;gap:7px;padding:7px 18px;background:linear-gradient(160deg,#0c0c22,#090918);border-top:1px solid rgba(255,215,0,0.35);border-bottom:2px solid rgba(0,0,0,0.85);border-left:1px solid rgba(255,215,0,0.15);border-right:1px solid rgba(0,0,0,0.60);border-radius:24px;box-shadow:0 1px 0 rgba(255,215,0,0.08) inset,0 -2px 0 rgba(0,0,0,0.80) inset,0 4px 16px rgba(0,0,0,0.50);">
+        <i data-lucide="zap" style="width:13px;height:13px;color:#FFD700;filter:drop-shadow(0 0 4px rgba(255,215,0,0.8));"></i>
+        <span style="font-size:0.72rem;font-weight:800;color:rgba(255,255,255,0.65);">+<span id="tap-reward-label">0.001</span> PXC por tap</span>
+        <span style="font-size:0.62rem;color:rgba(255,255,255,0.28);margin-left:2px;">· {{ user.referral_count or 0 }} refs</span>
     </div>
 </div>
-
-<!-- ═══════════════════════════════════════════════════
-     ENERGY BAR — sci-fi segmented
-═══════════════════════════════════════════════════ -->
-<div style="position:relative;z-index:10;padding:8px 16px 8px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
-        <div style="display:flex;align-items:center;gap:5px;">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="#FFD700" style="filter:drop-shadow(0 0 4px rgba(255,215,0,0.80));"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            <span style="font-size:0.58rem;font-weight:800;letter-spacing:0.14em;color:rgba(255,220,80,0.55);text-transform:uppercase;">Energía</span>
-        </div>
-        <span id="energy-label" style="font-size:0.60rem;font-weight:800;color:rgba(255,255,255,0.35);font-variant-numeric:tabular-nums;letter-spacing:0.04em;">500 / 500</span>
-    </div>
-    <!-- segmented bar -->
-    <div id="energy-segments" style="display:flex;gap:2px;height:6px;">
-        <!-- JS fills these -->
-    </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════
-     BOTTOM PANEL — claim + 3 live stats
-═══════════════════════════════════════════════════ -->
-<div style="position:relative;z-index:10;padding:0 14px 22px;display:flex;flex-direction:column;gap:8px;">
-
-    <!-- CLAIM CARD with holographic border -->
-    <div style="position:relative;border-radius:18px;padding:1.5px;
-        background:linear-gradient(135deg,rgba(80,130,255,0.55) 0%,rgba(40,60,180,0.20) 40%,rgba(80,0,255,0.35) 70%,rgba(0,150,255,0.45) 100%);
-        box-shadow:0 0 30px rgba(60,100,255,0.18),0 8px 32px rgba(0,0,0,0.60);">
-        <div style="background:linear-gradient(160deg,#0d0d24,#090918,#050513);border-radius:17px;padding:13px 15px;position:relative;overflow:hidden;">
-            <!-- top shimmer -->
-            <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(120,180,255,0.60),transparent);"></div>
-
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-                <div>
-                    <div style="font-size:0.52rem;font-weight:700;letter-spacing:0.16em;color:rgba(150,200,255,0.38);text-transform:uppercase;margin-bottom:3px;">Pendiente de reclamar</div>
-                    <div style="display:flex;align-items:baseline;gap:6px;">
-                        <span id="unclaimed-display" style="font-size:1.80rem;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;
-                            filter:drop-shadow(0 0 8px rgba(100,160,255,0.40));">{{ "%.4f"|format(unclaimed or 0) }}</span>
-                        <span style="font-size:0.65rem;font-weight:700;color:rgba(120,170,255,0.35);">PXC</span>
-                    </div>
-                </div>
-                <div style="display:flex;align-items:center;gap:5px;padding:6px 11px;
-                    background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.22);border-radius:20px;
-                    box-shadow:0 0 12px rgba(0,255,136,0.08);">
-                    <div style="width:6px;height:6px;border-radius:50%;background:#00FF88;
-                        box-shadow:0 0 10px rgba(0,255,136,1),0 0 20px rgba(0,255,136,0.50);
-                        animation:mining-pulse 1.5s ease-in-out infinite;"></div>
-                    <span style="font-size:0.65rem;font-weight:900;color:#00FF88;letter-spacing:0.04em;">{{ mining_rate or user.mining_power or 0.1 }}/h</span>
-                </div>
-            </div>
-
-            <button onclick="claimReward(event)"
-                style="width:100%;padding:13px;border:none;border-radius:12px;
-                background:linear-gradient(180deg,#2575ff 0%,#1155ee 50%,#0038c8 100%);
-                border-top:1px solid rgba(255,255,255,0.24);border-bottom:3px solid rgba(0,0,0,0.65);
-                font-size:0.85rem;font-weight:800;letter-spacing:0.08em;color:#fff;
-                box-shadow:0 2px 0 rgba(255,255,255,0.16) inset,0 -3px 0 rgba(0,0,0,0.55) inset,
-                           0 4px 20px rgba(30,80,255,0.40),0 0 40px rgba(0,60,255,0.15);
-                display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;
-                transition:transform 0.10s,box-shadow 0.10s;"
-                ontouchstart="this.style.transform='translateY(3px) scale(0.98)'"
-                ontouchend="this.style.transform=''">
-                <i data-lucide="arrow-down-to-line" style="width:17px;height:17px;"></i>
-                RECLAMAR PXC
-            </button>
-        </div>
-    </div>
-
-    <!-- STATS ROW — 3 holographic tiles -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
-
-        <!-- Taps sesión -->
-        <div style="position:relative;border-radius:14px;padding:1px;
-            background:linear-gradient(135deg,rgba(60,120,255,0.35),rgba(20,40,150,0.15),rgba(60,120,255,0.20));
-            box-shadow:0 4px 16px rgba(0,0,0,0.40);">
-            <div style="background:linear-gradient(160deg,#0c0c22,#080816);border-radius:13px;padding:11px 8px;text-align:center;position:relative;overflow:hidden;">
-                <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(80,140,255,0.50),transparent);"></div>
-                <div style="font-size:0.48rem;font-weight:700;letter-spacing:0.14em;color:rgba(120,170,255,0.45);text-transform:uppercase;margin-bottom:5px;">Taps</div>
-                <div id="stat-taps" style="font-size:1.35rem;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;filter:drop-shadow(0 0 6px rgba(100,160,255,0.35));">0</div>
-                <div style="font-size:0.50rem;font-weight:800;color:#00FF88;margin-top:4px;letter-spacing:0.06em;" id="stat-taps-pxc">+0.0000 PXC</div>
-            </div>
-        </div>
-
-        <!-- Multiplicador -->
-        <div style="position:relative;border-radius:14px;padding:1px;
-            background:linear-gradient(135deg,rgba(255,180,0,0.40),rgba(150,80,0,0.15),rgba(255,150,0,0.25));
-            box-shadow:0 4px 16px rgba(0,0,0,0.40);">
-            <div style="background:linear-gradient(160deg,#100c00,#090700);border-radius:13px;padding:11px 8px;text-align:center;position:relative;overflow:hidden;">
-                <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,180,0,0.55),transparent);"></div>
-                <div style="font-size:0.48rem;font-weight:700;letter-spacing:0.14em;color:rgba(255,180,0,0.50);text-transform:uppercase;margin-bottom:5px;">Multi</div>
-                <div style="font-size:1.35rem;font-weight:900;line-height:1;
-                    background:linear-gradient(180deg,#FFE844,#FF9900);
-                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-                    filter:drop-shadow(0 0 8px rgba(255,180,0,0.45));">x{{ user.mining_level or 1 }}</div>
-                <div style="font-size:0.50rem;font-weight:800;color:rgba(255,180,0,0.55);margin-top:4px;letter-spacing:0.06em;">Nivel {{ user.mining_level or 1 }}</div>
-            </div>
-        </div>
-
-        <!-- Progreso nivel -->
-        <div style="position:relative;border-radius:14px;padding:1px;
-            background:linear-gradient(135deg,rgba(160,100,255,0.38),rgba(80,20,180,0.15),rgba(140,80,255,0.22));
-            box-shadow:0 4px 16px rgba(0,0,0,0.40);">
-            <div style="background:linear-gradient(160deg,#0e0820,#070514);border-radius:13px;padding:11px 8px;text-align:center;position:relative;overflow:hidden;">
-                <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(160,100,255,0.55),transparent);"></div>
-                <div style="font-size:0.48rem;font-weight:700;letter-spacing:0.14em;color:rgba(160,100,255,0.50);text-transform:uppercase;margin-bottom:5px;">Progreso</div>
-                <div id="stat-next-pct" style="font-size:1.35rem;font-weight:900;color:#c084fc;line-height:1;filter:drop-shadow(0 0 6px rgba(160,100,255,0.40));">—</div>
-                <div style="margin-top:6px;height:3px;background:rgba(255,255,255,0.07);border-radius:6px;overflow:hidden;">
-                    <div id="stat-next-bar" style="height:100%;width:0%;
-                        background:linear-gradient(90deg,#6d28d9,#c084fc);
-                        border-radius:6px;transition:width 1.6s cubic-bezier(0.34,1.2,0.64,1);
-                        box-shadow:0 0 6px rgba(160,100,255,0.65);"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- ═══ KEYFRAMES ═══ -->
-<style>
-@keyframes spinBorder1 { to { transform:rotate(360deg); } }
-@keyframes spinBorder2 { to { transform:rotate(360deg); } }
-@keyframes spinBorder3 { to { transform:rotate(360deg); } }
-@keyframes floatUp {
-    0%   { opacity:1; transform:translateX(-50%) translateY(0) scale(1.08); }
-    100% { opacity:0; transform:translateX(-50%) translateY(-80px) scale(0.78); }
-}
-@keyframes shockwave {
-    0%   { transform:translate(-50%,-50%) scale(0); opacity:0.75; }
-    100% { transform:translate(-50%,-50%) scale(1); opacity:0; }
-}
-@keyframes coinPulse {
-    0%,100% { transform:scale(1) rotate(0deg); }
-    25%      { transform:scale(1.04) rotate(0.8deg); }
-    75%      { transform:scale(0.97) rotate(-0.8deg); }
-}
-@keyframes plasmaBreath {
-    0%,100% { opacity:0.6; transform:scale(1); }
-    50%      { opacity:1.0; transform:scale(1.12); }
-}
-@keyframes statPop {
-    0%  { transform:scale(1); }
-    35% { transform:scale(1.22); }
-    100%{ transform:scale(1); }
-}
-@keyframes tapFlash {
-    0%   { opacity:0.7; }
-    100% { opacity:0; }
-}
-</style>
-
 
 <!-- ══════════════════════════════════════════
      SECTION 3 — ENERGY BAR
 ══════════════════════════════════════════ -->
-<style>
-#energy-bar {
-    position: relative; overflow: hidden;
-}
-#energy-bar::before {
-    content: '';
-    position: absolute; top: 0; left: -80%; width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
-    animation: eSweep 2.5s ease-in-out infinite;
-    border-radius: inherit;
-}
-#energy-bar::after {
-    content: '';
-    position: absolute; top: 0; right: -3px; width: 8px; height: 100%;
-    background: radial-gradient(ellipse at center, rgba(255,255,255,0.95) 0%, rgba(255,220,50,0.5) 50%, transparent 80%);
-    animation: eTip 1.5s ease-in-out infinite;
-    filter: blur(1.5px);
-}
-@keyframes eSweep { 0%{left:-80%} 60%,100%{left:120%} }
-@keyframes eTip { 0%,100%{opacity:0.5;transform:scaleY(0.8)} 50%{opacity:1;transform:scaleY(1.2)} }
-</style>
-
 <div style="position:relative;z-index:1;padding:4px 20px 14px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
         <div style="display:flex;align-items:center;gap:5px;">
-            <i data-lucide="zap" style="width:12px;height:12px;color:#FFD700;filter:drop-shadow(0 0 4px rgba(255,215,0,0.9));"></i>
-            <span style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.50);letter-spacing:0.08em;text-transform:uppercase;">Energía</span>
+            <i data-lucide="zap" style="width:12px;height:12px;color:#FFD700;"></i>
+            <span style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;">ENERGÍA</span>
         </div>
-        <span id="energy-label" style="font-size:0.68rem;font-weight:800;color:rgba(255,215,0,0.75);font-variant-numeric:tabular-nums;text-shadow:0 0 8px rgba(255,215,0,0.4);">500 / 500</span>
+        <span id="energy-label" style="font-size:0.68rem;font-weight:800;color:rgba(255,255,255,0.50);font-variant-numeric:tabular-nums;">500 / 500</span>
     </div>
     <!-- bar track -->
-    <div style="height:7px;background:rgba(0,0,0,0.45);border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.07);box-shadow:inset 0 2px 4px rgba(0,0,0,0.7);">
-        <div id="energy-bar" style="height:100%;width:100%;background:linear-gradient(90deg,#FF6B00,#FFB300,#FFD700,#FFF176);border-radius:10px;transition:width 0.45s cubic-bezier(0.34,1.2,0.64,1),background 0.5s ease;box-shadow:0 0 10px rgba(255,200,0,0.7),0 0 20px rgba(255,160,0,0.3),inset 0 1px 0 rgba(255,255,255,0.4);"></div>
+    <div style="height:7px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,0.60) inset;">
+        <div id="energy-bar" style="height:100%;width:100%;background:linear-gradient(90deg,#FFD700,#FFA500);border-radius:10px;transition:width 0.35s ease,background 0.5s ease;box-shadow:0 0 8px rgba(255,180,0,0.55);"></div>
     </div>
 </div>
 
@@ -1152,125 +919,80 @@ function updateBalanceUI() {
 }
 
 // ── Float label ──
-function spawnFloat(val, x, y){
-    const c = document.getElementById('tap-fx-container');
+function spawnFloat(value, multiTap) {
+    const container = document.getElementById('tap-fx-container');
     const el = document.createElement('div');
-    const ox = (Math.random()-0.5)*90;
-    el.textContent = '+' + val.toFixed(4);
-    el.style.cssText=`
-        position:absolute;left:calc(50% + ${ox}px);bottom:10px;
-        font-size:1.10rem;font-weight:900;
-        background:linear-gradient(180deg,#fff7aa,#FFD700);
-        -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-        filter:drop-shadow(0 0 12px rgba(255,215,0,0.95));
-        pointer-events:none;animation:floatUp 1.0s ease-out forwards;
-        white-space:nowrap;transform:translateX(-50%);letter-spacing:-0.01em;
-    `;
-    c.appendChild(el);
-    setTimeout(()=>el.remove(),1000);
-}
-
-function spawnShockwave(){
-    const c = document.getElementById('shockwave-container');
-    const w = document.createElement('div');
-    const size = 260 + Math.random()*40;
-    w.style.cssText=`
+    const offset = (Math.random() - 0.5) * 80;
+    el.textContent = '+' + value.toFixed(4) + ' PXC';
+    el.style.cssText = `
         position:absolute;
-        width:${size}px;height:${size}px;
-        border-radius:50%;
-        border:2px solid rgba(100,160,255,0.55);
-        box-shadow:0 0 20px rgba(80,140,255,0.30),inset 0 0 20px rgba(80,140,255,0.15);
-        transform:translate(-50%,-50%) scale(0);
-        animation:shockwave 0.55s cubic-bezier(0.20,0.80,0.60,1) forwards;
+        left:calc(50% + ${offset}px);
+        bottom:0;
+        font-size:${multiTap ? '1.15' : '0.95'}rem;
+        font-weight:900;
+        color:#FFD700;
+        text-shadow:0 0 14px rgba(255,215,0,0.90), 0 2px 4px rgba(0,0,0,0.70);
         pointer-events:none;
+        animation:floatUp 0.85s ease-out forwards;
+        white-space:nowrap;
+        transform:translateX(-50%);
     `;
-    c.appendChild(w);
-    setTimeout(()=>w.remove(),600);
+    container.appendChild(el);
+    setTimeout(() => el.remove(), 850);
 }
 
-function flashAmbient(){
-    const g = document.getElementById('plasma-bg');
-    g.style.background='radial-gradient(ellipse,rgba(100,60,255,0.18) 0%,rgba(60,0,200,0.08) 40%,transparent 70%)';
-    g.style.transform='translate(-50%,-60%) scale(1.15)';
-    setTimeout(()=>{
-        g.style.background='radial-gradient(ellipse,rgba(80,0,255,0) 0%,transparent 70%)';
-        g.style.transform='translate(-50%,-60%) scale(1)';
-    },400);
+// ── Ambient glow flash ──
+function flashAmbient() {
+    const glow = document.getElementById('ambient-glow');
+    glow.style.background = 'radial-gradient(ellipse at center,rgba(255,200,0,0.12) 0%,transparent 70%)';
+    setTimeout(() => glow.style.background = 'radial-gradient(ellipse at center,rgba(255,200,0,0.0) 0%,transparent 70%)', 300);
 }
 
-function handleTap(e){
+// ── Main tap handler ──
+function handleTap(e) {
     e.preventDefault();
-    if(energy < 1){
-        const btn=document.getElementById('tap-btn');
-        btn.style.transform='translateX(-8px) scale(0.96)';
-        setTimeout(()=>{ btn.style.transform='translateX(8px) scale(0.96)'; },75);
-        setTimeout(()=>{ btn.style.transform=''; },155);
+    if (energy < 1) {
+        // empty energy shake
+        const btn = document.getElementById('tap-btn');
+        btn.style.transform = 'translateX(-6px)';
+        setTimeout(() => { btn.style.transform = 'translateX(6px)'; }, 80);
+        setTimeout(() => { btn.style.transform = ''; }, 160);
         return;
     }
-    const taps   = Math.min(e.touches?e.touches.length:1, Math.floor(energy));
-    const gained = TAP_REWARD * taps;
-    energy         = Math.max(0,energy-taps);
+
+    const touches = e.touches ? e.touches : [e];
+    const taps    = Math.min(touches.length, Math.floor(energy));
+    const gained  = TAP_REWARD * taps;
+
+    energy         = Math.max(0, energy - taps);
     currentBalance += gained;
-    sessionTaps    += taps;
-    sessionPxc     += gained;
 
     updateBalanceUI();
     updateEnergyUI();
-    spawnFloat(gained);
-    spawnShockwave();
+    spawnFloat(gained, taps > 1);
     flashAmbient();
 
-    // coin tilt
-    const coin = document.getElementById('coin-el');
-    const tx = (Math.random()-0.5)*10, ty = (Math.random()-0.5)*6;
-    coin.style.transform=`translate(${tx}px,${ty}px) scale(0.93) rotate(${(Math.random()-0.5)*6}deg)`;
-    setTimeout(()=>{ coin.style.transform=''; },120);
-
-    // sphere press
-    if(!isAnimating){
-        isAnimating=true;
-        const btn=document.getElementById('tap-btn');
-        btn.style.transform='scale(0.88) translateY(8px)';
-        btn.style.boxShadow='0 0 0 1px rgba(80,120,255,0.28),4px 8px 26px rgba(0,0,0,0.99),0 18px 55px rgba(0,8,120,0.22),0 -4px 18px rgba(90,140,255,0.14) inset,0 10px 42px rgba(0,0,0,0.96) inset,0 0 50px rgba(50,0,180,0.10) inset';
-        setTimeout(()=>{ btn.style.transform=''; btn.style.boxShadow=''; isAnimating=false; },140);
+    // Sphere press
+    if (!isAnimating) {
+        isAnimating = true;
+        const btn = document.getElementById('tap-btn');
+        btn.style.transform = 'scale(0.91) translateY(5px)';
+        btn.style.boxShadow = `
+            0 0 0 2px rgba(70,120,255,0.35),
+            2px 5px 18px rgba(0,0,0,0.95),
+            0 10px 50px rgba(0,20,160,0.20),
+            0 -3px 15px rgba(80,140,255,0.15) inset,
+            0 6px 30px rgba(0,0,0,0.90) inset
+        `;
+        setTimeout(() => {
+            btn.style.transform = '';
+            btn.style.boxShadow = '';
+            isAnimating = false;
+        }, 130);
     }
 
-    // stats
-    const tEl=document.getElementById('stat-taps');
-    tEl.textContent=sessionTaps;
-    tEl.style.animation='none'; tEl.offsetHeight; tEl.style.animation='statPop 0.22s ease-out';
-    document.getElementById('stat-taps-pxc').textContent='+'+sessionPxc.toFixed(4)+' PXC';
-
-    if(navigator.vibrate) navigator.vibrate(9);
+    if (navigator.vibrate) navigator.vibrate(10);
 }
-
-// ── STAR FIELD ──
-(function(){
-    const c = document.getElementById('star-canvas');
-    if (!c) return;
-    const ctx = c.getContext('2d');
-    function resize(){ c.width=window.innerWidth; c.height=window.innerHeight; }
-    resize(); window.addEventListener('resize',resize);
-    const stars = Array.from({length:120},()=>({
-        x:Math.random(),y:Math.random(),
-        r:Math.random()*1.2+0.2,
-        a:Math.random(),da:(Math.random()-0.5)*0.004
-    }));
-    function draw(){
-        ctx.clearRect(0,0,c.width,c.height);
-        stars.forEach(s=>{
-            s.a=Math.max(0.05,Math.min(1,s.a+s.da));
-            if(s.a<=0.05||s.a>=1) s.da*=-1;
-            ctx.beginPath();
-            ctx.arc(s.x*c.width,s.y*c.height,s.r,0,Math.PI*2);
-            ctx.fillStyle=`rgba(180,210,255,${s.a*0.7})`;
-            ctx.fill();
-        });
-        requestAnimationFrame(draw);
-    }
-    draw();
-})();
-
 
 // ── Energy regen ──
 setInterval(() => {
