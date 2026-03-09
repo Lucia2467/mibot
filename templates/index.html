@@ -3,771 +3,1058 @@
 {% block title %}SALLY-E | Dashboard{% endblock %}
 
 {% block extra_head %}
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- 3D Premium styles are inline below -->
 {% endblock %}
 
 {% block content %}
-
-<!-- ═══════════════════════════════════════════════
-     SPLASH SCREEN ULTRA PREMIUM
-═══════════════════════════════════════════════ -->
+<!-- Splash Screen Premium -->
 <div id="splash-screen" class="splash-screen">
-    <div class="splash-inner">
-        <div class="splash-logo">
-            <div class="splash-coin">
-                <span>P</span>
-                <div class="splash-coin-shine"></div>
-            </div>
-        </div>
-        <div class="splash-rings">
-            <div class="splash-ring r1"></div>
-            <div class="splash-ring r2"></div>
-            <div class="splash-ring r3"></div>
-        </div>
-        <div class="splash-brand">PXC</div>
-        <div class="splash-dots">
-            <span></span><span></span><span></span>
+    <div class="splash-content">
+        <div class="premium-loader">
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <div class="loader-core"></div>
         </div>
     </div>
 </div>
 
 <style>
-/* ═══════════════════════════════════════════════
-   TOKENS & BASE
-═══════════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
-
-:root {
-    --gold:        #F5C842;
-    --gold-light:  #FFE17A;
-    --gold-dark:   #C8971A;
-    --blue:        #2563EB;
-    --blue-light:  #60A5FA;
-    --cyan:        #06B6D4;
-    --green:       #10B981;
-    --green-glow:  rgba(16,185,129,0.6);
-    --surface-0:   #020209;
-    --surface-1:   #07071A;
-    --surface-2:   #0D0D24;
-    --surface-3:   #13132E;
-    --glass:       rgba(255,255,255,0.04);
-    --glass-border:rgba(255,255,255,0.09);
-    --text-1:      #FFFFFF;
-    --text-2:      rgba(255,255,255,0.65);
-    --text-3:      rgba(255,255,255,0.35);
-    --font-display:'Syne', sans-serif;
-    --font-mono:   'Space Mono', monospace;
-    --radius-xl:   24px;
-    --radius-lg:   18px;
-    --radius-md:   12px;
-}
-
+/* Zoom global -17% */
 body {
     zoom: 0.83;
     padding-top: 22px;
-    font-family: var(--font-display);
-    background: var(--surface-0);
 }
 
+/* Excluir barras de navegación del zoom */
 .bottom-nav,
 .app-top-header {
     zoom: 1.2048;
 }
 
-/* ═══════════════════════════════════════════════
-   SPLASH
-═══════════════════════════════════════════════ */
-.splash-screen {
-    position: fixed; inset: 0; z-index: 9999;
-    background: radial-gradient(ellipse at 50% 40%, #0a0a2a 0%, #020209 70%);
-    display: flex; align-items: center; justify-content: center;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-.splash-screen.fade-out { opacity: 0; visibility: hidden; }
-.splash-inner {
-    position: relative; display: flex; flex-direction: column;
-    align-items: center; gap: 20px;
-}
-.splash-logo { position: relative; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; }
-.splash-coin {
-    width: 72px; height: 72px; border-radius: 50%;
-    background:
-        radial-gradient(ellipse 55% 40% at 38% 28%, rgba(255,255,200,0.55) 0%, transparent 55%),
-        radial-gradient(ellipse at 50% 50%, #F5C842 0%, #C8971A 60%, #8B6010 100%);
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 0 2px rgba(255,255,255,0.15), 0 0 40px rgba(245,200,66,0.5), 0 8px 32px rgba(0,0,0,0.8);
-    position: relative; overflow: hidden;
-    animation: splashCoinPulse 2s ease-in-out infinite;
-}
-.splash-coin span {
-    font-family: var(--font-display); font-size: 1.8rem; font-weight: 800;
-    color: rgba(80,40,0,0.85); position: relative; z-index: 1;
-}
-.splash-coin-shine {
-    position: absolute; top: 8px; left: 10px; width: 28px; height: 16px;
-    background: radial-gradient(ellipse, rgba(255,255,255,0.5) 0%, transparent 70%);
-    border-radius: 50%; transform: rotate(-20deg);
-}
-.splash-rings { position: absolute; inset: -30px; pointer-events: none; }
-.splash-ring { position: absolute; border-radius: 50%; border: 1px solid; animation: splashRingExpand 2s ease-out infinite; }
-.r1 { inset: 0; border-color: rgba(245,200,66,0.3); animation-delay: 0s; }
-.r2 { inset: -15px; border-color: rgba(245,200,66,0.15); animation-delay: 0.4s; }
-.r3 { inset: -30px; border-color: rgba(245,200,66,0.07); animation-delay: 0.8s; }
-.splash-brand {
-    font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700;
-    letter-spacing: 0.4em; color: rgba(245,200,66,0.7); text-transform: uppercase;
-}
-.splash-dots { display: flex; gap: 8px; }
-.splash-dots span {
-    width: 6px; height: 6px; border-radius: 50%; background: rgba(245,200,66,0.4);
-    animation: splashDot 1.2s ease-in-out infinite;
-}
-.splash-dots span:nth-child(2) { animation-delay: 0.2s; }
-.splash-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes splashCoinPulse {
-    0%,100%{ box-shadow: 0 0 0 2px rgba(255,255,255,0.15), 0 0 40px rgba(245,200,66,0.5), 0 8px 32px rgba(0,0,0,0.8); }
-    50%{ box-shadow: 0 0 0 2px rgba(255,255,255,0.25), 0 0 70px rgba(245,200,66,0.8), 0 8px 40px rgba(0,0,0,0.9); }
-}
-@keyframes splashRingExpand { 0%{transform:scale(0.8);opacity:0.8} 100%{transform:scale(1.5);opacity:0} }
-@keyframes splashDot { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
-
-/* ═══════════════════════════════════════════════
-   AMBIENT CANVAS
-═══════════════════════════════════════════════ */
-.ambient-layer {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-}
-.ambient-blob {
-    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.15;
-}
-.amb-1 {
-    width: 500px; height: 500px; top: -150px; left: 50%; transform: translateX(-50%);
-    background: radial-gradient(#1a3aff, transparent);
-    animation: ambFloat1 8s ease-in-out infinite;
-}
-.amb-2 {
-    width: 300px; height: 300px; bottom: 30%; right: -100px;
-    background: radial-gradient(#0ea5e9, transparent);
-    animation: ambFloat2 10s ease-in-out infinite;
-}
-.amb-3 {
-    width: 250px; height: 250px; bottom: 10%; left: -80px;
-    background: radial-gradient(#7c3aed, transparent); opacity: 0.10;
-    animation: ambFloat3 12s ease-in-out infinite;
-}
-@keyframes ambFloat1 { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-30px)} }
-@keyframes ambFloat2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-40px)} }
-@keyframes ambFloat3 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(30px)} }
-
-/* ═══════════════════════════════════════════════
-   MAIN CONTAINER
-═══════════════════════════════════════════════ */
-.idx-root {
-    position: relative; z-index: 1;
-    padding: 0 0 20px;
-    min-height: calc(100vh - 120px);
-    display: flex; flex-direction: column;
-}
-
-/* ═══════════════════════════════════════════════
-   SECTION 1 — HEADER BALANCE
-═══════════════════════════════════════════════ */
-.idx-header {
-    padding: 36px 18px 0;
-    text-align: center;
+/* Premium Loader Animation */
+.premium-loader {
     position: relative;
-}
-.idx-header-row {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
-}
-
-.lvl-badge {
-    display: flex; align-items: center; gap: 5px;
-    padding: 6px 13px;
-    background: linear-gradient(145deg, rgba(124,58,237,0.25), rgba(76,29,149,0.15));
-    border: 1px solid rgba(167,139,250,0.35);
-    border-radius: 30px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 0 20px rgba(124,58,237,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
-}
-.lvl-badge-icon { width: 12px; height: 12px; color: #a78bfa; }
-.lvl-badge-text {
-    font-family: var(--font-display); font-size: 0.65rem; font-weight: 800;
-    color: #c4b5fd; letter-spacing: 0.08em;
+    width: 80px;
+    height: 80px;
 }
 
-.rate-badge {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 13px;
-    background: linear-gradient(145deg, rgba(16,185,129,0.20), rgba(5,150,105,0.10));
-    border: 1px solid rgba(16,185,129,0.35);
-    border-radius: 30px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 0 20px rgba(16,185,129,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
-}
-.rate-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #10B981;
-    box-shadow: 0 0 10px rgba(16,185,129,1);
-    animation: ratePulse 1.6s ease-in-out infinite;
-}
-.rate-text {
-    font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700;
-    color: #34d399; letter-spacing: 0.05em;
-}
-@keyframes ratePulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.7} }
-
-.balance-hero { position: relative; text-align: center; padding: 0 12px; }
-.balance-label {
-    font-family: var(--font-mono); font-size: 0.58rem; font-weight: 400;
-    color: var(--text-3); letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 4px;
-}
-.balance-amount {
-    font-family: var(--font-display); font-weight: 800; font-size: 3.2rem;
-    color: #fff; line-height: 1; letter-spacing: -0.04em;
-    text-shadow: 0 0 60px rgba(100,160,255,0.4), 0 4px 16px rgba(0,0,0,0.5);
-}
-.balance-amount.negative { color: #f87171 !important; }
-.balance-currency {
-    font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700;
-    color: var(--cyan); letter-spacing: 0.18em; margin-top: 2px;
-    text-shadow: 0 0 16px rgba(6,182,212,0.6);
-}
-.balance-refs {
-    display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 8px;
-}
-.balance-refs-icon { width: 11px; height: 11px; color: var(--text-3); }
-.balance-refs-text { font-size: 0.60rem; color: var(--text-3); font-weight: 500; }
-
-/* ═══════════════════════════════════════════════
-   SECTION 2 — TAP ARENA
-═══════════════════════════════════════════════ */
-.idx-arena {
-    position: relative; z-index: 1;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 60px 0 16px;
-    flex: 1;
-}
-#tap-fx-container {
-    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-    width: 280px; height: 80px; pointer-events: none; overflow: visible; z-index: 10;
+.loader-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid transparent;
 }
 
-.orbit-system {
-    position: relative; width: 260px; height: 260px;
-    display: flex; align-items: center; justify-content: center;
+.loader-ring:nth-child(1) {
+    border-top-color: #0066FF;
+    animation: spin-1 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 }
-.orbit-ring {
-    position: absolute; border-radius: 50%;
-    border: 1px solid rgba(60,130,255,0.14);
-}
-.orbit-ring.or1 { inset: -28px; animation: orbitSpin 14s linear infinite; }
-.orbit-ring.or2 { inset: -14px; border-color: rgba(245,200,66,0.10); animation: orbitSpin 9s linear infinite reverse; }
-.orbit-ring.or3 { inset: 8px; border-color: rgba(167,139,250,0.09); animation: orbitSpin 20s linear infinite; }
-@keyframes orbitSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
-.tap-sphere {
-    position: relative; width: 210px; height: 210px; border-radius: 50%;
-    cursor: pointer; user-select: none; -webkit-user-select: none;
-    background:
-        radial-gradient(ellipse 55% 40% at 38% 30%, rgba(255,255,255,0.16) 0%, transparent 60%),
-        radial-gradient(ellipse 80% 80% at 50% 45%, #1c1c44 0%, #0e0e2a 45%, #060616 100%);
+.loader-ring:nth-child(2) {
+    width: 70%;
+    height: 70%;
+    top: 15%;
+    left: 15%;
+    border-right-color: #00A3FF;
+    animation: spin-2 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
+}
+
+.loader-ring:nth-child(3) {
+    width: 40%;
+    height: 40%;
+    top: 30%;
+    left: 30%;
+    border-bottom-color: #00D4FF;
+    animation: spin-1 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.loader-core {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(0, 102, 255, 0.6), 0 0 40px rgba(0, 212, 255, 0.4);
+    animation: pulse-core 1.5s ease-in-out infinite;
+}
+
+@keyframes spin-1 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes spin-2 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse-core {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 0 20px rgba(0, 102, 255, 0.6), 0 0 40px rgba(0, 212, 255, 0.4);
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.2);
+        box-shadow: 0 0 30px rgba(0, 102, 255, 0.8), 0 0 60px rgba(0, 212, 255, 0.6);
+    }
+}
+
+.splash-screen {
+    position: fixed;
+    inset: 0;
+    background: #000000;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.splash-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* ── Card entrance animations ── */
+@keyframes idxIn {
+    from { opacity:0; transform:translateY(18px) scale(0.96); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.premium-balance     { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.05s both; }
+.premium-stats       { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.12s both; }
+.mining-card-premium { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.20s both; }
+.premium-card        { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.28s both; }
+</style>
+
+
+
+<style>
+/* ══════════════════════════════════════════════════════
+   INDEX — PREMIUM 3D FULL REDESIGN
+══════════════════════════════════════════════════════ */
+
+
+
+/* ── BOOST BUTTON ── */
+.boost-trigger-btn {
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding:15px 24px; width:100%; margin-top:12px;
+    background: linear-gradient(155deg, #060620 0%, #0a0a28 100%);
+    border-top: 1px solid rgba(0,163,255,0.35);
+    border-left: 1px solid rgba(0,120,255,0.20);
+    border-right: 1px solid rgba(0,0,0,0.4);
+    border-bottom: 3px solid rgba(0,0,0,0.7);
+    border-radius: 16px; color:#00A3FF;
+    font-size:.95rem; font-weight:700; cursor:pointer;
     box-shadow:
-        0 0 0 2px rgba(80,130,255,0.50),
-        8px 14px 48px rgba(0,0,0,0.95),
-        -3px -5px 24px rgba(0,0,0,0.65),
-        0 24px 90px rgba(0,30,200,0.28),
-        0 -8px 36px rgba(80,140,255,0.22) inset,
-        0 12px 50px rgba(0,0,0,0.85) inset;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
-    overflow: hidden;
-    transition: transform 0.10s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.10s;
+        0 2px 0 rgba(0,120,255,0.14) inset,
+        0 -3px 0 rgba(0,0,0,0.5) inset,
+        0 10px 30px rgba(0,102,255,0.25),
+        0 3px 8px rgba(0,0,0,0.5);
+    transition: transform 0.15s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.15s;
+    transform: translateZ(0);
 }
-.sphere-highlight {
-    position: absolute; top: 22px; left: 30px; width: 70px; height: 40px;
-    background: radial-gradient(ellipse, rgba(255,255,255,0.20) 0%, transparent 70%);
-    border-radius: 50%; pointer-events: none; transform: rotate(-20deg);
+.boost-trigger-btn:active {
+    transform: translateY(3px) scale(0.98);
+    box-shadow: 0 1px 0 rgba(0,120,255,0.1) inset, 0 -1px 0 rgba(0,0,0,0.4) inset, 0 4px 12px rgba(0,102,255,0.2);
 }
-.sphere-rim {
-    position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
-    width: 120px; height: 20px;
-    background: radial-gradient(ellipse, rgba(60,100,255,0.35) 0%, transparent 70%);
-    border-radius: 50%; pointer-events: none;
-}
-.tap-coin {
-    width: 82px; height: 82px; border-radius: 50%;
-    background:
-        radial-gradient(ellipse 55% 40% at 38% 28%, rgba(255,255,220,0.60) 0%, transparent 55%),
-        radial-gradient(ellipse at 50% 50%, #F5C842 0%, #D4900A 50%, #A06808 100%);
+.boost-trigger-btn svg { color:#00D4FF; filter:drop-shadow(0 0 8px rgba(0,212,255,0.8)); }
+
+/* ── PREMIUM CARD BASE ── */
+.premium-card {
+    background: linear-gradient(145deg, #0a0a1c 0%, #060614 60%, #030310 100%);
+    border-top:  2px solid rgba(255,255,255,0.10);
+    border-left: 1px solid rgba(255,255,255,0.06);
+    border-right:  1px solid rgba(0,0,0,0.45);
+    border-bottom: 3px solid rgba(0,0,0,0.8);
+    border-radius: 20px; padding: 24px;
+    position: relative; overflow: hidden;
     box-shadow:
-        0 0 0 2px rgba(255,255,255,0.18),
-        4px 8px 24px rgba(0,0,0,0.75),
-        0 -5px 20px rgba(255,230,80,0.50) inset,
-        0 7px 28px rgba(100,60,0,0.65) inset;
-    display: flex; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-    animation: coinFloat 4s ease-in-out infinite;
+        0 3px 0 rgba(255,255,255,0.05) inset,
+        0 -4px 0 rgba(0,0,0,0.7) inset,
+        0 20px 60px rgba(0,0,0,0.65),
+        0 4px 10px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
 }
-.tap-coin-shine {
-    position: absolute; top: 8px; left: 10px; width: 28px; height: 16px;
-    background: radial-gradient(ellipse, rgba(255,255,255,0.55) 0%, transparent 70%);
-    border-radius: 50%; transform: rotate(-20deg);
-}
-.tap-coin-letter {
-    font-family: var(--font-display); font-size: 1.15rem; font-weight: 900;
-    color: rgba(70,35,0,0.85); position: relative; z-index: 1;
-}
-@keyframes coinFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
-.tap-label {
-    font-family: var(--font-mono); font-size: 0.55rem; font-weight: 700;
-    letter-spacing: 0.22em; color: rgba(255,255,255,0.32); text-transform: uppercase;
-    position: relative; z-index: 1;
-}
-.sphere-shadow {
-    position: absolute; bottom: -26px; left: 50%; transform: translateX(-50%);
-    width: 160px; height: 18px;
-    background: radial-gradient(ellipse, rgba(0,0,0,0.65) 0%, transparent 70%);
-    border-radius: 50%; pointer-events: none;
+.premium-card::before {
+    content:''; position:absolute; top:0;left:0;right:0; height:2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
 }
 
-.pxc-badge {
-    margin-top: 70px;
-    display: flex; align-items: center; gap: 8px; padding: 8px 20px;
-    background: linear-gradient(145deg, rgba(13,13,32,0.9), rgba(10,10,24,0.95));
-    border: 1px solid rgba(245,200,66,0.28);
-    border-top: 1px solid rgba(245,200,66,0.45);
-    border-radius: 30px;
-    backdrop-filter: blur(16px);
-    box-shadow: 0 0 20px rgba(245,200,66,0.08), inset 0 1px 0 rgba(245,200,66,0.10), 0 4px 20px rgba(0,0,0,0.55);
+/* ── MINING STATUS ── */
+.mining-status {
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, rgba(0,255,136,0.10) 0%, rgba(0,180,80,0.05) 100%);
+    border-top:  1px solid rgba(0,255,136,0.30);
+    border-left: 1px solid rgba(0,255,136,0.18);
+    border-right:  1px solid rgba(0,0,0,0.3);
+    border-bottom: 2px solid rgba(0,0,0,0.5);
+    border-radius: 12px; margin-bottom: 20px;
+    box-shadow: 0 2px 0 rgba(0,255,136,0.08) inset, 0 -2px 0 rgba(0,0,0,0.4) inset, 0 6px 20px rgba(0,200,100,0.12);
 }
-.pxc-badge-icon { width: 13px; height: 13px; color: var(--gold); filter: drop-shadow(0 0 5px rgba(245,200,66,0.9)); }
-.pxc-badge-text { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; color: rgba(255,255,255,0.60); }
-.pxc-badge-refs { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-3); margin-left: 2px; padding-left: 8px; border-left: 1px solid rgba(255,255,255,0.10); }
+.mining-status-dot {
+    width:10px; height:10px; background:#00FF88; border-radius:50%;
+    animation:mining-pulse 1.5s ease-in-out infinite;
+    box-shadow: 0 0 12px rgba(0,255,136,0.8);
+}
+@keyframes mining-pulse {
+    0%,100%{transform:scale(1);opacity:1}
+    50%{transform:scale(1.4);opacity:0.7}
+}
+.mining-status-text { font-size:.85rem; font-weight:700; color:#00FF88; text-shadow:0 0 12px rgba(0,255,136,0.5); }
+.mining-status-rate { font-size:.8rem; color:rgba(255,255,255,0.5); margin-left:8px; padding-left:8px; border-left:1px solid rgba(0,255,136,0.3); }
 
-/* ═══════════════════════════════════════════════
-   SECTION 3 — ENERGY BAR
-═══════════════════════════════════════════════ */
-.idx-energy { position: relative; z-index: 1; padding: 20px 18px 14px; }
-.energy-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.energy-label-wrap { display: flex; align-items: center; gap: 5px; }
-.energy-icon { width: 12px; height: 12px; color: var(--gold); }
-.energy-label { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; color: var(--text-3); letter-spacing: 0.08em; }
-.energy-count { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; color: var(--text-2); font-variant-numeric: tabular-nums; }
-.energy-track {
-    height: 6px; background: rgba(255,255,255,0.05);
-    border-radius: 10px; overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.06);
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+/* ── PREMIUM STATS ── */
+.premium-stats {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px;
 }
-.energy-fill {
-    height: 100%; width: 100%;
-    background: linear-gradient(90deg, #F59E0B, #FBBF24, #FCD34D);
-    border-radius: 10px;
-    transition: width 0.35s ease, background 0.5s ease;
-    box-shadow: 0 0 10px rgba(251,191,36,0.6);
-    position: relative; overflow: hidden;
-}
-.energy-fill::after {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
-    animation: energyShine 2s ease-in-out infinite;
-}
-@keyframes energyShine { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
-
-/* ═══════════════════════════════════════════════
-   SECTION 4 — CLAIM CARD
-═══════════════════════════════════════════════ */
-.idx-claim { position: relative; z-index: 1; padding: 0 14px 14px; }
-.claim-card {
-    position: relative; overflow: hidden;
-    background: linear-gradient(145deg, #0b0b22 0%, #080818 55%, #050515 100%);
-    border-radius: var(--radius-xl);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-top: 1px solid rgba(80,130,255,0.45);
+.premium-stat {
+    background: linear-gradient(145deg, #0c0c22 0%, #080818 60%, #05050f 100%);
+    border-top:  2px solid rgba(0,140,255,0.30);
+    border-left: 1px solid rgba(0,120,255,0.18);
+    border-right:  1px solid rgba(0,0,0,0.5);
+    border-bottom: 3px solid rgba(0,0,0,0.80);
+    border-radius: 16px; padding:18px 12px;
+    text-align:center; position:relative; overflow:hidden;
     box-shadow:
-        0 0 0 1px rgba(50,100,255,0.12),
-        0 4px 0 rgba(100,150,255,0.08) inset,
-        0 -5px 0 rgba(0,0,0,0.9) inset,
-        0 12px 40px rgba(0,0,0,0.80),
-        0 0 80px rgba(0,40,200,0.06);
-    padding: 20px 18px 18px;
-    animation: cardIn 0.5s cubic-bezier(0.34,1.2,0.64,1) 0.3s both;
+        0 3px 0 rgba(255,255,255,0.07) inset,
+        0 -4px 0 rgba(0,0,0,0.72) inset,
+        0 14px 40px rgba(0,0,0,0.6),
+        0 3px 8px rgba(0,0,0,0.5);
+    transform: translateZ(0);
+    transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1), box-shadow 0.22s;
 }
-.claim-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(100,160,255,0.60), transparent);
+.premium-stat::after {
+    content:''; position:absolute; top:0; left:0; right:0; bottom:0;
+    background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, transparent 50%);
+    pointer-events:none;
 }
-.claim-top {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
-}
-.claim-label {
-    font-family: var(--font-mono); font-size: 0.58rem; font-weight: 700;
-    letter-spacing: 0.15em; color: var(--text-3); text-transform: uppercase; margin-bottom: 5px;
-}
-.claim-amount-row { display: flex; align-items: baseline; gap: 7px; }
-.claim-amount {
-    font-family: var(--font-display); font-size: 2rem; font-weight: 800;
-    color: #fff; line-height: 1; font-variant-numeric: tabular-nums;
-}
-.claim-unit { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; color: var(--text-3); }
-.mining-live-badge {
-    display: flex; align-items: center; gap: 6px; padding: 8px 14px;
-    background: linear-gradient(145deg, rgba(16,185,129,0.15), rgba(5,150,105,0.08));
-    border: 1px solid rgba(16,185,129,0.30);
-    border-radius: 30px;
-    box-shadow: 0 0 16px rgba(16,185,129,0.12), inset 0 1px 0 rgba(16,185,129,0.10);
-}
-.mlb-dot { width: 7px; height: 7px; border-radius: 50%; background: #10B981; box-shadow: 0 0 10px rgba(16,185,129,0.9); animation: ratePulse 1.6s ease-in-out infinite; }
-.mlb-text { font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; color: #34d399; }
-
-.claim-btn {
-    width: 100%; padding: 16px;
-    background: linear-gradient(175deg, #2563EB 0%, #1D4ED8 50%, #1E40AF 100%);
-    border: none;
-    border-top: 1px solid rgba(255,255,255,0.25);
-    border-bottom: 3px solid rgba(0,0,0,0.55);
-    border-radius: var(--radius-lg);
-    font-family: var(--font-display); font-size: 0.95rem; font-weight: 800;
-    letter-spacing: 0.06em; color: #fff;
+.premium-stat:hover {
+    transform: translateY(-5px) scale(1.04);
     box-shadow:
-        0 2px 0 rgba(255,255,255,0.18) inset,
-        0 -3px 0 rgba(0,0,0,0.50) inset,
-        0 6px 24px rgba(37,99,235,0.40);
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    cursor: pointer;
-    transition: transform 0.12s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.12s;
-    position: relative; overflow: hidden;
+        0 3px 0 rgba(255,255,255,0.09) inset,
+        0 -4px 0 rgba(0,0,0,0.72) inset,
+        0 24px 55px rgba(0,0,0,0.7),
+        0 0 50px rgba(0,100,255,0.20);
 }
-.claim-btn::before {
-    content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
-    animation: btnShine 3s ease-in-out infinite;
+.premium-stat-value {
+    font-size:1.75rem; font-weight:900; color:#FFFFFF;
+    text-shadow: 0 0 20px rgba(0,150,255,0.5), 0 2px 6px rgba(0,0,0,0.5);
+    margin-bottom:4px; position:relative;z-index:1;
 }
-.claim-btn:active { transform: translateY(3px) scale(0.98); }
-.claim-btn-icon { width: 20px; height: 20px; filter: drop-shadow(0 1px 4px rgba(0,0,0,0.4)); }
-@keyframes btnShine { 0%{left:-100%} 50%,100%{left:150%} }
-@keyframes cardIn { from{opacity:0;transform:translateY(20px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+.premium-stat-label {
+    font-size:.68rem; font-weight:700; color:rgba(255,255,255,0.45);
+    text-transform:uppercase; letter-spacing:.6px; position:relative;z-index:1;
+}
 
-/* ═══════════════════════════════════════════════
-   SECTION 5 — LIVE STATS
-═══════════════════════════════════════════════ */
-.idx-stats { position: relative; z-index: 1; padding: 0 14px 24px; }
-.stats-card {
-    position: relative; overflow: hidden;
-    background: linear-gradient(145deg, #0b0b22 0%, #080818 55%, #050515 100%);
-    border-radius: var(--radius-xl);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-top: 1px solid rgba(80,130,255,0.38);
+/* ── PREMIUM BALANCE ── */
+.premium-balance {
+    background: linear-gradient(155deg, #060616 0%, #040412 50%, #020210 100%);
+    border-top:  2px solid rgba(0,140,255,0.38);
+    border-left: 1px solid rgba(0,120,255,0.22);
+    border-right:  1px solid rgba(0,0,0,0.6);
+    border-bottom: 4px solid rgba(0,0,0,0.85);
+    border-radius: 24px; padding: 28px; text-align:center;
+    position:relative; overflow:hidden; margin-bottom:20px;
     box-shadow:
-        0 0 0 1px rgba(50,100,255,0.10),
-        0 4px 0 rgba(100,150,255,0.07) inset,
-        0 -5px 0 rgba(0,0,0,0.9) inset,
-        0 10px 36px rgba(0,0,0,0.75);
-    animation: cardIn 0.5s cubic-bezier(0.34,1.2,0.64,1) 0.45s both;
+        0 4px 0 rgba(0,140,255,0.12) inset,
+        0 -5px 0 rgba(0,0,0,0.75) inset,
+        0 35px 90px rgba(0,0,0,0.80),
+        0 0 130px rgba(0,60,220,0.12);
 }
-.stats-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(100,160,255,0.50), transparent);
+.premium-balance::before {
+    content:''; position:absolute; top:0;left:0;right:0; height:3px;
+    background: linear-gradient(90deg, #0033aa, #0066FF, #00D4FF, #0066FF, #0033aa);
+    opacity:0.9;
 }
-.stats-header {
-    display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px;
+.premium-balance::after {
+    content:''; position:absolute; top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    width:200%; height:200%;
+    background: radial-gradient(circle, rgba(0,102,255,0.10) 0%, transparent 55%);
+    pointer-events:none;
 }
-.stats-live { display: flex; align-items: center; gap: 7px; }
-.stats-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #10B981; box-shadow: 0 0 8px rgba(16,185,129,0.9); animation: ratePulse 1.6s ease-in-out infinite; }
-.stats-live-label { font-family: var(--font-mono); font-size: 0.60rem; font-weight: 700; letter-spacing: 0.14em; color: var(--text-3); text-transform: uppercase; }
-.stats-title { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 700; color: rgba(255,255,255,0.18); letter-spacing: 0.12em; text-transform: uppercase; }
+.premium-balance-label {
+    font-size:.75rem; font-weight:700; color:rgba(255,255,255,0.45);
+    text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; position:relative;z-index:1;
+}
+.premium-balance-amount {
+    font-size:3rem; font-weight:900; color:#FFFFFF;
+    text-shadow: 0 0 50px rgba(0,140,255,0.6), 0 4px 12px rgba(0,0,0,0.6);
+    letter-spacing:-.03em; margin-bottom:4px; position:relative;z-index:1;
+}
+.premium-balance-currency {
+    font-size:1rem; font-weight:700; color:#00D4FF;
+    text-shadow: 0 0 20px rgba(0,212,255,0.7); position:relative;z-index:1;
+}
 
-.stats-grid { display: grid; grid-template-columns: 1fr 1px 1fr 1px 1fr; padding: 4px 0 18px; }
-.stats-divider { background: rgba(255,255,255,0.06); margin: 10px 0; }
-.stat-col { text-align: center; padding: 10px 10px; }
-.stat-col-label { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.12em; color: var(--text-3); text-transform: uppercase; margin-bottom: 8px; }
-.stat-col-value { font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: #fff; line-height: 1; font-variant-numeric: tabular-nums; }
-.stat-col-value.gold { background: linear-gradient(135deg, #F5C842, #FF9500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.stat-col-value.purple { color: #a78bfa; }
-.stat-col-sub { display: flex; align-items: center; justify-content: center; gap: 3px; margin-top: 5px; }
-.stat-col-sub-icon { width: 10px; height: 10px; }
-.stat-col-sub-text { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 700; }
-.sub-green { color: #10B981; }
-.sub-gold { color: var(--gold); }
-.stat-next-bar-wrap { margin-top: 7px; height: 4px; background: rgba(255,255,255,0.07); border-radius: 6px; overflow: hidden; margin-left: 10px; margin-right: 10px; }
-.stat-next-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #7c3aed, #a78bfa, #c4b5fd); border-radius: 6px; transition: width 1.4s cubic-bezier(0.34,1.2,0.64,1); box-shadow: 0 0 8px rgba(167,139,250,0.65); }
+/* ── MINING CARD ── */
+.mining-card-premium {
+    background: linear-gradient(145deg, #060614 0%, #040412 60%, #020210 100%);
+    border-top:  2px solid rgba(0,120,255,0.32);
+    border-left: 1px solid rgba(0,100,255,0.18);
+    border-right:  1px solid rgba(0,0,0,0.55);
+    border-bottom: 4px solid rgba(0,0,0,0.85);
+    border-radius: 24px; padding:24px; margin-bottom:20px;
+    position:relative; overflow:hidden;
+    box-shadow:
+        0 4px 0 rgba(0,80,255,0.10) inset,
+        0 -5px 0 rgba(0,0,0,0.75) inset,
+        0 32px 80px rgba(0,0,0,0.75),
+        0 0 110px rgba(0,60,200,0.08);
+}
+.mining-card-premium::before {
+    content:''; position:absolute;top:0;left:0;right:0;height:3px;
+    background: linear-gradient(90deg, #003399, #0066FF, #00D4FF, #0066FF, #003399);
+    opacity:0.85;
+}
+.mining-card-premium::after {
+    content:''; position:absolute;top:0;left:0;right:0;bottom:0;
+    background: linear-gradient(135deg, rgba(0,80,200,0.04) 0%, transparent 50%, rgba(0,60,180,0.03) 100%);
+    pointer-events:none;
+}
 
-.stats-ticker { border-top: 1px solid rgba(255,255,255,0.05); padding: 9px 0; overflow: hidden; position: relative; }
-.ticker-track { display: flex; gap: 0; white-space: nowrap; animation: tickerScroll 20s linear infinite; }
-.ticker-item { font-family: var(--font-mono); font-size: 0.58rem; font-weight: 700; padding: 0 18px; }
-.ticker-item.dim { color: rgba(255,255,255,0.20); }
-.ticker-item.green { color: rgba(52,211,153,0.60); }
-.ticker-item.gold { color: rgba(245,200,66,0.60); }
-.ticker-item.purple { color: rgba(167,139,250,0.60); }
-@keyframes tickerScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-@keyframes statPop { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
+/* ── MINING ICON ── */
+.mining-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.mining-title-section h2 {
+    font-size: 1.15rem; font-weight: 700;
+    color: var(--color-text-primary); margin: 0 0 4px 0;
+}
+.mining-title-section p {
+    font-size: .8rem; color: var(--color-text-tertiary); margin: 0;
+}
+.mining-icon-box {
+    width:50px;height:50px;
+    background: linear-gradient(145deg, rgba(0,255,136,0.25) 0%, rgba(0,160,80,0.14) 100%);
+    border-top:  1px solid rgba(0,255,136,0.45);
+    border-left: 1px solid rgba(0,255,136,0.28);
+    border-right:  1px solid rgba(0,0,0,0.3);
+    border-bottom: 2px solid rgba(0,0,0,0.55);
+    border-radius:14px; display:flex; align-items:center; justify-content:center; position:relative;
+    box-shadow:
+        0 2px 0 rgba(0,255,136,0.18) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 10px 28px rgba(0,220,100,0.25);
+}
+.mining-icon-box i { width:26px;height:26px;color:#00FF88;animation:icon-glow 2s ease-in-out infinite; }
+@keyframes icon-glow {
+    0%,100%{filter:drop-shadow(0 0 6px rgba(0,255,136,0.6))}
+    50%{filter:drop-shadow(0 0 18px rgba(0,255,136,0.95))}
+}
+.mining-amount-display { text-align:center; padding:20px 0; }
+.mining-amount-value {
+    font-size:3rem; font-weight:900; color:#FFFFFF;
+    text-shadow: 0 0 40px rgba(0,150,255,0.5), 0 4px 10px rgba(0,0,0,0.6);
+    letter-spacing:-.03em;
+}
+.mining-amount-label { font-size:.85rem; color:rgba(255,255,255,0.4); margin-top:4px; }
 
-/* ═══════════════════════════════════════════════
-   AD OVERLAY
-═══════════════════════════════════════════════ */
-.ad-overlay { display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);backdrop-filter:blur(15px);z-index:2000;align-items:center;justify-content:center;padding:20px; }
-.ad-modal { background:linear-gradient(145deg,#1a1a2e,#16213e,#0f0f23);border-radius:24px;max-width:400px;width:100%;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.08); }
-.ad-header { padding:25px 20px 20px;background:linear-gradient(135deg,#00D4FF,#0099CC,#006699);text-align:center; }
-.ad-icon-wrapper { width:56px;height:56px;margin:0 auto 12px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.3); }
-.ad-icon { width:28px;height:28px;color:white; }
-.ad-title { font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:white;margin:0 0 6px; }
-.ad-subtitle { font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0; }
-.ad-container { min-height:250px;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center; }
-.ad-loading { display:flex;flex-direction:column;align-items:center;gap:15px;color:rgba(255,255,255,0.6);font-size:0.875rem; }
-.ad-spinner { width:40px;height:40px;border:3px solid rgba(0,245,255,0.2);border-top-color:#00D4FF;border-radius:50%;animation:adSpin 1s linear infinite; }
-@keyframes adSpin { to{transform:rotate(360deg)} }
-.ad-footer { padding:20px;background:rgba(0,0,0,0.2);border-top:1px solid rgba(255,255,255,0.05); }
-.ad-timer-bar { height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin-bottom:8px; }
-.ad-timer-progress { height:100%;width:0%;background:linear-gradient(90deg,#00D4FF,#00FF88);border-radius:3px;transition:width 0.1s linear; }
-.ad-timer-text { font-size:0.75rem;color:rgba(255,255,255,0.5);text-align:center;display:block;margin-bottom:15px; }
-.ad-close-btn { width:100%;padding:14px;background:linear-gradient(135deg,rgba(0,255,136,0.2),rgba(0,200,100,0.1));border:1px solid rgba(0,255,136,0.3);border-radius:12px;color:rgba(0,255,136,0.5);font-weight:600;cursor:not-allowed;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.3s ease; }
-.ad-close-btn:disabled { opacity:0.5; }
-.ad-close-btn:not(:disabled) { background:linear-gradient(135deg,#00FF88,#00CC66);border-color:transparent;color:#0B0B0F;cursor:pointer;box-shadow:0 4px 20px rgba(0,255,136,0.4); }
-.ad-close-btn i { width:20px;height:20px; }
+/* ── PROGRESS BAR ── */
+.mining-progress-premium {
+    height:8px; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.06);
+    border-radius:10px; overflow:hidden; margin-bottom:20px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
+}
+.mining-progress-bar {
+    height:100%;
+    background: linear-gradient(90deg, #0033aa, #0066FF, #00D4FF);
+    border-radius:10px; transition:width .5s ease; position:relative;
+    box-shadow: 0 0 10px rgba(0,180,255,0.6);
+}
+.mining-progress-bar::after {
+    content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);
+    animation:progress-shine 2s ease-in-out infinite;
+}
+@keyframes progress-shine { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
 
-/* ═══════════════════════════════════════════════
-   PROMO FAB & MODAL
-═══════════════════════════════════════════════ */
-#promo-fab { position:fixed;bottom:90px;right:20px;width:70px;height:70px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;z-index:998;padding:0;outline:none;filter:drop-shadow(0 4px 12px rgba(0,102,255,0.4)); }
-#promo-fab img { width:100%;height:100%;object-fit:contain;pointer-events:none;display:block; }
-#promo-fab:active { transform:scale(0.95); }
-.promo-modal-overlay { display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:1000;align-items:center;justify-content:center;padding:20px; }
-.promo-modal-container { background:linear-gradient(145deg,#1a1a2e,#16213e,#0f0f23);border-radius:24px;max-width:420px;width:100%;overflow:hidden;box-shadow:0 25px 50px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.1); }
-.promo-modal-header { position:relative;padding:30px 25px 25px;background:linear-gradient(135deg,#003D99,#0066FF,#00A3FF);text-align:center; }
-.promo-icon-wrapper { width:60px;height:60px;margin:0 auto 15px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.3); }
-.promo-icon { width:30px;height:30px;color:white; }
-.promo-title { font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:white;margin:0 0 8px; }
-.promo-subtitle { font-size:0.875rem;color:rgba(255,255,255,0.85);margin:0; }
-.promo-close-btn { position:absolute;top:15px;right:15px;width:36px;height:36px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s;color:white; }
-.promo-close-btn i { width:20px;height:20px; }
-.promo-modal-body { padding:30px 25px; }
-.promo-input-container { margin-bottom:20px; }
-.promo-input-label { display:block;font-size:0.8rem;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px; }
-.promo-input { width:100%;padding:18px 20px;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);border-radius:14px;color:white;font-size:1.25rem;font-weight:700;text-align:center;text-transform:uppercase;letter-spacing:3px;transition:all 0.3s;font-family:'Consolas','Monaco',monospace; }
-.promo-input::placeholder { color:rgba(255,255,255,0.3); }
-.promo-input:focus { outline:none;border-color:#0066FF;background:rgba(0,102,255,0.1);box-shadow:0 0 0 4px rgba(0,102,255,0.2); }
-.promo-input-hint { font-size:0.75rem;color:rgba(255,255,255,0.4);margin-top:8px;text-align:center; }
-.promo-submit-btn { width:100%;padding:18px 24px;background:linear-gradient(135deg,#003D99,#0066FF);border:none;border-radius:14px;color:white;font-family:var(--font-display);font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.3s;box-shadow:0 4px 15px rgba(0,102,255,0.4);text-transform:uppercase;letter-spacing:1px; }
-.promo-submit-btn:disabled { opacity:0.6;cursor:not-allowed; }
-.promo-submit-btn .btn-icon { width:20px;height:20px; }
-.promo-info-box { margin-top:20px;padding:14px 16px;background:linear-gradient(135deg,rgba(0,245,255,0.08),rgba(0,102,255,0.08));border:1px solid rgba(0,245,255,0.2);border-radius:12px;display:flex;align-items:center;gap:12px;font-size:0.8rem;color:rgba(255,255,255,0.7); }
-.promo-info-box .info-icon { width:18px;height:18px;color:#00d4ff;flex-shrink:0; }
-.promo-submit-btn.loading { pointer-events:none; }
-.promo-submit-btn.loading span { opacity:0; }
-.promo-modal-container.success { animation:success-pulse 0.5s ease-out; }
-@keyframes success-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
-@media(max-width:480px){
-    #promo-fab{width:60px;height:60px;bottom:80px;right:15px}
-    .promo-modal-overlay{padding:15px}
-    .promo-title{font-size:1.3rem}
-    .promo-modal-body{padding:25px 20px}
-    .promo-input{font-size:1.1rem;padding:16px}
+/* ── QUICK ACTIONS ── */
+.quick-actions-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:12px; }
+.quick-action-item {
+    background: linear-gradient(145deg, #0b0b20 0%, #07071a 60%, #050516 100%);
+    border-top:  2px solid rgba(0,140,255,0.28);
+    border-left: 1px solid rgba(0,120,255,0.16);
+    border-right:  1px solid rgba(0,0,0,0.5);
+    border-bottom: 3px solid rgba(0,0,0,0.82);
+    border-radius:16px; padding:20px 16px;
+    text-align:center; text-decoration:none;
+    display:flex; flex-direction:column; align-items:center;
+    position:relative; overflow:hidden;
+    box-shadow:
+        0 3px 0 rgba(255,255,255,0.07) inset,
+        0 -4px 0 rgba(0,0,0,0.72) inset,
+        0 14px 40px rgba(0,0,0,0.65);
+    transform:translateZ(0);
+    transition: transform .22s cubic-bezier(0.34,1.5,0.64,1), box-shadow .22s;
+}
+.quick-action-item::before {
+    content:''; position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(0,160,255,0.45),transparent);
+}
+.quick-action-item:hover {
+    transform:translateY(-6px) scale(1.04);
+    box-shadow:
+        0 3px 0 rgba(255,255,255,0.09) inset,
+        0 -4px 0 rgba(0,0,0,0.72) inset,
+        0 28px 65px rgba(0,0,0,0.7),
+        0 0 55px rgba(0,100,220,0.25);
+}
+.quick-action-item:active { transform:translateY(2px) scale(0.97); transition:transform .07s ease; }
+.quick-action-icon {
+    width:52px; height:52px;
+    background: linear-gradient(145deg, rgba(0,120,255,0.24) 0%, rgba(0,70,180,0.14) 100%);
+    border-top:  1px solid rgba(0,140,255,0.38);
+    border-left: 1px solid rgba(0,120,255,0.24);
+    border-right:  1px solid rgba(0,0,0,0.3);
+    border-bottom: 2px solid rgba(0,0,0,0.55);
+    border-radius:14px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;
+    box-shadow:
+        0 2px 0 rgba(0,140,255,0.18) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 10px 26px rgba(0,0,0,0.5),
+        0 0 20px rgba(0,100,255,0.15);
+    transition:transform .22s cubic-bezier(0.34,1.5,0.64,1);
+}
+.quick-action-item:hover .quick-action-icon {
+    transform:translateY(-3px) scale(1.08);
+    box-shadow:
+        0 2px 0 rgba(0,140,255,0.22) inset,
+        0 -2px 0 rgba(0,0,0,0.45) inset,
+        0 16px 36px rgba(0,80,220,0.35);
+}
+.quick-action-icon i, .quick-action-icon svg {
+    width:26px;height:26px;color:#4da6ff !important;stroke:#4da6ff !important;
+    filter:drop-shadow(0 0 6px rgba(0,140,255,0.7));
+}
+.quick-action-label { font-size:.9rem;font-weight:700;color:rgba(255,255,255,0.85); }
+
+/* ── ENTRANCE ANIMATIONS ── */
+@keyframes idxIn {
+    from{opacity:0;transform:translateY(22px) scale(0.95)}
+    to{opacity:1;transform:translateY(0) scale(1)}
+}
+.premium-balance      { animation:idxIn .4s cubic-bezier(0.34,1.2,0.64,1) .04s both; }
+.premium-stats        { animation:idxIn .4s cubic-bezier(0.34,1.2,0.64,1) .12s both; }
+.mining-card-premium  { animation:idxIn .4s cubic-bezier(0.34,1.2,0.64,1) .20s both; }
+.premium-card         { animation:idxIn .4s cubic-bezier(0.34,1.2,0.64,1) .28s both; }
+</style>
+
+
+
+<div class="container" style="padding:0;padding-top:28px;overflow:hidden;min-height:calc(100vh - 120px);display:flex;flex-direction:column;">
+
+<!-- ══════════════════════════════════════════
+     AMBIENT BACKGROUND LAYER
+══════════════════════════════════════════ -->
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+    <!-- deep radial ambient -->
+    <div style="position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(ellipse at center,rgba(0,60,200,0.18) 0%,rgba(0,20,80,0.10) 40%,transparent 70%);border-radius:50%;"></div>
+    <!-- tap glow (activates on tap via JS) -->
+    <div id="ambient-glow" style="position:absolute;top:20%;left:50%;transform:translateX(-50%);width:420px;height:420px;background:radial-gradient(ellipse at center,rgba(255,200,0,0.0) 0%,transparent 70%);border-radius:50%;transition:background 0.3s ease;pointer-events:none;"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1 — BALANCE HERO (top)
+══════════════════════════════════════════ -->
+<div style="position:relative;z-index:1;text-align:center;padding:40px 20px 0;">
+
+    <!-- row: level badge + balance + pts badge -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+
+        <!-- Level pill -->
+        <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:linear-gradient(160deg,#0d0d24,#090920);border-top:1px solid rgba(60,130,255,0.40);border-bottom:2px solid rgba(0,0,0,0.90);border-radius:20px;box-shadow:0 1px 0 rgba(80,140,255,0.10) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
+            <i data-lucide="shield" style="width:13px;height:13px;color:#a78bfa;"></i>
+            <span style="font-size:0.68rem;font-weight:800;color:#a78bfa;letter-spacing:0.06em;">NVL {{ user.mining_level or 1 }}</span>
+        </div>
+
+        <!-- Main balance -->
+        <div style="text-align:center;flex:1;padding:0 10px;">
+            <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.14em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:2px;">Balance Total</div>
+            <div id="tap-balance-display" style="font-size:2.1rem;font-weight:900;letter-spacing:-0.03em;color:#fff;line-height:1;{% if user.se_balance < 0 %}color:#ef4444!important;{% endif %}">{{ "%.2f"|format(user.se_balance or 0) }}</div>
+            <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.16em;color:rgba(255,255,255,0.30);margin-top:1px;">PXC TOKENS</div>
+        </div>
+
+        <!-- Rate pill -->
+        <div style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:linear-gradient(160deg,#061a0e,#040e08);border-top:1px solid rgba(0,255,136,0.35);border-bottom:2px solid rgba(0,0,0,0.90);border-radius:20px;box-shadow:0 1px 0 rgba(0,255,136,0.10) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#00FF88;box-shadow:0 0 7px rgba(0,255,136,0.9);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
+            <span style="font-size:0.68rem;font-weight:800;color:#00FF88;letter-spacing:0.04em;">{{ mining_rate or user.mining_power or 0.1 }}/h</span>
+        </div>
+    </div>
+
+    <!-- referrals sub-line -->
+    <div style="display:flex;justify-content:center;gap:4px;align-items:center;margin-bottom:4px;">
+        <i data-lucide="users" style="width:11px;height:11px;color:rgba(255,255,255,0.28);"></i>
+        <span style="font-size:0.62rem;color:rgba(255,255,255,0.28);font-weight:600;">{{ user.referral_count or 0 }} referidos</span>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 2 — TAP ARENA (center stage)
+══════════════════════════════════════════ -->
+<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:70px 0 16px;">
+
+    <!-- float label zone -->
+    <div id="tap-fx-container" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:280px;height:80px;pointer-events:none;overflow:visible;z-index:10;"></div>
+
+    <!-- ── ORBITAL RING SYSTEM ── -->
+    <div style="position:relative;width:260px;height:260px;display:flex;align-items:center;justify-content:center;">
+
+        <!-- Ring 1 — slow outer -->
+        <div style="position:absolute;inset:-28px;border-radius:50%;border:1px solid rgba(60,130,255,0.12);animation:orbitRing1 12s linear infinite;"></div>
+        <!-- Ring 1 spark -->
+        <div style="position:absolute;top:-29px;left:50%;margin-left:-3px;width:6px;height:6px;border-radius:50%;background:rgba(80,160,255,0.70);box-shadow:0 0 8px rgba(80,160,255,0.9);animation:orbitRing1 12s linear infinite;"></div>
+
+        <!-- Ring 2 — medium, tilted -->
+        <div style="position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(255,200,0,0.10);animation:orbitRing2 8s linear infinite reverse;transform:rotate(45deg);"></div>
+        <!-- Ring 2 spark -->
+        <div style="position:absolute;inset:-14px;border-radius:50%;animation:orbitRing2 8s linear infinite reverse;">
+            <div style="position:absolute;top:-4px;left:50%;margin-left:-3px;width:5px;height:5px;border-radius:50%;background:rgba(255,200,0,0.75);box-shadow:0 0 7px rgba(255,200,0,0.9);transform:rotate(-45deg);"></div>
+        </div>
+
+        <!-- Ring 3 — inner glow ring -->
+        <div style="position:absolute;inset:8px;border-radius:50%;border:1px solid rgba(160,120,255,0.10);animation:orbitRing3 16s linear infinite;"></div>
+
+        <!-- ── THE SPHERE BUTTON ── -->
+        <div id="tap-btn"
+             ontouchstart="handleTap(event)"
+             onclick="handleTap(event)"
+             style="
+                position:relative;
+                width:210px;height:210px;border-radius:50%;
+                cursor:pointer;user-select:none;-webkit-user-select:none;
+                /* 3D sphere illusion: light from top-left */
+                background:
+                    radial-gradient(ellipse 55% 40% at 38% 30%, rgba(255,255,255,0.18) 0%, transparent 60%),
+                    radial-gradient(ellipse 80% 80% at 50% 45%, #1a1a40 0%, #0d0d28 45%, #060614 100%);
+                border:none;
+                box-shadow:
+                    /* top highlight ring */
+                    0 0 0 2px rgba(70,120,255,0.55),
+                    /* outer 3D shadow — bottom-right heavy */
+                    6px 12px 40px rgba(0,0,0,0.90),
+                    -2px -4px 20px rgba(0,0,0,0.60),
+                    /* colored ambient bounce */
+                    0 20px 80px rgba(0,30,180,0.30),
+                    /* inner top light */
+                    0 -6px 30px rgba(80,140,255,0.25) inset,
+                    /* inner bottom shadow */
+                    0 10px 40px rgba(0,0,0,0.80) inset;
+                transition:transform 0.10s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.10s;
+                display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+                overflow:hidden;
+             ">
+
+            <!-- specular highlight blob (top-left) -->
+            <div style="position:absolute;top:22px;left:30px;width:70px;height:40px;background:radial-gradient(ellipse,rgba(255,255,255,0.22) 0%,transparent 70%);border-radius:50%;pointer-events:none;transform:rotate(-20deg);"></div>
+
+            <!-- bottom rim glow -->
+            <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:120px;height:20px;background:radial-gradient(ellipse,rgba(60,100,255,0.35) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
+
+            <!-- COIN — 3D golden disc -->
+            <div style="
+                width:80px;height:80px;border-radius:50%;
+                background:
+                    radial-gradient(ellipse 55% 40% at 38% 28%, rgba(255,255,220,0.60) 0%, transparent 55%),
+                    radial-gradient(ellipse 80% 80% at 50% 50%, #FFD700 0%, #E6A800 50%, #B87800 100%);
+                border:none;
+                box-shadow:
+                    0 0 0 2px rgba(255,255,255,0.18),
+                    3px 6px 20px rgba(0,0,0,0.70),
+                    0 -4px 18px rgba(255,230,80,0.50) inset,
+                    0 6px 24px rgba(100,60,0,0.60) inset;
+                display:flex;align-items:center;justify-content:center;
+                position:relative;
+                overflow:hidden;
+            ">
+                <!-- coin shine -->
+                <div style="position:absolute;top:8px;left:10px;width:28px;height:16px;background:radial-gradient(ellipse,rgba(255,255,255,0.50) 0%,transparent 70%);border-radius:50%;transform:rotate(-20deg);"></div>
+                <!-- PXC letter -->
+                <span style="font-size:1.1rem;font-weight:900;color:rgba(80,40,0,0.80);letter-spacing:-0.02em;position:relative;z-index:1;">P</span>
+            </div>
+
+            <!-- label -->
+            <div style="font-size:0.65rem;font-weight:800;letter-spacing:0.14em;color:rgba(255,255,255,0.40);text-transform:uppercase;position:relative;z-index:1;">TOCA PARA GANAR</div>
+        </div>
+
+        <!-- shadow ellipse under sphere -->
+        <div style="position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);width:160px;height:18px;background:radial-gradient(ellipse,rgba(0,0,0,0.65) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
+    </div>
+
+    <!-- +PXC badge below button -->
+    <div style="margin-top:70px;display:flex;align-items:center;gap:7px;padding:7px 18px;background:linear-gradient(160deg,#0c0c22,#090918);border-top:1px solid rgba(255,215,0,0.35);border-bottom:2px solid rgba(0,0,0,0.85);border-left:1px solid rgba(255,215,0,0.15);border-right:1px solid rgba(0,0,0,0.60);border-radius:24px;box-shadow:0 1px 0 rgba(255,215,0,0.08) inset,0 -2px 0 rgba(0,0,0,0.80) inset,0 4px 16px rgba(0,0,0,0.50);">
+        <i data-lucide="zap" style="width:13px;height:13px;color:#FFD700;filter:drop-shadow(0 0 4px rgba(255,215,0,0.8));"></i>
+        <span style="font-size:0.72rem;font-weight:800;color:rgba(255,255,255,0.65);">+<span id="tap-reward-label">0.001</span> PXC por tap</span>
+        <span style="font-size:0.62rem;color:rgba(255,255,255,0.28);margin-left:2px;">· {{ user.referral_count or 0 }} refs</span>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 3 — ENERGY BAR
+══════════════════════════════════════════ -->
+<div style="position:relative;z-index:1;padding:20px 20px 14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+        <div style="display:flex;align-items:center;gap:5px;">
+            <i data-lucide="zap" style="width:12px;height:12px;color:#FFD700;"></i>
+            <span style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;">ENERGÍA</span>
+        </div>
+        <span id="energy-label" style="font-size:0.68rem;font-weight:800;color:rgba(255,255,255,0.50);font-variant-numeric:tabular-nums;">500 / 500</span>
+    </div>
+    <!-- bar track -->
+    <div style="height:7px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,0.60) inset;">
+        <div id="energy-bar" style="height:100%;width:100%;background:linear-gradient(90deg,#FFD700,#FFA500);border-radius:10px;transition:width 0.35s ease,background 0.5s ease;box-shadow:0 0 8px rgba(255,180,0,0.55);"></div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 4 — PENDING + CLAIM CARD
+══════════════════════════════════════════ -->
+<div style="position:relative;z-index:1;padding:0 16px 14px;">
+    <div style="background:linear-gradient(160deg,#0c0c22 0%,#080818 55%,#050514 100%);border-top:2px solid rgba(60,130,255,0.50);border-left:1px solid rgba(40,100,255,0.25);border-right:1px solid rgba(0,0,0,0.80);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:20px;padding:18px 18px 16px;box-shadow:0 3px 0 rgba(80,140,255,0.12) inset,0 -4px 0 rgba(0,0,0,0.95) inset,0 8px 32px rgba(0,0,0,0.80),0 0 0 1px rgba(50,100,255,0.18);position:relative;overflow:hidden;">
+        <!-- top highlight line -->
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(80,160,255,0.65),transparent);pointer-events:none;"></div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div>
+                <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:4px;">Pendiente de reclamar</div>
+                <div style="display:flex;align-items:baseline;gap:7px;">
+                    <span id="unclaimed-display" style="font-size:1.75rem;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;">{{ "%.4f"|format(unclaimed or 0) }}</span>
+                    <span style="font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.32);">PXC</span>
+                </div>
+            </div>
+            <!-- active indicator -->
+            <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:linear-gradient(160deg,#061a0e,#040e08);border-top:1px solid rgba(0,255,136,0.32);border-bottom:2px solid rgba(0,0,0,0.80);border-radius:20px;box-shadow:0 1px 0 rgba(0,255,136,0.08) inset,0 -2px 0 rgba(0,0,0,0.75) inset;">
+                <div style="width:7px;height:7px;border-radius:50%;background:#00FF88;box-shadow:0 0 10px rgba(0,255,136,0.9);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
+                <span style="font-size:0.68rem;font-weight:800;color:#00FF88;">{{ mining_rate or user.mining_power or 0.1 }}/h</span>
+            </div>
+        </div>
+
+        <!-- Claim CTA -->
+        <button onclick="claimReward(event)" style="
+            width:100%;padding:15px;
+            background:linear-gradient(180deg,#1a6fff 0%,#0055ee 60%,#003fbf 100%);
+            border:none;
+            border-top:1px solid rgba(255,255,255,0.28);
+            border-bottom:3px solid rgba(0,0,0,0.60);
+            border-radius:14px;
+            font-size:0.95rem;font-weight:800;letter-spacing:0.06em;color:#fff;
+            box-shadow:0 2px 0 rgba(255,255,255,0.20) inset,0 -3px 0 rgba(0,0,0,0.55) inset,0 4px 18px rgba(0,60,200,0.35);
+            display:flex;align-items:center;justify-content:center;gap:9px;
+            cursor:pointer;
+            transition:transform 0.10s cubic-bezier(0.34,1.4,0.64,1),box-shadow 0.10s;
+        "
+        ontouchstart="this.style.transform='translateY(3px) scale(0.98)';this.style.boxShadow='0 1px 0 rgba(255,255,255,0.12) inset,0 -1px 0 rgba(0,0,0,0.40) inset,0 2px 6px rgba(0,60,200,0.20)'"
+        ontouchend="this.style.transform='';this.style.boxShadow=''">
+            <i data-lucide="arrow-down-to-line" style="width:19px;height:19px;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.40));"></i>
+            <span>Reclamar PXC</span>
+        </button>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 5 — LIVE STATS TICKER
+══════════════════════════════════════════ -->
+<div style="position:relative;z-index:1;padding:0 16px 24px;">
+    <div style="background:linear-gradient(160deg,#0c0c22 0%,#080818 55%,#050514 100%);border-top:2px solid rgba(60,130,255,0.45);border-left:1px solid rgba(40,100,255,0.22);border-right:1px solid rgba(0,0,0,0.80);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:20px;overflow:hidden;box-shadow:0 3px 0 rgba(80,140,255,0.10) inset,0 -4px 0 rgba(0,0,0,0.95) inset,0 8px 32px rgba(0,0,0,0.80),0 0 0 1px rgba(50,100,255,0.15);position:relative;">
+
+        <!-- top shimmer line -->
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(80,160,255,0.60),transparent);pointer-events:none;"></div>
+
+        <!-- header row -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px 10px;">
+            <div style="display:flex;align-items:center;gap:7px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:#00FF88;box-shadow:0 0 8px rgba(0,255,136,0.9);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
+                <span style="font-size:0.65rem;font-weight:800;letter-spacing:0.12em;color:rgba(255,255,255,0.40);text-transform:uppercase;">En vivo</span>
+            </div>
+            <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);letter-spacing:0.08em;">ESTADÍSTICAS</span>
+        </div>
+
+        <!-- 3 stat columns -->
+        <div style="display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;padding:2px 0 16px;">
+
+            <!-- COL 1: Taps hoy -->
+            <div style="text-align:center;padding:8px 10px;">
+                <div style="font-size:0.60rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.30);text-transform:uppercase;margin-bottom:6px;">Taps Hoy</div>
+                <div id="stat-taps" style="font-size:1.30rem;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;transition:transform 0.15s ease;">0</div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:3px;margin-top:4px;">
+                    <i data-lucide="trending-up" style="width:10px;height:10px;color:#00FF88;"></i>
+                    <span style="font-size:0.58rem;font-weight:700;color:#00FF88;" id="stat-taps-pxc">+0.0000</span>
+                </div>
+            </div>
+
+            <!-- divider -->
+            <div style="background:rgba(255,255,255,0.06);margin:8px 0;"></div>
+
+            <!-- COL 2: Multiplicador (nivel) -->
+            <div style="text-align:center;padding:8px 10px;">
+                <div style="font-size:0.60rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.30);text-transform:uppercase;margin-bottom:6px;">Multiplicador</div>
+                <div style="font-size:1.30rem;font-weight:900;line-height:1;">
+                    <span style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">x{{ user.mining_level or 1 }}.0</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:3px;margin-top:4px;">
+                    <i data-lucide="zap" style="width:10px;height:10px;color:#FFD700;"></i>
+                    <span style="font-size:0.58rem;font-weight:700;color:#FFD700;">Nivel {{ user.mining_level or 1 }}</span>
+                </div>
+            </div>
+
+            <!-- divider -->
+            <div style="background:rgba(255,255,255,0.06);margin:8px 0;"></div>
+
+            <!-- COL 3: Próximo nivel barra -->
+            <div style="text-align:center;padding:8px 10px;">
+                <div style="font-size:0.60rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.30);text-transform:uppercase;margin-bottom:6px;">Próx. Nivel</div>
+                <div style="font-size:1.30rem;font-weight:900;color:#a78bfa;line-height:1;font-variant-numeric:tabular-nums;">
+                    <span id="stat-next-pct">—</span>
+                </div>
+                <div style="margin-top:6px;height:4px;background:rgba(255,255,255,0.08);border-radius:6px;overflow:hidden;margin-left:8px;margin-right:8px;">
+                    <div id="stat-next-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:6px;transition:width 1.2s cubic-bezier(0.34,1.2,0.64,1);box-shadow:0 0 6px rgba(167,139,250,0.60);"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- scrolling ticker bottom -->
+        <div style="border-top:1px solid rgba(255,255,255,0.05);padding:8px 0;overflow:hidden;position:relative;">
+            <div id="ticker-track" style="display:flex;gap:0;white-space:nowrap;animation:tickerScroll 18s linear infinite;">
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);padding:0 18px;">⚡ Minería activa · </span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(0,255,136,0.55);padding:0 8px;">+{{ mining_rate or user.mining_power or 0.1 }} PXC/hora</span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);padding:0 18px;">· 🏆 Ranking activo · </span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,215,0,0.55);padding:0 8px;">{{ user.referral_count or 0 }} referidos confirmados</span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);padding:0 18px;">· 💎 PixieLand BETA · </span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(167,139,250,0.55);padding:0 8px;">Gana, tapea, sube de nivel</span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.22);padding:0 18px;">⚡ Minería activa · </span>
+                <span style="font-size:0.60rem;font-weight:700;color:rgba(0,255,136,0.55);padding:0 8px;">+{{ mining_rate or user.mining_power or 0.1 }} PXC/hora</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes tickerScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+@keyframes statPop {
+    0%   { transform:scale(1); }
+    40%  { transform:scale(1.18); color:#FFD700; }
+    100% { transform:scale(1); }
+}
+</style>
+<script>
+// Live stat updates driven by tap engine
+let sessionTaps = 0;
+let sessionPxc  = 0;
+// Progress to next level: simple formula — each level costs 100 PXC more
+const LVL      = {{ user.mining_level or 1 }};
+const BAL      = {{ (user.se_balance or 0)|float }};
+const threshold = LVL * 100;  // 100 per level
+const pct       = Math.min(100, Math.round((BAL % threshold) / threshold * 100));
+document.getElementById('stat-next-pct').textContent = pct + '%';
+setTimeout(() => {
+    document.getElementById('stat-next-bar').style.width = pct + '%';
+}, 400);
+
+function updateStatTaps() {
+    const el = document.getElementById('stat-taps');
+    el.textContent = sessionTaps;
+    el.style.animation = 'none';
+    el.offsetHeight; // reflow
+    el.style.animation = 'statPop 0.25s ease-out';
+    document.getElementById('stat-taps-pxc').textContent = '+' + sessionPxc.toFixed(4);
+}
+
+// Hook into tap handler — patch after load
+const _origHandleTap = handleTap;
+window.handleTap = function(e) {
+    const before = currentBalance;
+    _origHandleTap(e);
+    const gained = currentBalance - before;
+    if (gained > 0) {
+        sessionTaps++;
+        sessionPxc += gained;
+        updateStatTaps();
+    }
+};
+</script>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     STYLES & KEYFRAMES
+══════════════════════════════════════════ -->
+<style>
+@keyframes orbitRing1 {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+@keyframes orbitRing2 {
+    from { transform: rotate(45deg); }
+    to   { transform: rotate(405deg); }
+}
+@keyframes orbitRing3 {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(-360deg); }
+}
+@keyframes floatUp {
+    0%   { opacity:1; transform:translateX(-50%) translateY(0) scale(1.1); }
+    70%  { opacity:0.9; }
+    100% { opacity:0; transform:translateX(-50%) translateY(-64px) scale(0.80); }
+}
+@keyframes tapGoldPulse {
+    0%   { transform:scale(1); }
+    40%  { transform:scale(1.06); }
+    100% { transform:scale(1); }
 }
 </style>
 
-<!-- AMBIENT LAYER -->
-<div class="ambient-layer">
-    <div class="ambient-blob amb-1"></div>
-    <div class="ambient-blob amb-2"></div>
-    <div class="ambient-blob amb-3"></div>
-    <div id="tap-glow" style="position:absolute;top:25%;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(ellipse at center,rgba(255,200,0,0.0) 0%,transparent 70%);border-radius:50%;transition:background 0.3s ease;pointer-events:none;"></div>
-</div>
+<!-- ══════════════════════════════════════════
+     TAP ENGINE JS
+══════════════════════════════════════════ -->
+<script>
+const TAP_REWARD  = parseFloat(( {{ (mining_rate or user.mining_power or 0.1)|float }} / 100 ).toFixed(6));
+const MAX_ENERGY  = 500;
+const REGEN_RATE  = 1;
 
-<!-- MAIN ROOT -->
-<div class="idx-root">
+let currentBalance = {{ (user.se_balance or 0)|float }};
+let energy         = MAX_ENERGY;
+let isAnimating    = false;
 
-    <!-- HEADER -->
-    <div class="idx-header">
-        <div class="idx-header-row">
-            <div class="lvl-badge">
-                <i data-lucide="shield" class="lvl-badge-icon"></i>
-                <span class="lvl-badge-text">NVL {{ user.mining_level or 1 }}</span>
-            </div>
-            <div class="balance-hero">
-                <div class="balance-label">Balance Total</div>
-                <div id="tap-balance-display" class="balance-amount{% if user.se_balance < 0 %} negative{% endif %}">
-                    {{ "%.2f"|format(user.se_balance or 0) }}
-                </div>
-                <div class="balance-currency">PXC TOKENS</div>
-            </div>
-            <div class="rate-badge">
-                <div class="rate-dot"></div>
-                <span class="rate-text">{{ mining_rate or user.mining_power or 0.1 }}/h</span>
-            </div>
-        </div>
-        <div class="balance-refs">
-            <i data-lucide="users" class="balance-refs-icon"></i>
-            <span class="balance-refs-text">{{ user.referral_count or 0 }} referidos</span>
-        </div>
-    </div>
+document.getElementById('tap-reward-label').textContent = TAP_REWARD.toFixed(4);
 
-    <!-- TAP ARENA -->
-    <div class="idx-arena">
-        <div id="tap-fx-container"></div>
-        <div class="orbit-system">
-            <div class="orbit-ring or1"></div>
-            <div class="orbit-ring or2"></div>
-            <div class="orbit-ring or3"></div>
-            <div id="tap-btn" ontouchstart="handleTap(event)" onclick="handleTap(event)" class="tap-sphere">
-                <div class="sphere-highlight"></div>
-                <div class="sphere-rim"></div>
-                <div class="tap-coin">
-                    <div class="tap-coin-shine"></div>
-                    <span class="tap-coin-letter">P</span>
-                </div>
-                <span class="tap-label">TOCA PARA GANAR</span>
-            </div>
-            <div class="sphere-shadow"></div>
-        </div>
-        <div class="pxc-badge">
-            <i data-lucide="zap" class="pxc-badge-icon"></i>
-            <span class="pxc-badge-text">+<span id="tap-reward-label">0.001</span> PXC por tap</span>
-            <span class="pxc-badge-refs">· {{ user.referral_count or 0 }} refs</span>
-        </div>
-    </div>
+// ── Energy UI ──
+function updateEnergyUI() {
+    const pct = (energy / MAX_ENERGY) * 100;
+    const bar = document.getElementById('energy-bar');
+    document.getElementById('energy-label').textContent = Math.floor(energy) + ' / ' + MAX_ENERGY;
+    bar.style.width = pct + '%';
+    if      (pct > 50) bar.style.background = 'linear-gradient(90deg,#FFD700,#FFA500)';
+    else if (pct > 20) bar.style.background = 'linear-gradient(90deg,#FF8000,#FF5000)';
+    else               bar.style.background = 'linear-gradient(90deg,#ef4444,#b91c1c)';
+    bar.style.boxShadow = pct > 20
+        ? '0 0 8px rgba(255,180,0,0.55)'
+        : '0 0 8px rgba(239,68,68,0.60)';
+}
 
-    <!-- ENERGY -->
-    <div class="idx-energy">
-        <div class="energy-header">
-            <div class="energy-label-wrap">
-                <i data-lucide="zap" class="energy-icon"></i>
-                <span class="energy-label">ENERGÍA</span>
-            </div>
-            <span id="energy-label" class="energy-count">500 / 500</span>
-        </div>
-        <div class="energy-track">
-            <div id="energy-bar" class="energy-fill"></div>
-        </div>
-    </div>
+// ── Balance UI ──
+function updateBalanceUI() {
+    document.getElementById('tap-balance-display').textContent = currentBalance.toFixed(2);
+}
 
-    <!-- CLAIM CARD -->
-    <div class="idx-claim">
-        <div class="claim-card">
-            <div class="claim-top">
-                <div>
-                    <div class="claim-label">Pendiente de reclamar</div>
-                    <div class="claim-amount-row">
-                        <span id="unclaimed-display" class="claim-amount">{{ "%.4f"|format(unclaimed or 0) }}</span>
-                        <span class="claim-unit">PXC</span>
-                    </div>
-                </div>
-                <div class="mining-live-badge">
-                    <div class="mlb-dot"></div>
-                    <span class="mlb-text">{{ mining_rate or user.mining_power or 0.1 }}/h</span>
-                </div>
-            </div>
-            <button onclick="claimReward(event)" class="claim-btn"
-                ontouchstart="this.style.transform='translateY(3px) scale(0.98)'"
-                ontouchend="this.style.transform=''">
-                <i data-lucide="arrow-down-to-line" class="claim-btn-icon"></i>
-                <span>Reclamar PXC</span>
-            </button>
-        </div>
-    </div>
+// ── Float label ──
+function spawnFloat(value, multiTap) {
+    const container = document.getElementById('tap-fx-container');
+    const el = document.createElement('div');
+    const offset = (Math.random() - 0.5) * 80;
+    el.textContent = '+' + value.toFixed(4) + ' PXC';
+    el.style.cssText = `
+        position:absolute;
+        left:calc(50% + ${offset}px);
+        bottom:0;
+        font-size:${multiTap ? '1.15' : '0.95'}rem;
+        font-weight:900;
+        color:#FFD700;
+        text-shadow:0 0 14px rgba(255,215,0,0.90), 0 2px 4px rgba(0,0,0,0.70);
+        pointer-events:none;
+        animation:floatUp 0.85s ease-out forwards;
+        white-space:nowrap;
+        transform:translateX(-50%);
+    `;
+    container.appendChild(el);
+    setTimeout(() => el.remove(), 850);
+}
 
-    <!-- LIVE STATS -->
-    <div class="idx-stats">
-        <div class="stats-card">
-            <div class="stats-header">
-                <div class="stats-live">
-                    <div class="stats-live-dot"></div>
-                    <span class="stats-live-label">En vivo</span>
-                </div>
-                <span class="stats-title">ESTADÍSTICAS</span>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-col">
-                    <div class="stat-col-label">Taps Hoy</div>
-                    <div id="stat-taps" class="stat-col-value">0</div>
-                    <div class="stat-col-sub">
-                        <i data-lucide="trending-up" style="width:10px;height:10px;color:#10B981"></i>
-                        <span id="stat-taps-pxc" class="stat-col-sub-text sub-green">+0.0000</span>
-                    </div>
-                </div>
-                <div class="stats-divider"></div>
-                <div class="stat-col">
-                    <div class="stat-col-label">Multiplicador</div>
-                    <div class="stat-col-value gold">x{{ user.mining_level or 1 }}.0</div>
-                    <div class="stat-col-sub">
-                        <i data-lucide="zap" style="width:10px;height:10px;color:#F5C842"></i>
-                        <span class="stat-col-sub-text sub-gold">Nivel {{ user.mining_level or 1 }}</span>
-                    </div>
-                </div>
-                <div class="stats-divider"></div>
-                <div class="stat-col">
-                    <div class="stat-col-label">Próx. Nivel</div>
-                    <div id="stat-next-pct" class="stat-col-value purple">—</div>
-                    <div class="stat-next-bar-wrap">
-                        <div id="stat-next-bar" class="stat-next-bar-fill"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="stats-ticker">
-                <div class="ticker-track">
-                    <span class="ticker-item dim">⚡ Minería activa · </span>
-                    <span class="ticker-item green">+{{ mining_rate or user.mining_power or 0.1 }} PXC/hora</span>
-                    <span class="ticker-item dim"> · 🏆 Ranking activo · </span>
-                    <span class="ticker-item gold">{{ user.referral_count or 0 }} referidos confirmados</span>
-                    <span class="ticker-item dim"> · 💎 PixieLand BETA · </span>
-                    <span class="ticker-item purple">Gana, tapea, sube de nivel</span>
-                    <span class="ticker-item dim"> · ⚡ Minería activa · </span>
-                    <span class="ticker-item green">+{{ mining_rate or user.mining_power or 0.1 }} PXC/hora</span>
-                </div>
-            </div>
-        </div>
-    </div>
+// ── Ambient glow flash ──
+function flashAmbient() {
+    const glow = document.getElementById('ambient-glow');
+    glow.style.background = 'radial-gradient(ellipse at center,rgba(255,200,0,0.12) 0%,transparent 70%)';
+    setTimeout(() => glow.style.background = 'radial-gradient(ellipse at center,rgba(255,200,0,0.0) 0%,transparent 70%)', 300);
+}
 
-</div><!-- end idx-root -->
+// ── Main tap handler ──
+function handleTap(e) {
+    e.preventDefault();
+    if (energy < 1) {
+        // empty energy shake
+        const btn = document.getElementById('tap-btn');
+        btn.style.transform = 'translateX(-6px)';
+        setTimeout(() => { btn.style.transform = 'translateX(6px)'; }, 80);
+        setTimeout(() => { btn.style.transform = ''; }, 160);
+        return;
+    }
 
-<!-- AD OVERLAY -->
+    const touches = e.touches ? e.touches : [e];
+    const taps    = Math.min(touches.length, Math.floor(energy));
+    const gained  = TAP_REWARD * taps;
+
+    energy         = Math.max(0, energy - taps);
+    currentBalance += gained;
+
+    updateBalanceUI();
+    updateEnergyUI();
+    spawnFloat(gained, taps > 1);
+    flashAmbient();
+
+    // Sphere press
+    if (!isAnimating) {
+        isAnimating = true;
+        const btn = document.getElementById('tap-btn');
+        btn.style.transform = 'scale(0.91) translateY(5px)';
+        btn.style.boxShadow = `
+            0 0 0 2px rgba(70,120,255,0.35),
+            2px 5px 18px rgba(0,0,0,0.95),
+            0 10px 50px rgba(0,20,160,0.20),
+            0 -3px 15px rgba(80,140,255,0.15) inset,
+            0 6px 30px rgba(0,0,0,0.90) inset
+        `;
+        setTimeout(() => {
+            btn.style.transform = '';
+            btn.style.boxShadow = '';
+            isAnimating = false;
+        }, 130);
+    }
+
+    if (navigator.vibrate) navigator.vibrate(10);
+}
+
+// ── Energy regen ──
+setInterval(() => {
+    if (energy < MAX_ENERGY) {
+        energy = Math.min(MAX_ENERGY, energy + REGEN_RATE);
+        updateEnergyUI();
+    }
+}, 1000);
+
+// ── Unclaimed live ticker ──
+const ratePerSec = {{ (mining_rate or user.mining_power or 0.1)|float }} / 3600;
+let unclaimedLocal = {{ (unclaimed or 0)|float }};
+setInterval(() => {
+    unclaimedLocal += ratePerSec;
+    document.getElementById('unclaimed-display').textContent = unclaimedLocal.toFixed(4);
+}, 1000);
+
+// ── Claim ──
+async function claimReward(e) {
+    const btn = e.currentTarget;
+    try {
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+        const res  = await fetch('/api/claim', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            currentBalance = data.new_balance;
+            unclaimedLocal = 0;
+            updateBalanceUI();
+            document.getElementById('unclaimed-display').textContent = '0.0000';
+            btn.style.background = 'linear-gradient(180deg,#22c55e,#15803d)';
+            setTimeout(() => btn.style.background = '', 700);
+        }
+    } catch(err) {
+        console.error('Claim error', err);
+    } finally {
+        btn.disabled = false;
+        btn.style.opacity = '';
+    }
+}
+
+updateEnergyUI();
+updateBalanceUI();
+</script>
+
+<!-- ========================================== -->
+<!-- AD OVERLAY MODAL - Sistema de Anuncios -->
+<!-- ========================================== -->
 <div id="ad-overlay" class="ad-overlay">
     <div class="ad-modal">
+        <!-- Header del anuncio -->
         <div class="ad-header">
-            <div class="ad-icon-wrapper"><i data-lucide="tv" class="ad-icon"></i></div>
-            <h3 class="ad-title">Patrocinador</h3>
-            <p class="ad-subtitle">Mira el anuncio para reclamar tu recompensa</p>
+            <div class="ad-header-content">
+                <div class="ad-icon-wrapper">
+                    <i data-lucide="tv" class="ad-icon"></i>
+                </div>
+                <h3 class="ad-title">Patrocinador</h3>
+                <p class="ad-subtitle">Mira el anuncio para reclamar tu recompensa</p>
+            </div>
         </div>
+        
+        <!-- Contenedor del anuncio -->
         <div class="ad-container" id="ad-container">
-            <div class="ad-loading"><div class="ad-spinner"></div><span>Cargando anuncio...</span></div>
+            <div class="ad-loading">
+                <div class="ad-spinner"></div>
+                <span>Cargando anuncio...</span>
+            </div>
         </div>
+        
+        <!-- Footer con contador -->
         <div class="ad-footer">
-            <div class="ad-timer-bar"><div class="ad-timer-progress" id="ad-timer-progress"></div></div>
-            <span class="ad-timer-text" id="ad-timer-text">Preparando...</span>
+            <div class="ad-timer-wrapper">
+                <div class="ad-timer-bar">
+                    <div class="ad-timer-progress" id="ad-timer-progress"></div>
+                </div>
+                <span class="ad-timer-text" id="ad-timer-text">Preparando...</span>
+            </div>
             <button class="ad-close-btn" id="ad-close-btn" disabled onclick="closeAdAndClaim()">
-                <i data-lucide="check-circle"></i><span>Continuar</span>
+                <i data-lucide="check-circle"></i>
+                <span>Continuar</span>
             </button>
         </div>
     </div>
 </div>
 
-<!-- PROMO FAB -->
+<!-- Botón FAB - SOLO APARECE SI HAY CÓDIGOS ACTIVOS -->
 {% if show_promo_fab %}
 <button id="promo-fab" onclick="openPromoModal()">
+    <!-- TU GIF PERSONALIZADO - CAMBIA ESTA RUTA -->
     <img src="{{ url_for('static', filename='images/promo.gif') }}" alt="Código Promocional">
 </button>
 {% endif %}
 
-<!-- PROMO MODAL -->
+<!-- Modal de Código Promocional - DISEÑO PROFESIONAL -->
 <div id="promo-modal" class="promo-modal-overlay">
     <div class="promo-modal-container">
+        <!-- Header con gradiente -->
         <div class="promo-modal-header">
-            <div class="promo-icon-wrapper"><i data-lucide="gift" class="promo-icon"></i></div>
-            <h2 class="promo-title">Código Promocional</h2>
-            <p class="promo-subtitle">Ingresa tu código para recibir recompensas</p>
-            <button class="promo-close-btn" onclick="closePromoModal()"><i data-lucide="x"></i></button>
+            <div class="promo-header-content">
+                <div class="promo-icon-wrapper">
+                    <i data-lucide="gift" class="promo-icon"></i>
+                </div>
+                <h2 class="promo-title">Código Promocional</h2>
+                <p class="promo-subtitle">Ingresa tu código para recibir recompensas</p>
+            </div>
+            <button class="promo-close-btn" onclick="closePromoModal()">
+                <i data-lucide="x"></i>
+            </button>
         </div>
+
+        <!-- Body del modal -->
         <div class="promo-modal-body">
             <div class="promo-input-container">
                 <label class="promo-input-label">Tu código</label>
-                <input type="text" id="promo-code-input" class="promo-input"
-                    placeholder="EJEMPLO2024" maxlength="30" autocomplete="off" autocapitalize="characters">
+                <input 
+                    type="text" 
+                    id="promo-code-input" 
+                    class="promo-input"
+                    placeholder="EJEMPLO2024" 
+                    maxlength="30"
+                    autocomplete="off"
+                    autocapitalize="characters">
                 <div class="promo-input-hint">Los códigos no distinguen mayúsculas/minúsculas</div>
             </div>
+
             <button class="promo-submit-btn" onclick="submitPromoCode()" id="promo-submit-btn">
                 <i data-lucide="check-circle" class="btn-icon"></i>
                 <span>Canjear Código</span>
             </button>
+
+            <!-- Info box -->
             <div class="promo-info-box">
                 <i data-lucide="info" class="info-icon"></i>
                 <span>Los códigos son de uso único y pueden tener límite de usos</span>
@@ -776,249 +1063,979 @@ body {
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     TAP ENGINE
-═══════════════════════════════════════════════ -->
+<style>
+/* ===== PROMO FAB BUTTON ===== */
+#promo-fab {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 70px;
+    height: 70px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 998;
+    padding: 0;
+    outline: none;
+    filter: drop-shadow(0 4px 12px rgba(0, 102, 255, 0.4));
+}
+
+#promo-fab img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    display: block;
+}
+
+#promo-fab:hover {
+    transform: scale(1.15) rotate(5deg);
+    filter: drop-shadow(0 6px 20px rgba(0, 102, 255, 0.6));
+}
+
+#promo-fab:active {
+    transform: scale(0.95);
+}
+
+/* ===== AD OVERLAY STYLES ===== */
+.ad-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: adFadeIn 0.3s ease-out;
+}
+
+@keyframes adFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.ad-modal {
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+    border-radius: 24px;
+    max-width: 400px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 0 100px rgba(0, 245, 255, 0.1);
+    animation: adSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes adSlideUp {
+    from {
+        transform: translateY(40px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Ad Header */
+.ad-header {
+    position: relative;
+    padding: 25px 20px 20px;
+    background: linear-gradient(135deg, #00D4FF 0%, #0099CC 50%, #006699 100%);
+    text-align: center;
+}
+
+.ad-header-content {
+    position: relative;
+    z-index: 1;
+}
+
+.ad-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    animation: adIconPulse 2s ease-in-out infinite;
+}
+
+@keyframes adIconPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.2); }
+}
+
+.ad-icon {
+    width: 28px;
+    height: 28px;
+    color: white;
+}
+
+.ad-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 6px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.ad-subtitle {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+}
+
+/* Ad Container */
+.ad-container {
+    min-height: 250px;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.ad-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+}
+
+.ad-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 245, 255, 0.2);
+    border-top-color: #00D4FF;
+    border-radius: 50%;
+    animation: adSpin 1s linear infinite;
+}
+
+@keyframes adSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* Ad Footer */
+.ad-footer {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ad-timer-wrapper {
+    margin-bottom: 15px;
+}
+
+.ad-timer-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.ad-timer-progress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00D4FF, #00FF88);
+    border-radius: 3px;
+    transition: width 0.1s linear;
+}
+
+.ad-timer-text {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    display: block;
+}
+
+.ad-close-btn {
+    width: 100%;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.2) 0%, rgba(0, 200, 100, 0.1) 100%);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 12px;
+    color: rgba(0, 255, 136, 0.5);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: not-allowed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.ad-close-btn:disabled {
+    opacity: 0.5;
+}
+
+.ad-close-btn:not(:disabled) {
+    background: linear-gradient(135deg, #00FF88 0%, #00CC66 100%);
+    border-color: transparent;
+    color: #0B0B0F;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
+}
+
+.ad-close-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 255, 136, 0.5);
+}
+
+.ad-close-btn:not(:disabled):active {
+    transform: translateY(0);
+}
+
+.ad-close-btn i {
+    width: 20px;
+    height: 20px;
+}
+
+/* ===== PROMO MODAL ===== */
+.promo-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.promo-modal-container {
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+    border-radius: 24px;
+    max-width: 420px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Header */
+.promo-modal-header {
+    position: relative;
+    padding: 30px 25px 25px;
+    background: linear-gradient(135deg, #003D99 0%, #0066FF 50%, #00A3FF 100%);
+    text-align: center;
+}
+
+.promo-header-content {
+    position: relative;
+    z-index: 1;
+}
+
+.promo-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.promo-icon {
+    width: 30px;
+    height: 30px;
+    color: white;
+}
+
+.promo-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 8px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.promo-subtitle {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+}
+
+.promo-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.promo-close-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(90deg);
+}
+
+.promo-close-btn i {
+    width: 20px;
+    height: 20px;
+}
+
+/* Body */
+.promo-modal-body {
+    padding: 30px 25px;
+}
+
+.promo-input-container {
+    margin-bottom: 20px;
+}
+
+.promo-input-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.promo-input {
+    width: 100%;
+    padding: 18px 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transition: all 0.3s ease;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.promo-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+    font-weight: 400;
+    letter-spacing: 2px;
+}
+
+.promo-input:focus {
+    outline: none;
+    border-color: #0066FF;
+    background: rgba(0, 102, 255, 0.1);
+    box-shadow: 
+        0 0 0 4px rgba(0, 102, 255, 0.2),
+        inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.promo-input-hint {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 8px;
+    text-align: center;
+}
+
+/* Submit Button */
+.promo-submit-btn {
+    width: 100%;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #003D99 0%, #0066FF 100%);
+    border: none;
+    border-radius: 14px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 102, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.promo-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 102, 255, 0.5);
+}
+
+.promo-submit-btn:active {
+    transform: translateY(0);
+}
+
+.promo-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.promo-submit-btn .btn-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Info Box */
+.promo-info-box {
+    margin-top: 20px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(0, 245, 255, 0.08) 0%, rgba(0, 102, 255, 0.08) 100%);
+    border: 1px solid rgba(0, 245, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.promo-info-box .info-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--color-neon-cyan, #00d4ff);
+    flex-shrink: 0;
+}
+
+/* Loading state */
+.promo-submit-btn.loading {
+    pointer-events: none;
+}
+
+.promo-submit-btn.loading span {
+    opacity: 0;
+}
+
+.promo-submit-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Success state animation */
+@keyframes success-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.promo-modal-container.success {
+    animation: success-pulse 0.5s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .promo-modal-overlay {
+        padding: 15px;
+    }
+    
+    .promo-modal-container {
+        border-radius: 20px;
+    }
+    
+    .promo-modal-header {
+        padding: 25px 20px 20px;
+    }
+    
+    .promo-title {
+        font-size: 1.3rem;
+    }
+    
+    .promo-modal-body {
+        padding: 25px 20px;
+    }
+    
+    .promo-input {
+        font-size: 1.1rem;
+        padding: 16px;
+    }
+    
+    #promo-fab {
+        width: 60px;
+        height: 60px;
+        bottom: 80px;
+        right: 15px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
 <script>
-const TAP_REWARD = parseFloat(({{ (mining_rate or user.mining_power or 0.1)|float }} / 100).toFixed(6));
-const MAX_ENERGY = 500;
-const REGEN_RATE = 1;
-let currentBalance = {{ (user.se_balance or 0)|float }};
-let energy = MAX_ENERGY;
-let isAnimating = false;
+// Auto-update unclaimed balance
+function updateUnclaimedBalance() {
+    // Usar la tasa efectiva (power * mining_rate global)
+    const effectiveRate = {{ mining_rate or user.mining_power or 1.0 }};
+    const ratePerSecond = effectiveRate / 3600;
+    const unclaimedElement = document.getElementById('unclaimed-balance');
+    const progressBar = document.getElementById('mining-progress');
 
-document.getElementById('tap-reward-label').textContent = TAP_REWARD.toFixed(4);
+    // El backend YA calculó el unclaimed real, ahora solo sumamos desde ahí
+    const initialUnclaimed = {{ unclaimed or 0 }};
+    const startTime = Date.now();
 
-function updateEnergyUI() {
-    const pct = (energy / MAX_ENERGY) * 100;
-    const bar = document.getElementById('energy-bar');
-    document.getElementById('energy-label').textContent = Math.floor(energy) + ' / ' + MAX_ENERGY;
-    bar.style.width = pct + '%';
-    if (pct > 50)      bar.style.background = 'linear-gradient(90deg,#F59E0B,#FBBF24,#FCD34D)';
-    else if (pct > 20) bar.style.background = 'linear-gradient(90deg,#F97316,#FB923C)';
-    else               bar.style.background = 'linear-gradient(90deg,#EF4444,#DC2626)';
-    bar.style.boxShadow = pct > 20 ? '0 0 10px rgba(251,191,36,0.6)' : '0 0 10px rgba(239,68,68,0.6)';
+    // Actualizar cada segundo
+    setInterval(() => {
+        if (unclaimedElement) {
+            // Calcular segundos desde que cargó la página
+            const secondsPassed = (Date.now() - startTime) / 1000;
+
+            // Sumar al valor inicial que ya incluye todo lo acumulado
+            const newValue = initialUnclaimed + (secondsPassed * ratePerSecond);
+
+            unclaimedElement.textContent = newValue.toFixed(4);
+
+            const progress = Math.min((newValue / 100) * 100, 100);
+            if (progressBar) {
+                progressBar.style.width = progress + '%';
+            }
+        }
+    }, 1000);
 }
-function updateBalanceUI() {
-    document.getElementById('tap-balance-display').textContent = currentBalance.toFixed(2);
-}
-function spawnFloat(value, multiTap) {
-    const c = document.getElementById('tap-fx-container');
-    const el = document.createElement('div');
-    const offset = (Math.random() - 0.5) * 80;
-    el.textContent = '+' + value.toFixed(4) + ' PXC';
-    el.style.cssText = `position:absolute;left:calc(50% + ${offset}px);bottom:0;font-family:'Syne',sans-serif;font-size:${multiTap?'1.1':'0.9'}rem;font-weight:900;color:#F5C842;text-shadow:0 0 14px rgba(245,200,66,0.9),0 2px 4px rgba(0,0,0,0.7);pointer-events:none;animation:floatUp 0.85s ease-out forwards;white-space:nowrap;transform:translateX(-50%);`;
-    c.appendChild(el);
-    setTimeout(() => el.remove(), 850);
-}
-function flashAmbient() {
-    const g = document.getElementById('tap-glow');
-    g.style.background = 'radial-gradient(ellipse at center,rgba(255,200,0,0.11) 0%,transparent 70%)';
-    setTimeout(() => g.style.background = 'radial-gradient(ellipse at center,rgba(255,200,0,0.0) 0%,transparent 70%)', 300);
-}
-function handleTap(e) {
-    e.preventDefault();
-    if (energy < 1) {
-        const b = document.getElementById('tap-btn');
-        b.style.transform = 'translateX(-6px)';
-        setTimeout(() => { b.style.transform = 'translateX(6px)'; }, 80);
-        setTimeout(() => { b.style.transform = ''; }, 160);
+
+// Claim reward function
+async function claimReward() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('user_id');
+
+    if (!userId) {
+        showToast(window.tt ? window.tt('toast_user_not_identified') : 'Error: Usuario no identificado', 'error');
         return;
     }
-    const touches = e.touches ? e.touches : [e];
-    const taps = Math.min(touches.length, Math.floor(energy));
-    const gained = TAP_REWARD * taps;
-    energy = Math.max(0, energy - taps);
-    currentBalance += gained;
-    updateBalanceUI(); updateEnergyUI(); spawnFloat(gained, taps > 1); flashAmbient();
-    if (!isAnimating) {
-        isAnimating = true;
-        const b = document.getElementById('tap-btn');
-        b.style.transform = 'scale(0.91) translateY(5px)';
-        setTimeout(() => { b.style.transform = ''; b.style.boxShadow = ''; isAnimating = false; }, 130);
+
+    // Get current unclaimed amount
+    const unclaimedAmount = parseFloat(document.getElementById('unclaimed-balance').textContent);
+    
+    if (unclaimedAmount <= 0) {
+        showToast(window.tt ? window.tt('toast_no_earnings_claim') : 'No hay ganancias para reclamar', 'warning');
+        return;
     }
-    if (navigator.vibrate) navigator.vibrate(10);
-}
-setInterval(() => { if (energy < MAX_ENERGY) { energy = Math.min(MAX_ENERGY, energy + REGEN_RATE); updateEnergyUI(); } }, 1000);
-const ratePerSec = {{ (mining_rate or user.mining_power or 0.1)|float }} / 3600;
-let unclaimedLocal = {{ (unclaimed or 0)|float }};
-setInterval(() => { unclaimedLocal += ratePerSec; document.getElementById('unclaimed-display').textContent = unclaimedLocal.toFixed(4); }, 1000);
-async function claimReward(e) {
-    const btn = e.currentTarget;
-    try {
-        btn.disabled = true; btn.style.opacity = '0.7';
-        const res = await fetch('/api/claim', { method: 'POST' });
-        const data = await res.json();
-        if (data.success) {
-            currentBalance = data.new_balance; unclaimedLocal = 0;
-            updateBalanceUI();
-            document.getElementById('unclaimed-display').textContent = '0.0000';
-            btn.style.background = 'linear-gradient(180deg,#22c55e,#15803d)';
-            setTimeout(() => btn.style.background = '', 700);
-        }
-    } catch(err) { console.error(err); }
-    finally { btn.disabled = false; btn.style.opacity = ''; }
-}
-updateEnergyUI(); updateBalanceUI();
-</script>
 
-<!-- STATS ENGINE -->
-<script>
-let sessionTaps = 0, sessionPxc = 0;
-const LVL = {{ user.mining_level or 1 }};
-const BAL = {{ (user.se_balance or 0)|float }};
-const threshold = LVL * 100;
-const pct = Math.min(100, Math.round((BAL % threshold) / threshold * 100));
-document.getElementById('stat-next-pct').textContent = pct + '%';
-setTimeout(() => { document.getElementById('stat-next-bar').style.width = pct + '%'; }, 500);
-function updateStatTaps() {
-    const el = document.getElementById('stat-taps');
-    el.textContent = sessionTaps;
-    el.style.animation = 'none'; el.offsetHeight; el.style.animation = 'statPop 0.25s ease-out';
-    document.getElementById('stat-taps-pxc').textContent = '+' + sessionPxc.toFixed(4);
+    // Store data for after ad
+    window.pendingClaimData = {
+        userId: userId,
+        amount: unclaimedAmount
+    };
+
+    // Show ad first
+    showAdOverlay();
 }
-const _origHandleTap = handleTap;
-window.handleTap = function(e) {
-    const before = currentBalance; _origHandleTap(e);
-    const gained = currentBalance - before;
-    if (gained > 0) { sessionTaps++; sessionPxc += gained; updateStatTaps(); }
-};
-</script>
 
-<style>
-@keyframes floatUp { 0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1.1)} 70%{opacity:0.9} 100%{opacity:0;transform:translateX(-50%) translateY(-64px) scale(0.80)} }
-</style>
+// ========================================
+// AD SYSTEM FUNCTIONS - INTERSTITIAL FOR MINING CLAIM
+// Uses Unit ID: int-19115 (Interstitial)
+// NO REWARD is granted - this is just an ad before claim
+// ========================================
 
-<!-- AD SYSTEM -->
-<script>
-let adTimer = null, adTimeRemaining = 5;
+let adTimer = null;
+let adTimeRemaining = 5; // Seconds to wait before allowing close
 const AD_WAIT_TIME = 5;
+
 function showAdOverlay() {
     const overlay = document.getElementById('ad-overlay');
     const closeBtn = document.getElementById('ad-close-btn');
     const timerProgress = document.getElementById('ad-timer-progress');
     const timerText = document.getElementById('ad-timer-text');
-    closeBtn.disabled = true; timerProgress.style.width = '0%'; adTimeRemaining = AD_WAIT_TIME;
+    
+    // Reset state
+    closeBtn.disabled = true;
+    timerProgress.style.width = '0%';
+    adTimeRemaining = AD_WAIT_TIME;
+    
+    // Show overlay
     overlay.style.display = 'flex';
-    if (window.lucide) lucide.createIcons();
-    if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-    try { if (window.showInterstitialAd) window.showInterstitialAd().catch(e => console.warn(e)); } catch(e) {}
+    
+    // Reinitialize Lucide icons in the modal
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+    
+    // Haptic feedback
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+    
+    // ============================================
+    // INTERSTITIAL AD FOR MINING CLAIM
+    // Uses showInterstitialAd() - Unit ID: int-19115
+    // NO reward is granted - this is purely for monetization
+    // ============================================
+    try {
+        if (window.showInterstitialAd) {
+            // Show interstitial ad (no reward)
+            window.showInterstitialAd()
+                .then((result) => {
+                    if (result.success && result.shown) {
+                        console.log('✅ [Mining Claim] Interstitial ad shown successfully');
+                    } else {
+                        console.log('⚠️ [Mining Claim] Interstitial not shown:', result.reason);
+                    }
+                })
+                .catch((error) => {
+                    // Interstitial errors don't block the claim
+                    console.warn('⚠️ [Mining Claim] Interstitial error:', error);
+                });
+            
+            console.log('📺 [Mining Claim] Interstitial ad triggered (int-19115)');
+        } else {
+            console.log('⚠️ [Mining Claim] Interstitial ad system not ready');
+        }
+    } catch (e) {
+        console.warn('⚠️ [Mining Claim] Error showing interstitial:', e);
+    }
+    
+    // Start countdown timer (independent of ad completion)
     timerText.textContent = `Espera ${adTimeRemaining} segundos...`;
+    
     adTimer = setInterval(() => {
         adTimeRemaining--;
-        timerProgress.style.width = ((AD_WAIT_TIME - adTimeRemaining) / AD_WAIT_TIME * 100) + '%';
-        if (adTimeRemaining > 0) timerText.textContent = `Espera ${adTimeRemaining} segundos...`;
-        else {
+        const progress = ((AD_WAIT_TIME - adTimeRemaining) / AD_WAIT_TIME) * 100;
+        timerProgress.style.width = progress + '%';
+        
+        if (adTimeRemaining > 0) {
+            timerText.textContent = `Espera ${adTimeRemaining} segundos...`;
+        } else {
+            // Enable close button
             clearInterval(adTimer);
             timerText.textContent = '¡Listo! Puedes continuar';
             closeBtn.disabled = false;
-            if (window.lucide) lucide.createIcons();
-            if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            
+            // Reinitialize icons to update the button
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+            
+            // Haptic feedback for completion
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
         }
     }, 1000);
 }
+
 function closeAdAndClaim() {
     const overlay = document.getElementById('ad-overlay');
-    if (adTimer) { clearInterval(adTimer); adTimer = null; }
+    
+    // Clear timer if still running
+    if (adTimer) {
+        clearInterval(adTimer);
+        adTimer = null;
+    }
+    
+    // Hide overlay with animation
     overlay.style.opacity = '0';
-    setTimeout(() => { overlay.style.display = 'none'; overlay.style.opacity = '1'; }, 300);
-    if (window.pendingClaimData) { processClaimReward(window.pendingClaimData.userId, window.pendingClaimData.amount); window.pendingClaimData = null; }
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        overlay.style.opacity = '1';
+    }, 300);
+    
+    // Process the actual claim
+    if (window.pendingClaimData) {
+        processClaimReward(window.pendingClaimData.userId, window.pendingClaimData.amount);
+        window.pendingClaimData = null;
+    }
 }
+
 async function processClaimReward(userId, unclaimedAmount) {
     try {
-        if (window.showProcessingToast) window.showProcessingToast('Procesando...', `¡Reclamado! +${unclaimedAmount.toFixed(4)} PXC`, null, 1800);
-        const response = await fetch('/api/claim?user_id=' + userId, { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-        const data = await response.json();
-        if (data.success) {
-            document.getElementById('unclaimed-display').textContent = '0.0000';
-            if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
-            sessionStorage.setItem('quickReload', 'true');
-            setTimeout(() => window.location.reload(), 3500);
-        } else { if (window.showToast) showToast(data.message || 'Error al reclamar', 'error'); }
-    } catch(e) { if (window.showToast) showToast('Error de conexión', 'error'); }
-}
-</script>
+        // Show ultra professional processing notification
+        if (window.showProcessingToast) {
+            const processingText = window.tt ? window.tt('toast_processing') : 'Procesando...';
+            const claimedText = window.tt ? window.tt('toast_claimed_successfully') : '¡Reclamado!';
+            window.showProcessingToast(
+                processingText,
+                `${claimedText} +${unclaimedAmount.toFixed(4)} PXC`,
+                null,
+                1800
+            );
+        }
 
-<!-- PROMO SYSTEM -->
-<script>
+        const response = await fetch('/api/claim?user_id=' + userId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('total-balance').textContent = data.new_balance.toFixed(4);
+            document.getElementById('unclaimed-balance').textContent = '0.0000';
+            document.getElementById('mining-progress').style.width = '0%';
+
+            // Vibrar si está disponible
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+            }
+
+            // Marcar que viene de un claim para splash rápido
+            sessionStorage.setItem('quickReload', 'true');
+
+            // Recargar después de 3.5 segundos
+            setTimeout(() => {
+                window.location.reload();
+            }, 3500);
+        } else {
+            showToast(data.message || (window.tt ? window.tt('toast_claim_error') : 'Error al reclamar'), 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+    }
+}
+
+// Abrir modal de código promocional
 function openPromoModal() {
-    document.getElementById('promo-modal').style.display = 'flex';
+    const modal = document.getElementById('promo-modal');
+    modal.style.display = 'flex';
+    
+    // Clear and focus input
     const input = document.getElementById('promo-code-input');
     input.value = '';
     setTimeout(() => input.focus(), 100);
-    if (window.lucide) lucide.createIcons();
-    if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+
+    // Re-initialize Lucide icons
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+
+    if (window.vibrateDevice) {
+        window.vibrateDevice([10]);
+    }
+
+    // Vibración de Telegram
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
 }
+
+// Cerrar modal
 function closePromoModal() {
-    document.getElementById('promo-modal').style.display = 'none';
-    if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    const modal = document.getElementById('promo-modal');
+    modal.style.display = 'none';
+
+    if (window.vibrateDevice) {
+        window.vibrateDevice([10]);
+    }
+
+    // Vibración de Telegram
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
 }
+
+// Enviar código promocional
 async function submitPromoCode() {
     const input = document.getElementById('promo-code-input');
     const btn = document.getElementById('promo-submit-btn');
     const code = input.value.trim().toUpperCase();
-    if (!code) { if (window.showToast) window.showToast('Por favor ingresa un código', 'warning'); input.focus(); return; }
-    btn.disabled = true; btn.classList.add('loading');
+
+    if (!code) {
+        if (window.showToast) {
+            window.showToast(window.tt ? window.tt('toast_code_required') : 'Por favor ingresa un código', 'warning');
+        }
+        input.focus();
+        return;
+    }
+
+    // Disable button and show loading
+    btn.disabled = true;
+    btn.classList.add('loading');
     const originalContent = btn.innerHTML;
-    btn.innerHTML = '<span>Verificando...</span>';
+    const verifyingText = window.tt ? window.tt('toast_validating') : 'Verificando...';
+    btn.innerHTML = `<span>${verifyingText}</span>`;
+
     try {
         const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get('user_id') || window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        const response = await fetch('/api/promo/redeem', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: userId, code }) });
+        const userId = urlParams.get('user_id') || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id);
+
+        const response = await fetch('/api/promo/redeem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                code: code
+            })
+        });
+
         const data = await response.json();
+
         if (data.success) {
-            document.querySelector('.promo-modal-container').classList.add('success');
-            if (window.showToast) window.showToast(`🎉 ${data.message || '¡Código canjeado!'}`, 'success');
-            if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-            setTimeout(() => { closePromoModal(); document.querySelector('.promo-modal-container').classList.remove('success'); }, 1000);
-            setTimeout(() => window.location.reload(), 1500);
+            // Success animation
+            const container = document.querySelector('.promo-modal-container');
+            container.classList.add('success');
+            
+            if (window.showToast) {
+                const defaultMsg = window.tt ? window.tt('toast_code_redeemed') : '¡Código canjeado!';
+                window.showToast(`🎉 ${data.message || defaultMsg}`, 'success');
+            }
+            
+            // Vibración de éxito
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+
+            // Close modal and reload after delay
+            setTimeout(() => {
+                closePromoModal();
+                container.classList.remove('success');
+            }, 1000);
+            
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
         } else {
-            if (window.showToast) window.showToast(data.error || 'Código inválido', 'error');
-            if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+            if (window.showToast) {
+                const defaultMsg = window.tt ? window.tt('toast_invalid_code') : 'Código inválido';
+                window.showToast(data.error || data.message || defaultMsg, 'error');
+            }
+
+            // Vibración de error
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+            }
+            
+            // Shake input on error
             input.style.animation = 'shake 0.5s ease';
-            setTimeout(() => { input.style.animation = ''; input.select(); }, 500);
+            setTimeout(() => {
+                input.style.animation = '';
+                input.select();
+            }, 500);
         }
-    } catch(e) { if (window.showToast) window.showToast('Error de conexión', 'error'); }
-    finally { btn.disabled = false; btn.classList.remove('loading'); btn.innerHTML = originalContent; if (window.lucide) lucide.createIcons(); }
+
+        if (window.vibrateDevice) {
+            window.vibrateDevice(data.success ? [10, 50, 10] : [100]);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        if (window.showToast) {
+            window.showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+        }
+    } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.innerHTML = originalContent;
+        
+        // Re-initialize icons
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }
 }
-document.addEventListener('click', e => { const m = document.getElementById('promo-modal'); if (e.target === m) closePromoModal(); });
-document.addEventListener('keydown', e => {
-    const m = document.getElementById('promo-modal');
-    if (m?.style.display === 'flex') { if (e.key === 'Enter') submitPromoCode(); if (e.key === 'Escape') closePromoModal(); }
+
+// Cerrar modal al hacer clic fuera
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('promo-modal');
+    if (e.target === modal || e.target.classList.contains('promo-modal-overlay')) {
+        closePromoModal();
+    }
 });
+
+// Enter key to submit
+document.addEventListener('keydown', function(e) {
+    const modal = document.getElementById('promo-modal');
+    if (modal && modal.style.display === 'flex' && e.key === 'Enter') {
+        submitPromoCode();
+    }
+    if (modal && modal.style.display === 'flex' && e.key === 'Escape') {
+        closePromoModal();
+    }
+});
+
+// Add shake animation
 const shakeStyle = document.createElement('style');
-shakeStyle.textContent = `@keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-5px)}20%,40%,60%,80%{transform:translateX(5px)}}`;
+shakeStyle.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+`;
 document.head.appendChild(shakeStyle);
-</script>
 
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function updateUnclaimedBalance() {
-    const effectiveRate = {{ mining_rate or user.mining_power or 1.0 }};
-    const ratePerSecond = effectiveRate / 3600;
-    const unclaimedElement = document.getElementById('unclaimed-balance');
-    const progressBar = document.getElementById('mining-progress');
-    const initialUnclaimed = {{ unclaimed or 0 }};
-    const startTime = Date.now();
-    setInterval(() => {
-        if (unclaimedElement) {
-            const secondsPassed = (Date.now() - startTime) / 1000;
-            const newValue = initialUnclaimed + (secondsPassed * ratePerSecond);
-            unclaimedElement.textContent = newValue.toFixed(4);
-            if (progressBar) progressBar.style.width = Math.min((newValue / 100) * 100, 100) + '%';
-        }
-    }, 1000);
-}
+// Initialize
 document.addEventListener('DOMContentLoaded', function() {
     const splash = document.getElementById('splash-screen');
+
+    // Ocultar splash después de 1 segundo
     setTimeout(() => {
         splash.style.opacity = '0';
-        setTimeout(() => { splash.style.display = 'none'; document.body.style.overflow = 'auto'; }, 400);
-    }, 1200);
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-    setTimeout(updateUnclaimedBalance, 1500);
+        setTimeout(() => {
+            splash.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 300);
+    }, 1000);
+
+    // Inicializar iconos
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Iniciar actualización de balance
+    setTimeout(() => {
+        updateUnclaimedBalance();
+    }, 1500);
 });
 </script>
 
@@ -1026,34 +2043,77 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="/static/js/adsgram_boost.js"></script>
 
 <script>
+/* ── INDEX 3D TILT + PARTICLES ── */
 (function(){
+    const MAX_TILT = 6;
+
+    function applyTilt(el, rx, ry) {
+        el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(4px)`;
+        const ic = el.querySelector('.quick-action-icon');
+        if (ic) ic.style.transform = 'translateZ(8px)';
+    }
+    function resetTilt(el) {
+        el.style.transition = 'transform 0.5s cubic-bezier(0.34,1,0.64,1)';
+        el.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) translateZ(0)';
+        const ic = el.querySelector('.quick-action-icon');
+        if (ic) { ic.style.transition = 'transform 0.5s'; ic.style.transform = 'translateZ(0)'; }
+        setTimeout(() => { el.style.transition = ''; }, 500);
+    }
+    function bindTilt(el) {
+        if (el._tiltBound) return;
+        el._tiltBound = true;
+        el.addEventListener('touchmove', e => {
+            const t = e.touches[0], r = el.getBoundingClientRect();
+            const x = (t.clientX - r.left) / r.width - 0.5;
+            const y = (t.clientY - r.top)  / r.height - 0.5;
+            el.style.transition = '';
+            applyTilt(el, -y * MAX_TILT, x * MAX_TILT);
+        }, { passive:true });
+        el.addEventListener('touchend', () => resetTilt(el), { passive:true });
+    }
+    function bindAll() {
+        document.querySelectorAll('.quick-action-item, .premium-stat').forEach(bindTilt);
+    }
+
+    // Gyro parallax en balance + mining
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', e => {
-            const bx = Math.max(-3, Math.min(3, (e.beta || 0) * 0.06));
-            const by = Math.max(-3, Math.min(3, (e.gamma || 0) * 0.06));
-            const sphere = document.querySelector('.tap-sphere');
-            if (sphere) sphere.style.transform = `perspective(1000px) rotateX(${-bx}deg) rotateY(${by}deg)`;
+            const bx = Math.max(-4, Math.min(4, (e.beta  || 0) * 0.08));
+            const by = Math.max(-4, Math.min(4, (e.gamma || 0) * 0.08));
+            const bal = document.querySelector('.premium-balance');
+            const min = document.querySelector('.mining-card-premium');
+            if (bal) bal.style.transform = `perspective(1200px) rotateX(${-bx}deg) rotateY(${by}deg)`;
+            if (min) min.style.transform = `perspective(1200px) rotateX(${-bx*0.6}deg) rotateY(${by*0.6}deg)`;
         }, { passive:true });
     }
+
+    // Partículas flotantes en balance card
     function spawnParticles() {
-        const arena = document.querySelector('.idx-arena');
-        if (!arena) return;
-        for (let i = 0; i < 6; i++) {
+        const card = document.querySelector('.premium-balance');
+        if (!card) return;
+        for (let i = 0; i < 10; i++) {
             setTimeout(() => {
                 const p = document.createElement('div');
                 const sz = Math.random() * 3 + 1;
-                p.style.cssText = `position:absolute;width:${sz}px;height:${sz}px;background:rgba(${Math.random()>0.5?'245,200,66':'80,140,255'},${0.35+Math.random()*0.4});border-radius:50%;left:${20+Math.random()*60}%;top:${20+Math.random()*60}%;pointer-events:none;z-index:2;animation:idxPtcl ${1.5+Math.random()*2}s ease-out forwards;`;
-                arena.appendChild(p);
+                p.style.cssText = `position:absolute;width:${sz}px;height:${sz}px;`+
+                    `background:rgba(0,${120+Math.random()*135|0},255,${0.3+Math.random()*0.4});`+
+                    `border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*100}%;`+
+                    `pointer-events:none;z-index:2;`+
+                    `animation:idxPtcl ${1.5+Math.random()*2}s ease-out forwards;`;
+                card.appendChild(p);
                 setTimeout(() => p.remove(), 4000);
-            }, i * 300);
+            }, i * 200);
         }
     }
     const ps = document.createElement('style');
-    ps.textContent = `@keyframes idxPtcl{0%{opacity:.8;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-50px) scale(0.2)}}`;
+    ps.textContent = `@keyframes idxPtcl{0%{opacity:.8;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-45px) scale(0.2)}}`;
     document.head.appendChild(ps);
+
     document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(spawnParticles, 1500);
-        setInterval(spawnParticles, 8000);
+        bindAll();
+        setTimeout(spawnParticles, 1000);
+        setInterval(spawnParticles, 7000);
+        new MutationObserver(bindAll).observe(document.body, { childList:true, subtree:true });
     });
 })();
 </script>
