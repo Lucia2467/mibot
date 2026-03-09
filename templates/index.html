@@ -23,7 +23,6 @@
 /* Zoom global -17% */
 body {
     zoom: 0.83;
-    padding-top: 22px;
 }
 
 /* Excluir barras de navegación del zoom */
@@ -129,86 +128,70 @@ body {
 .premium-stats       { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.12s both; }
 .mining-card-premium { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.20s both; }
 .premium-card        { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.28s both; }
-
-/* ══════════════════════════════
-   MEJORAS PREMIUM — OVERLAY FINO
-══════════════════════════════ */
-
-/* Fondo ambient glow sutil */
-body::before {
-    content: '';
-    position: fixed;
-    top: -20%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(ellipse at center, rgba(0,50,200,0.12) 0%, transparent 65%);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* Balance amount — glow refinado */
-#tap-balance-display {
-    text-shadow: 0 0 50px rgba(80,140,255,0.35), 0 3px 10px rgba(0,0,0,0.5) !important;
-    letter-spacing: -0.02em;
-}
-
-/* Claim button — shine animado */
-button[onclick*="claimReward"]::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 55%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
-    animation: btnShine 3.5s ease-in-out infinite;
-    border-radius: inherit;
-}
-button[onclick*="claimReward"] {
-    position: relative;
-    overflow: hidden;
-}
-@keyframes btnShine { 0%{left:-100%} 50%,100%{left:150%} }
-
-/* Energy bar — shimmer */
-#energy-bar::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.30), transparent);
-    animation: energyShimmer 2s ease-in-out infinite;
-    border-radius: inherit;
-}
-#energy-bar { position: relative; overflow: hidden; }
-@keyframes energyShimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
-
-/* Mining rate dot — glow más vivo */
-.mining-status-dot,
-[style*="background:#00FF88"][style*="border-radius:50%"] {
-    box-shadow: 0 0 0 3px rgba(0,255,136,0.15), 0 0 14px rgba(0,255,136,0.9) !important;
-}
-
-/* Ticker bottom — fade edges */
-#ticker-track {
-    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
-    mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
-}
-
-/* Stats valores — pop sutil al actualizar */
-#stat-taps { transition: transform 0.15s ease; }
-
-/* Cards — separación más clara */
-.container > div + div { margin-top: 2px; }
-
 </style>
 
+<!-- ==================== RULETA PTS - BOTÓN FLOTANTE PREMIUM ==================== -->
+<a href="/roulette-pts?user_id={{ user_id }}" class="roulette-fab" id="roulette-fab">
+    <div class="roulette-fab-glow"></div>
+    <div class="roulette-fab-inner">
+        <svg class="roulette-fab-wheel" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+            <path d="M12 2 L12 12 L19 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+            <circle cx="12" cy="5" r="1.5" fill="currentColor" opacity="0.8"/>
+            <circle cx="18.5" cy="9" r="1.5" fill="currentColor" opacity="0.6"/>
+            <circle cx="17" cy="17" r="1.5" fill="currentColor" opacity="0.7"/>
+            <circle cx="7" cy="17" r="1.5" fill="currentColor" opacity="0.6"/>
+            <circle cx="5.5" cy="9" r="1.5" fill="currentColor" opacity="0.8"/>
+        </svg>
+    </div>
+    <div class="roulette-fab-badge" id="roulette-badge">
+        <span class="badge-text">PTS</span>
+    </div>
+</a>
 
 <style>
 /* ══════════════════════════════════════════════════════
    INDEX — PREMIUM 3D FULL REDESIGN
 ══════════════════════════════════════════════════════ */
 
+/* ── Ruleta FAB ── */
+.roulette-fab {
+    position: fixed; top: 90px; right: 12px;
+    width: 42px; height: 42px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1); overflow: visible;
+}
+.roulette-fab-glow {
+    position: absolute; inset: -2px; border-radius: 14px;
+    background: linear-gradient(135deg,#0066FF,#0052CC,#0040FF,#0066FF);
+    background-size: 300% 300%; animation: gradient-shift 3s ease infinite;
+    opacity: 0.8; filter: blur(1px);
+}
+.roulette-fab-inner {
+    position: relative; width: 100%; height: 100%; border-radius: 11px;
+    background: linear-gradient(135deg,#05051A 0%,#0A0A22 100%);
+    display: flex; align-items: center; justify-content: center;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    border-bottom: 2px solid rgba(0,0,0,0.5);
+    box-shadow: 0 2px 0 rgba(255,255,255,0.06) inset, 0 -2px 0 rgba(0,0,0,0.4) inset, 0 8px 20px rgba(0,0,0,0.5);
+}
+.roulette-fab-wheel { width:22px;height:22px;color:white;animation:spin-wheel 10s linear infinite; }
+.roulette-fab-badge {
+    position:absolute;top:-4px;right:-4px;min-width:20px;height:16px;
+    background:linear-gradient(135deg,#00FF88,#00CC6A);border-radius:8px;
+    display:flex;align-items:center;justify-content:center;padding:0 4px;
+    box-shadow:0 2px 8px rgba(0,255,136,0.5);border:1px solid rgba(255,255,255,0.3);
+}
+.roulette-fab-badge .badge-text { font-size:0.5rem;font-weight:800;color:#000;letter-spacing:.02em;text-transform:uppercase; }
+.roulette-fab:active { transform:scale(0.93); }
+@keyframes gradient-shift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+@keyframes spin-wheel { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+.roulette-fab.can-spin .roulette-fab-badge { animation:badge-glow 1.5s ease-in-out infinite; }
+.roulette-fab.waiting .roulette-fab-badge { background:linear-gradient(135deg,#FFB800,#FF9500); }
+.roulette-fab.waiting .roulette-fab-glow { opacity:0.4; }
+@keyframes badge-glow { 0%,100%{box-shadow:0 2px 6px rgba(0,255,136,0.4)} 50%{box-shadow:0 2px 14px rgba(0,255,136,0.8)} }
 
 /* ── BOOST BUTTON ── */
 .boost-trigger-btn {
@@ -520,8 +503,41 @@ button[onclick*="claimReward"] {
 .premium-card         { animation:idxIn .4s cubic-bezier(0.34,1.2,0.64,1) .28s both; }
 </style>
 
+<script>
+// Verificar estado de la ruleta al cargar
+document.addEventListener('DOMContentLoaded', async function() {
+    const fab = document.getElementById('roulette-fab');
+    const badge = document.getElementById('roulette-badge');
+    const badgeText = badge?.querySelector('.badge-text');
+    
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('user_id') || window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        
+        if (userId) {
+            const response = await fetch(`/api/roulette-pts/status?user_id=${userId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                if (data.can_spin) {
+                    fab.classList.add('can-spin');
+                    fab.classList.remove('waiting');
+                    if (badgeText) badgeText.textContent = 'GO';
+                } else {
+                    fab.classList.add('waiting');
+                    fab.classList.remove('can-spin');
+                    const mins = Math.floor(data.remaining_seconds / 60);
+                    if (badgeText) badgeText.textContent = `${mins}m`;
+                }
+            }
+        }
+    } catch (e) {
+        console.log('Error checking roulette status:', e);
+    }
+});
+</script>
 
-<div class="container" style="padding:0;padding-top:28px;overflow:hidden;min-height:calc(100vh - 120px);display:flex;flex-direction:column;">
+<div class="container" style="padding:0;overflow:hidden;min-height:calc(100vh - 120px);display:flex;flex-direction:column;">
 
 <!-- ══════════════════════════════════════════
      AMBIENT BACKGROUND LAYER
@@ -536,7 +552,7 @@ button[onclick*="claimReward"] {
 <!-- ══════════════════════════════════════════
      SECTION 1 — BALANCE HERO (top)
 ══════════════════════════════════════════ -->
-<div style="position:relative;z-index:1;text-align:center;padding:40px 20px 0;">
+<div style="position:relative;z-index:1;text-align:center;padding:20px 20px 0;">
 
     <!-- row: level badge + balance + pts badge -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
@@ -561,17 +577,23 @@ button[onclick*="claimReward"] {
         </div>
     </div>
 
-    <!-- referrals sub-line -->
-    <div style="display:flex;justify-content:center;gap:4px;align-items:center;margin-bottom:4px;">
-        <i data-lucide="users" style="width:11px;height:11px;color:rgba(255,255,255,0.28);"></i>
-        <span style="font-size:0.62rem;color:rgba(255,255,255,0.28);font-weight:600;">{{ user.referral_count or 0 }} referidos</span>
+    <!-- sub-row: referidos centered -->
+    {% if user.referral_count and user.referral_count > 0 %}
+    <div style="display:flex;justify-content:center;margin-top:6px;margin-bottom:-2px;">
+        <div style="display:flex;align-items:center;gap:5px;padding:4px 12px;background:linear-gradient(160deg,#0e0b1e,#090618);border-top:1px solid rgba(167,139,250,0.28);border-bottom:2px solid rgba(0,0,0,0.80);border-radius:20px;box-shadow:0 1px 0 rgba(167,139,250,0.08) inset,0 -2px 0 rgba(0,0,0,0.75) inset;">
+            <i data-lucide="users" style="width:11px;height:11px;color:#a78bfa;"></i>
+            <span style="font-size:0.65rem;font-weight:800;color:#a78bfa;letter-spacing:0.05em;">{{ user.referral_count }} referidos activos</span>
+        </div>
     </div>
+    {% endif %}
+
+
 </div>
 
 <!-- ══════════════════════════════════════════
      SECTION 2 — TAP ARENA (center stage)
 ══════════════════════════════════════════ -->
-<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:30px 0 16px;">
+<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:10px 0 16px;">
 
     <!-- float label zone -->
     <div id="tap-fx-container" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:280px;height:80px;pointer-events:none;overflow:visible;z-index:10;"></div>
@@ -661,49 +683,27 @@ button[onclick*="claimReward"] {
     </div>
 
     <!-- +PXC badge below button -->
-    <div style="margin-top:55px;display:flex;align-items:center;gap:7px;padding:7px 18px;background:linear-gradient(160deg,#0c0c22,#090918);border-top:1px solid rgba(255,215,0,0.35);border-bottom:2px solid rgba(0,0,0,0.85);border-left:1px solid rgba(255,215,0,0.15);border-right:1px solid rgba(0,0,0,0.60);border-radius:24px;box-shadow:0 1px 0 rgba(255,215,0,0.08) inset,0 -2px 0 rgba(0,0,0,0.80) inset,0 4px 16px rgba(0,0,0,0.50);">
+    <div style="margin-top:22px;display:flex;align-items:center;gap:7px;padding:7px 18px;background:linear-gradient(160deg,#0c0c22,#090918);border-top:1px solid rgba(255,215,0,0.35);border-bottom:2px solid rgba(0,0,0,0.85);border-left:1px solid rgba(255,215,0,0.15);border-right:1px solid rgba(0,0,0,0.60);border-radius:24px;box-shadow:0 1px 0 rgba(255,215,0,0.08) inset,0 -2px 0 rgba(0,0,0,0.80) inset,0 4px 16px rgba(0,0,0,0.50);">
         <i data-lucide="zap" style="width:13px;height:13px;color:#FFD700;filter:drop-shadow(0 0 4px rgba(255,215,0,0.8));"></i>
         <span style="font-size:0.72rem;font-weight:800;color:rgba(255,255,255,0.65);">+<span id="tap-reward-label">0.001</span> PXC por tap</span>
-        <span style="font-size:0.62rem;color:rgba(255,255,255,0.28);margin-left:2px;">· {{ user.referral_count or 0 }} refs</span>
+
     </div>
 </div>
 
 <!-- ══════════════════════════════════════════
      SECTION 3 — ENERGY BAR
 ══════════════════════════════════════════ -->
-<style>
-#energy-bar {
-    position: relative; overflow: hidden;
-}
-#energy-bar::before {
-    content: '';
-    position: absolute; top: 0; left: -80%; width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
-    animation: eSweep 2.5s ease-in-out infinite;
-    border-radius: inherit;
-}
-#energy-bar::after {
-    content: '';
-    position: absolute; top: 0; right: -3px; width: 8px; height: 100%;
-    background: radial-gradient(ellipse at center, rgba(255,255,255,0.95) 0%, rgba(255,220,50,0.5) 50%, transparent 80%);
-    animation: eTip 1.5s ease-in-out infinite;
-    filter: blur(1.5px);
-}
-@keyframes eSweep { 0%{left:-80%} 60%,100%{left:120%} }
-@keyframes eTip { 0%,100%{opacity:0.5;transform:scaleY(0.8)} 50%{opacity:1;transform:scaleY(1.2)} }
-</style>
-
-<div style="position:relative;z-index:1;padding:4px 20px 14px;">
+<div style="position:relative;z-index:1;padding:0 20px 14px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
         <div style="display:flex;align-items:center;gap:5px;">
-            <i data-lucide="zap" style="width:12px;height:12px;color:#FFD700;filter:drop-shadow(0 0 4px rgba(255,215,0,0.9));"></i>
-            <span style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.50);letter-spacing:0.08em;text-transform:uppercase;">Energía</span>
+            <i data-lucide="zap" style="width:12px;height:12px;color:#FFD700;"></i>
+            <span style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;">ENERGÍA</span>
         </div>
-        <span id="energy-label" style="font-size:0.68rem;font-weight:800;color:rgba(255,215,0,0.75);font-variant-numeric:tabular-nums;text-shadow:0 0 8px rgba(255,215,0,0.4);">500 / 500</span>
+        <span id="energy-label" style="font-size:0.68rem;font-weight:800;color:rgba(255,255,255,0.50);font-variant-numeric:tabular-nums;">500 / 500</span>
     </div>
     <!-- bar track -->
-    <div style="height:7px;background:rgba(0,0,0,0.45);border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.07);box-shadow:inset 0 2px 4px rgba(0,0,0,0.7);">
-        <div id="energy-bar" style="height:100%;width:100%;background:linear-gradient(90deg,#FF6B00,#FFB300,#FFD700,#FFF176);border-radius:10px;transition:width 0.45s cubic-bezier(0.34,1.2,0.64,1),background 0.5s ease;box-shadow:0 0 10px rgba(255,200,0,0.7),0 0 20px rgba(255,160,0,0.3),inset 0 1px 0 rgba(255,255,255,0.4);"></div>
+    <div style="height:7px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,0.60) inset;">
+        <div id="energy-bar" style="height:100%;width:100%;background:linear-gradient(90deg,#FFD700,#FFA500);border-radius:10px;transition:width 0.35s ease,background 0.5s ease;box-shadow:0 0 8px rgba(255,180,0,0.55);"></div>
     </div>
 </div>
 
