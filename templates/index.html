@@ -571,7 +571,292 @@ button[onclick*="claimReward"] {
 <!-- ══════════════════════════════════════════
      SECTION 2 — TAP ARENA (center stage)
 ══════════════════════════════════════════ -->
-<div style="position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;padding:30px 0 16px;flex:1;justify-content:center;">
+<style>
+/* ════════════════════════════════════════
+   ORB 8K ULTRA — FULL CINEMATIC
+════════════════════════════════════════ */
+
+/* Container */
+.orb-stage {
+    position: relative; z-index: 10;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 30px 0 16px; flex: 1;
+}
+
+/* ── HALO RINGS ── */
+.orb-system {
+    position: relative;
+    width: 260px; height: 260px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+/* Outer energy ring — slow blue sweep */
+.orb-ring-outer {
+    position: absolute; inset: -32px; border-radius: 50%;
+    background: transparent;
+    border: 1.5px solid transparent;
+    background-clip: padding-box;
+}
+.orb-ring-outer::before {
+    content: '';
+    position: absolute; inset: -1.5px; border-radius: 50%;
+    background: conic-gradient(
+        from 0deg,
+        rgba(40,100,255,0) 0%,
+        rgba(60,140,255,0) 30%,
+        rgba(100,180,255,0.80) 48%,
+        rgba(140,200,255,0.90) 50%,
+        rgba(100,180,255,0.80) 52%,
+        rgba(60,140,255,0) 70%,
+        rgba(40,100,255,0) 100%
+    );
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), white calc(100% - 2px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 2px), white calc(100% - 2px));
+    animation: ringSpinOuter 9s linear infinite;
+}
+/* spark on outer ring */
+.orb-spark-outer {
+    position: absolute; inset: -32px; border-radius: 50%;
+    animation: ringSpinOuter 9s linear infinite;
+    pointer-events: none;
+}
+.orb-spark-outer::after {
+    content: '';
+    position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+    width: 12px; height: 12px; border-radius: 50%;
+    background: radial-gradient(circle, #fff 0%, #80c0ff 40%, rgba(60,120,255,0) 75%);
+    box-shadow: 0 0 16px 5px rgba(100,180,255,0.95), 0 0 40px rgba(60,120,255,0.55);
+    filter: blur(0.5px);
+}
+
+/* Mid ring — gold reverse */
+.orb-ring-mid {
+    position: absolute; inset: -16px; border-radius: 50%;
+}
+.orb-ring-mid::before {
+    content: '';
+    position: absolute; inset: -1px; border-radius: 50%;
+    background: conic-gradient(
+        from 0deg,
+        rgba(255,170,0,0) 0%,
+        rgba(255,170,0,0) 35%,
+        rgba(255,215,0,0.85) 48%,
+        rgba(255,240,100,1) 50%,
+        rgba(255,215,0,0.85) 52%,
+        rgba(255,170,0,0) 65%,
+        rgba(255,170,0,0) 100%
+    );
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px));
+    animation: ringSpinMid 6s linear infinite reverse;
+}
+.orb-spark-mid {
+    position: absolute; inset: -16px; border-radius: 50%;
+    animation: ringSpinMid 6s linear infinite reverse;
+    pointer-events: none;
+}
+.orb-spark-mid::after {
+    content: '';
+    position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+    width: 9px; height: 9px; border-radius: 50%;
+    background: radial-gradient(circle, #fff 0%, #FFD700 45%, rgba(255,170,0,0) 75%);
+    box-shadow: 0 0 12px 4px rgba(255,210,0,0.95), 0 0 30px rgba(255,160,0,0.50);
+}
+
+/* Inner ring — violet faint static */
+.orb-ring-inner {
+    position: absolute; inset: 10px; border-radius: 50%;
+    border: 1px solid rgba(160,80,255,0.08);
+    animation: ringSpinInner 22s linear infinite;
+}
+
+@keyframes ringSpinOuter { to { transform: rotate(360deg); } }
+@keyframes ringSpinMid   { to { transform: rotate(360deg); } }
+@keyframes ringSpinInner { to { transform: rotate(360deg); } }
+
+/* ── THE SPHERE ── */
+#tap-btn {
+    position: relative;
+    width: 200px; height: 200px; border-radius: 50%;
+    cursor: pointer; user-select: none; -webkit-user-select: none;
+    /* Deep space sphere — multi-layer 3D illusion */
+    background:
+        /* specular top-left cap */
+        radial-gradient(ellipse 44% 28% at 30% 18%, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.06) 40%, transparent 65%),
+        /* secondary sub-specular */
+        radial-gradient(ellipse 25% 16% at 42% 30%, rgba(200,220,255,0.18) 0%, transparent 60%),
+        /* purple depth scatter bottom-right */
+        radial-gradient(ellipse 65% 55% at 72% 78%, rgba(90,20,220,0.35) 0%, transparent 55%),
+        /* blue core glow */
+        radial-gradient(ellipse 80% 70% at 45% 55%, rgba(20,10,100,0.60) 0%, transparent 65%),
+        /* base deep space */
+        radial-gradient(ellipse 100% 100% at 50% 50%, #18104E 0%, #0E0930 28%, #07051C 55%, #030210 80%, #010108 100%);
+    border: none;
+    box-shadow:
+        /* outer definition ring */
+        0 0 0 1.5px rgba(110,155,255,0.55),
+        /* atmosphere ring */
+        0 0 0 5px rgba(70,110,255,0.10),
+        0 0 0 14px rgba(50,80,220,0.05),
+        /* 3D cast shadow — bottom-right */
+        12px 22px 70px rgba(0,0,0,1),
+        -5px -9px 35px rgba(0,0,0,0.70),
+        /* colored floor bounce */
+        0 35px 100px rgba(0,8,160,0.35),
+        /* inner rim top glow */
+        0 -12px 45px rgba(120,170,255,0.32) inset,
+        /* inner deep shadow */
+        0 18px 70px rgba(0,0,0,0.95) inset,
+        /* purple core depth */
+        0 0 90px rgba(80,10,220,0.18) inset;
+    transition: transform 0.12s cubic-bezier(0.34,1.5,0.64,1), box-shadow 0.12s;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 12px;
+    overflow: hidden;
+}
+
+/* Fresnel rim light */
+#tap-btn::before {
+    content: '';
+    position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(ellipse 100% 100% at 50% 50%,
+        transparent 55%,
+        rgba(80,130,255,0.08) 70%,
+        rgba(100,160,255,0.22) 82%,
+        rgba(120,180,255,0.30) 90%,
+        rgba(140,200,255,0.12) 96%,
+        transparent 100%
+    );
+    pointer-events: none;
+}
+
+/* Scanlines overlay */
+#tap-btn::after {
+    content: '';
+    position: absolute; inset: 0; border-radius: 50%;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent 0px, transparent 2px,
+        rgba(100,150,255,0.012) 2px, rgba(100,150,255,0.012) 3px
+    );
+    pointer-events: none;
+}
+
+/* Specular blobs inside sphere */
+.orb-spec-1 {
+    position: absolute; top: 18px; left: 24px;
+    width: 78px; height: 46px;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.30) 0%, rgba(220,235,255,0.10) 40%, transparent 68%);
+    border-radius: 50%; transform: rotate(-30deg);
+    pointer-events: none;
+}
+.orb-spec-2 {
+    position: absolute; top: 44px; left: 54px;
+    width: 44px; height: 24px;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.18) 0%, transparent 70%);
+    border-radius: 50%; transform: rotate(-22deg);
+    pointer-events: none;
+}
+.orb-rim-bottom {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    width: 130px; height: 32px;
+    background: radial-gradient(ellipse, rgba(80,120,255,0.38) 0%, rgba(60,90,255,0.10) 55%, transparent 75%);
+    pointer-events: none;
+}
+.orb-plasma {
+    position: absolute; inset: 35px; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(110,50,255,0.22) 0%, rgba(60,20,200,0.12) 50%, transparent 75%);
+    animation: plasmaBreath 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* ── COIN ── */
+.orb-coin {
+    position: relative; z-index: 3;
+    width: 82px; height: 82px; border-radius: 50%;
+    flex-shrink: 0;
+    background:
+        /* glare cap */
+        radial-gradient(ellipse 48% 34% at 30% 20%, rgba(255,255,230,0.90) 0%, rgba(255,240,120,0.25) 40%, transparent 65%),
+        /* warm mid */
+        radial-gradient(ellipse 75% 65% at 50% 45%, #FFE044 0%, #FFAB00 35%, #D46800 62%, #8A3A00 82%, #3A1400 100%);
+    box-shadow:
+        0 0 0 1.5px rgba(255,235,100,0.55),
+        0 0 0 3.5px rgba(255,185,0,0.18),
+        0 0 0 9px rgba(255,140,0,0.05),
+        6px 12px 32px rgba(0,0,0,0.85),
+        -2px -4px 14px rgba(0,0,0,0.45),
+        0 -7px 30px rgba(255,245,90,0.80) inset,
+        0 11px 38px rgba(110,45,0,0.85) inset;
+    overflow: hidden;
+    animation: coinFloat 3.8s ease-in-out infinite;
+    transition: transform 0.12s cubic-bezier(0.34,1.5,0.64,1);
+}
+.orb-coin-shine {
+    position: absolute; top: 10px; left: 12px;
+    width: 38px; height: 22px;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.78) 0%, rgba(255,255,200,0.15) 50%, transparent 70%);
+    border-radius: 50%; transform: rotate(-25deg);
+}
+.orb-coin-rim {
+    position: absolute; inset: 5px; border-radius: 50%;
+    border: 1px solid rgba(255,210,60,0.28);
+}
+.orb-coin-letter {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.35rem; font-weight: 900;
+    color: rgba(55,22,0,0.82);
+    text-shadow: 0 1px 3px rgba(255,210,70,0.45);
+    letter-spacing: -0.04em;
+    z-index: 1;
+}
+
+.orb-label {
+    font-size: 0.52rem; font-weight: 800;
+    letter-spacing: 0.22em; color: rgba(180,210,255,0.32);
+    text-transform: uppercase; position: relative; z-index: 3;
+}
+
+/* Ground shadow */
+.orb-ground-shadow {
+    position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%);
+    width: 160px; height: 14px;
+    background: radial-gradient(ellipse, rgba(0,0,100,0.65) 0%, transparent 70%);
+    filter: blur(3px); pointer-events: none;
+}
+
+@keyframes coinFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33%       { transform: translateY(-5px) rotate(0.6deg); }
+    66%       { transform: translateY(-2px) rotate(-0.4deg); }
+}
+@keyframes plasmaBreath {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50%       { opacity: 1; transform: scale(1.14); }
+}
+@keyframes coinPulse {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    25%       { transform: scale(1.04) rotate(0.8deg); }
+    75%       { transform: scale(0.97) rotate(-0.8deg); }
+}
+
+/* ── PXC BADGE ── */
+.orb-badge {
+    margin-top: 55px;
+    display: flex; align-items: center; gap: 8px; padding: 8px 20px;
+    background: linear-gradient(160deg, #0c0c22, #090918);
+    border-top: 1px solid rgba(255,215,0,0.38);
+    border-bottom: 2px solid rgba(0,0,0,0.88);
+    border-left: 1px solid rgba(255,215,0,0.14);
+    border-right: 1px solid rgba(0,0,0,0.60);
+    border-radius: 26px;
+    box-shadow: 0 1px 0 rgba(255,215,0,0.08) inset, 0 -2px 0 rgba(0,0,0,0.80) inset, 0 4px 18px rgba(0,0,0,0.55);
+}
+</style>
+
+<div class="orb-stage">
 
     <!-- float FX zone -->
     <div id="tap-fx-container" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:320px;height:100px;pointer-events:none;overflow:visible;z-index:30;"></div>
@@ -579,139 +864,47 @@ button[onclick*="claimReward"] {
     <!-- shockwave container -->
     <div id="shockwave-container" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:0;height:0;pointer-events:none;z-index:5;overflow:visible;"></div>
 
-    <!-- ── ORBITAL SYSTEM ── -->
-    <div style="position:relative;width:230px;height:230px;display:flex;align-items:center;justify-content:center;">
+    <!-- ORBITAL SYSTEM -->
+    <div class="orb-system">
 
-        <!-- Ring 1: outer blue — slow, conic gradient border -->
-        <div style="position:absolute;inset:-20px;border-radius:50%;border:1px solid transparent;
-            background:linear-gradient(#0a0a18,#0a0a18) padding-box,
-                        linear-gradient(var(--r1-angle,0deg),rgba(60,120,255,0.0),rgba(60,120,255,0.55),rgba(60,120,255,0.0)) border-box;
-            animation:spinBorder1 10s linear infinite;">
-        </div>
-        <!-- spark on ring 1 -->
-        <div style="position:absolute;inset:-20px;border-radius:50%;animation:spinBorder1 10s linear infinite;pointer-events:none;">
-            <div style="position:absolute;top:0;left:50%;transform:translate(-50%,-50%);
-                width:10px;height:10px;border-radius:50%;
-                background:#60a0ff;box-shadow:0 0 14px 4px rgba(80,150,255,0.90),0 0 30px rgba(60,100,255,0.45);"></div>
-        </div>
+        <!-- Outer ring + spark -->
+        <div class="orb-ring-outer"></div>
+        <div class="orb-spark-outer"></div>
 
-        <!-- Ring 2: mid gold — reverse medium -->
-        <div style="position:absolute;inset:-8px;border-radius:50%;border:1px solid transparent;
-            background:linear-gradient(#0a0a18,#0a0a18) padding-box,
-                        linear-gradient(var(--r2-angle,120deg),rgba(255,180,0,0.0),rgba(255,180,0,0.50),rgba(255,180,0,0.0)) border-box;
-            animation:spinBorder2 7s linear infinite reverse;">
-        </div>
-        <div style="position:absolute;inset:-8px;border-radius:50%;animation:spinBorder2 7s linear infinite reverse;pointer-events:none;">
-            <div style="position:absolute;top:0;left:50%;transform:translate(-50%,-50%);
-                width:8px;height:8px;border-radius:50%;
-                background:#ffcc00;box-shadow:0 0 12px 3px rgba(255,200,0,0.90),0 0 28px rgba(255,150,0,0.40);"></div>
-        </div>
+        <!-- Mid ring + spark -->
+        <div class="orb-ring-mid"></div>
+        <div class="orb-spark-mid"></div>
 
-        <!-- Ring 3: inner violet — slow reverse dashed -->
-        <div style="position:absolute;inset:6px;border-radius:50%;border:1px dashed rgba(150,80,255,0.12);animation:spinBorder3 18s linear infinite;"></div>
+        <!-- Inner ring -->
+        <div class="orb-ring-inner"></div>
 
-        <!-- ══ THE ORB ══ -->
+        <!-- THE SPHERE -->
         <div id="tap-btn"
              ontouchstart="handleTap(event)"
-             onclick="handleTap(event)"
-             style="
-                position:relative;
-                width:180px;height:180px;border-radius:50%;
-                cursor:pointer;user-select:none;-webkit-user-select:none;
-                background:
-                    radial-gradient(ellipse 48% 32% at 32% 22%, rgba(255,255,255,0.28) 0%, transparent 48%),
-                    radial-gradient(ellipse 60% 45% at 70% 75%, rgba(100,20,255,0.30) 0%, transparent 55%),
-                    radial-gradient(ellipse 100% 100% at 50% 50%, #1c1060 0%, #110c40 30%, #090720 60%, #040312 100%);
-                border:none;
-                box-shadow:
-                    0 0 0 1px rgba(100,140,255,0.45),
-                    0 0 0 3px rgba(60,90,255,0.15),
-                    0 0 0 12px rgba(40,60,200,0.06),
-                    10px 20px 60px rgba(0,0,0,0.98),
-                    -4px -8px 30px rgba(0,0,0,0.60),
-                    0 30px 90px rgba(0,10,150,0.30),
-                    0 -10px 40px rgba(100,150,255,0.28) inset,
-                    0 15px 60px rgba(0,0,0,0.90) inset,
-                    0 0 80px rgba(60,0,200,0.12) inset;
-                transition:transform 0.12s cubic-bezier(0.34,1.5,0.64,1),box-shadow 0.12s;
-                display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
-                overflow:hidden;
-             ">
+             onclick="handleTap(event)">
 
-            <!-- specular highlight top-left -->
-            <div style="position:absolute;top:20px;left:26px;width:70px;height:42px;
-                background:radial-gradient(ellipse,rgba(255,255,255,0.26) 0%,transparent 62%);
-                border-radius:50%;transform:rotate(-28deg);pointer-events:none;"></div>
+            <div class="orb-spec-1"></div>
+            <div class="orb-spec-2"></div>
+            <div class="orb-rim-bottom"></div>
+            <div class="orb-plasma"></div>
 
-            <!-- secondary specular -->
-            <div style="position:absolute;top:48px;left:52px;width:40px;height:22px;
-                background:radial-gradient(ellipse,rgba(255,255,255,0.16) 0%,transparent 70%);
-                border-radius:50%;transform:rotate(-20deg);pointer-events:none;"></div>
-
-            <!-- bottom blue rim light -->
-            <div style="position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
-                width:120px;height:28px;
-                background:radial-gradient(ellipse,rgba(80,120,255,0.35) 0%,transparent 68%);
-                pointer-events:none;"></div>
-
-            <!-- plasma core -->
-            <div id="plasma-core" style="position:absolute;inset:30px;border-radius:50%;
-                background:radial-gradient(ellipse,rgba(120,60,255,0.20) 0%,rgba(60,20,180,0.12) 50%,transparent 70%);
-                animation:plasmaBreath 4s ease-in-out infinite;pointer-events:none;"></div>
-
-            <!-- HOLOGRAPHIC COIN -->
-            <div id="coin-el" style="
-                position:relative;z-index:2;
-                width:76px;height:76px;border-radius:50%;flex-shrink:0;
-                background:
-                    radial-gradient(ellipse 50% 36% at 33% 24%, rgba(255,255,210,0.80) 0%, transparent 45%),
-                    radial-gradient(ellipse 100% 100% at 50% 50%, #FFE844 0%, #FFB800 35%, #E07000 65%, #8B3E00 90%, #3D1500 100%);
-                box-shadow:
-                    0 0 0 1.5px rgba(255,230,100,0.50),
-                    0 0 0 3px rgba(255,180,0,0.18),
-                    0 0 0 8px rgba(255,140,0,0.06),
-                    5px 10px 30px rgba(0,0,0,0.80),
-                    -2px -4px 12px rgba(0,0,0,0.40),
-                    0 -6px 28px rgba(255,240,80,0.75) inset,
-                    0 10px 36px rgba(100,40,0,0.80) inset;
-                overflow:hidden;
-                animation:coinPulse 3.5s ease-in-out infinite;
-            ">
-                <!-- coin shine -->
-                <div style="position:absolute;top:11px;left:13px;width:36px;height:20px;
-                    background:radial-gradient(ellipse,rgba(255,255,255,0.72) 0%,transparent 65%);
-                    border-radius:50%;transform:rotate(-25deg);"></div>
-                <!-- coin micro rim -->
-                <div style="position:absolute;inset:4px;border-radius:50%;border:1px solid rgba(255,200,50,0.25);"></div>
-                <!-- PXC glyph -->
-                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-                    <span style="font-size:1.3rem;font-weight:900;color:rgba(60,25,0,0.78);
-                        text-shadow:0 1px 2px rgba(255,200,60,0.40);
-                        letter-spacing:-0.05em;position:relative;z-index:1;">P</span>
-                </div>
+            <!-- COIN -->
+            <div id="coin-el" class="orb-coin">
+                <div class="orb-coin-shine"></div>
+                <div class="orb-coin-rim"></div>
+                <div class="orb-coin-letter">P</div>
             </div>
 
-            <!-- tap label -->
-            <div style="font-size:0.52rem;font-weight:800;letter-spacing:0.20em;
-                color:rgba(180,210,255,0.35);text-transform:uppercase;
-                position:relative;z-index:2;">TOCA PARA GANAR</div>
-
-            <!-- holographic scanlines overlay -->
-            <div style="position:absolute;inset:0;border-radius:50%;
-                background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(100,150,255,0.015) 3px,rgba(100,150,255,0.015) 4px);
-                pointer-events:none;"></div>
+            <div class="orb-label">TOCA PARA GANAR</div>
         </div>
 
-        <!-- ground shadow ellipse -->
-        <div style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);
-            width:150px;height:12px;
-            background:radial-gradient(ellipse,rgba(0,0,80,0.60) 0%,transparent 70%);
-            pointer-events:none;filter:blur(2px);"></div>
+        <!-- Ground shadow -->
+        <div class="orb-ground-shadow"></div>
     </div>
 
-    <!-- +PXC badge below button -->
-    <div style="margin-top:55px;display:flex;align-items:center;gap:7px;padding:7px 18px;background:linear-gradient(160deg,#0c0c22,#090918);border-top:1px solid rgba(255,215,0,0.35);border-bottom:2px solid rgba(0,0,0,0.85);border-left:1px solid rgba(255,215,0,0.15);border-right:1px solid rgba(0,0,0,0.60);border-radius:24px;box-shadow:0 1px 0 rgba(255,215,0,0.08) inset,0 -2px 0 rgba(0,0,0,0.80) inset,0 4px 16px rgba(0,0,0,0.50);">
-        <i data-lucide="zap" style="width:13px;height:13px;color:#FFD700;filter:drop-shadow(0 0 4px rgba(255,215,0,0.8));"></i>
+    <!-- PXC badge -->
+    <div class="orb-badge">
+        <i data-lucide="zap" style="width:13px;height:13px;color:#FFD700;filter:drop-shadow(0 0 5px rgba(255,215,0,0.9));"></i>
         <span style="font-size:0.72rem;font-weight:800;color:rgba(255,255,255,0.65);">+<span id="tap-reward-label">0.001</span> PXC por tap</span>
         <span style="font-size:0.62rem;color:rgba(255,255,255,0.28);margin-left:2px;">· {{ user.referral_count or 0 }} refs</span>
     </div>
