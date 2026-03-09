@@ -129,15 +129,85 @@ body {
 .premium-stats       { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.12s both; }
 .mining-card-premium { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.20s both; }
 .premium-card        { animation: idxIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.28s both; }
-</style>
 
+/* ══════════════════════════════
+   MEJORAS PREMIUM — OVERLAY FINO
+══════════════════════════════ */
+
+/* Fondo ambient glow sutil */
+body::before {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse at center, rgba(0,50,200,0.12) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Balance amount — glow refinado */
+#tap-balance-display {
+    text-shadow: 0 0 50px rgba(80,140,255,0.35), 0 3px 10px rgba(0,0,0,0.5) !important;
+    letter-spacing: -0.02em;
+}
+
+/* Claim button — shine animado */
+button[onclick*="claimReward"]::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 55%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
+    animation: btnShine 3.5s ease-in-out infinite;
+    border-radius: inherit;
+}
+button[onclick*="claimReward"] {
+    position: relative;
+    overflow: hidden;
+}
+@keyframes btnShine { 0%{left:-100%} 50%,100%{left:150%} }
+
+/* Energy bar — shimmer */
+#energy-bar::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.30), transparent);
+    animation: energyShimmer 2s ease-in-out infinite;
+    border-radius: inherit;
+}
+#energy-bar { position: relative; overflow: hidden; }
+@keyframes energyShimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+
+/* Mining rate dot — glow más vivo */
+.mining-status-dot,
+[style*="background:#00FF88"][style*="border-radius:50%"] {
+    box-shadow: 0 0 0 3px rgba(0,255,136,0.15), 0 0 14px rgba(0,255,136,0.9) !important;
+}
+
+/* Ticker bottom — fade edges */
+#ticker-track {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+/* Stats valores — pop sutil al actualizar */
+#stat-taps { transition: transform 0.15s ease; }
+
+/* Cards — separación más clara */
+.container > div + div { margin-top: 2px; }
+
+</style>
 
 
 <style>
 /* ══════════════════════════════════════════════════════
    INDEX — PREMIUM 3D FULL REDESIGN
 ══════════════════════════════════════════════════════ */
-
 
 
 /* ── BOOST BUTTON ── */
@@ -449,7 +519,6 @@ body {
 .mining-card-premium  { animation:idxIn .4s cubic-bezier(0.34,1.2,0.64,1) .20s both; }
 .premium-card         { animation:idxIn .4s cubic-bezier(0.34,1.2,0.64,1) .28s both; }
 </style>
-
 
 
 <div class="container" style="padding:0;padding-top:28px;overflow:hidden;min-height:calc(100vh - 120px);display:flex;flex-direction:column;">
