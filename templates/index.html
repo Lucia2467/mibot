@@ -7,18 +7,6 @@
 {% endblock %}
 
 {% block content %}
-<!-- Splash Screen Premium -->
-<div id="splash-screen" class="splash-screen">
-    <div class="splash-content">
-        <div class="premium-loader">
-            <div class="loader-ring"></div>
-            <div class="loader-ring"></div>
-            <div class="loader-ring"></div>
-            <div class="loader-core"></div>
-        </div>
-    </div>
-</div>
-
 <style>
 /* Zoom global -17% */
 body {
@@ -32,93 +20,6 @@ body {
     zoom: 1.2048;
 }
 
-/* Premium Loader Animation */
-.premium-loader {
-    position: relative;
-    width: 80px;
-    height: 80px;
-}
-
-.loader-ring {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 3px solid transparent;
-}
-
-.loader-ring:nth-child(1) {
-    border-top-color: #0066FF;
-    animation: spin-1 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-}
-
-.loader-ring:nth-child(2) {
-    width: 70%;
-    height: 70%;
-    top: 15%;
-    left: 15%;
-    border-right-color: #00A3FF;
-    animation: spin-2 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
-}
-
-.loader-ring:nth-child(3) {
-    width: 40%;
-    height: 40%;
-    top: 30%;
-    left: 30%;
-    border-bottom-color: #00D4FF;
-    animation: spin-1 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-}
-
-.loader-core {
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%);
-    border-radius: 50%;
-    box-shadow: 0 0 20px rgba(0, 102, 255, 0.6), 0 0 40px rgba(0, 212, 255, 0.4);
-    animation: pulse-core 1.5s ease-in-out infinite;
-}
-
-@keyframes spin-1 {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes spin-2 {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes pulse-core {
-    0%, 100% { 
-        transform: translate(-50%, -50%) scale(1);
-        box-shadow: 0 0 20px rgba(0, 102, 255, 0.6), 0 0 40px rgba(0, 212, 255, 0.4);
-    }
-    50% { 
-        transform: translate(-50%, -50%) scale(1.2);
-        box-shadow: 0 0 30px rgba(0, 102, 255, 0.8), 0 0 60px rgba(0, 212, 255, 0.6);
-    }
-}
-
-.splash-screen {
-    position: fixed;
-    inset: 0;
-    background: #000000;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
-}
-
-.splash-screen.fade-out {
-    opacity: 0;
-    visibility: hidden;
-}
 
 /* ── Card entrance animations ── */
 @keyframes idxIn {
@@ -580,9 +481,10 @@ button[onclick*="claimReward"] {
     <div style="position:relative;width:260px;height:260px;display:flex;align-items:center;justify-content:center;">
 
         <!-- Ring 1 — slow outer -->
-        <div style="position:absolute;inset:-28px;border-radius:50%;border:1px solid rgba(60,130,255,0.12);animation:orbitRing1 12s linear infinite;"></div>
-        <!-- Ring 1 spark -->
-        <div style="position:absolute;top:-29px;left:50%;margin-left:-3px;width:6px;height:6px;border-radius:50%;background:rgba(80,160,255,0.70);box-shadow:0 0 8px rgba(80,160,255,0.9);animation:orbitRing1 12s linear infinite;"></div>
+        <!-- Ring 1 — slow outer -->
+        <div style="position:absolute;inset:-28px;border-radius:50%;border:1px solid rgba(60,130,255,0.12);animation:orbitRing1 12s linear infinite;">
+            <div style="position:absolute;top:-3px;left:50%;margin-left:-3px;width:6px;height:6px;border-radius:50%;background:rgba(80,160,255,0.70);box-shadow:0 0 8px rgba(80,160,255,0.9);"></div>
+        </div>
 
         <!-- Ring 2 — medium, tilted -->
         <div style="position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(255,200,0,0.10);animation:orbitRing2 8s linear infinite reverse;transform:rotate(45deg);"></div>
@@ -2085,17 +1987,6 @@ document.head.appendChild(shakeStyle);
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    const splash = document.getElementById('splash-screen');
-
-    // Ocultar splash después de 1 segundo
-    setTimeout(() => {
-        splash.style.opacity = '0';
-        setTimeout(() => {
-            splash.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }, 300);
-    }, 1000);
-
     // Inicializar iconos
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
