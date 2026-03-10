@@ -180,28 +180,38 @@ body::after {
 }
 
 /* ==================== NAVEGACIÓN ULTRA PREMIUM ==================== */
+/* ══════════════════════════════════════
+   BOTTOM NAV — 3D PREMIUM
+   ══════════════════════════════════════ */
+
 .bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    padding: 0 12px calc(10px + env(safe-area-inset-bottom));
+    padding: 0 10px calc(12px + env(safe-area-inset-bottom));
 }
 
 .nav-inner {
     max-width: 680px;
     margin: 0 auto;
-    background: rgba(6, 6, 16, 0.82);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    border: 1px solid rgba(0, 102, 255, 0.18);
-    border-radius: 22px;
-    padding: 6px 4px;
+    /* 3D extruded panel */
+    background: linear-gradient(180deg, #0d0d22 0%, #080814 100%);
+    backdrop-filter: blur(32px) saturate(200%);
+    -webkit-backdrop-filter: blur(32px) saturate(200%);
+    border-top:    2px solid rgba(0,163,255,0.45);
+    border-left:   1px solid rgba(0,120,255,0.22);
+    border-right:  1px solid rgba(0,0,0,0.80);
+    border-bottom: 3px solid rgba(0,0,0,0.95);
+    border-radius: 24px;
+    padding: 8px 6px 6px;
     box-shadow:
-        0 -1px 0 rgba(0, 163, 255, 0.08) inset,
-        0 24px 60px rgba(0, 0, 0, 0.7),
-        0 0 0 1px rgba(0, 0, 0, 0.3);
+        0 3px 0 rgba(0,163,255,0.12) inset,
+        0 -4px 0 rgba(0,0,0,0.95) inset,
+        0 -20px 60px rgba(0,0,0,0.85),
+        0 0 0 1px rgba(0,100,255,0.14),
+        0 0 40px rgba(0,60,200,0.10);
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 2px;
@@ -209,132 +219,156 @@ body::after {
     overflow: hidden;
 }
 
+/* Top glow line */
 .nav-inner::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 10%;
-    right: 10%;
+    top: 0; left: 8%; right: 8%;
     height: 1px;
     background: linear-gradient(90deg,
         transparent,
-        rgba(0, 163, 255, 0.5) 30%,
-        rgba(0, 212, 255, 0.8) 50%,
-        rgba(0, 163, 255, 0.5) 70%,
+        rgba(0,163,255,0.55) 25%,
+        rgba(0,212,255,1.0) 50%,
+        rgba(0,163,255,0.55) 75%,
         transparent);
-    border-radius: 1px;
+    pointer-events: none;
 }
 
+/* Specular shimmer */
+.nav-inner::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+    border-radius: 24px 24px 0 0;
+    pointer-events: none;
+}
+
+/* ── Each nav item ── */
 .nav-item {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    padding: 7px 2px 6px;
-    border-radius: 16px;
+    gap: 4px;
+    padding: 6px 2px 5px;
+    border-radius: 18px;
     cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
 }
 
 .nav-item:active {
-    transform: scale(0.9);
+    transform: translateY(2px) scale(0.92);
+    transition: transform 0.08s ease;
 }
 
-/* Active pill glow behind icon */
+/* ── Active: 3D raised icon box ── */
 .nav-item::before {
     content: '';
     position: absolute;
-    top: 4px;
-    left: 50%;
+    top: 3px; left: 50%;
     transform: translateX(-50%);
-    width: 44px;
-    height: 42px;
+    width: 46px; height: 40px;
     border-radius: 14px;
-    background: linear-gradient(135deg, rgba(0,102,255,0.35) 0%, rgba(0,163,255,0.25) 100%);
-    border: 1px solid rgba(0,163,255,0.3);
+    background: linear-gradient(160deg, #0d1f4a 0%, #071535 100%);
+    border-top:    1px solid rgba(0,163,255,0.50);
+    border-left:   1px solid rgba(0,120,255,0.25);
+    border-right:  1px solid rgba(0,0,0,0.70);
+    border-bottom: 2px solid rgba(0,0,0,0.90);
+    box-shadow:
+        0 2px 0 rgba(0,163,255,0.15) inset,
+        0 -2px 0 rgba(0,0,0,0.80) inset,
+        0 4px 14px rgba(0,50,200,0.30),
+        0 0 20px rgba(0,100,255,0.15);
     opacity: 0;
-    transition: opacity 0.25s ease, box-shadow 0.25s ease;
-    box-shadow: 0 0 16px rgba(0, 102, 255, 0.4), 0 0 32px rgba(0, 163, 255, 0.2);
+    transition: opacity 0.22s ease, box-shadow 0.22s ease;
 }
 
 .nav-item.active::before {
     opacity: 1;
 }
 
-/* Active dot indicator */
+/* ── Active bottom dot ── */
 .nav-item.active::after {
     content: '';
     position: absolute;
-    bottom: 3px;
-    left: 50%;
+    bottom: 2px; left: 50%;
     transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
+    width: 5px; height: 5px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #00A3FF, #0066FF);
-    box-shadow: 0 0 6px rgba(0, 163, 255, 0.8);
+    background: #00D4FF;
+    box-shadow: 0 0 8px rgba(0,212,255,1), 0 0 16px rgba(0,163,255,0.6);
 }
 
+/* ── Icon container ── */
 .nav-icon {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 22px;
-    height: 22px;
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    width: 24px; height: 24px;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .nav-item.active .nav-icon {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 
 .nav-icon svg,
 .nav-icon i {
-    width: 18px !important;
-    height: 18px !important;
+    width: 19px !important;
+    height: 19px !important;
     stroke-width: 2;
-    transition: all 0.25s ease;
+    transition: all 0.22s ease;
 }
 
+/* Inactive */
 .nav-item:not(.active) .nav-icon svg,
 .nav-item:not(.active) .nav-icon i {
-    color: rgba(139, 157, 195, 0.6);
-    stroke: rgba(139, 157, 195, 0.6);
+    color: rgba(100, 130, 180, 0.50);
+    stroke: rgba(100, 130, 180, 0.50);
     filter: none;
 }
 
+/* Active — white + cyan glow */
 .nav-item.active .nav-icon svg,
 .nav-item.active .nav-icon i {
     color: #fff;
     stroke: #fff;
-    filter: drop-shadow(0 0 6px rgba(0, 163, 255, 0.9)) drop-shadow(0 0 12px rgba(0, 102, 255, 0.6));
+    filter:
+        drop-shadow(0 0 5px rgba(0,212,255,1))
+        drop-shadow(0 0 12px rgba(0,163,255,0.75))
+        drop-shadow(0 0 24px rgba(0,100,255,0.40));
 }
 
+/* ── Label ── */
 .nav-label {
     position: relative;
-    z-index: 1;
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    z-index: 2;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    transition: all 0.25s ease;
+    transition: all 0.22s ease;
     line-height: 1;
 }
 
 .nav-item:not(.active) .nav-label {
-    color: rgba(139, 157, 195, 0.45);
+    color: rgba(100, 130, 180, 0.38);
 }
 
 .nav-item.active .nav-label {
-    background: linear-gradient(135deg, #00D4FF 0%, #0066FF 100%);
+    background: linear-gradient(135deg, #00D4FF 0%, #4D9FFF 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 /* ==================== TIPOGRAFÍA ULTRA PREMIUM ==================== */
