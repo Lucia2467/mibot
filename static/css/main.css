@@ -165,7 +165,7 @@ body::after {
 
 .main-content {
     flex: 1;
-    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+    padding-bottom: calc(105px + env(safe-area-inset-bottom));
 }
 
 /* Padding-top solo cuando hay header */
@@ -181,85 +181,84 @@ body::after {
 
 /* ==================== NAVEGACIÓN ULTRA PREMIUM ==================== */
 /* ═══════════════════════════════════════════════
-   BOTTOM NAV — ULTRA 3D PREMIUM
-   Materiales: Metal anodizado azul + cristal templado
+   BOTTOM NAV — FLOATING PILL 3D ULTRA PREMIUM
    ═══════════════════════════════════════════════ */
 
 .bottom-nav {
     position: fixed;
-    bottom: 0; left: 0; right: 0;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 1000;
-    padding: 0 12px calc(10px + env(safe-area-inset-bottom));
+    width: calc(100% - 32px);
+    max-width: 420px;
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Cuerpo principal — placa metálica 3D */
+/* Cápsula flotante — vidrio oscuro con profundidad real */
 .nav-inner {
-    max-width: 680px;
-    margin: 0 auto;
     position: relative;
-    /* Metal oscuro con gradiente de luz desde arriba */
     background:
-        linear-gradient(180deg,
-            #141428 0%,
-            #0d0d1e 35%,
-            #080812 70%,
-            #040408 100%);
-    backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
-    -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
-    /* Bordes 3D: arriba claro (luz), abajo oscuro (sombra) */
-    border-top:    2px solid rgba(80,160,255,0.55);
-    border-left:   1px solid rgba(60,120,255,0.25);
-    border-right:  1px solid rgba(0,0,0,0.90);
-    border-bottom: 4px solid rgba(0,0,0,1.0);
-    border-radius: 26px;
-    padding: 8px 4px 6px;
+        linear-gradient(160deg,
+            rgba(22, 22, 48, 0.96) 0%,
+            rgba(10, 10, 28, 0.98) 50%,
+            rgba(5, 5, 14, 0.99) 100%);
+    backdrop-filter: blur(40px) saturate(220%) brightness(1.05);
+    -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.05);
+    /* Forma cápsula */
+    border-radius: 40px;
+    padding: 10px 8px 10px;
+    /* Bordes 3D: arriba luz, abajo sombra */
+    border-top:    1.5px solid rgba(80,160,255,0.50);
+    border-left:   1px solid rgba(60,120,255,0.20);
+    border-right:  1px solid rgba(0,0,20,0.80);
+    border-bottom: 3px solid rgba(0,0,0,1.0);
     box-shadow:
-        /* Luz interior arriba */
-        0 2px 0 rgba(100,180,255,0.12) inset,
-        /* Sombra interior abajo */
-        0 -3px 8px rgba(0,0,0,0.90) inset,
-        /* Sombra exterior profunda */
-        0 8px 32px rgba(0,0,0,0.95),
-        0 2px 8px rgba(0,0,0,0.80),
-        /* Halo azul ambiental */
-        0 0 60px rgba(0,60,200,0.12),
-        /* Borde exterior difuso */
-        0 0 0 1px rgba(0,80,220,0.15);
+        /* luz interna arriba */
+        0 1px 0 rgba(120,180,255,0.10) inset,
+        /* oscuridad interna abajo */
+        0 -4px 12px rgba(0,0,0,0.85) inset,
+        /* sombra flotante — difusa larga */
+        0 20px 60px rgba(0,0,0,0.75),
+        0 8px 20px rgba(0,0,0,0.60),
+        /* halo ambiental azul */
+        0 0 0 1px rgba(0,80,220,0.12),
+        0 4px 40px rgba(0,40,180,0.15);
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 2px;
+    gap: 0;
     overflow: hidden;
 }
 
-/* Línea de luz superior — specular highlight */
+/* Specular highlight — raya de luz superior */
 .nav-inner::before {
     content: '';
     position: absolute;
-    top: 0; left: 5%; right: 5%;
+    top: 0; left: 12%; right: 12%;
     height: 1px;
     background: linear-gradient(90deg,
         transparent 0%,
-        rgba(100,180,255,0.20) 15%,
-        rgba(0,212,255,0.90) 40%,
-        rgba(180,230,255,1.0) 50%,
-        rgba(0,212,255,0.90) 60%,
-        rgba(100,180,255,0.20) 85%,
+        rgba(0,180,255,0.25) 20%,
+        rgba(120,210,255,0.95) 45%,
+        rgba(200,240,255,1.00) 50%,
+        rgba(120,210,255,0.95) 55%,
+        rgba(0,180,255,0.25) 80%,
         transparent 100%);
+    border-radius: 1px;
     pointer-events: none;
     z-index: 10;
 }
 
-/* Reflejo de cristal superior */
+/* Reflejo suave de vidrio */
 .nav-inner::after {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 45%;
+    height: 50%;
     background: linear-gradient(180deg,
-        rgba(255,255,255,0.04) 0%,
-        rgba(255,255,255,0.01) 50%,
+        rgba(255,255,255,0.035) 0%,
         transparent 100%);
-    border-radius: 26px 26px 0 0;
+    border-radius: 40px 40px 0 0;
     pointer-events: none;
     z-index: 1;
 }
@@ -272,10 +271,10 @@ body::after {
     align-items: center;
     justify-content: center;
     gap: 4px;
-    padding: 8px 2px 7px;
-    border-radius: 18px;
+    padding: 7px 2px 6px;
+    border-radius: 30px;
     cursor: pointer;
-    transition: transform 0.20s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     user-select: none;
@@ -283,58 +282,51 @@ body::after {
 }
 
 .nav-item:active {
-    transform: translateY(2px) scale(0.91);
-    transition: transform 0.06s ease;
+    transform: scale(0.86) translateY(1px);
+    transition: transform 0.07s ease;
 }
 
-/* Plataforma 3D elevada para el activo */
+/* Cápsula interna activa — cristal azul 3D */
 .nav-item::before {
     content: '';
     position: absolute;
-    top: 4px; left: 50%;
-    transform: translateX(-50%);
-    width: 48px; height: 44px;
-    border-radius: 15px;
-    /* Superficie metálica azul */
+    inset: 2px 3px;
+    border-radius: 26px;
     background: linear-gradient(170deg,
-        #0f2050 0%,
-        #091840 30%,
-        #050f28 70%,
-        #02080f 100%);
-    /* Bordes 3D de la plataforma */
-    border-top:    1.5px solid rgba(0,180,255,0.70);
-    border-left:   1px solid rgba(0,140,255,0.35);
-    border-right:  1px solid rgba(0,0,0,0.80);
-    border-bottom: 3px solid rgba(0,0,0,0.95);
+        rgba(0, 80, 200, 0.40) 0%,
+        rgba(0, 50, 160, 0.28) 40%,
+        rgba(0, 20, 80, 0.20) 100%);
+    border-top:    1px solid rgba(0,180,255,0.60);
+    border-left:   1px solid rgba(0,130,255,0.25);
+    border-right:  1px solid rgba(0,0,0,0.60);
+    border-bottom: 2px solid rgba(0,0,0,0.80);
     box-shadow:
-        0 2px 0 rgba(0,150,255,0.18) inset,
-        0 -2px 0 rgba(0,0,0,0.90) inset,
-        0 4px 16px rgba(0,40,180,0.50),
-        0 0 24px rgba(0,100,255,0.20),
-        0 0 0 1px rgba(0,80,200,0.15);
+        0 1px 0 rgba(0,160,255,0.20) inset,
+        0 -1px 0 rgba(0,0,0,0.70) inset,
+        0 2px 12px rgba(0,60,200,0.35),
+        0 0 20px rgba(0,100,255,0.15);
     opacity: 0;
-    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.34,1.4,0.64,1);
-    transform: translateX(-50%) translateY(2px) scale(0.95);
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
+    transform: scaleY(0.85) scaleX(0.90);
 }
 
 .nav-item.active::before {
     opacity: 1;
-    transform: translateX(-50%) translateY(0px) scale(1);
+    transform: scaleY(1) scaleX(1);
 }
 
-/* Punto de luz activo abajo */
+/* Punto de brillo inferior */
 .nav-item.active::after {
     content: '';
     position: absolute;
-    bottom: 1px; left: 50%;
+    bottom: 3px; left: 50%;
     transform: translateX(-50%);
-    width: 6px; height: 3px;
-    border-radius: 50%;
-    background: #00D4FF;
-    box-shadow:
-        0 0 6px 2px rgba(0,212,255,0.90),
-        0 0 14px 4px rgba(0,163,255,0.55),
-        0 0 28px 6px rgba(0,100,255,0.25);
+    width: 18px; height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0,212,255,0.9), transparent);
+    box-shadow: 0 0 8px rgba(0,212,255,0.8), 0 0 16px rgba(0,163,255,0.4);
 }
 
 /* ── Ícono ── */
@@ -349,7 +341,7 @@ body::after {
 }
 
 .nav-item.active .nav-icon {
-    transform: translateY(-2px) scale(1.10);
+    transform: translateY(-1px) scale(1.12);
 }
 
 .nav-icon svg,
@@ -360,24 +352,22 @@ body::after {
     transition: all 0.22s ease;
 }
 
-/* Inactivo — gris acero apagado */
 .nav-item:not(.active) .nav-icon svg,
 .nav-item:not(.active) .nav-icon i {
-    color: rgba(100, 130, 175, 0.40);
-    stroke: rgba(100, 130, 175, 0.40);
+    color: rgba(100, 130, 175, 0.38);
+    stroke: rgba(100, 130, 175, 0.38);
     filter: none;
 }
 
-/* Activo — blanco con halo neón multicapa */
 .nav-item.active .nav-icon svg,
 .nav-item.active .nav-icon i {
     color: #ffffff;
     stroke: #ffffff;
     filter:
-        drop-shadow(0 0 3px rgba(255,255,255,0.90))
-        drop-shadow(0 0 7px rgba(0,212,255,0.95))
-        drop-shadow(0 0 16px rgba(0,163,255,0.70))
-        drop-shadow(0 0 30px rgba(0,100,255,0.35));
+        drop-shadow(0 0 2px rgba(255,255,255,1.0))
+        drop-shadow(0 0 6px rgba(0,212,255,0.95))
+        drop-shadow(0 0 14px rgba(0,163,255,0.65))
+        drop-shadow(0 0 26px rgba(0,80,255,0.30));
 }
 
 /* ── Label ── */
@@ -393,16 +383,16 @@ body::after {
 }
 
 .nav-item:not(.active) .nav-label {
-    color: rgba(100, 130, 175, 0.32);
+    color: rgba(100, 130, 175, 0.30);
 }
 
 .nav-item.active .nav-label {
-    background: linear-gradient(135deg, #ffffff 0%, #00D4FF 50%, #0099FF 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #7dd8ff 40%, #00D4FF 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-weight: 800;
-    filter: drop-shadow(0 0 4px rgba(0,212,255,0.60));
+    filter: drop-shadow(0 0 5px rgba(0,212,255,0.50));
 }
 
 /* ==================== TIPOGRAFÍA ULTRA PREMIUM ==================== */
