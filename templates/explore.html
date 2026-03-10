@@ -192,58 +192,15 @@
 {% endblock %}
 
 SALLY-E | Explorar{% endblock %}
-
 {% block content %}
 <div style="padding: 0 var(--space-4) 120px;">
 
     <!-- HEADER -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) 0 var(--space-3);">
+    <div style="padding:var(--space-4) 0 var(--space-3);">
         <h1 style="margin:0;font-size:1.4rem;font-weight:800;color:var(--color-text-primary);" data-i18n="explore_title">
             Explorar
         </h1>
-        <div style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.18);border-radius:12px;">
-            <i data-lucide="compass" style="width:13px;height:13px;color:#00D4FF;"></i>
-            <span style="font-size:0.75rem;font-weight:700;color:#00D4FF;">Explore</span>
-        </div>
     </div>
-
-    <!-- HERO BANNER — estilo task-row 3D -->
-    <div class="explore-hero">
-        <div class="explore-hero-orb explore-hero-orb1"></div>
-        <div class="explore-hero-orb explore-hero-orb2"></div>
-        <div style="position:relative;z-index:2;display:flex;align-items:center;gap:14px;">
-            <!-- Icono 3D extruido igual que explore-row-icon pero más grande -->
-            <div class="compass-float" style="
-                width:60px;height:60px;flex-shrink:0;
-                display:flex;align-items:center;justify-content:center;
-                background:linear-gradient(135deg,rgba(0,212,255,0.22) 0%,rgba(0,82,204,0.15) 100%);
-                border-radius:16px;
-                box-shadow:
-                    0 2px 0 rgba(255,255,255,0.18) inset,
-                    0 -3px 0 rgba(0,0,0,0.55) inset,
-                    2px 0 0 rgba(255,255,255,0.08) inset,
-                    -2px 0 0 rgba(0,0,0,0.25) inset,
-                    0 8px 24px rgba(0,212,255,0.25),
-                    0 3px 8px rgba(0,0,0,0.50);
-                border-top: 1px solid rgba(0,212,255,0.35);
-                border-bottom: 2px solid rgba(0,0,0,0.60);
-            ">
-                <i data-lucide="compass" style="width:28px;height:28px;color:#00D4FF;position:relative;z-index:2;"></i>
-            </div>
-            <!-- Texto -->
-            <div style="flex:1;min-width:0;">
-                <div style="font-weight:800;font-size:1.1rem;color:#fff;margin-bottom:5px;letter-spacing:-0.01em;text-shadow:0 1px 4px rgba(0,0,0,0.5);" data-i18n="explore_title">
-                    Explorar
-                </div>
-                <div style="font-size:0.82rem;color:rgba(255,255,255,0.50);line-height:1.5;" data-i18n="explore_subtitle">
-                    Descubre juegos, minería y mejoras para maximizar tus ganancias
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SECCIÓN: GANA MÁS -->
-    <div class="explore-section-label">⚡ Gana más</div>
 
     <!-- Games -->
     <a href="/explore/games?user_id={{ user_id }}" class="explore-row">
@@ -296,11 +253,6 @@ SALLY-E | Explorar{% endblock %}
         </div>
     </a>
 
-    <div class="explore-divider"></div>
-
-    <!-- SECCIÓN: TU ESTACIÓN -->
-    <div class="explore-section-label">🔧 Tu estación</div>
-
     <!-- Mining -->
     <a href="/explore/mining?user_id={{ user_id }}" class="explore-row">
         <div class="explore-row-icon" style="background:linear-gradient(135deg,rgba(0,255,136,0.22) 0%,rgba(0,200,100,0.12) 100%);">
@@ -334,17 +286,6 @@ SALLY-E | Explorar{% endblock %}
             <i data-lucide="chevron-right" style="width:18px;height:18px;"></i>
         </div>
     </a>
-
-    <!-- FOOTER INFO -->
-    <div class="explore-footer" style="margin-top:20px;">
-        <div style="flex-shrink:0;width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:rgba(0,245,255,0.08);border-radius:10px;border:1px solid rgba(0,212,255,0.15);">
-            <i data-lucide="sparkles" style="width:18px;height:18px;color:#00D4FF;"></i>
-        </div>
-        <div>
-            <div data-i18n="more_coming_soon" style="font-weight:700;font-size:0.875rem;color:#fff;margin-bottom:2px;">¡Más contenido pronto!</div>
-            <div data-i18n="working_on_features" style="font-size:0.75rem;color:rgba(255,255,255,0.40);">Nuevos juegos y funciones en camino</div>
-        </div>
-    </div>
 
 </div>
 {% endblock %}
