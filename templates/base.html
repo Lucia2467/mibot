@@ -744,7 +744,7 @@
     <!-- ❄️ Snow Effect Container -->
     <div class="snow-container" id="snow-container"></div>
 
-    <div class="app-shell has-top-header">
+    <div class="app-shell{% if request.endpoint != 'index' %} has-top-header{% endif %}">
         <!-- ========== TOP HEADER - USER PROFILE (DISABLED) ========== -->
         {% if false and user and not hide_header %}
         <header class="app-top-header" id="app-top-header">
