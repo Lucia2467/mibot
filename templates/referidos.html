@@ -188,7 +188,7 @@
 .inv-stat:nth-child(1) { animation-delay:.05s; border-top-color: rgba(0,230,118,0.35); }
 .inv-stat:nth-child(2) { animation-delay:.10s; border-top-color: rgba(255,179,0,0.35); }
 .inv-stat:nth-child(3) { animation-delay:.15s; border-top-color: rgba(41,121,255,0.35); }
-.inv-stat:nth-child(4) { animation-delay:.20s; border-top-color: rgba(255,100,200,0.35); }
+.inv-stat:nth-child(4) { animation-delay:.20s; border-top-color: rgba(0,212,255,0.35); }
 .inv-stat-val {
     font-size: 1.35rem; font-weight: 900; color: #fff;
     line-height: 1; margin-bottom: 4px;
@@ -425,7 +425,7 @@ SALLY-E | Invitar{% endblock %}
             <div class="inv-stat-lbl">Total</div>
         </div>
         <div class="inv-stat">
-            <div class="inv-stat-val" id="se-earned-display" style="color:#FF78C8;">{{ total_se_earned|default(0)|round }}</div>
+            <div class="inv-stat-val" id="se-earned-display" style="color:#00D4FF;">{{ total_se_earned|default(0)|round }}</div>
             <div class="inv-stat-lbl">Bonus S-E</div>
         </div>
     </div>
@@ -500,8 +500,8 @@ const REFERRAL_COMMISSION = {{ ((config.referral_commission|default(0.05)) * 100
 
 /* Colores de avatar por inicial */
 const AVATAR_COLORS = [
-    ['#0a1a40','#00E5FF'],['#1a0a30','#C084FC'],['#0a2a10','#00E676'],
-    ['#2a1000','#FFB300'],['#1a0010','#FF4081'],['#001a2a','#29B6F6']
+    ['#0a1a40','#00E5FF'],['#0a1030','#0066FF'],['#0a2a10','#00E676'],
+    ['#2a1000','#FFB300'],['#001020','#00D4FF'],['#001a2a','#29B6F6']
 ];
 function getAvatarColor(name) {
     const idx = (name || 'U').charCodeAt(0) % AVATAR_COLORS.length;
