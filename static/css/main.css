@@ -181,92 +181,74 @@ body::after {
 
 /* ==================== NAVEGACIÓN ULTRA PREMIUM ==================== */
 /* ═══════════════════════════════════════════════
-   BOTTOM NAV — FLOATING CAPSULE ULTRA PREMIUM
+   BOTTOM NAV — PREMIUM FLOATING DARK GLASS
+   Inspirado en: Binance, Phantom Wallet, Robinhood
    ═══════════════════════════════════════════════ */
 
 .bottom-nav {
     position: fixed;
-    bottom: 18px;
+    bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1000;
-    width: calc(100% - 32px);
-    max-width: 440px;
-    padding-bottom: env(safe-area-inset-bottom);
+    z-index: 9999;
+    width: calc(100% - 28px);
+    max-width: 420px;
 }
 
-/* Cápsula flotante — vidrio oscuro con profundidad real */
 .nav-inner {
     position: relative;
-    background: linear-gradient(160deg,
-        rgba(18, 18, 42, 0.97) 0%,
-        rgba(10, 10, 26, 0.98) 50%,
-        rgba(5, 5, 14, 0.99) 100%);
-    backdrop-filter: blur(40px) saturate(220%) brightness(1.05);
-    -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.05);
-    border-radius: 40px;
-    padding: 10px 6px 10px;
-    border-top:    1.5px solid rgba(80, 160, 255, 0.50);
-    border-left:   1px solid rgba(60, 120, 255, 0.18);
-    border-right:  1px solid rgba(0, 0, 0, 0.85);
-    border-bottom: 3px solid rgba(0, 0, 0, 1.0);
-    box-shadow:
-        0 1px 0 rgba(120, 180, 255, 0.10) inset,
-        0 -4px 12px rgba(0, 0, 0, 0.85) inset,
-        0 24px 60px rgba(0, 0, 0, 0.80),
-        0 8px 24px rgba(0, 0, 0, 0.60),
-        0 0 0 1px rgba(0, 80, 220, 0.12),
-        0 4px 40px rgba(0, 40, 180, 0.18);
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 0;
+    align-items: center;
+    padding: 0 4px;
+    height: 64px;
+    /* Vidrio oscuro premium */
+    background: rgba(8, 8, 20, 0.92);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-radius: 32px;
+    /* Borde 1px uniforme sutil */
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow:
+        /* sombra flotante suave */
+        0 16px 48px rgba(0, 0, 0, 0.72),
+        0 4px 16px rgba(0, 0, 0, 0.50),
+        /* glow ambiental azul muy sutil */
+        0 0 0 1px rgba(0, 100, 255, 0.08),
+        /* rim light superior */
+        0 1px 0 rgba(255, 255, 255, 0.06) inset;
     overflow: hidden;
 }
 
-/* Specular — raya de luz */
+/* Shimmer superior ultra sutil */
 .nav-inner::before {
     content: '';
     position: absolute;
-    top: 0; left: 10%; right: 10%;
+    top: 0; left: 20%; right: 20%;
     height: 1px;
     background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(0, 180, 255, 0.20) 20%,
-        rgba(120, 210, 255, 0.95) 45%,
-        rgba(210, 245, 255, 1.00) 50%,
-        rgba(120, 210, 255, 0.95) 55%,
-        rgba(0, 180, 255, 0.20) 80%,
-        transparent 100%);
+        transparent,
+        rgba(255, 255, 255, 0.12) 40%,
+        rgba(255, 255, 255, 0.22) 50%,
+        rgba(255, 255, 255, 0.12) 60%,
+        transparent);
     pointer-events: none;
-    z-index: 10;
 }
 
-/* Reflejo de vidrio */
-.nav-inner::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 48%;
-    background: linear-gradient(180deg,
-        rgba(255, 255, 255, 0.032) 0%,
-        transparent 100%);
-    border-radius: 40px 40px 0 0;
-    pointer-events: none;
-    z-index: 1;
-}
+.nav-inner::after { display: none; }
 
-/* ── Cada item ── */
+/* ── Nav item base ── */
 .nav-item {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 8px 2px 7px;
-    border-radius: 32px;
+    gap: 3px;
+    height: 100%;
+    border-radius: 28px;
     cursor: pointer;
-    transition: transform 0.20s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     user-select: none;
@@ -274,51 +256,51 @@ body::after {
 }
 
 .nav-item:active {
-    transform: scale(0.86) translateY(1px);
-    transition: transform 0.06s ease;
+    transform: scale(0.88);
+    transition: transform 0.07s ease;
 }
 
-/* Cápsula interna activa 3D */
+/* Glow difuso detrás del ícono activo — no caja, solo luz */
 .nav-item::before {
     content: '';
     position: absolute;
-    inset: 2px 3px;
-    border-radius: 28px;
-    background: linear-gradient(170deg,
-        rgba(0, 90, 210, 0.42) 0%,
-        rgba(0, 55, 165, 0.28) 45%,
-        rgba(0, 22, 80, 0.18) 100%);
-    border-top:    1px solid rgba(0, 185, 255, 0.65);
-    border-left:   1px solid rgba(0, 135, 255, 0.28);
-    border-right:  1px solid rgba(0, 0, 0, 0.65);
-    border-bottom: 2px solid rgba(0, 0, 0, 0.85);
-    box-shadow:
-        0 1px 0 rgba(0, 165, 255, 0.22) inset,
-        0 -1px 0 rgba(0, 0, 0, 0.75) inset,
-        0 4px 14px rgba(0, 60, 210, 0.40),
-        0 0 22px rgba(0, 100, 255, 0.18);
+    top: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+        rgba(0, 163, 255, 0.28) 0%,
+        rgba(0, 100, 255, 0.12) 50%,
+        transparent 75%);
     opacity: 0;
-    transition:
-        opacity 0.24s ease,
-        transform 0.24s cubic-bezier(0.34, 1.4, 0.64, 1);
-    transform: scaleY(0.82) scaleX(0.88);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    transform: translateX(-50%) scale(0.6);
+    pointer-events: none;
 }
 
 .nav-item.active::before {
     opacity: 1;
-    transform: scaleY(1) scaleX(1);
+    transform: translateX(-50%) scale(1);
 }
 
-/* Barra de luz inferior activa */
+/* Indicador activo — línea delgada debajo del ícono */
 .nav-item.active::after {
     content: '';
     position: absolute;
-    bottom: 3px; left: 50%;
+    bottom: 8px; left: 50%;
     transform: translateX(-50%);
-    width: 20px; height: 2px;
+    width: 24px; height: 2.5px;
     border-radius: 2px;
-    background: linear-gradient(90deg, transparent, #00D4FF, transparent);
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.9), 0 0 20px rgba(0, 163, 255, 0.5);
+    background: linear-gradient(90deg, #0066FF, #00D4FF);
+    box-shadow:
+        0 0 8px rgba(0, 212, 255, 0.8),
+        0 0 16px rgba(0, 120, 255, 0.4);
+    animation: navIndicator 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes navIndicator {
+    from { transform: translateX(-50%) scaleX(0); opacity: 0; }
+    to   { transform: translateX(-50%) scaleX(1); opacity: 1; }
 }
 
 /* ── Ícono ── */
@@ -328,63 +310,61 @@ body::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px; height: 24px;
     transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .nav-item.active .nav-icon {
-    transform: translateY(-1px) scale(1.12);
+    transform: translateY(-2px);
 }
 
 .nav-icon svg,
 .nav-icon i {
-    width: 20px !important;
-    height: 20px !important;
-    stroke-width: 1.75;
+    width: 22px !important;
+    height: 22px !important;
+    stroke-width: 1.7;
     transition: all 0.22s ease;
+    display: block;
 }
 
+/* Inactivo — gris frío apagado */
 .nav-item:not(.active) .nav-icon svg,
 .nav-item:not(.active) .nav-icon i {
-    color: rgba(100, 130, 175, 0.38);
-    stroke: rgba(100, 130, 175, 0.38);
-    filter: none;
+    color: rgba(140, 155, 185, 0.40);
+    stroke: rgba(140, 155, 185, 0.40);
 }
 
+/* Activo — blanco brillante con glow neón */
 .nav-item.active .nav-icon svg,
 .nav-item.active .nav-icon i {
     color: #ffffff;
     stroke: #ffffff;
     filter:
-        drop-shadow(0 0 2px rgba(255, 255, 255, 1.0))
-        drop-shadow(0 0 6px rgba(0, 212, 255, 0.95))
-        drop-shadow(0 0 14px rgba(0, 163, 255, 0.65))
-        drop-shadow(0 0 28px rgba(0, 80, 255, 0.30));
+        drop-shadow(0 0 3px rgba(255, 255, 255, 0.95))
+        drop-shadow(0 0 8px rgba(0, 200, 255, 0.80))
+        drop-shadow(0 0 18px rgba(0, 120, 255, 0.45));
 }
 
 /* ── Label ── */
 .nav-label {
     position: relative;
     z-index: 3;
-    font-size: 7.5px;
-    font-weight: 700;
-    letter-spacing: 0.07em;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     transition: all 0.22s ease;
     line-height: 1;
+    margin-top: 1px;
 }
 
 .nav-item:not(.active) .nav-label {
-    color: rgba(100, 130, 175, 0.30);
+    color: rgba(140, 155, 185, 0.32);
 }
 
 .nav-item.active .nav-label {
-    background: linear-gradient(135deg, #ffffff 0%, #7dd8ff 40%, #00D4FF 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 800;
-    filter: drop-shadow(0 0 5px rgba(0, 212, 255, 0.50));
+    color: rgba(255, 255, 255, 0.90);
+    font-weight: 700;
+    letter-spacing: 0.06em;
 }
 
 /* ==================== TIPOGRAFÍA ULTRA PREMIUM ==================== */
