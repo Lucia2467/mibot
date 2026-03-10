@@ -4,394 +4,316 @@
 
 {% block extra_head %}
 <style>
-/* ══ 3D PREMIUM OVERRIDE ══ */
-.card, .balance-card {
-    background: linear-gradient(160deg, #0c0c22 0%, #080818 50%, #050514 100%) !important;
-    border-top:  2px solid rgba(60,130,255,0.45) !important;
-    border-left: 1px solid rgba(40,100,255,0.25) !important;
-    border-right:  1px solid rgba(0,0,0,0.80) !important;
-    border-bottom: 4px solid rgba(0,0,0,0.95) !important;
-    border-radius: 20px !important;
+/* ══ EXPLORE TASK-ROW STYLE ══ */
+
+.explore-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 16px;
+    background: linear-gradient(145deg, #1a1a2e 0%, #0f0f1a 40%, #080810 100%) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top:    1px solid rgba(255,255,255,0.12);
+    border-left:   1px solid rgba(255,255,255,0.08);
+    border-right:  1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(0,0,0,0.5);
+    border-radius: 18px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transform: translateZ(0) translateY(0) scale(1);
+    transform-style: preserve-3d;
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s ease, border-color 0.18s ease;
     box-shadow:
-        0 3px 0 rgba(80,140,255,0.12) inset,
-        0 -4px 0 rgba(0,0,0,0.95) inset,
-        0 8px 32px rgba(0,0,0,0.80),
-        0 2px 8px rgba(0,0,0,0.60),
-        0 0 0 1px rgba(50,100,255,0.18) !important;
-    position: relative !important;
-    overflow: hidden !important;
+        0 2px 0 rgba(255,255,255,0.05) inset,
+        0 -1px 0 rgba(0,0,0,0.4) inset,
+        0 4px 16px rgba(0,0,0,0.3),
+        0 1px 3px rgba(0,0,0,0.4);
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform, box-shadow;
+    animation: exploreCardIn 0.35s cubic-bezier(0.34,1.2,0.64,1) both;
+    text-decoration: none;
 }
-.card::before, .balance-card::before {
-    content: '' !important;
-    position: absolute !important; top:0;left:0;right:0;height:2px !important;
-    background: linear-gradient(90deg,transparent,rgba(255,255,255,0.14),transparent) !important;
-    pointer-events:none !important; z-index:1 !important;
+.explore-row:nth-child(1) { animation-delay: 0.05s; }
+.explore-row:nth-child(2) { animation-delay: 0.10s; }
+.explore-row:nth-child(3) { animation-delay: 0.15s; }
+.explore-row:nth-child(4) { animation-delay: 0.20s; }
+.explore-row:nth-child(5) { animation-delay: 0.25s; }
+
+.explore-row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 30%, transparent 60%, rgba(255,255,255,0.01) 100%);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.2s;
 }
-.stat-card {
-    background: linear-gradient(160deg, #0d0d24 0%, #090920 55%, #060618 100%) !important;
-    border-top:  2px solid rgba(60,140,255,0.55) !important;
-    border-left: 1px solid rgba(40,120,255,0.30) !important;
-    border-right:  1px solid rgba(0,0,0,0.85) !important;
-    border-bottom: 4px solid rgba(0,0,0,0.98) !important;
-    border-radius: 18px !important;
+
+.explore-row:active {
+    transform: translateZ(0) translateY(2px) scale(0.984);
     box-shadow:
-        0 3px 0 rgba(80,150,255,0.14) inset,
-        0 -4px 0 rgba(0,0,0,0.98) inset,
-        0 8px 28px rgba(0,0,0,0.75),
-        0 2px 8px rgba(0,0,0,0.60),
-        0 0 0 1px rgba(50,110,255,0.25),
-        0 0 20px rgba(0,80,255,0.08) !important;
+        0 1px 0 rgba(255,255,255,0.04) inset,
+        0 -1px 0 rgba(0,0,0,0.5) inset,
+        0 2px 8px rgba(0,0,0,0.4);
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
-.btn-primary {
-    background: linear-gradient(180deg, #1a6fff 0%, #0055ee 60%, #003fbf 100%) !important;
-    border-top: 1px solid rgba(255,255,255,0.28) !important;
-    border-bottom: 3px solid rgba(0,0,0,0.55) !important;
-    border-left: none !important;
-    border-right: none !important;
+
+@media (hover: hover) {
+    .explore-row:hover {
+        transform: translateZ(0) translateY(-3px) scale(1.008);
+        box-shadow:
+            0 2px 0 rgba(255,255,255,0.07) inset,
+            0 -1px 0 rgba(0,0,0,0.4) inset,
+            0 14px 40px rgba(0,0,0,0.45),
+            0 4px 12px rgba(0,0,0,0.3);
+    }
+    .explore-row:hover::before { opacity: 1.5; }
+    .explore-row:hover .explore-row-arrow { color: rgba(255,255,255,0.5); transform: translateX(2px); }
+}
+
+.explore-row-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
     box-shadow:
-        0 2px 0 rgba(255,255,255,0.20) inset,
-        0 -3px 0 rgba(0,0,0,0.50) inset,
-        0 4px 14px rgba(0,60,200,0.30) !important;
-    border-radius: 14px !important;
-    transform: translateZ(0) !important;
-    transition: transform .15s cubic-bezier(.34,1.4,.64,1), box-shadow .15s !important;
+        0 2px 0 rgba(255,255,255,0.15) inset,
+        0 -2px 0 rgba(0,0,0,0.4) inset,
+        2px 0 0 rgba(255,255,255,0.06) inset,
+        -2px 0 0 rgba(0,0,0,0.2) inset,
+        0 6px 20px rgba(0,0,0,0.4),
+        0 2px 6px rgba(0,0,0,0.3);
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s;
 }
-.btn-primary:active {
-    transform: translateY(3px) scale(0.98) !important;
-    box-shadow:
-        0 1px 0 rgba(255,255,255,0.12) inset,
-        0 -1px 0 rgba(0,0,0,0.40) inset,
-        0 2px 6px rgba(0,60,200,0.20) !important;
-    transition: transform .07s ease !important;
+.explore-row:active .explore-row-icon { transform: scale(0.92) translateZ(-4px); }
+
+.explore-row-body { flex: 1; min-width: 0; position: relative; z-index: 2; }
+.explore-row-title {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 5px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    letter-spacing: -0.01em;
 }
-.btn-secondary {
-    background: linear-gradient(180deg, #131328 0%, #0a0a1e 100%) !important;
-    border-top: 1px solid rgba(255,255,255,0.12) !important;
-    border-bottom: 3px solid rgba(0,0,0,0.80) !important;
-    border-left: none !important;
-    border-right: none !important;
-    box-shadow:
-        0 2px 0 rgba(255,255,255,0.06) inset,
-        0 -3px 0 rgba(0,0,0,0.75) inset,
-        0 3px 10px rgba(0,0,0,0.40) !important;
-    border-radius: 14px !important;
-    transform: translateZ(0) !important;
-    transition: transform .15s cubic-bezier(.34,1.4,.64,1) !important;
+.explore-row-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.explore-row-arrow {
+    color: rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.2s, color 0.2s;
 }
-.btn-secondary:active { transform: translateY(2px) scale(0.98) !important; }
-@keyframes pgIn {
-    from{opacity:0;transform:translateY(18px) scale(0.96)}
-    to{opacity:1;transform:translateY(0) scale(1)}
+
+/* Chips */
+.exp-chip {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.05);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 -1px 0 rgba(0,0,0,0.3) inset, 0 2px 6px rgba(0,0,0,0.2);
+    letter-spacing: 0.01em;
 }
-.card    { animation: pgIn .38s cubic-bezier(.34,1.2,.64,1) both; }
-.stat-card { animation: pgIn .38s cubic-bezier(.34,1.2,.64,1) .08s both; }
+.exp-chip-blue  { color:#6BB8FF; border-color:rgba(77,148,255,0.28); background:rgba(77,148,255,0.10); }
+.exp-chip-green { color:#4DFFA0; border-color:rgba(0,255,136,0.28);  background:rgba(0,255,136,0.08); }
+.exp-chip-yellow{ color:#FFD464; border-color:rgba(255,184,0,0.28);  background:rgba(255,184,0,0.08); }
+.exp-chip-cyan  { color:#4DDFFF; border-color:rgba(0,212,255,0.28);  background:rgba(0,212,255,0.08); }
+.exp-chip-soon  { color:#A78BFA; border-color:rgba(139,92,246,0.28); background:rgba(139,92,246,0.08); }
+
+/* Hero */
+.explore-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #07071a 0%, #040414 50%, #020210 100%);
+    border-top:    1px solid rgba(0,200,255,0.22);
+    border-left:   1px solid rgba(0,160,255,0.12);
+    border-right:  1px solid rgba(0,0,0,0.4);
+    border-bottom: 2px solid rgba(0,0,0,0.70);
+    border-radius: 20px;
+    margin-bottom: 18px;
+    padding: 20px 18px 18px;
+    box-shadow: 0 2px 0 rgba(0,200,255,0.07) inset, 0 -3px 0 rgba(0,0,0,0.60) inset, 0 20px 60px rgba(0,0,0,0.65);
+}
+.explore-hero-orb { position:absolute; border-radius:50%; pointer-events:none; }
+.explore-hero-orb1 { top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(0,245,255,0.12) 0%,transparent 70%);animation:floatOrb 8s ease-in-out infinite; }
+.explore-hero-orb2 { bottom:-25px;left:-25px;width:120px;height:120px;background:radial-gradient(circle,rgba(0,82,204,0.10) 0%,transparent 70%);animation:floatOrb 11s ease-in-out infinite reverse; }
+
+@keyframes floatOrb { 0%,100%{transform:translate(0,0)} 50%{transform:translate(8px,8px)} }
+@keyframes exploreCardIn { from{opacity:0;transform:translateY(14px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes compassFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+
+.explore-section-label {
+    font-size:0.72rem; font-weight:700; letter-spacing:0.08em;
+    text-transform:uppercase; color:rgba(255,255,255,0.28);
+    margin:18px 0 10px 4px;
+}
+.explore-divider { height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent); margin:6px 0 16px; }
+.explore-footer {
+    display:flex; align-items:center; gap:12px;
+    padding:14px 16px;
+    background:linear-gradient(145deg,#080818,#060614);
+    border-top:1px solid rgba(0,200,255,0.14);
+    border-bottom:2px solid rgba(0,0,0,0.55);
+    border-radius:16px;
+    margin-top:8px;
+}
+.compass-float { animation:compassFloat 3s ease-in-out infinite; }
 </style>
 {% endblock %}
 
 SALLY-E | Explorar{% endblock %}
 
 {% block content %}
-<div class="container">
-    <!-- Hero Section -->
-    <div class="card" style="background: linear-gradient(155deg, #07071a 0%, #040414 50%, #020210 100%); border-top: 2px solid rgba(0,200,255,0.30); border-left: 1px solid rgba(0,160,255,0.16); border-right: 1px solid rgba(0,0,0,0.5); border-bottom: 3px solid rgba(0,0,0,0.80); box-shadow: 0 3px 0 rgba(0,200,255,0.08) inset, 0 -4px 0 rgba(0,0,0,0.70) inset, 0 24px 65px rgba(0,0,0,0.70); position: relative; overflow: hidden;">
-        <!-- Elementos de fondo -->
-        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0, 245, 255, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite;"></div>
-        <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(0, 82, 204, 0.12) 0%, transparent 70%); border-radius: 50%; animation: float 10s ease-in-out infinite reverse;"></div>
+<div style="padding: 0 var(--space-4) 120px;">
 
-        <div style="position: relative; z-index: 1; text-align: center; padding: var(--space-4);">
-            <!-- Icono principal -->
-            <div class="floating" style="width: 80px; height: 80px; margin: 0 auto var(--space-4); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 245, 255, 0.2) 0%, rgba(0, 82, 204, 0.2) 100%); border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 245, 255, 0.3);">
-                <i data-lucide="compass" style="width: 40px; height: 40px; color: #00D4FF;"></i>
-            </div>
-
-            <h1 data-i18n="explore_title" style="font-size: 1.75rem; font-weight: 800; margin-bottom: var(--space-2); background: linear-gradient(135deg, #00D4FF 0%, #0052CC 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                Explorar
-            </h1>
-            <p data-i18n="explore_subtitle" style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.6); line-height: 1.6;">
-                Descubre juegos, minería y mejoras para maximizar tus ganancias
-            </p>
+    <!-- HEADER -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) 0 var(--space-3);">
+        <h1 style="margin:0;font-size:1.4rem;font-weight:800;color:var(--color-text-primary);" data-i18n="explore_title">
+            Explorar
+        </h1>
+        <div style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.18);border-radius:12px;">
+            <i data-lucide="compass" style="width:13px;height:13px;color:#00D4FF;"></i>
+            <span style="font-size:0.75rem;font-weight:700;color:#00D4FF;">Explore</span>
         </div>
     </div>
 
-    <!-- Secciones de Exploración -->
-    <div style="display: grid; gap: var(--space-4); margin-top: var(--space-4);">
-
-        <!-- Games Section -->
-        <a href="/explore/games?user_id={{ user_id }}" style="text-decoration: none;">
-            <div class="card explore-card" style="position: relative; overflow: hidden; cursor: pointer;">
-                <div class="card-glow-pink"></div>
-                <div style="display: flex; align-items: center; gap: var(--space-4); position: relative; z-index: 1;">
-                    <div style="flex-shrink: 0; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 102, 255, 0.25) 0%, rgba(0, 82, 204, 0.15) 100%); border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 102, 255, 0.3);">
-                        <i data-lucide="gamepad-2" style="width: 32px; height: 32px; color: #0066FF;"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div data-i18n="games" style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--space-1); color: white;">
-                            Juegos
-                        </div>
-                        <div data-i18n="games_desc" style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5;">
-                            Apuesta y multiplica tus S-E con juegos emocionantes
-                        </div>
-                    </div>
-                    <div style="flex-shrink: 0;">
-                        <i data-lucide="chevron-right" style="width: 24px; height: 24px; color: rgba(255, 255, 255, 0.4);"></i>
-                    </div>
-                </div>
-                <div data-i18n="games_badge" style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #0066FF 0%, #0052CC 100%); border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; color: white;">
-                    1 Juego
-                </div>
-            </div>
-        </a>
-
-        <!-- Mining Section -->
-        <a href="/explore/mining?user_id={{ user_id }}" style="text-decoration: none;">
-            <div class="card explore-card" style="position: relative; overflow: hidden; cursor: pointer;">
-                <div class="card-glow-green"></div>
-                <div style="display: flex; align-items: center; gap: var(--space-4); position: relative; z-index: 1;">
-                    <div style="flex-shrink: 0; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 255, 136, 0.25) 0%, rgba(0, 200, 100, 0.15) 100%); border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 255, 136, 0.3);">
-                        <i data-lucide="cpu" style="width: 32px; height: 32px; color: #00FF88;"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div data-i18n="mining" style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--space-1); color: white;">
-                            Minería
-                        </div>
-                        <div data-i18n="mining_desc" style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5;">
-                            Estadísticas y configuración de tu estación de minería
-                        </div>
-                    </div>
-                    <div style="flex-shrink: 0;">
-                        <i data-lucide="chevron-right" style="width: 24px; height: 24px; color: rgba(255, 255, 255, 0.4);"></i>
-                    </div>
-                </div>
-            </div>
-        </a>
-
-        <!-- Upgrades Section -->
-        <a href="/explore/upgrades?user_id={{ user_id }}" style="text-decoration: none;">
-            <div class="card explore-card" style="position: relative; overflow: hidden; cursor: pointer;">
-                <div class="card-glow-magenta"></div>
-                <div style="display: flex; align-items: center; gap: var(--space-4); position: relative; z-index: 1;">
-                    <div style="flex-shrink: 0; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 102, 255, 0.25) 0%, rgba(0, 82, 204, 0.15) 100%); border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 102, 255, 0.3);">
-                        <i data-lucide="zap" style="width: 32px; height: 32px; color: #3B82F6;"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div data-i18n="upgrades" style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--space-1); color: white;">
-                            Mejoras
-                        </div>
-                        <div data-i18n="upgrades_desc" style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5;">
-                            Aumenta tu velocidad y capacidad de minería
-                        </div>
-                    </div>
-                    <div style="flex-shrink: 0;">
-                        <i data-lucide="chevron-right" style="width: 24px; height: 24px; color: rgba(255, 255, 255, 0.4);"></i>
-                    </div>
-                </div>
-                <div data-i18n="coming_soon" style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #3B82F6 0%, #0052CC 100%); border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; color: white;">
-                    Próximamente
-                </div>
-            </div>
-        </a>
-
-        <!-- Centro de ADS Section -->
-        <a href="/explore/ads-center?user_id={{ user_id }}" style="text-decoration: none;">
-            <div class="card explore-card" style="position: relative; overflow: hidden; cursor: pointer;">
-                <div class="card-glow-ads"></div>
-                <div style="display: flex; align-items: center; gap: var(--space-4); position: relative; z-index: 1;">
-                    <div style="flex-shrink: 0; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(255, 184, 0, 0.25) 0%, rgba(255, 107, 53, 0.15) 100%); border-radius: 16px; box-shadow: 0 4px 20px rgba(255, 184, 0, 0.3);">
-                        <i data-lucide="megaphone" style="width: 32px; height: 32px; color: #FFB800;"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div data-i18n="ads_center" style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--space-1); color: white;">
-                            📢 Centro de ADS
-                        </div>
-                        <div data-i18n="ads_center_desc" style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5;">
-                            Gana monedas viendo anuncios voluntarios
-                        </div>
-                    </div>
-                    <div style="flex-shrink: 0;">
-                        <i data-lucide="chevron-right" style="width: 24px; height: 24px; color: rgba(255, 255, 255, 0.4);"></i>
-                    </div>
-                </div>
-                <div data-i18n="ads_options_badge" style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #FFB800 0%, #FF6B35 100%); border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; color: #000;">
-                    5 Opciones
-                </div>
-            </div>
-        </a>
-
-        <!-- ============================================ -->
-        <!-- 🔗 Centro de Enlaces - NUEVA SECCIÓN -->
-        <!-- ============================================ -->
-        <a href="/explore/link-center?user_id={{ user_id }}" style="text-decoration: none;">
-            <div class="card explore-card" style="position: relative; overflow: hidden; cursor: pointer;">
-                <div class="card-glow-link"></div>
-                <div style="display: flex; align-items: center; gap: var(--space-4); position: relative; z-index: 1;">
-                    <div style="flex-shrink: 0; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 212, 255, 0.25) 0%, rgba(138, 43, 226, 0.15) 100%); border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);">
-                        <i data-lucide="link-2" style="width: 32px; height: 32px; color: #00D4FF;"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--space-1); color: white;" data-i18n="link_center">
-                            🔗 Centro de Enlaces
-                        </div>
-                        <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5;" data-i18n="link_center_desc">
-                            Completa tareas de enlaces y gana DOGE
-                        </div>
-                    </div>
-                    <div style="flex-shrink: 0;">
-                        <i data-lucide="chevron-right" style="width: 24px; height: 24px; color: rgba(255, 255, 255, 0.4);"></i>
-                    </div>
-                </div>
-                <div style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #00D4FF 0%, #8A2BE2 100%); border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; color: #fff;" data-i18n="link_options_badge">
-                    1 Plataforma
-                </div>
-            </div>
-        </a>
-
-    </div>
-
-    <!-- Info Card -->
-    <div class="card" style="background: linear-gradient(145deg, #080818, #060614); border-top: 1px solid rgba(0,200,255,0.20); border-bottom: 2px solid rgba(0,0,0,0.60); margin-top: var(--space-4);">
-        <div style="display: flex; align-items: center; gap: var(--space-3);">
-            <div style="flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(0, 245, 255, 0.1); border-radius: 12px;">
-                <i data-lucide="sparkles" style="width: 22px; height: 22px; color: #00D4FF;"></i>
+    <!-- HERO BANNER -->
+    <div class="explore-hero">
+        <div class="explore-hero-orb explore-hero-orb1"></div>
+        <div class="explore-hero-orb explore-hero-orb2"></div>
+        <div style="position:relative;z-index:1;display:flex;align-items:center;gap:16px;">
+            <div class="compass-float" style="width:52px;height:52px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(0,245,255,0.18) 0%,rgba(0,82,204,0.18) 100%);border-radius:16px;box-shadow:0 6px 24px rgba(0,245,255,0.25);border:1px solid rgba(0,212,255,0.20);">
+                <i data-lucide="compass" style="width:26px;height:26px;color:#00D4FF;"></i>
             </div>
             <div>
-                <div data-i18n="more_coming_soon" style="font-weight: 600; font-size: 0.9375rem; color: white; margin-bottom: var(--space-1);">
-                    ¡Más contenido pronto!
-                </div>
-                <div data-i18n="working_on_features" style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);">
-                    Estamos trabajando en nuevos juegos y funciones
+                <div style="font-weight:800;font-size:1.05rem;color:#fff;margin-bottom:4px;" data-i18n="explore_title">Descubre todo</div>
+                <div style="font-size:0.8rem;color:rgba(255,255,255,0.50);line-height:1.5;" data-i18n="explore_subtitle">
+                    Juegos, minería, mejoras y más para maximizar tus ganancias
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- SECCIÓN: GANA MÁS -->
+    <div class="explore-section-label">⚡ Gana más</div>
+
+    <!-- Games -->
+    <a href="/explore/games?user_id={{ user_id }}" class="explore-row">
+        <div class="explore-row-icon" style="background:linear-gradient(135deg,rgba(0,102,255,0.22) 0%,rgba(0,82,204,0.12) 100%);">
+            <i data-lucide="gamepad-2" style="width:22px;height:22px;color:#4D94FF;position:relative;z-index:2;"></i>
+        </div>
+        <div class="explore-row-body">
+            <div class="explore-row-title" data-i18n="games">Juegos</div>
+            <div class="explore-row-meta">
+                <span class="exp-chip exp-chip-blue" data-i18n="games_badge">1 Juego</span>
+                <span class="exp-chip" data-i18n="games_desc">Apuesta y multiplica</span>
+            </div>
+        </div>
+        <div class="explore-row-arrow">
+            <i data-lucide="chevron-right" style="width:18px;height:18px;"></i>
+        </div>
+    </a>
+
+    <!-- ADS Center -->
+    <a href="/explore/ads-center?user_id={{ user_id }}" class="explore-row">
+        <div class="explore-row-icon" style="background:linear-gradient(135deg,rgba(255,184,0,0.22) 0%,rgba(255,107,53,0.12) 100%);">
+            <i data-lucide="megaphone" style="width:22px;height:22px;color:#FFB800;position:relative;z-index:2;"></i>
+        </div>
+        <div class="explore-row-body">
+            <div class="explore-row-title" data-i18n="ads_center">📢 Centro de ADS</div>
+            <div class="explore-row-meta">
+                <span class="exp-chip exp-chip-yellow" data-i18n="ads_options_badge">5 Opciones</span>
+                <span class="exp-chip" data-i18n="ads_center_desc">Ver anuncios voluntarios</span>
+            </div>
+        </div>
+        <div class="explore-row-arrow">
+            <i data-lucide="chevron-right" style="width:18px;height:18px;"></i>
+        </div>
+    </a>
+
+    <!-- Link Center -->
+    <a href="/explore/link-center?user_id={{ user_id }}" class="explore-row">
+        <div class="explore-row-icon" style="background:linear-gradient(135deg,rgba(0,212,255,0.22) 0%,rgba(138,43,226,0.12) 100%);">
+            <i data-lucide="link-2" style="width:22px;height:22px;color:#00D4FF;position:relative;z-index:2;"></i>
+        </div>
+        <div class="explore-row-body">
+            <div class="explore-row-title" data-i18n="link_center">🔗 Centro de Enlaces</div>
+            <div class="explore-row-meta">
+                <span class="exp-chip exp-chip-cyan" data-i18n="link_options_badge">1 Plataforma</span>
+                <span class="exp-chip" data-i18n="link_center_desc">Completa tareas de enlaces</span>
+            </div>
+        </div>
+        <div class="explore-row-arrow">
+            <i data-lucide="chevron-right" style="width:18px;height:18px;"></i>
+        </div>
+    </a>
+
+    <div class="explore-divider"></div>
+
+    <!-- SECCIÓN: TU ESTACIÓN -->
+    <div class="explore-section-label">🔧 Tu estación</div>
+
+    <!-- Mining -->
+    <a href="/explore/mining?user_id={{ user_id }}" class="explore-row">
+        <div class="explore-row-icon" style="background:linear-gradient(135deg,rgba(0,255,136,0.22) 0%,rgba(0,200,100,0.12) 100%);">
+            <i data-lucide="cpu" style="width:22px;height:22px;color:#00FF88;position:relative;z-index:2;"></i>
+        </div>
+        <div class="explore-row-body">
+            <div class="explore-row-title" data-i18n="mining">Minería</div>
+            <div class="explore-row-meta">
+                <span class="exp-chip exp-chip-green">Activo</span>
+                <span class="exp-chip" data-i18n="mining_desc">Estadísticas y configuración</span>
+            </div>
+        </div>
+        <div class="explore-row-arrow">
+            <i data-lucide="chevron-right" style="width:18px;height:18px;"></i>
+        </div>
+    </a>
+
+    <!-- Upgrades -->
+    <a href="/explore/upgrades?user_id={{ user_id }}" class="explore-row">
+        <div class="explore-row-icon" style="background:linear-gradient(135deg,rgba(139,92,246,0.22) 0%,rgba(0,82,204,0.12) 100%);">
+            <i data-lucide="zap" style="width:22px;height:22px;color:#A78BFA;position:relative;z-index:2;"></i>
+        </div>
+        <div class="explore-row-body">
+            <div class="explore-row-title" data-i18n="upgrades">Mejoras</div>
+            <div class="explore-row-meta">
+                <span class="exp-chip exp-chip-soon" data-i18n="coming_soon">Próximamente</span>
+                <span class="exp-chip" data-i18n="upgrades_desc">Velocidad y capacidad</span>
+            </div>
+        </div>
+        <div class="explore-row-arrow">
+            <i data-lucide="chevron-right" style="width:18px;height:18px;"></i>
+        </div>
+    </a>
+
+    <!-- FOOTER INFO -->
+    <div class="explore-footer" style="margin-top:20px;">
+        <div style="flex-shrink:0;width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:rgba(0,245,255,0.08);border-radius:10px;border:1px solid rgba(0,212,255,0.15);">
+            <i data-lucide="sparkles" style="width:18px;height:18px;color:#00D4FF;"></i>
+        </div>
+        <div>
+            <div data-i18n="more_coming_soon" style="font-weight:700;font-size:0.875rem;color:#fff;margin-bottom:2px;">¡Más contenido pronto!</div>
+            <div data-i18n="working_on_features" style="font-size:0.75rem;color:rgba(255,255,255,0.40);">Nuevos juegos y funciones en camino</div>
+        </div>
+    </div>
+
 </div>
-
-<style>
-/* Animación flotante */
-@keyframes float {
-    0%, 100% {
-        transform: translate(0, 0);
-    }
-    50% {
-        transform: translate(10px, 10px);
-    }
-}
-
-.floating {
-    animation: floating 3s ease-in-out infinite;
-}
-
-@keyframes floating {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-8px);
-    }
-}
-
-/* 3D Explore cards */
-.explore-card {
-    background: linear-gradient(160deg, #0c0c22 0%, #080818 50%, #050514 100%) !important;
-    border-top:    2px solid rgba(60,130,255,0.45) !important;
-    border-left:   1px solid rgba(40,100,255,0.25) !important;
-    border-right:  1px solid rgba(0,0,0,0.80) !important;
-    border-bottom: 4px solid rgba(0,0,0,0.95) !important;
-    border-radius: 20px !important;
-    box-shadow:
-        0 3px 0 rgba(80,140,255,0.12) inset,
-        0 -4px 0 rgba(0,0,0,0.95) inset,
-        0 8px 32px rgba(0,0,0,0.80),
-        0 2px 8px rgba(0,0,0,0.60),
-        0 0 0 1px rgba(50,100,255,0.18) !important;
-    transform: translateZ(0);
-    transition: transform .22s cubic-bezier(.34,1.5,.64,1), box-shadow .22s !important;
-}
-.explore-card:hover {
-    transform: translateY(-4px) !important;
-    box-shadow:
-        0 3px 0 rgba(80,140,255,0.14) inset,
-        0 -4px 0 rgba(0,0,0,0.95) inset,
-        0 16px 48px rgba(0,0,0,0.85),
-        0 0 40px rgba(0,80,200,0.20),
-        0 0 0 1px rgba(50,100,255,0.28) !important;
-}
-.explore-card:active { transform: translateY(2px) scale(0.98) !important; transition: transform .07s ease !important; }
-.explore-card > div[style*="flex-shrink: 0"] {
-    box-shadow: 0 2px 0 rgba(255,255,255,0.12) inset, 0 -2px 0 rgba(0,0,0,0.5) inset, 0 6px 18px rgba(0,0,0,0.45) !important;
-    border-top: 1px solid rgba(255,255,255,0.16) !important;
-    border-bottom: 2px solid rgba(0,0,0,0.55) !important;
-}
-
-/* Efectos de brillo */
-.card-glow-pink {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(0, 102, 255, 0.15) 50%, transparent 100%);
-    animation: slideGlow 4s ease infinite;
-}
-
-.card-glow-green {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(0, 255, 136, 0.15) 50%, transparent 100%);
-    animation: slideGlow 4s ease infinite;
-    animation-delay: 0.5s;
-}
-
-.card-glow-magenta {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(0, 102, 255, 0.15) 50%, transparent 100%);
-    animation: slideGlow 4s ease infinite;
-    animation-delay: 1s;
-}
-
-.card-glow-ads {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 184, 0, 0.15) 25%, rgba(255, 107, 53, 0.15) 75%, transparent 100%);
-    animation: slideGlow 4s ease infinite;
-    animation-delay: 1.5s;
-}
-
-/* 🔗 NUEVO: Efecto de brillo para Centro de Enlaces */
-.card-glow-link {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(0, 212, 255, 0.15) 25%, rgba(138, 43, 226, 0.15) 75%, transparent 100%);
-    animation: slideGlow 4s ease infinite;
-    animation-delay: 2s;
-}
-
-@keyframes slideGlow {
-    0% {
-        left: -100%;
-    }
-    100% {
-        left: 200%;
-    }
-}
-</style>
 {% endblock %}
 
 {% block extra_js %}
@@ -400,11 +322,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
-
-    // Haptic feedback en cards
-    const exploreCards = document.querySelectorAll('.explore-card');
-    exploreCards.forEach(card => {
-        card.addEventListener('click', () => {
+    const exploreRows = document.querySelectorAll('.explore-row');
+    exploreRows.forEach(row => {
+        row.addEventListener('click', () => {
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
             }
