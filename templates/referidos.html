@@ -4,502 +4,534 @@
 
 {% block extra_head %}
 <style>
-/* ══ 3D PREMIUM OVERRIDE ══ */
-.card, .balance-card {
-    background: linear-gradient(160deg, #0c0c22 0%, #080818 50%, #050514 100%) !important;
-    border-top:  2px solid rgba(60,130,255,0.45) !important;
-    border-left: 1px solid rgba(40,100,255,0.25) !important;
-    border-right:  1px solid rgba(0,0,0,0.80) !important;
-    border-bottom: 4px solid rgba(0,0,0,0.95) !important;
-    border-radius: 20px !important;
+/* ══ REFERIDOS — ESTRUCTURA PREMIUM ══ */
+
+/* ── Rows reutilizables ── */
+.ref-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 16px;
+    background: linear-gradient(145deg, #1a1a2e 0%, #0f0f1a 40%, #080810 100%);
+    border-top:    1px solid rgba(255,255,255,0.12);
+    border-left:   1px solid rgba(255,255,255,0.08);
+    border-right:  1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(0,0,0,0.5);
+    border-radius: 18px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
     box-shadow:
-        0 3px 0 rgba(80,140,255,0.12) inset,
+        0 2px 0 rgba(255,255,255,0.05) inset,
+        0 -1px 0 rgba(0,0,0,0.4) inset,
+        0 4px 16px rgba(0,0,0,0.3),
+        0 1px 3px rgba(0,0,0,0.4);
+    animation: refCardIn 0.35s cubic-bezier(0.34,1.2,0.64,1) both;
+}
+.ref-row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, rgba(255,255,255,0.06) 0%, transparent 60%);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ── Icono cuadrado 3D ── */
+.ref-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    position: relative; z-index: 2;
+    box-shadow:
+        0 2px 0 rgba(255,255,255,0.15) inset,
+        0 -2px 0 rgba(0,0,0,0.4) inset,
+        2px 0 0 rgba(255,255,255,0.06) inset,
+        -2px 0 0 rgba(0,0,0,0.2) inset,
+        0 6px 20px rgba(0,0,0,0.4);
+}
+
+/* ── Body ── */
+.ref-body { flex: 1; min-width: 0; position: relative; z-index: 2; }
+.ref-title {
+    font-weight: 700; font-size: 0.92rem; color: #fff;
+    margin-bottom: 5px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    letter-spacing: -0.01em;
+}
+.ref-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+/* ── Chips ── */
+.ref-chip {
+    font-size: 0.68rem; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.05);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 -1px 0 rgba(0,0,0,0.3) inset;
+    letter-spacing: 0.01em;
+}
+.ref-chip-blue   { color:#6BB8FF; border-color:rgba(77,148,255,0.28); background:rgba(77,148,255,0.10); }
+.ref-chip-green  { color:#4DFFA0; border-color:rgba(0,255,136,0.28);  background:rgba(0,255,136,0.08); }
+.ref-chip-yellow { color:#FFD464; border-color:rgba(255,184,0,0.28);  background:rgba(255,184,0,0.08); }
+.ref-chip-cyan   { color:#4DDFFF; border-color:rgba(0,212,255,0.28);  background:rgba(0,212,255,0.08); }
+.ref-chip-red    { color:#FF7070; border-color:rgba(255,80,80,0.28);  background:rgba(255,80,80,0.08); }
+
+/* ── Stats grid ── */
+.ref-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.ref-stat-card {
+    background: linear-gradient(145deg, #0d0d22 0%, #090918 50%, #060614 100%);
+    border-top:    2px solid rgba(60,130,255,0.45);
+    border-left:   1px solid rgba(40,100,255,0.22);
+    border-right:  1px solid rgba(0,0,0,0.75);
+    border-bottom: 4px solid rgba(0,0,0,0.95);
+    border-radius: 18px;
+    padding: 16px 14px;
+    text-align: center;
+    box-shadow:
+        0 3px 0 rgba(80,140,255,0.10) inset,
         0 -4px 0 rgba(0,0,0,0.95) inset,
-        0 8px 32px rgba(0,0,0,0.80),
-        0 2px 8px rgba(0,0,0,0.60),
-        0 0 0 1px rgba(50,100,255,0.18) !important;
-    position: relative !important;
-    overflow: hidden !important;
+        0 8px 24px rgba(0,0,0,0.70),
+        0 0 0 1px rgba(50,100,255,0.14);
+    animation: refCardIn 0.35s cubic-bezier(0.34,1.2,0.64,1) both;
+    position: relative;
+    overflow: hidden;
 }
-.card::before, .balance-card::before {
-    content: '' !important;
-    position: absolute !important; top:0;left:0;right:0;height:2px !important;
-    background: linear-gradient(90deg,transparent,rgba(255,255,255,0.14),transparent) !important;
-    pointer-events:none !important; z-index:1 !important;
+.ref-stat-card::before {
+    content: ''; position: absolute; top:0;left:0;right:0;height:2px;
+    background: linear-gradient(90deg,transparent,rgba(255,255,255,0.10),transparent);
+    pointer-events:none;
 }
-.stat-card {
-    background: linear-gradient(160deg, #0d0d24 0%, #090920 55%, #060618 100%) !important;
-    border-top:  2px solid rgba(60,140,255,0.55) !important;
-    border-left: 1px solid rgba(40,120,255,0.30) !important;
-    border-right:  1px solid rgba(0,0,0,0.85) !important;
-    border-bottom: 4px solid rgba(0,0,0,0.98) !important;
-    border-radius: 18px !important;
+.ref-stat-val {
+    font-size: 1.6rem; font-weight: 800; color: #fff;
+    line-height: 1; margin-bottom: 4px;
+    text-shadow: 0 0 20px rgba(100,180,255,0.4);
+}
+.ref-stat-lbl {
+    font-size: 0.72rem; font-weight: 600;
+    color: rgba(255,255,255,0.40);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+/* ── Link box ── */
+.ref-link-box {
+    background: linear-gradient(145deg, #0d0d22 0%, #090918 50%, #060614 100%);
+    border-top:    2px solid rgba(60,130,255,0.40);
+    border-left:   1px solid rgba(40,100,255,0.20);
+    border-right:  1px solid rgba(0,0,0,0.75);
+    border-bottom: 4px solid rgba(0,0,0,0.95);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 10px;
     box-shadow:
-        0 3px 0 rgba(80,150,255,0.14) inset,
-        0 -4px 0 rgba(0,0,0,0.98) inset,
-        0 8px 28px rgba(0,0,0,0.75),
-        0 2px 8px rgba(0,0,0,0.60),
-        0 0 0 1px rgba(50,110,255,0.25),
-        0 0 20px rgba(0,80,255,0.08) !important;
+        0 3px 0 rgba(80,140,255,0.10) inset,
+        0 -4px 0 rgba(0,0,0,0.95) inset,
+        0 8px 24px rgba(0,0,0,0.70);
+    animation: refCardIn 0.35s cubic-bezier(0.34,1.2,0.64,1) 0.05s both;
 }
-.btn-primary {
-    background: linear-gradient(180deg, #1a6fff 0%, #0055ee 60%, #003fbf 100%) !important;
-    border-top: 1px solid rgba(255,255,255,0.28) !important;
-    border-bottom: 3px solid rgba(0,0,0,0.55) !important;
-    border-left: none !important;
-    border-right: none !important;
+
+/* ── Botones de acción ── */
+.ref-btn-share {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(180deg, #1a6fff 0%, #0055ee 60%, #003fbf 100%);
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.28);
+    border-bottom: 3px solid rgba(0,0,0,0.55);
+    border-radius: 14px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 2px 0 rgba(255,255,255,0.20) inset, 0 -3px 0 rgba(0,0,0,0.50) inset, 0 4px 14px rgba(0,60,200,0.30);
+    transform: translateZ(0);
+    transition: transform .15s cubic-bezier(.34,1.4,.64,1);
+    margin-bottom: 10px;
+}
+.ref-btn-share:active { transform: translateY(2px) scale(0.98); transition: transform .07s; }
+
+.ref-btn-copy {
+    padding: 8px 12px;
+    background: linear-gradient(180deg, #1a6fff, #0050dd);
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.20);
+    border-bottom: 2px solid rgba(0,0,0,0.45);
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    display: flex; align-items: center;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.14) inset, 0 -2px 0 rgba(0,0,0,0.40) inset;
+    flex-shrink: 0;
+    transition: transform .1s;
+}
+.ref-btn-copy:active { transform: translateY(1px); }
+
+/* ── Sección label ── */
+.ref-section-label {
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(255,255,255,0.28);
+    margin: 18px 0 10px 4px;
+}
+
+/* ── Referral list item ── */
+.ref-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: linear-gradient(145deg, #14141e 0%, #0c0c16 50%, #080810 100%);
+    border-top:    1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(0,0,0,0.4);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 2px 0 rgba(255,255,255,0.04) inset, 0 -1px 0 rgba(0,0,0,0.35) inset, 0 4px 12px rgba(0,0,0,0.25);
+}
+.ref-item-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 0 rgba(255,255,255,0.12) inset, 0 -1px 0 rgba(0,0,0,0.35) inset;
+}
+
+/* ── Cómo funciona — steps ── */
+.ref-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.ref-step:last-child { border-bottom: none; padding-bottom: 0; }
+.ref-step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-weight: 800; font-size: 0.78rem;
+    background: linear-gradient(180deg,#2060cc,#0040aa);
+    border-top: 1px solid rgba(255,255,255,0.20);
+    border-bottom: 2px solid rgba(0,0,0,0.50);
+    color: #fff;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.14) inset, 0 -1px 0 rgba(0,0,0,0.40) inset, 0 4px 10px rgba(0,60,200,0.25);
+    margin-top: 1px;
+}
+
+/* ── Card contenedor ── */
+.ref-card {
+    background: linear-gradient(145deg, #0d0d22 0%, #090918 50%, #060614 100%);
+    border-top:    2px solid rgba(60,130,255,0.40);
+    border-left:   1px solid rgba(40,100,255,0.20);
+    border-right:  1px solid rgba(0,0,0,0.75);
+    border-bottom: 4px solid rgba(0,0,0,0.95);
+    border-radius: 20px;
+    padding: 18px 16px;
+    margin-bottom: 10px;
     box-shadow:
-        0 2px 0 rgba(255,255,255,0.20) inset,
-        0 -3px 0 rgba(0,0,0,0.50) inset,
-        0 4px 14px rgba(0,60,200,0.30) !important;
-    border-radius: 14px !important;
-    transform: translateZ(0) !important;
-    transition: transform .15s cubic-bezier(.34,1.4,.64,1), box-shadow .15s !important;
+        0 3px 0 rgba(80,140,255,0.10) inset,
+        0 -4px 0 rgba(0,0,0,0.95) inset,
+        0 8px 28px rgba(0,0,0,0.70),
+        0 0 0 1px rgba(50,100,255,0.12);
+    position: relative; overflow: hidden;
+    animation: refCardIn 0.35s cubic-bezier(0.34,1.2,0.64,1) both;
 }
-.btn-primary:active {
-    transform: translateY(3px) scale(0.98) !important;
-    box-shadow:
-        0 1px 0 rgba(255,255,255,0.12) inset,
-        0 -1px 0 rgba(0,0,0,0.40) inset,
-        0 2px 6px rgba(0,60,200,0.20) !important;
-    transition: transform .07s ease !important;
+.ref-card::before {
+    content: ''; position: absolute; top:0;left:0;right:0;height:2px;
+    background: linear-gradient(90deg,transparent,rgba(255,255,255,0.10),transparent);
+    pointer-events:none;
 }
-.btn-secondary {
-    background: linear-gradient(180deg, #131328 0%, #0a0a1e 100%) !important;
-    border-top: 1px solid rgba(255,255,255,0.12) !important;
-    border-bottom: 3px solid rgba(0,0,0,0.80) !important;
-    border-left: none !important;
-    border-right: none !important;
-    box-shadow:
-        0 2px 0 rgba(255,255,255,0.06) inset,
-        0 -3px 0 rgba(0,0,0,0.75) inset,
-        0 3px 10px rgba(0,0,0,0.40) !important;
-    border-radius: 14px !important;
-    transform: translateZ(0) !important;
-    transition: transform .15s cubic-bezier(.34,1.4,.64,1) !important;
+
+@keyframes refCardIn {
+    from { opacity:0; transform:translateY(14px) scale(0.97); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
 }
-.btn-secondary:active { transform: translateY(2px) scale(0.98) !important; }
-@keyframes pgIn {
-    from{opacity:0;transform:translateY(18px) scale(0.96)}
-    to{opacity:1;transform:translateY(0) scale(1)}
-}
-.card    { animation: pgIn .38s cubic-bezier(.34,1.2,.64,1) both; }
-.stat-card { animation: pgIn .38s cubic-bezier(.34,1.2,.64,1) .08s both; }
+.ref-stat-card:nth-child(1) { animation-delay:0.02s; }
+.ref-stat-card:nth-child(2) { animation-delay:0.06s; }
+.ref-stat-card:nth-child(3) { animation-delay:0.10s; }
+.ref-stat-card:nth-child(4) { animation-delay:0.14s; }
 </style>
 {% endblock %}
 
 SALLY-E | Referrals{% endblock %}
 
 {% block content %}
-<div class="container">
-    <!-- Header -->
-    <div style="margin-bottom: var(--space-8);">
-        <h1 class="page-title">👥 <span data-i18n="referidos_title">Programa de Referidos</span></h1>
-        <p class="text-muted" data-i18n="referidos_invite_friends">Invita Amigos</p>
+<div style="padding: 0 var(--space-4) 120px;">
+
+    <!-- HEADER -->
+    <div style="padding:var(--space-4) 0 var(--space-3);">
+        <h1 style="margin:0;font-size:1.4rem;font-weight:800;color:var(--color-text-primary);" data-i18n="referidos_title">
+            Invitar
+        </h1>
     </div>
 
-    <!-- Stats Overview -->
-    <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
-        <div class="stat-card glow-hover">
-            <div style="margin-bottom: var(--space-3);">
-                <i data-lucide="user-check" style="width: 32px; height: 32px; color: var(--color-success);"></i>
+    <!-- STATS GRID — 4 tarjetas -->
+    <div class="ref-stats">
+        <div class="ref-stat-card">
+            <div style="width:36px;height:36px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;background:rgba(0,255,136,0.12);border-radius:10px;">
+                <i data-lucide="user-check" style="width:18px;height:18px;color:#00FF88;"></i>
             </div>
-            <div class="stat-value" id="validated-count-display">{{ validated_count|default(0) }}</div>
-            <div class="stat-label" data-i18n="referidos_validated">Referidos Validados</div>
+            <div class="ref-stat-val" id="validated-count-display">{{ validated_count|default(0) }}</div>
+            <div class="ref-stat-lbl" data-i18n="referidos_validated">Validados</div>
         </div>
-
-        <div class="stat-card glow-hover">
-            <div style="margin-bottom: var(--space-3);">
-                <i data-lucide="clock" style="width: 32px; height: 32px; color: var(--color-warning);"></i>
+        <div class="ref-stat-card">
+            <div style="width:36px;height:36px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;background:rgba(255,184,0,0.12);border-radius:10px;">
+                <i data-lucide="clock" style="width:18px;height:18px;color:#FFB800;"></i>
             </div>
-            <div class="stat-value" id="pending-count-display">{{ pending_count|default(0) }}</div>
-            <div class="stat-label" data-i18n="referidos_pending">Pendientes</div>
+            <div class="ref-stat-val" id="pending-count-display">{{ pending_count|default(0) }}</div>
+            <div class="ref-stat-lbl" data-i18n="referidos_pending">Pendientes</div>
         </div>
-    </div>
-
-    <!-- Total Earnings -->
-    <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr); margin-top: var(--space-4);">
-        <div class="stat-card glow-hover">
-            <div style="margin-bottom: var(--space-3);">
-                <i data-lucide="users" style="width: 32px; height: 32px; color: var(--color-neon-purple);"></i>
+        <div class="ref-stat-card">
+            <div style="width:36px;height:36px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;background:rgba(100,160,255,0.12);border-radius:10px;">
+                <i data-lucide="users" style="width:18px;height:18px;color:#6BB8FF;"></i>
             </div>
-            <div class="stat-value" id="referral-count-display">{{ (validated_count|default(0)) + (pending_count|default(0)) }}</div>
-            <div class="stat-label" data-i18n="referidos_total">Referidos</div>
+            <div class="ref-stat-val" id="referral-count-display">{{ (validated_count|default(0)) + (pending_count|default(0)) }}</div>
+            <div class="ref-stat-lbl" data-i18n="referidos_total">Total</div>
         </div>
-
-        <div class="stat-card glow-hover">
-            <div style="margin-bottom: var(--space-3);">
-                <i data-lucide="gift" style="width: 32px; height: 32px; color: var(--color-neon-pink);"></i>
+        <div class="ref-stat-card">
+            <div style="width:36px;height:36px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;background:rgba(255,100,200,0.12);border-radius:10px;">
+                <i data-lucide="gift" style="width:18px;height:18px;color:#FF78C8;"></i>
             </div>
-            <div class="stat-value" id="se-earned-display">{{ total_se_earned|round }}</div>
-            <div class="stat-label" data-i18n="referidos_bonus_earned">Bonus Ganado</div>
+            <div class="ref-stat-val" id="se-earned-display">{{ total_se_earned|round }}</div>
+            <div class="ref-stat-lbl" data-i18n="referidos_bonus_earned">Bonus</div>
         </div>
     </div>
 
-    <!-- Referral Link Card -->
-    <div class="card" style="background: linear-gradient(145deg,#080818,#050514); border-top:2px solid rgba(0,140,255,0.28); border-left:1px solid rgba(0,120,255,0.16); border-right:1px solid rgba(0,0,0,0.5); border-bottom:3px solid rgba(0,0,0,0.80); box-shadow:0 3px 0 rgba(255,255,255,0.05) inset,0 -4px 0 rgba(0,0,0,0.70) inset,0 22px 60px rgba(0,0,0,0.65); transform: scale(0.88); margin-top: var(--space-4);">
-        <div style="text-align: center; margin-bottom: var(--space-5);">
-            <div class="floating" style="width: 58px; height: 58px; margin: 0 auto var(--space-3); display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #1a6fff 0%, #0050dd 100%); border-top: 1px solid rgba(255,255,255,0.22); border-bottom: 2px solid rgba(0,0,0,0.45); border-left: none; border-right: none; border-radius: 16px; box-shadow: 0 2px 0 rgba(255,255,255,0.14) inset, 0 -2px 0 rgba(0,0,0,0.40) inset, 0 4px 12px rgba(0,50,180,0.25);">
-                <i data-lucide="link" style="width: 26px; height: 26px; color: white;"></i>
-            </div>
-            <h2 style="font-size: 1.32rem; font-weight: 700; margin-bottom: var(--space-2);" data-i18n="referidos_your_link">Tu Link de Referido</h2>
-            <p style="color: var(--color-text-tertiary); font-size: 0.825rem;" data-i18n="referidos_share_earn">¡Comparte tu link y gana recompensas!</p>
+    <!-- LINK BOX -->
+    <div class="ref-link-box">
+        <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:10px;" data-i18n="referidos_your_link">Tu link de referido</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <input type="text" id="referral-link"
+                value="https://t.me/{{ bot_username.replace('@', '') if bot_username else 'SallyeeBot' }}?start=ref_{{ user_id }}"
+                readonly
+                style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.10);border-radius:10px;padding:10px 12px;color:rgba(255,255,255,0.75);font-size:0.78rem;outline:none;">
+            <button class="ref-btn-copy" onclick="copyReferralLink()">
+                <i data-lucide="copy" style="width:16px;height:16px;"></i>
+            </button>
         </div>
-
-        <!-- Referral Link Input -->
-        <div style="background:linear-gradient(160deg,#0c0c22,#090918);border-top:2px solid rgba(60,130,255,0.40);border-left:1px solid rgba(40,100,255,0.22);border-right:1px solid rgba(0,0,0,0.70);border-bottom:3px solid rgba(0,0,0,0.90);border-radius:14px;padding:var(--space-4);margin-bottom:var(--space-4);box-shadow:0 2px 0 rgba(80,140,255,0.10) inset,0 -3px 0 rgba(0,0,0,0.88) inset,0 6px 20px rgba(0,0,0,0.60),0 0 0 1px rgba(50,100,255,0.14);">
-            <div style="display: flex; align-items: center; gap: var(--space-3);">
-                <input
-                    type="text"
-                    id="referral-link"
-                    value="https://t.me/{{ bot_username.replace('@', '') if bot_username else 'SallyeeBot' }}?start=ref_{{ user_id }}"
-                    readonly
-                    style="flex: 1; background: transparent; border: none; color: var(--color-text-primary); font-size: 0.825rem; outline: none; padding: 0;"
-                >
-                <button
-                    onclick="copyReferralLink()"
-                    class="btn btn-primary btn-sm"
-                    style="flex-shrink:0;padding:7px 10px;background:linear-gradient(180deg,#1a6fff,#0050dd);border-top:1px solid rgba(255,255,255,0.20);border-bottom:2px solid rgba(0,0,0,0.45);border-left:none;border-right:none;border-radius:10px;box-shadow:0 1px 0 rgba(255,255,255,0.14) inset,0 -2px 0 rgba(0,0,0,0.40) inset,0 2px 8px rgba(0,50,180,0.20);">
-                    <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Share Button -->
-        <button class="btn btn-primary btn-lg btn-block" onclick="shareReferralLink()" style="transform: scale(0.88);">
-            <i data-lucide="share-2" style="width: 21px; height: 21px;"></i>
-            <span data-i18n="referidos_share_btn">Compartir Link</span>
-        </button>
     </div>
 
-    <!-- Referral Rewards -->
-    <div class="card">
-        <h2 class="section-title"><img src="/static/icons/gift.svg" style="width:30px; height:40px; vertical-align:middle; margin-right:8px;"><span data-i18n="referidos_rewards_title">Recompensas por Referir</span></h2>
+    <!-- BOTÓN COMPARTIR -->
+    <button class="ref-btn-share" onclick="shareReferralLink()">
+        <i data-lucide="share-2" style="width:20px;height:20px;"></i>
+        <span data-i18n="referidos_share_btn">Compartir Link</span>
+    </button>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-4);">
+    <!-- RECOMPENSAS -->
+    <div class="ref-section-label">🎁 Recompensas</div>
 
-            <!-- Recompensa 1 -->
-            <div style="background:linear-gradient(160deg,#0c0c22,#090918,#060616);border-top:2px solid rgba(60,130,255,0.45);border-left:1px solid rgba(40,100,255,0.25);border-right:1px solid rgba(0,0,0,0.80);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:16px;padding:var(--space-4);text-align:center;box-shadow:0 3px 0 rgba(80,140,255,0.10) inset,0 -4px 0 rgba(0,0,0,0.95) inset,0 8px 24px rgba(0,0,0,0.70),0 0 0 1px rgba(50,100,255,0.16);">
-                <div style="width:52px;height:52px;margin:0 auto var(--space-3);display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#2060cc,#0040aa);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.55);border-radius:50%;box-shadow:0 2px 0 rgba(255,255,255,0.16) inset,0 -2px 0 rgba(0,0,0,0.50) inset,0 4px 14px rgba(0,60,200,0.35);">
-                    <i data-lucide="user-plus" style="width:24px;height:24px;color:#fff;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.5));"></i>
-                </div>
-                <div style="margin-bottom:var(--space-3);">
-                    <div style="font-weight:700;font-size:0.95rem;color:#fff;margin-bottom:6px;" data-i18n="referidos_per_friend">Por cada amigo</div>
-                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.55);" data-i18n="referidos_when_complete_task">Cuando completen su primera tarea</div>
-                </div>
-                <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;">
-                    <div style="background:linear-gradient(180deg,#1a5fe0,#0040bb);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:20px;padding:5px 14px;font-size:0.85rem;font-weight:700;color:#fff;box-shadow:0 1px 0 rgba(255,255,255,0.16) inset,0 -2px 0 rgba(0,0,0,0.45) inset;">
-                        +{{ config.referral_bonus|default(50)|int }} S-E
-                    </div>
-                    <div style="background:linear-gradient(180deg,#00b8e0,#0060cc);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:20px;padding:5px 14px;font-size:0.85rem;font-weight:700;color:#fff;box-shadow:0 1px 0 rgba(255,255,255,0.16) inset,0 -2px 0 rgba(0,0,0,0.45) inset;">
-                        +50 PTS
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recompensa 2 -->
-            <div style="background:linear-gradient(160deg,#0c0c22,#090918,#060616);border-top:2px solid rgba(60,130,255,0.45);border-left:1px solid rgba(40,100,255,0.25);border-right:1px solid rgba(0,0,0,0.80);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:16px;padding:var(--space-4);text-align:center;box-shadow:0 3px 0 rgba(80,140,255,0.10) inset,0 -4px 0 rgba(0,0,0,0.95) inset,0 8px 24px rgba(0,0,0,0.70),0 0 0 1px rgba(50,100,255,0.16);">
-                <div style="width:52px;height:52px;margin:0 auto var(--space-3);display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#2060cc,#0040aa);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.55);border-radius:50%;box-shadow:0 2px 0 rgba(255,255,255,0.16) inset,0 -2px 0 rgba(0,0,0,0.50) inset,0 4px 14px rgba(0,60,200,0.35);">
-                    <i data-lucide="zap" style="width:24px;height:24px;color:#fff;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.5));"></i>
-                </div>
-                <div style="margin-bottom:var(--space-3);">
-                    <div style="font-weight:700;font-size:0.95rem;color:#fff;margin-bottom:6px;" data-i18n="referidos_activity_bonus">Bonus por actividad</div>
-                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.55);">{{ ((config.referral_commission|default(0.05)) * 100)|int }}% <span data-i18n="referidos_of_earnings">de lo que ganan tus referidos</span></div>
-                </div>
-                <div style="background:linear-gradient(180deg,#1a5fe0,#0040bb);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:20px;padding:5px 18px;font-size:0.95rem;font-weight:800;color:#fff;display:inline-block;box-shadow:0 1px 0 rgba(255,255,255,0.16) inset,0 -2px 0 rgba(0,0,0,0.45) inset;">
-                    {{ ((config.referral_commission|default(0.05)) * 100)|int }}%
-                </div>
+    <div class="ref-row">
+        <div class="ref-icon" style="background:linear-gradient(135deg,rgba(0,102,255,0.22) 0%,rgba(0,82,204,0.12) 100%);">
+            <i data-lucide="user-plus" style="width:22px;height:22px;color:#4D94FF;position:relative;z-index:2;"></i>
+        </div>
+        <div class="ref-body">
+            <div class="ref-title" data-i18n="referidos_per_friend">Por cada amigo</div>
+            <div class="ref-meta">
+                <span class="ref-chip ref-chip-blue">+{{ config.referral_bonus|default(50)|int }} S-E</span>
+                <span class="ref-chip ref-chip-cyan">+50 PTS</span>
+                <span class="ref-chip" data-i18n="referidos_when_complete_task">Al completar su 1ª tarea</span>
             </div>
         </div>
     </div>
 
-    <!-- Referrals List -->
-    <div class="card">
-        <h2 class="section-title"><img src="/static/icons/clipboard.svg" style="width:20px; height:20px; vertical-align:middle; margin-right:8px;"><span data-i18n="referidos_your_referrals">Tus Referidos</span></h2>
-
-        <div class="item-list" id="referral-list">
-            <div style="text-align: center; padding: var(--space-8); color: var(--color-text-tertiary);">
-                <div class="rotating" style="width: 40px; height: 40px; margin: 0 auto var(--space-3); border: 3px solid var(--color-text-tertiary); border-top-color: transparent; border-radius: 50%;"></div>
-                <p data-i18n="referidos_loading">Cargando referidos...</p>
+    <div class="ref-row">
+        <div class="ref-icon" style="background:linear-gradient(135deg,rgba(255,184,0,0.22) 0%,rgba(255,107,53,0.12) 100%);">
+            <i data-lucide="zap" style="width:22px;height:22px;color:#FFB800;position:relative;z-index:2;"></i>
+        </div>
+        <div class="ref-body">
+            <div class="ref-title" data-i18n="referidos_activity_bonus">Bonus por actividad</div>
+            <div class="ref-meta">
+                <span class="ref-chip ref-chip-yellow">{{ ((config.referral_commission|default(0.05)) * 100)|int }}% comisión</span>
+                <span class="ref-chip" data-i18n="referidos_of_earnings">De lo que ganan tus referidos</span>
             </div>
         </div>
     </div>
 
-    <!-- How it Works -->
-    <div class="card" style="background: linear-gradient(145deg,#07071a,#050516); border-top:2px solid rgba(0,200,255,0.22); border-bottom:3px solid rgba(0,0,0,0.75); box-shadow:0 3px 0 rgba(0,200,255,0.06) inset,0 -4px 0 rgba(0,0,0,0.65) inset,0 18px 55px rgba(0,0,0,0.60);">
-        <div style="display: flex; align-items: flex-start; gap: var(--space-4);">
-            <div style="flex-shrink: 0; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 245, 255, 0.2) 0%, rgba(0, 82, 204, 0.2) 100%); border-radius: var(--radius-lg); box-shadow: 0 0 30px rgba(0, 245, 255, 0.3);">
-                <i data-lucide="help-circle" style="width: 28px; height: 28px; color: var(--color-neon-cyan);"></i>
+    <!-- CÓMO FUNCIONA -->
+    <div class="ref-section-label">💡 Cómo funciona</div>
+
+    <div class="ref-card">
+        <div class="ref-step">
+            <div class="ref-step-num">1</div>
+            <div style="font-size:0.875rem;color:rgba(255,255,255,0.70);line-height:1.5;" data-i18n="referidos_step_1">Comparte tu link de referido único</div>
+        </div>
+        <div class="ref-step">
+            <div class="ref-step-num">2</div>
+            <div style="font-size:0.875rem;color:rgba(255,255,255,0.70);line-height:1.5;" data-i18n="referidos_step_2">Tus amigos se registran usando tu link</div>
+        </div>
+        <div class="ref-step">
+            <div class="ref-step-num" style="background:linear-gradient(180deg,#c07800,#8a5500);">3</div>
+            <div style="font-size:0.875rem;line-height:1.5;">
+                <span style="color:#FFB800;font-weight:600;">⏳ </span>
+                <span style="color:rgba(255,255,255,0.70);" data-i18n="referidos_step_3">El referido queda pendiente</span>
             </div>
-            <div style="flex: 1;">
-                <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--space-3); color: var(--color-text-primary);" data-i18n="referidos_how_works">¿Cómo funciona?</div>
-                <ol style="margin: 0; padding-left: var(--space-5); color: var(--color-text-secondary); font-size: 0.9375rem; line-height: 1.8;">
-                    <li data-i18n="referidos_step_1">Comparte tu link de referido único</li>
-                    <li data-i18n="referidos_step_2">Tus amigos se registran usando tu link</li>
-                    <li><strong style="color: var(--color-warning);">⏳ <span data-i18n="referidos_step_3">El referido queda pendiente</span></strong></li>
-                    <li><strong style="color: var(--color-success);">✓ <span data-i18n="referidos_step_4">Se valida cuando completan su primera tarea</span></strong></li>
-                    <li><span data-i18n="referidos_step_5">Ganas</span> {{ config.referral_bonus|default(1)|int }} S-E <span data-i18n="referidos_step_5">por cada referido validado</span></li>
-                    <li><span data-i18n="referidos_step_6">Recibes</span> {{ ((config.referral_commission|default(0.05)) * 100)|int }}% <span data-i18n="referidos_step_6">bonus por su actividad</span></li>
-                </ol>
+        </div>
+        <div class="ref-step">
+            <div class="ref-step-num" style="background:linear-gradient(180deg,#007840,#004e28);">4</div>
+            <div style="font-size:0.875rem;line-height:1.5;">
+                <span style="color:#00FF88;font-weight:600;">✓ </span>
+                <span style="color:rgba(255,255,255,0.70);" data-i18n="referidos_step_4">Se valida cuando completan su primera tarea</span>
+            </div>
+        </div>
+        <div class="ref-step">
+            <div class="ref-step-num">5</div>
+            <div style="font-size:0.875rem;color:rgba(255,255,255,0.70);line-height:1.5;">
+                <span data-i18n="referidos_step_5">Ganas</span> <strong style="color:#6BB8FF;">{{ config.referral_bonus|default(1)|int }} S-E</strong> + <strong style="color:#4DDFFF;">{{ ((config.referral_commission|default(0.05)) * 100)|int }}%</strong> <span data-i18n="referidos_step_6">por su actividad</span>
             </div>
         </div>
     </div>
+
+    <!-- LISTA DE REFERIDOS -->
+    <div class="ref-section-label">👥 Tus referidos</div>
+
+    <div id="referral-list">
+        <div style="text-align:center;padding:32px 16px;color:rgba(255,255,255,0.30);">
+            <div style="width:36px;height:36px;margin:0 auto 12px;border:3px solid rgba(255,255,255,0.15);border-top-color:rgba(100,180,255,0.6);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+            <p style="font-size:0.85rem;" data-i18n="referidos_loading">Cargando referidos...</p>
+        </div>
+    </div>
+
 </div>
+
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Config values from server
 const REFERRAL_BONUS = {{ config.referral_bonus|default(50) }};
 const REFERRAL_COMMISSION = {{ ((config.referral_commission|default(0.05)) * 100)|int }};
 
-// Copy referral link
 function copyReferralLink() {
     const input = document.getElementById('referral-link');
     input.select();
     input.setSelectionRange(0, 99999);
-
     try {
         document.execCommand('copy');
-        const msg = window.t ? window.t('referidos_copy_success') : 'Link copiado al portapapeles!';
-        if (window.showToast) {
-            window.showToast(msg, 'success');
-        }
-        if (window.vibrateDevice) {
-            window.vibrateDevice([10]);
-        }
-    } catch (err) {
-        console.error('Error al copiar:', err);
-        if (window.showToast) {
-            window.showToast('Error al copiar link', 'error');
-        }
+        const msg = window.t ? window.t('referidos_copy_success') : '¡Link copiado!';
+        if (window.showToast) window.showToast(msg, 'success');
+        if (window.vibrateDevice) window.vibrateDevice([10]);
+    } catch(err) {
+        if (window.showToast) window.showToast('Error al copiar', 'error');
     }
 }
 
-// Share referral link
 function shareReferralLink() {
     const link = document.getElementById('referral-link').value;
-    const text = `¡Únete a SALLY-E y comienza a ganar S-E! 💎\n\nUsa mi link de referido:\n${link}`;
-
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
-        const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('¡Únete a SALLY-E y comienza a ganar S-E! 💎')}`;
-        window.Telegram.WebApp.openTelegramLink(shareUrl);
-    }
-    else if (navigator.share) {
-        navigator.share({
-            title: 'SALLY-E',
-            text: text,
-            url: link
-        }).catch(err => console.log('Error compartiendo:', err));
-    }
-    else {
+    if (window.Telegram?.WebApp?.openTelegramLink) {
+        const url = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('¡Únete y comienza a ganar S-E! 💎')}`;
+        window.Telegram.WebApp.openTelegramLink(url);
+    } else if (navigator.share) {
+        navigator.share({ title:'SALLY-E', text:'¡Únete y comienza a ganar S-E! 💎', url:link }).catch(()=>{});
+    } else {
         copyReferralLink();
     }
 }
 
-// Pagination variables
 let currentPage = 1;
 const pageSize = 15;
 let hasMoreReferrals = true;
 let isLoadingReferrals = false;
 let referralsLoaded = [];
 
-// Render a single referral item
 function renderReferralItem(ref) {
-    const statusColor = ref.validated ? 'var(--color-success)' : 'var(--color-warning)';
-    const statusIcon = ref.validated ? 'user-check' : 'clock';
-    const statusText = ref.validated 
+    const isValid = ref.validated;
+    const color = isValid ? '#00FF88' : '#FFB800';
+    const bg = isValid ? 'rgba(0,255,136,0.10)' : 'rgba(255,184,0,0.10)';
+    const icon = isValid ? 'user-check' : 'clock';
+    const statusText = isValid
         ? (window.t ? window.t('referidos_validated') : 'Validado')
         : (window.t ? window.t('referidos_pending') : 'Pendiente');
-
     return `
-        <div class="item" style="transform: scale(0.88);">
-            <div class="item-icon" style="background: ${ref.validated ? 'rgba(0, 255, 136, 0.1)' : 'rgba(255, 184, 0, 0.1)'};">
-                <i data-lucide="${statusIcon}" style="width: 20px; height: 20px; color: ${statusColor};"></i>
+        <div class="ref-item">
+            <div class="ref-item-icon" style="background:${bg};">
+                <i data-lucide="${icon}" style="width:18px;height:18px;color:${color};"></i>
             </div>
-            <div class="item-content">
-                <div class="item-title">${ref.username || ref.first_name || 'Usuario'}</div>
-                <div class="item-subtitle" style="color: ${statusColor};">${statusText}</div>
-            </div>
-            ${ref.validated ? `
-                <div style="text-align: right;">
-                    <div style="font-weight: 600; font-size: 0.875rem; color: var(--color-success);">+${REFERRAL_BONUS} S-E</div>
+            <div style="flex:1;min-width:0;">
+                <div style="font-weight:700;font-size:0.88rem;color:#fff;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                    ${ref.username || ref.first_name || 'Usuario'}
                 </div>
-            ` : ''}
-        </div>
-    `;
+                <div style="font-size:0.72rem;font-weight:700;color:${color};">${statusText}</div>
+            </div>
+            ${isValid ? `<div style="font-weight:700;font-size:0.85rem;color:#4DFFA0;flex-shrink:0;">+${REFERRAL_BONUS} S-E</div>` : ''}
+        </div>`;
 }
 
-// Render load more button
-function renderLoadMoreButton() {
-    const loadMoreText = window.t ? window.t('referidos_load_more') : 'Cargar más';
-    return `
-        <div id="load-more-container" style="text-align: center; padding: var(--space-4);">
-            <button class="btn btn-secondary btn-sm" onclick="loadMoreReferrals()" id="load-more-btn">
-                <i data-lucide="chevron-down" style="width: 16px; height: 16px; margin-right: var(--space-2);"></i>
-                ${loadMoreText}
-            </button>
-        </div>
-    `;
-}
-
-// Load referrals with pagination
-async function loadReferrals(append = false) {
+async function loadReferrals(append=false) {
     if (isLoadingReferrals) return;
     isLoadingReferrals = true;
-
-    const listContainer = document.getElementById('referral-list');
-    const urlParams = new URLSearchParams(window.location.search);
-    const userId = urlParams.get('user_id');
-
-    if (!userId) {
-        listContainer.innerHTML = '<div style="text-align: center; padding: var(--space-8); color: var(--color-error);">Usuario no identificado</div>';
-        isLoadingReferrals = false;
-        return;
-    }
-
+    const listEl = document.getElementById('referral-list');
+    const userId = new URLSearchParams(window.location.search).get('user_id');
+    if (!userId) { listEl.innerHTML='<div style="text-align:center;padding:24px;color:rgba(255,80,80,0.7);font-size:0.85rem;">Usuario no identificado</div>'; isLoadingReferrals=false; return; }
     try {
-        const response = await fetch(`/api/referrals?user_id=${userId}&page=${currentPage}&page_size=${pageSize}`);
-        const data = await response.json();
-
+        const res = await fetch(`/api/referrals?user_id=${userId}&page=${currentPage}&page_size=${pageSize}`);
+        const data = await res.json();
         if (data.success) {
             hasMoreReferrals = data.has_more;
-
             if (data.stats) {
-                const referralCountDisplay = document.getElementById('referral-count-display');
-                const seEarnedDisplay = document.getElementById('se-earned-display');
-                const validatedDisplay = document.getElementById('validated-count-display');
-                const pendingDisplay = document.getElementById('pending-count-display');
-
-                if (referralCountDisplay) {
-                    if (typeof animateCounter === 'function') {
-                        animateCounter(referralCountDisplay, data.stats.total_referrals);
-                    } else {
-                        referralCountDisplay.textContent = data.stats.total_referrals;
-                    }
-                }
-
-                if (seEarnedDisplay) {
-                    if (typeof animateCounter === 'function') {
-                        animateCounter(seEarnedDisplay, data.total_se_earned);
-                    } else {
-                        seEarnedDisplay.textContent = data.total_se_earned;
-                    }
-                }
-
-                if (validatedDisplay) {
-                    validatedDisplay.textContent = data.validated_count;
-                }
-
-                if (pendingDisplay) {
-                    pendingDisplay.textContent = data.pending_count;
-                }
-
-                const commissionDisplay = document.getElementById('total-commission-display');
-                if (commissionDisplay) {
-                    if (typeof animateCounter === 'function') {
-                        animateCounter(commissionDisplay, data.total_commission);
-                    } else {
-                        commissionDisplay.textContent = data.total_commission.toFixed(4);
-                    }
-                }
+                ['referral-count-display','se-earned-display','validated-count-display','pending-count-display'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    const val = id==='referral-count-display' ? data.stats.total_referrals
+                              : id==='se-earned-display' ? data.total_se_earned
+                              : id==='validated-count-display' ? data.validated_count
+                              : data.pending_count;
+                    if (typeof animateCounter==='function') animateCounter(el, val);
+                    else el.textContent = val;
+                });
             }
-
             referralsLoaded = append ? [...referralsLoaded, ...data.referrals] : data.referrals;
-
-            const noReferralsText = window.t ? window.t('referidos_no_referrals') : 'Aún no tienes referidos';
-            const shareStartText = window.t ? window.t('referidos_share_start') : '¡Comparte tu link y comienza a ganar!';
-            const seenAllText = window.t ? window.t('referidos_seen_all') : 'Has visto todos tus referidos';
-
             if (referralsLoaded.length > 0) {
                 if (append) {
-                    const oldLoadMore = document.getElementById('load-more-container');
-                    if (oldLoadMore) {
-                        oldLoadMore.remove();
-                    }
-                    const newItemsHtml = data.referrals.map(ref => renderReferralItem(ref)).join('');
-                    listContainer.insertAdjacentHTML('beforeend', newItemsHtml);
+                    document.getElementById('load-more-container')?.remove();
+                    listEl.insertAdjacentHTML('beforeend', data.referrals.map(renderReferralItem).join(''));
                 } else {
-                    listContainer.innerHTML = referralsLoaded.map(ref => renderReferralItem(ref)).join('');
+                    listEl.innerHTML = referralsLoaded.map(renderReferralItem).join('');
                 }
-
                 if (hasMoreReferrals) {
-                    listContainer.insertAdjacentHTML('beforeend', renderLoadMoreButton());
-                } else if (referralsLoaded.length > 15) {
-                    listContainer.insertAdjacentHTML('beforeend', `
-                        <div style="text-align: center; padding: var(--space-4); color: var(--color-text-tertiary); font-size: 0.875rem;">
-                            <i data-lucide="check-circle" style="width: 20px; height: 20px; vertical-align: middle; margin-right: var(--space-2);"></i>
-                            ${seenAllText}
-                        </div>
-                    `);
+                    const loadMoreText = window.t ? window.t('referidos_load_more') : 'Cargar más';
+                    listEl.insertAdjacentHTML('beforeend', `
+                        <div id="load-more-container" style="text-align:center;padding:12px 0;">
+                            <button onclick="loadMoreReferrals()" style="padding:9px 22px;background:linear-gradient(145deg,#1a1a2e,#0f0f1a);border:1px solid rgba(255,255,255,0.12);border-radius:12px;color:rgba(255,255,255,0.6);font-size:0.82rem;font-weight:700;cursor:pointer;">
+                                ${loadMoreText}
+                            </button>
+                        </div>`);
                 }
             } else {
-                listContainer.innerHTML = `
-                    <div style="text-align: center; padding: var(--space-8); color: var(--color-text-tertiary);">
-                        <i data-lucide="users" style="width: 64px; height: 64px; margin-bottom: var(--space-4); opacity: 0.3;"></i>
-                        <p style="font-size: 1.125rem; margin-bottom: var(--space-2);">${noReferralsText}</p>
-                        <p style="font-size: 0.9375rem;">${shareStartText}</p>
-                    </div>
-                `;
+                listEl.innerHTML = `
+                    <div style="text-align:center;padding:32px 16px;color:rgba(255,255,255,0.30);">
+                        <i data-lucide="users" style="width:48px;height:48px;margin-bottom:12px;opacity:0.3;"></i>
+                        <p style="font-size:0.95rem;margin-bottom:6px;" data-i18n="referidos_no_referrals">Aún no tienes referidos</p>
+                        <p style="font-size:0.82rem;" data-i18n="referidos_share_start">¡Comparte tu link y comienza a ganar!</p>
+                    </div>`;
             }
-
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        } else {
-            throw new Error(data.message || 'Error desconocido');
+            if (typeof lucide!=='undefined') lucide.createIcons();
         }
-    } catch (error) {
-        console.error('Error cargando referidos:', error);
-        const errorLoadingText = window.t ? window.t('referidos_error_loading') : 'Error al cargar referidos';
-        const retryText = window.t ? window.t('referidos_retry') : 'Reintentar';
-        
-        if (!append) {
-            listContainer.innerHTML = `
-                <div style="text-align: center; padding: var(--space-8); color: var(--color-error);">
-                    <i data-lucide="alert-circle" style="width: 48px; height: 48px; margin-bottom: var(--space-3);"></i>
-                    <p style="font-size: 1.125rem; margin-bottom: var(--space-2);">${errorLoadingText}</p>
-                    <p style="font-size: 0.875rem;">${error.message}</p>
-                    <button class="btn btn-secondary btn-sm" onclick="retryLoadReferrals()" style="margin-top: var(--space-4);">
-                        <i data-lucide="refresh-cw" style="width: 16px; height: 16px; margin-right: var(--space-2);"></i>
-                        ${retryText}
-                    </button>
-                </div>
-            `;
-        }
-
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
+    } catch(err) {
+        console.error(err);
+        if (!append) listEl.innerHTML=`<div style="text-align:center;padding:24px;color:rgba(255,80,80,0.7);font-size:0.85rem;">Error al cargar referidos</div>`;
     } finally {
         isLoadingReferrals = false;
     }
 }
 
-function loadMoreReferrals() {
-    if (!hasMoreReferrals || isLoadingReferrals) return;
-    currentPage++;
-    loadReferrals(true);
-}
+function loadMoreReferrals() { if (!hasMoreReferrals || isLoadingReferrals) return; currentPage++; loadReferrals(true); }
 
-function retryLoadReferrals() {
-    currentPage = 1;
-    hasMoreReferrals = true;
-    referralsLoaded = [];
-    loadReferrals(false);
-}
-
-// Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
+    if (typeof lucide!=='undefined') lucide.createIcons();
     loadReferrals();
-    
-    // Aplicar traducciones después de cargar
-    if (typeof applyTranslations === 'function') {
-        setTimeout(applyTranslations, 100);
-    }
+    if (typeof applyTranslations==='function') setTimeout(applyTranslations, 100);
 });
 </script>
 {% endblock %}
