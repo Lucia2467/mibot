@@ -744,9 +744,9 @@
     <!-- ❄️ Snow Effect Container -->
     <div class="snow-container" id="snow-container"></div>
 
-    <div class="app-shell{% if user and not hide_header %} has-top-header{% endif %}">
-        <!-- ========== TOP HEADER - USER PROFILE ========== -->
-        {% if user and not hide_header %}
+    <div class="app-shell has-top-header">
+        <!-- ========== TOP HEADER - USER PROFILE (DISABLED) ========== -->
+        {% if false and user and not hide_header %}
         <header class="app-top-header" id="app-top-header">
             <div class="header-inner">
                 <!-- Avatar del usuario -->
