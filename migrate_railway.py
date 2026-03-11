@@ -196,6 +196,10 @@ def migrate_users():
         'ton_wallet_linked_at':    "ALTER TABLE users ADD COLUMN ton_wallet_linked_at DATETIME DEFAULT NULL",
         'withdrawal_blocked':      "ALTER TABLE users ADD COLUMN withdrawal_blocked TINYINT(1) DEFAULT 0",
         'withdrawal_block_reason': "ALTER TABLE users ADD COLUMN withdrawal_block_reason VARCHAR(255) DEFAULT NULL",
+        'energy_current':          "ALTER TABLE users ADD COLUMN energy_current INT DEFAULT 500",
+        'energy_last_update':      "ALTER TABLE users ADD COLUMN energy_last_update DATETIME DEFAULT CURRENT_TIMESTAMP",
+        'taps_today':              "ALTER TABLE users ADD COLUMN taps_today INT DEFAULT 0",
+        'taps_today_date':         "ALTER TABLE users ADD COLUMN taps_today_date DATE DEFAULT NULL",
     })
 
 

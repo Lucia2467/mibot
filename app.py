@@ -1233,6 +1233,66 @@ def api_claim():
     })
 
 # ============================================
+# TAP ENDPOINT — guarda balance y energía real
+# ============================================
+
+@app.route('/api/tap', methods=['POST'])
+def api_tap():
+    """Guarda los taps acumulados en la BD"""
+    user_id = get_user_id()
+    if not user_id:
+        return jsonify({'success': False, 'error': 'User ID required'}), 400
+
+    user = get_user(user_id)
+    if not user:
+        return jsonify({'success': False, 'error': 'User not found'}), 404
+
+    if user.get('banned'):
+        return jsonify({'success': False, 'error': 'User banned'}), 403
+
+    data = request.get_json(silent=True) or {}
+    taps      = int(data.get('taps', 0))
+    gained    = float(data.get('gained', 0))
+    energy    = int(data.get('energy', 500))
+
+    if taps <= 0 or gained <= 0:
+        return jsonify({'success': False, 'error': 'Invalid tap data'}), 400
+
+    # Límite de seguridad: máximo 10 PXC por batch de taps
+    MAX_REWARD = float(get_config('max_tap_reward_per_batch', 10.0))
+    if gained > MAX_REWARD:
+        gained = MAX_REWARD
+
+    balance_before = float(user.get('se_balance', 0))
+    new_balance    = balance_before + gained
+    total_mined    = float(user.get('total_mined', 0) or 0) + gained
+
+    # Resetear taps_today si es un nuevo día
+    today = datetime.now().date()
+    last_date = user.get('taps_today_date')
+    current_taps = int(user.get('taps_today', 0) or 0)
+    if last_date != today:
+        current_taps = 0
+
+    update_user(user_id,
+                se_balance=new_balance,
+                total_mined=total_mined,
+                energy_current=max(0, energy),
+                energy_last_update=datetime.now(),
+                taps_today=current_taps + taps,
+                taps_today_date=today)
+
+    from database import log_balance_change
+    log_balance_change(user_id, 'SE', gained, 'add', f'Tap x{taps}', balance_before, new_balance)
+
+    return jsonify({
+        'success': True,
+        'new_balance': new_balance,
+        'energy': max(0, energy),
+        'taps_today': current_taps + taps
+    })
+
+# ============================================
 # REWARDED ADS API ENDPOINTS
 # ============================================
 
