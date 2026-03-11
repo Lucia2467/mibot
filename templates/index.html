@@ -627,309 +627,77 @@ button[onclick*="claimReward"] {
 <!-- ══════════════════════════════════════════
      SECTION 5 — LIVE STATS TICKER
 ══════════════════════════════════════════ -->
-<div style="position:relative;z-index:1;padding:0 14px 24px;">
-<style>
-@keyframes ev-scanline {
-    0%   { top:-80px; }
-    100% { top:110%; }
-}
-@keyframes ev-glow-pulse {
-    0%,100% { opacity:.55; }
-    50%      { opacity:1; }
-}
-@keyframes ev-live-ring {
-    0%   { transform:scale(1);   opacity:.9; }
-    100% { transform:scale(3.2); opacity:0; }
-}
-@keyframes ev-counter {
-    from { transform:translateY(6px) scale(.92); opacity:0; }
-    to   { transform:translateY(0)   scale(1);   opacity:1; }
-}
-@keyframes ev-shimmer {
-    0%   { background-position: -200% center; }
-    100% { background-position:  200% center; }
-}
-@keyframes ev-bar-in {
-    from { width:0 !important; }
-}
-@keyframes ev-flicker {
-    0%,89%,91%,96%,100% { opacity:1; }
-    90%                  { opacity:.3; }
-    95%                  { opacity:.6; }
-}
+<div style="position:relative;z-index:1;padding:0 16px 24px;">
+    <div style="background:linear-gradient(160deg,#0c0c22 0%,#080818 55%,#050514 100%);border-top:2px solid rgba(60,130,255,0.45);border-left:1px solid rgba(40,100,255,0.22);border-right:1px solid rgba(0,0,0,0.80);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:20px;overflow:hidden;box-shadow:0 3px 0 rgba(80,140,255,0.10) inset,0 -4px 0 rgba(0,0,0,0.95) inset,0 8px 32px rgba(0,0,0,0.80),0 0 0 1px rgba(50,100,255,0.15);position:relative;">
 
-/* ── Wrapper ── */
-.ev-wrap {
-    position: relative;
-}
+        <!-- shimmer line top -->
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.50),transparent);pointer-events:none;"></div>
 
-/* ── Card ── */
-.ev-card {
-    position: relative;
-    border-radius: 20px;
-    overflow: hidden;
-    background: #070711;
-    box-shadow:
-        0 0 0 1px rgba(255,255,255,0.055),
-        0 24px 64px rgba(0,0,0,.75),
-        inset 0 1px 0 rgba(255,255,255,0.05);
-}
-
-/* borde superior dorado */
-.ev-card::before {
-    content:'';
-    position:absolute;
-    inset:0;
-    border-radius:20px;
-    border-top: 1.5px solid transparent;
-    background: linear-gradient(#070711,#070711) padding-box,
-                linear-gradient(90deg, rgba(245,166,35,0) 0%, #F5A623 35%, #FFE066 50%, #F5A623 65%, rgba(245,166,35,0) 100%) border-box;
-    pointer-events:none;
-    z-index:3;
-}
-
-/* línea scan */
-.ev-scan {
-    position:absolute;
-    left:0; right:0;
-    height:90px;
-    background: linear-gradient(180deg,
-        transparent 0%,
-        rgba(245,166,35,.030) 40%,
-        rgba(245,166,35,.055) 50%,
-        rgba(245,166,35,.030) 60%,
-        transparent 100%);
-    animation: ev-scanline 5s linear infinite;
-    pointer-events:none;
-    z-index:2;
-}
-
-/* ── Header ── */
-.ev-header {
-    position:relative;
-    z-index:4;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding: 13px 16px 11px;
-    border-bottom: 1px solid rgba(255,255,255,0.045);
-}
-.ev-live {
-    display:flex; align-items:center; gap:9px;
-}
-.ev-dot-wrap {
-    position:relative; width:8px; height:8px; flex-shrink:0;
-}
-.ev-dot-core {
-    position:absolute; inset:0;
-    border-radius:50%;
-    background:#00FF8C;
-    box-shadow:0 0 8px #00FF8C;
-}
-.ev-dot-ring {
-    position:absolute; inset:-4px;
-    border-radius:50%;
-    border:1px solid rgba(0,255,140,.6);
-    animation: ev-live-ring 1.8s ease-out infinite;
-}
-.ev-live-label {
-    font-size:.595rem;
-    font-weight:900;
-    letter-spacing:.22em;
-    color:rgba(255,255,255,.32);
-    text-transform:uppercase;
-    animation: ev-flicker 7s linear infinite;
-}
-
-/* badge nivel */
-.ev-badge {
-    display:flex; align-items:center; gap:5px;
-    padding: 5px 12px 5px 9px;
-    background: linear-gradient(120deg,rgba(245,166,35,.14) 0%,rgba(220,100,0,.07) 100%);
-    border: 1px solid rgba(245,166,35,.30);
-    border-radius: 6px;
-    position:relative; overflow:hidden;
-}
-.ev-badge::after {
-    content:'';
-    position:absolute; inset:0;
-    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.06) 50%, transparent 60%);
-    background-size:200% 100%;
-    animation: ev-shimmer 3.5s ease infinite;
-}
-.ev-badge i { width:11px; height:11px; color:#F5A623; flex-shrink:0; position:relative; z-index:1; }
-.ev-badge-txt {
-    font-size:.62rem; font-weight:900;
-    color:#F5A623; letter-spacing:.05em;
-    text-transform:uppercase;
-    position:relative; z-index:1;
-}
-
-/* ── Grid ── */
-.ev-grid {
-    position:relative; z-index:4;
-    display:grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 7px;
-    padding: 10px 10px 14px;
-}
-
-/* ── Celda ── */
-.ev-cell {
-    position:relative; overflow:hidden;
-    display:flex; flex-direction:column; align-items:center;
-    padding: 13px 5px 11px;
-    border-radius: 12px;
-    background: rgba(255,255,255,.022);
-    border: 1px solid rgba(255,255,255,.06);
-    animation: ev-counter .45s cubic-bezier(.16,1,.3,1) both;
-}
-.ev-cell:nth-child(1) { animation-delay:.06s; }
-
-/* celda central — oro */
-.ev-cell-gold {
-    background: rgba(245,166,35,.055);
-    border-color: rgba(245,166,35,.22);
-    box-shadow: inset 0 1px 0 rgba(245,166,35,.12),
-                0 0 24px rgba(245,166,35,.06);
-    animation-delay:.13s;
-}
-.ev-cell-gold::before {
-    content:'';
-    position:absolute;
-    top:0; left:0; right:0; height:1px;
-    background:linear-gradient(90deg,transparent,rgba(245,166,35,.7),transparent);
-}
-
-.ev-cell:nth-child(3) { animation-delay:.20s; }
-
-/* número fantasma de fondo */
-.ev-bg-num {
-    position:absolute;
-    bottom:-10px; right:3px;
-    font-size:3.2rem; font-weight:900;
-    line-height:1; letter-spacing:-.06em;
-    color:rgba(255,255,255,.028);
-    pointer-events:none; user-select:none;
-}
-
-.ev-label {
-    font-size:.50rem; font-weight:800;
-    letter-spacing:.16em;
-    color:rgba(255,255,255,.22);
-    text-transform:uppercase;
-    margin-bottom:8px;
-    position:relative; z-index:1;
-}
-.ev-value {
-    font-size:1.60rem; font-weight:900;
-    line-height:1; letter-spacing:-.04em;
-    font-variant-numeric:tabular-nums;
-    margin-bottom:7px;
-    position:relative; z-index:1;
-}
-.ev-value-gold {
-    background: linear-gradient(135deg,#FFE566 0%,#F5A623 45%,#E07000 100%);
-    background-size:200% 200%;
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    background-clip:text;
-    animation: ev-shimmer 2.8s ease infinite;
-}
-.ev-tag {
-    font-size:.53rem; font-weight:800;
-    padding:2px 8px; border-radius:4px;
-    letter-spacing:.05em; text-transform:uppercase;
-    position:relative; z-index:1;
-}
-.ev-tag-green { background:rgba(0,255,140,.07); border:1px solid rgba(0,255,140,.18); color:#00FF8C; }
-.ev-tag-gold  { background:rgba(245,166,35,.08); border:1px solid rgba(245,166,35,.22); color:#F5A623; }
-.ev-tag-blue  { background:rgba(0,180,255,.07);  border:1px solid rgba(0,180,255,.18);  color:#00B4FF; }
-
-/* barra progreso */
-.ev-bar-wrap { width:100%; padding:0 2px; margin-top:7px; position:relative; z-index:1; }
-.ev-bar-track {
-    height:3px; border-radius:2px;
-    background:rgba(255,255,255,.07);
-    overflow:hidden; position:relative;
-}
-.ev-bar-fill {
-    height:100%; border-radius:2px;
-    background: linear-gradient(90deg,#0055FF,#00AAFF,#00FFEE);
-    background-size:200% 100%;
-    animation: ev-shimmer 2.5s ease infinite, ev-bar-in 1.3s cubic-bezier(.34,1.2,.64,1) both;
-    animation-delay: 0s, .4s;
-}
-.ev-bar-lbl {
-    margin-top:5px;
-    font-size:.46rem; font-weight:700;
-    color:rgba(255,255,255,.18);
-    letter-spacing:.08em; text-transform:uppercase;
-    position:relative; z-index:1;
-}
-</style>
-
-<div class="ev-wrap">
-<div class="ev-card">
-
-    <div class="ev-scan"></div>
-
-    <!-- Header -->
-    <div class="ev-header">
-        <div class="ev-live">
-            <div class="ev-dot-wrap">
-                <div class="ev-dot-core"></div>
-                <div class="ev-dot-ring"></div>
+        <!-- header row -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:7px;height:7px;border-radius:50%;background:#00FF88;box-shadow:0 0 10px rgba(0,255,136,1);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
+                <span style="font-size:0.70rem;font-weight:800;letter-spacing:0.14em;color:rgba(255,255,255,0.55);text-transform:uppercase;">En vivo</span>
             </div>
-            <span class="ev-live-label">En vivo</span>
-        </div>
-        <div class="ev-badge">
-            <i data-lucide="zap"></i>
-            <span class="ev-badge-txt">{{ level_info.name if level_info else 'Novato' }}&nbsp;·&nbsp;Nvl&nbsp;{{ level_info.level if level_info else (user.mining_level or 1) }}</span>
-        </div>
-    </div>
-
-    <!-- Grid -->
-    <div class="ev-grid">
-
-        <!-- Taps hoy -->
-        <div class="ev-cell">
-            <div class="ev-bg-num">T</div>
-            <div class="ev-label">Taps hoy</div>
-            <div class="ev-value" id="stat-taps" style="color:#fff;">0</div>
-            <div class="ev-tag ev-tag-green" id="stat-taps-pxc">+0.0000</div>
+            <!-- nivel badge -->
+            <div style="display:flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.20);border-radius:20px;">
+                <i data-lucide="zap" style="width:10px;height:10px;color:#FFD700;"></i>
+                <span style="font-size:0.65rem;font-weight:800;color:#FFD700;">{{ level_info.name if level_info else 'Novato' }} · Nvl {{ level_info.level if level_info else (user.mining_level or 1) }}</span>
+            </div>
         </div>
 
-        <!-- Multiplicador -->
-        <div class="ev-cell ev-cell-gold">
-            <div class="ev-bg-num" style="color:rgba(245,166,35,.06);">×</div>
-            <div class="ev-label">Potencia</div>
-            <div class="ev-value ev-value-gold">x{{ level_info.tap_mult if level_info else 1.0 }}</div>
-            <div class="ev-tag ev-tag-gold">por tap</div>
-        </div>
+        <!-- 3 stat columns -->
+        <div style="display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;padding:0 0 16px;">
 
-        <!-- Próximo nivel -->
-        <div class="ev-cell">
-            {% if level_info and level_info.is_max %}
-            <div class="ev-bg-num">★</div>
-            <div class="ev-label">Rango</div>
-            <div class="ev-value" style="font-size:1.3rem;">👑</div>
-            <div class="ev-tag ev-tag-gold">Máximo</div>
-            {% else %}
-            <div class="ev-bg-num">↑</div>
-            <div class="ev-label">Próx. nivel</div>
-            <div class="ev-value" id="stat-next-pct" style="color:#fff;font-size:1.25rem;">{{ level_info.refs_needed if level_info else '?' }}<span style="font-size:.58rem;font-weight:700;color:rgba(255,255,255,.28);margin-left:2px;-webkit-text-fill-color:rgba(255,255,255,.28);">refs</span></div>
-            <div class="ev-bar-wrap">
-                <div class="ev-bar-track">
-                    <div class="ev-bar-fill" id="stat-next-bar" style="width:{{ level_info.progress_pct if level_info else 0 }}%;"></div>
+            <!-- COL 1: Taps hoy -->
+            <div style="text-align:center;padding:8px 12px;">
+                <div style="font-size:0.58rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:8px;">Taps Hoy</div>
+                <div id="stat-taps" style="font-size:1.45rem;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;">0</div>
+                <div style="display:inline-flex;align-items:center;gap:3px;margin-top:6px;padding:2px 8px;background:rgba(0,255,136,0.08);border-radius:20px;border:1px solid rgba(0,255,136,0.18);">
+                    <i data-lucide="trending-up" style="width:9px;height:9px;color:#00FF88;"></i>
+                    <span style="font-size:0.58rem;font-weight:700;color:#00FF88;" id="stat-taps-pxc">+0.0000</span>
                 </div>
             </div>
-            {% if level_info %}<div class="ev-bar-lbl">→&nbsp;{{ level_info.next_name }}</div>{% endif %}
-            {% endif %}
+
+            <!-- divider -->
+            <div style="background:rgba(255,255,255,0.06);margin:10px 0;"></div>
+
+            <!-- COL 2: Multiplicador -->
+            <div style="text-align:center;padding:8px 12px;">
+                <div style="font-size:0.58rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:8px;">Multiplica</div>
+                <div style="font-size:1.45rem;font-weight:900;line-height:1;letter-spacing:-0.02em;">
+                    <span style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">x{{ level_info.tap_mult if level_info else 1.0 }}</span>
+                </div>
+                <div style="display:inline-flex;align-items:center;gap:3px;margin-top:6px;padding:2px 8px;background:rgba(255,215,0,0.08);border-radius:20px;border:1px solid rgba(255,215,0,0.18);">
+                    <span style="font-size:0.58rem;font-weight:700;color:rgba(255,215,0,0.80);">por tap</span>
+                </div>
+            </div>
+
+            <!-- divider -->
+            <div style="background:rgba(255,255,255,0.06);margin:10px 0;"></div>
+
+            <!-- COL 3: Próximo nivel -->
+            <div style="text-align:center;padding:8px 12px;">
+                <div style="font-size:0.58rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:8px;">
+                    {% if level_info and level_info.is_max %}MAX{% else %}Próx. Nvl{% endif %}
+                </div>
+                <div style="font-size:1.45rem;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;">
+                    {% if level_info and level_info.is_max %}
+                    <span style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">👑</span>
+                    {% else %}
+                    <span id="stat-next-pct" style="background:linear-gradient(135deg,#0066FF,#00D4FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">{{ level_info.refs_needed if level_info else '?' }} refs</span>
+                    {% endif %}
+                </div>
+                <div style="margin-top:8px;height:3px;background:rgba(255,255,255,0.07);border-radius:6px;overflow:hidden;margin-left:6px;margin-right:6px;">
+                    <div id="stat-next-bar" style="height:100%;width:{{ level_info.progress_pct if level_info else 0 }}%;background:linear-gradient(90deg,#0066FF,#00D4FF);border-radius:6px;transition:width 1.2s cubic-bezier(0.34,1.2,0.64,1);"></div>
+                </div>
+                {% if level_info and not level_info.is_max %}
+                <div style="margin-top:4px;font-size:0.52rem;color:rgba(255,255,255,0.22);font-weight:600;">para {{ level_info.next_name }}</div>
+                {% endif %}
+            </div>
         </div>
 
     </div>
-</div>
 </div>
 
 <style>
