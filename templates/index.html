@@ -628,377 +628,303 @@ button[onclick*="claimReward"] {
      SECTION 5 — LIVE STATS TICKER
 ══════════════════════════════════════════ -->
 <div style="position:relative;z-index:1;padding:0 14px 24px;">
-
 <style>
-/* ══ HUD TÁCTICO — EN VIVO ══ */
-@keyframes hud-scan {
-    0%   { transform: translateY(-100%); opacity: 0.6; }
-    100% { transform: translateY(400%);  opacity: 0; }
+@keyframes ev-scanline {
+    0%   { top:-80px; }
+    100% { top:110%; }
 }
-@keyframes hud-flicker {
-    0%,100% { opacity:1; }
-    92%     { opacity:1; }
-    93%     { opacity:0.4; }
-    94%     { opacity:1; }
-    97%     { opacity:0.6; }
-    98%     { opacity:1; }
+@keyframes ev-glow-pulse {
+    0%,100% { opacity:.55; }
+    50%      { opacity:1; }
 }
-@keyframes hud-in {
-    from { opacity:0; transform:translateY(10px) scale(0.97); }
-    to   { opacity:1; transform:translateY(0) scale(1); }
+@keyframes ev-live-ring {
+    0%   { transform:scale(1);   opacity:.9; }
+    100% { transform:scale(3.2); opacity:0; }
 }
-@keyframes corner-pulse {
-    0%,100% { opacity:0.6; }
-    50%     { opacity:1; }
+@keyframes ev-counter {
+    from { transform:translateY(6px) scale(.92); opacity:0; }
+    to   { transform:translateY(0)   scale(1);   opacity:1; }
 }
-@keyframes num-count {
-    from { opacity:0; transform:scale(0.8); }
-    to   { opacity:1; transform:scale(1); }
+@keyframes ev-shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position:  200% center; }
 }
-@keyframes bar-grow {
+@keyframes ev-bar-in {
     from { width:0 !important; }
 }
-@keyframes live-ring {
-    0%   { transform:scale(1);   opacity:0.8; }
-    100% { transform:scale(2.8); opacity:0; }
-}
-@keyframes gold-shift {
-    0%,100% { background-position: 0% 50%; }
-    50%     { background-position: 100% 50%; }
+@keyframes ev-flicker {
+    0%,89%,91%,96%,100% { opacity:1; }
+    90%                  { opacity:.3; }
+    95%                  { opacity:.6; }
 }
 
-.hud-wrap {
-    animation: hud-in 0.5s cubic-bezier(0.16,1,0.3,1) both;
-}
-
-/* Tarjeta principal */
-.hud-card {
+/* ── Wrapper ── */
+.ev-wrap {
     position: relative;
-    background: linear-gradient(160deg, #0d0d1a 0%, #080812 60%, #060610 100%);
-    border-radius: 16px;
+}
+
+/* ── Card ── */
+.ev-card {
+    position: relative;
+    border-radius: 20px;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.06);
+    background: #070711;
     box-shadow:
-        0 0 0 1px rgba(0,0,0,0.8),
-        0 20px 60px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(255,255,255,0.055),
+        0 24px 64px rgba(0,0,0,.75),
         inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
-/* Línea superior de acento */
-.hud-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg,
+/* borde superior dorado */
+.ev-card::before {
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:20px;
+    border-top: 1.5px solid transparent;
+    background: linear-gradient(#070711,#070711) padding-box,
+                linear-gradient(90deg, rgba(245,166,35,0) 0%, #F5A623 35%, #FFE066 50%, #F5A623 65%, rgba(245,166,35,0) 100%) border-box;
+    pointer-events:none;
+    z-index:3;
+}
+
+/* línea scan */
+.ev-scan {
+    position:absolute;
+    left:0; right:0;
+    height:90px;
+    background: linear-gradient(180deg,
         transparent 0%,
-        rgba(245,166,35,0.8) 20%,
-        rgba(255,220,80,1) 50%,
-        rgba(245,166,35,0.8) 80%,
+        rgba(245,166,35,.030) 40%,
+        rgba(245,166,35,.055) 50%,
+        rgba(245,166,35,.030) 60%,
         transparent 100%);
-    z-index: 2;
+    animation: ev-scanline 5s linear infinite;
+    pointer-events:none;
+    z-index:2;
 }
 
-/* Scan line animada */
-.hud-scanline {
-    position: absolute;
-    left: 0; right: 0;
-    height: 60px;
-    background: linear-gradient(180deg, transparent 0%, rgba(245,166,35,0.025) 50%, transparent 100%);
-    animation: hud-scan 4s linear infinite;
-    pointer-events: none;
-    z-index: 1;
+/* ── Header ── */
+.ev-header {
+    position:relative;
+    z-index:4;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 13px 16px 11px;
+    border-bottom: 1px solid rgba(255,255,255,0.045);
+}
+.ev-live {
+    display:flex; align-items:center; gap:9px;
+}
+.ev-dot-wrap {
+    position:relative; width:8px; height:8px; flex-shrink:0;
+}
+.ev-dot-core {
+    position:absolute; inset:0;
+    border-radius:50%;
+    background:#00FF8C;
+    box-shadow:0 0 8px #00FF8C;
+}
+.ev-dot-ring {
+    position:absolute; inset:-4px;
+    border-radius:50%;
+    border:1px solid rgba(0,255,140,.6);
+    animation: ev-live-ring 1.8s ease-out infinite;
+}
+.ev-live-label {
+    font-size:.595rem;
+    font-weight:900;
+    letter-spacing:.22em;
+    color:rgba(255,255,255,.32);
+    text-transform:uppercase;
+    animation: ev-flicker 7s linear infinite;
 }
 
-/* Esquinas tácticas */
-.hud-corner {
-    position: absolute;
-    width: 10px; height: 10px;
-    animation: corner-pulse 2s ease-in-out infinite;
-    z-index: 3;
+/* badge nivel */
+.ev-badge {
+    display:flex; align-items:center; gap:5px;
+    padding: 5px 12px 5px 9px;
+    background: linear-gradient(120deg,rgba(245,166,35,.14) 0%,rgba(220,100,0,.07) 100%);
+    border: 1px solid rgba(245,166,35,.30);
+    border-radius: 6px;
+    position:relative; overflow:hidden;
 }
-.hud-corner-tl { top:6px; left:6px;
-    border-top: 1.5px solid rgba(245,166,35,0.7);
-    border-left: 1.5px solid rgba(245,166,35,0.7); }
-.hud-corner-tr { top:6px; right:6px;
-    border-top: 1.5px solid rgba(245,166,35,0.7);
-    border-right: 1.5px solid rgba(245,166,35,0.7);
-    animation-delay: 0.5s; }
-.hud-corner-bl { bottom:6px; left:6px;
-    border-bottom: 1.5px solid rgba(245,166,35,0.7);
-    border-left: 1.5px solid rgba(245,166,35,0.7);
-    animation-delay: 1s; }
-.hud-corner-br { bottom:6px; right:6px;
-    border-bottom: 1.5px solid rgba(245,166,35,0.7);
-    border-right: 1.5px solid rgba(245,166,35,0.7);
-    animation-delay: 1.5s; }
-
-/* Header */
-.hud-header {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px 10px;
-    border-bottom: 1px solid rgba(245,166,35,0.10);
+.ev-badge::after {
+    content:'';
+    position:absolute; inset:0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.06) 50%, transparent 60%);
+    background-size:200% 100%;
+    animation: ev-shimmer 3.5s ease infinite;
 }
-.hud-live {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.hud-live-dot {
-    position: relative;
-    width: 7px; height: 7px;
-}
-.hud-live-dot-core {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: #00FF88;
-    box-shadow: 0 0 6px #00FF88;
-}
-.hud-live-dot-ring {
-    position: absolute;
-    inset: -3px;
-    border-radius: 50%;
-    border: 1px solid #00FF88;
-    animation: live-ring 1.6s ease-out infinite;
-}
-.hud-live-text {
-    font-size: 0.60rem;
-    font-weight: 900;
-    letter-spacing: 0.22em;
-    color: rgba(255,255,255,0.40);
-    text-transform: uppercase;
-    animation: hud-flicker 6s linear infinite;
-}
-.hud-level-badge {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 11px 4px 8px;
-    border-radius: 4px;
-    background: rgba(12,10,4,0.9);
-    border: 1px solid rgba(245,166,35,0.35);
-    position: relative;
-    overflow: hidden;
-}
-.hud-level-badge::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(245,166,35,0.10) 0%, transparent 60%);
-}
-.hud-level-badge i {
-    width: 11px; height: 11px;
-    color: #F5A623;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-}
-.hud-level-text {
-    font-size: 0.62rem;
-    font-weight: 900;
-    color: #F5A623;
-    letter-spacing: 0.04em;
-    position: relative;
-    z-index: 1;
-    text-transform: uppercase;
+.ev-badge i { width:11px; height:11px; color:#F5A623; flex-shrink:0; position:relative; z-index:1; }
+.ev-badge-txt {
+    font-size:.62rem; font-weight:900;
+    color:#F5A623; letter-spacing:.05em;
+    text-transform:uppercase;
+    position:relative; z-index:1;
 }
 
-/* Grid de stats */
-.hud-stats {
-    position: relative;
-    z-index: 2;
-    display: grid;
+/* ── Grid ── */
+.ev-grid {
+    position:relative; z-index:4;
+    display:grid;
     grid-template-columns: 1fr 1fr 1fr;
-    padding: 6px 8px 14px;
-    gap: 6px;
+    gap: 7px;
+    padding: 10px 10px 14px;
 }
 
-/* Celda stat */
-.hud-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 11px 4px 10px;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.05);
-    position: relative;
-    overflow: hidden;
-    animation: hud-in 0.4s cubic-bezier(0.16,1,0.3,1) both;
+/* ── Celda ── */
+.ev-cell {
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center;
+    padding: 13px 5px 11px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.022);
+    border: 1px solid rgba(255,255,255,.06);
+    animation: ev-counter .45s cubic-bezier(.16,1,.3,1) both;
 }
-.hud-stat:nth-child(1) { animation-delay:0.08s; }
-.hud-stat:nth-child(2) {
-    animation-delay:0.16s;
-    background: rgba(245,166,35,0.05);
-    border-color: rgba(245,166,35,0.20);
-    box-shadow: inset 0 1px 0 rgba(245,166,35,0.12), 0 0 20px rgba(245,166,35,0.06);
-}
-.hud-stat:nth-child(3) { animation-delay:0.24s; }
+.ev-cell:nth-child(1) { animation-delay:.06s; }
 
-/* Número de referencia táctico en fondo */
-.hud-stat-bg-num {
-    position: absolute;
-    bottom: -6px; right: 4px;
-    font-size: 2.8rem;
-    font-weight: 900;
-    color: rgba(255,255,255,0.02);
-    line-height: 1;
-    user-select: none;
-    pointer-events: none;
-    letter-spacing: -0.05em;
+/* celda central — oro */
+.ev-cell-gold {
+    background: rgba(245,166,35,.055);
+    border-color: rgba(245,166,35,.22);
+    box-shadow: inset 0 1px 0 rgba(245,166,35,.12),
+                0 0 24px rgba(245,166,35,.06);
+    animation-delay:.13s;
+}
+.ev-cell-gold::before {
+    content:'';
+    position:absolute;
+    top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,rgba(245,166,35,.7),transparent);
 }
 
-.hud-stat-label {
-    font-size: 0.50rem;
-    font-weight: 800;
-    letter-spacing: 0.16em;
-    color: rgba(255,255,255,0.22);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-}
-.hud-stat-value {
-    font-size: 1.60rem;
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
-    margin-bottom: 7px;
-}
-.hud-stat-sub {
-    font-size: 0.53rem;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 3px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-}
-.hud-sub-green {
-    background: rgba(0,255,136,0.07);
-    border: 1px solid rgba(0,255,136,0.18);
-    color: #00FF88;
-}
-.hud-sub-gold {
-    background: rgba(245,166,35,0.08);
-    border: 1px solid rgba(245,166,35,0.22);
-    color: #F5A623;
-}
-.hud-sub-blue {
-    background: rgba(0,160,255,0.07);
-    border: 1px solid rgba(0,160,255,0.18);
-    color: #00AAFF;
+.ev-cell:nth-child(3) { animation-delay:.20s; }
+
+/* número fantasma de fondo */
+.ev-bg-num {
+    position:absolute;
+    bottom:-10px; right:3px;
+    font-size:3.2rem; font-weight:900;
+    line-height:1; letter-spacing:-.06em;
+    color:rgba(255,255,255,.028);
+    pointer-events:none; user-select:none;
 }
 
-/* Barra de progreso */
-.hud-bar-wrap {
-    width: 100%;
-    padding: 0 2px;
-    margin-top: 7px;
+.ev-label {
+    font-size:.50rem; font-weight:800;
+    letter-spacing:.16em;
+    color:rgba(255,255,255,.22);
+    text-transform:uppercase;
+    margin-bottom:8px;
+    position:relative; z-index:1;
 }
-.hud-bar-track {
-    height: 3px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 2px;
-    overflow: hidden;
-    position: relative;
+.ev-value {
+    font-size:1.60rem; font-weight:900;
+    line-height:1; letter-spacing:-.04em;
+    font-variant-numeric:tabular-nums;
+    margin-bottom:7px;
+    position:relative; z-index:1;
 }
-.hud-bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    background: linear-gradient(90deg, #0055FF, #00C4FF, #00FFDD);
-    background-size: 200% 100%;
-    animation: gold-shift 3s ease infinite, bar-grow 1.2s cubic-bezier(0.34,1.2,0.64,1) both;
-    animation-delay: 0s, 0.3s;
-    position: relative;
+.ev-value-gold {
+    background: linear-gradient(135deg,#FFE566 0%,#F5A623 45%,#E07000 100%);
+    background-size:200% 200%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    animation: ev-shimmer 2.8s ease infinite;
 }
-.hud-bar-fill::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -40px;
-    width: 40px; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
-    animation: hud-scan 1.8s ease infinite;
-    animation-delay: 0.6s;
+.ev-tag {
+    font-size:.53rem; font-weight:800;
+    padding:2px 8px; border-radius:4px;
+    letter-spacing:.05em; text-transform:uppercase;
+    position:relative; z-index:1;
 }
-.hud-bar-label {
-    margin-top: 5px;
-    font-size: 0.48rem;
-    color: rgba(255,255,255,0.18);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+.ev-tag-green { background:rgba(0,255,140,.07); border:1px solid rgba(0,255,140,.18); color:#00FF8C; }
+.ev-tag-gold  { background:rgba(245,166,35,.08); border:1px solid rgba(245,166,35,.22); color:#F5A623; }
+.ev-tag-blue  { background:rgba(0,180,255,.07);  border:1px solid rgba(0,180,255,.18);  color:#00B4FF; }
+
+/* barra progreso */
+.ev-bar-wrap { width:100%; padding:0 2px; margin-top:7px; position:relative; z-index:1; }
+.ev-bar-track {
+    height:3px; border-radius:2px;
+    background:rgba(255,255,255,.07);
+    overflow:hidden; position:relative;
+}
+.ev-bar-fill {
+    height:100%; border-radius:2px;
+    background: linear-gradient(90deg,#0055FF,#00AAFF,#00FFEE);
+    background-size:200% 100%;
+    animation: ev-shimmer 2.5s ease infinite, ev-bar-in 1.3s cubic-bezier(.34,1.2,.64,1) both;
+    animation-delay: 0s, .4s;
+}
+.ev-bar-lbl {
+    margin-top:5px;
+    font-size:.46rem; font-weight:700;
+    color:rgba(255,255,255,.18);
+    letter-spacing:.08em; text-transform:uppercase;
+    position:relative; z-index:1;
 }
 </style>
 
-<div class="hud-wrap">
-<div class="hud-card">
+<div class="ev-wrap">
+<div class="ev-card">
 
-    <!-- Scan line -->
-    <div class="hud-scanline"></div>
-
-    <!-- Esquinas tácticas -->
-    <div class="hud-corner hud-corner-tl"></div>
-    <div class="hud-corner hud-corner-tr"></div>
-    <div class="hud-corner hud-corner-bl"></div>
-    <div class="hud-corner hud-corner-br"></div>
+    <div class="ev-scan"></div>
 
     <!-- Header -->
-    <div class="hud-header">
-        <div class="hud-live">
-            <div class="hud-live-dot">
-                <div class="hud-live-dot-core"></div>
-                <div class="hud-live-dot-ring"></div>
+    <div class="ev-header">
+        <div class="ev-live">
+            <div class="ev-dot-wrap">
+                <div class="ev-dot-core"></div>
+                <div class="ev-dot-ring"></div>
             </div>
-            <span class="hud-live-text">En vivo</span>
+            <span class="ev-live-label">En vivo</span>
         </div>
-        <div class="hud-level-badge">
+        <div class="ev-badge">
             <i data-lucide="zap"></i>
-            <span class="hud-level-text">{{ level_info.name if level_info else 'Novato' }} · NVL {{ level_info.level if level_info else (user.mining_level or 1) }}</span>
+            <span class="ev-badge-txt">{{ level_info.name if level_info else 'Novato' }}&nbsp;·&nbsp;Nvl&nbsp;{{ level_info.level if level_info else (user.mining_level or 1) }}</span>
         </div>
     </div>
 
-    <!-- Stats grid -->
-    <div class="hud-stats">
+    <!-- Grid -->
+    <div class="ev-grid">
 
-        <!-- TAPS HOY -->
-        <div class="hud-stat">
-            <div class="hud-stat-bg-num">T</div>
-            <div class="hud-stat-label">Taps hoy</div>
-            <div class="hud-stat-value" id="stat-taps" style="color:#fff;">0</div>
-            <div class="hud-stat-sub hud-sub-green" id="stat-taps-pxc">+0.0000</div>
+        <!-- Taps hoy -->
+        <div class="ev-cell">
+            <div class="ev-bg-num">T</div>
+            <div class="ev-label">Taps hoy</div>
+            <div class="ev-value" id="stat-taps" style="color:#fff;">0</div>
+            <div class="ev-tag ev-tag-green" id="stat-taps-pxc">+0.0000</div>
         </div>
 
-        <!-- MULTIPLICADOR -->
-        <div class="hud-stat">
-            <div class="hud-stat-bg-num">×</div>
-            <div class="hud-stat-label">Potencia</div>
-            <div class="hud-stat-value" style="background:linear-gradient(135deg,#FFE566,#F5A623,#E07000);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gold-shift 2.5s ease infinite;">x{{ level_info.tap_mult if level_info else 1.0 }}</div>
-            <div class="hud-stat-sub hud-sub-gold">por tap</div>
+        <!-- Multiplicador -->
+        <div class="ev-cell ev-cell-gold">
+            <div class="ev-bg-num" style="color:rgba(245,166,35,.06);">×</div>
+            <div class="ev-label">Potencia</div>
+            <div class="ev-value ev-value-gold">x{{ level_info.tap_mult if level_info else 1.0 }}</div>
+            <div class="ev-tag ev-tag-gold">por tap</div>
         </div>
 
-        <!-- PRÓXIMO NIVEL -->
-        <div class="hud-stat">
+        <!-- Próximo nivel -->
+        <div class="ev-cell">
             {% if level_info and level_info.is_max %}
-            <div class="hud-stat-bg-num">👑</div>
-            <div class="hud-stat-label">Rango</div>
-            <div class="hud-stat-value" style="font-size:1.3rem;">👑</div>
-            <div class="hud-stat-sub hud-sub-gold">Máximo</div>
+            <div class="ev-bg-num">★</div>
+            <div class="ev-label">Rango</div>
+            <div class="ev-value" style="font-size:1.3rem;">👑</div>
+            <div class="ev-tag ev-tag-gold">Máximo</div>
             {% else %}
-            <div class="hud-stat-bg-num">↑</div>
-            <div class="hud-stat-label">Próx. nivel</div>
-            <div class="hud-stat-value" id="stat-next-pct" style="color:#fff;font-size:1.30rem;">{{ level_info.refs_needed if level_info else '?' }}<span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.28);margin-left:2px;-webkit-text-fill-color:rgba(255,255,255,0.28);">refs</span></div>
-            <div class="hud-bar-wrap">
-                <div class="hud-bar-track">
-                    <div class="hud-bar-fill" id="stat-next-bar" style="width:{{ level_info.progress_pct if level_info else 0 }}%;"></div>
+            <div class="ev-bg-num">↑</div>
+            <div class="ev-label">Próx. nivel</div>
+            <div class="ev-value" id="stat-next-pct" style="color:#fff;font-size:1.25rem;">{{ level_info.refs_needed if level_info else '?' }}<span style="font-size:.58rem;font-weight:700;color:rgba(255,255,255,.28);margin-left:2px;-webkit-text-fill-color:rgba(255,255,255,.28);">refs</span></div>
+            <div class="ev-bar-wrap">
+                <div class="ev-bar-track">
+                    <div class="ev-bar-fill" id="stat-next-bar" style="width:{{ level_info.progress_pct if level_info else 0 }}%;"></div>
                 </div>
             </div>
-            {% if level_info %}
-            <div class="hud-bar-label">→ {{ level_info.next_name }}</div>
-            {% endif %}
+            {% if level_info %}<div class="ev-bar-lbl">→&nbsp;{{ level_info.next_name }}</div>{% endif %}
             {% endif %}
         </div>
 
