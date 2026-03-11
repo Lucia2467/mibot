@@ -209,14 +209,7 @@ body::after {
     border-radius: 32px;
     /* Borde 1px uniforme sutil */
     border: 1px solid rgba(255, 255, 255, 0.07);
-    box-shadow:
-        /* sombra flotante suave */
-        0 16px 48px rgba(0, 0, 0, 0.72),
-        0 4px 16px rgba(0, 0, 0, 0.50),
-        /* glow ambiental azul muy sutil */
-        0 0 0 1px rgba(0, 100, 255, 0.08),
-        /* rim light superior */
-        0 1px 0 rgba(255, 255, 255, 0.06) inset;
+    box-shadow: none;
     overflow: hidden;
 }
 
