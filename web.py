@@ -573,10 +573,9 @@ def check_and_level_up(user_id):
     current_level = int(user.get('mining_level', 1) or 1)
     
     if info['level'] > current_level:
-        # ¡Subió de nivel! Actualizar mining_power y nivel
+        # ¡Subió de nivel! Solo actualizar el nivel — mining_power NO cambia
         update_user(user_id,
-                    mining_level=info['level'],
-                    mining_power=info['mining_power'])
+                    mining_level=info['level'])
         print(f"[level_up] ✅ Usuario {user_id} subió a Nivel {info['level']} ({info['name']})")
         return info
     
@@ -746,11 +745,10 @@ def index():
     # Calcular nivel actual basado en referidos validados
     validated_refs = get_validated_referrals_count(user_id)
     level_info = get_level_info(validated_refs)
-    # Sincronizar mining_power si hay discrepancia
-    if abs(float(user.get('mining_power', 1.0)) - level_info['mining_power']) > 0.01:
-        update_user(user_id, mining_level=level_info['level'], mining_power=level_info['mining_power'])
+    # Sincronizar solo mining_level si cambió (mining_power no se toca)
+    if int(user.get('mining_level', 1)) != level_info['level']:
+        update_user(user_id, mining_level=level_info['level'])
         user['mining_level'] = level_info['level']
-        user['mining_power'] = level_info['mining_power']
 
     return render_template('index.html',
                          user=user,
