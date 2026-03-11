@@ -794,6 +794,40 @@ let currentBalance = {{ (user.se_balance or 0)|float }};
 let energy         = MAX_ENERGY;
 let isAnimating    = false;
 
+// ── Obtener user_id para llamadas API ──
+const _UID = new URLSearchParams(window.location.search).get('user_id')
+          || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString());
+
+// ── Buffer de taps — guarda en BD cada 5 taps o 3 seg ──
+let _bufTaps   = 0;
+let _bufGained = 0;
+let _bufTimer  = null;
+let _saving    = false;
+
+function _saveTaps() {
+    if (!_bufTaps || !_bufGained || !_UID || _saving) return;
+    const taps   = _bufTaps;
+    const gained = _bufGained;
+    _bufTaps   = 0;
+    _bufGained = 0;
+    _saving = true;
+    fetch('/api/tap?user_id=' + _UID, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ taps, gained, energy: Math.floor(energy) }),
+        keepalive: true
+    })
+    .then(r => r.json())
+    .then(d => { if (d.success) currentBalance = d.new_balance; })
+    .catch(() => {})
+    .finally(() => { _saving = false; });
+}
+
+// Guardar al salir o cambiar de pestaña
+window.addEventListener('pagehide',          _saveTaps);
+window.addEventListener('beforeunload',      _saveTaps);
+document.addEventListener('visibilitychange', () => { if (document.hidden) _saveTaps(); });
+
 document.getElementById('tap-reward-label').textContent = TAP_REWARD.toFixed(4);
 
 // ── Energy UI ──
@@ -863,6 +897,16 @@ function handleTap(e) {
 
     energy         = Math.max(0, energy - taps);
     currentBalance += gained;
+
+    // Acumular y guardar en BD
+    _bufTaps   += taps;
+    _bufGained += gained;
+    clearTimeout(_bufTimer);
+    if (_bufTaps >= 5) {
+        _saveTaps();
+    } else {
+        _bufTimer = setTimeout(_saveTaps, 3000);
+    }
 
     updateBalanceUI();
     updateEnergyUI();
