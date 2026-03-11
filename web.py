@@ -1368,11 +1368,18 @@ def api_tap():
     new_balance    = balance_before + gained
     total_mined    = float(user.get('total_mined', 0) or 0) + gained
 
+    # Guardar balance — crítico
     update_user(user_id,
                 se_balance=new_balance,
-                total_mined=total_mined,
-                energy_current=max(0, energy),
-                energy_last_update=datetime.now())
+                total_mined=total_mined)
+
+    # Guardar energía solo si la columna existe
+    try:
+        update_user(user_id,
+                    energy_current=max(0, energy),
+                    energy_last_update=datetime.now())
+    except Exception:
+        pass
 
     from database import log_balance_change
     log_balance_change(user_id, 'SE', gained, 'add', f'Tap x{taps}', balance_before, new_balance)
