@@ -441,7 +441,7 @@ button[onclick*="claimReward"] {
         <!-- Level pill -->
         <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:linear-gradient(160deg,#0d0d24,#090920);border-top:1px solid rgba(60,130,255,0.40);border-bottom:2px solid rgba(0,0,0,0.90);border-radius:20px;box-shadow:0 1px 0 rgba(80,140,255,0.10) inset,0 -2px 0 rgba(0,0,0,0.88) inset;">
             <i data-lucide="shield" style="width:13px;height:13px;color:#a78bfa;"></i>
-            <span style="font-size:0.68rem;font-weight:800;color:#a78bfa;letter-spacing:0.06em;">NVL {{ user.mining_level or 1 }}</span>
+            <span style="font-size:0.68rem;font-weight:800;color:#a78bfa;letter-spacing:0.06em;">NVL {{ level_info.level if level_info else (user.mining_level or 1) }}</span>
         </div>
 
         <!-- Main balance -->
@@ -642,7 +642,7 @@ button[onclick*="claimReward"] {
             <!-- nivel badge -->
             <div style="display:flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.20);border-radius:20px;">
                 <i data-lucide="zap" style="width:10px;height:10px;color:#FFD700;"></i>
-                <span style="font-size:0.65rem;font-weight:800;color:#FFD700;">Nivel {{ user.mining_level or 1 }}</span>
+                <span style="font-size:0.65rem;font-weight:800;color:#FFD700;">{{ level_info.name if level_info else 'Novato' }} · Nvl {{ level_info.level if level_info else (user.mining_level or 1) }}</span>
             </div>
         </div>
 
@@ -666,7 +666,7 @@ button[onclick*="claimReward"] {
             <div style="text-align:center;padding:8px 12px;">
                 <div style="font-size:0.58rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:8px;">Multiplica</div>
                 <div style="font-size:1.45rem;font-weight:900;line-height:1;letter-spacing:-0.02em;">
-                    <span style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">x{{ user.mining_level or 1 }}.0</span>
+                    <span style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">x{{ level_info.tap_mult if level_info else 1.0 }}</span>
                 </div>
                 <div style="display:inline-flex;align-items:center;gap:3px;margin-top:6px;padding:2px 8px;background:rgba(255,215,0,0.08);border-radius:20px;border:1px solid rgba(255,215,0,0.18);">
                     <span style="font-size:0.58rem;font-weight:700;color:rgba(255,215,0,0.80);">por tap</span>
@@ -678,13 +678,22 @@ button[onclick*="claimReward"] {
 
             <!-- COL 3: Próximo nivel -->
             <div style="text-align:center;padding:8px 12px;">
-                <div style="font-size:0.58rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:8px;">Próx. Nvl</div>
+                <div style="font-size:0.58rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:8px;">
+                    {% if level_info and level_info.is_max %}MAX{% else %}Próx. Nvl{% endif %}
+                </div>
                 <div style="font-size:1.45rem;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;">
-                    <span id="stat-next-pct" style="background:linear-gradient(135deg,#0066FF,#00D4FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">—</span>
+                    {% if level_info and level_info.is_max %}
+                    <span style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">👑</span>
+                    {% else %}
+                    <span id="stat-next-pct" style="background:linear-gradient(135deg,#0066FF,#00D4FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">{{ level_info.refs_needed if level_info else '?' }} refs</span>
+                    {% endif %}
                 </div>
                 <div style="margin-top:8px;height:3px;background:rgba(255,255,255,0.07);border-radius:6px;overflow:hidden;margin-left:6px;margin-right:6px;">
-                    <div id="stat-next-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#0066FF,#00D4FF);border-radius:6px;transition:width 1.2s cubic-bezier(0.34,1.2,0.64,1);box-shadow:0 0 8px rgba(0,212,255,0.60);"></div>
+                    <div id="stat-next-bar" style="height:100%;width:{{ level_info.progress_pct if level_info else 0 }}%;background:linear-gradient(90deg,#0066FF,#00D4FF);border-radius:6px;transition:width 1.2s cubic-bezier(0.34,1.2,0.64,1);"></div>
                 </div>
+                {% if level_info and not level_info.is_max %}
+                <div style="margin-top:4px;font-size:0.52rem;color:rgba(255,255,255,0.22);font-weight:600;">para {{ level_info.next_name }}</div>
+                {% endif %}
             </div>
         </div>
 
@@ -704,14 +713,20 @@ button[onclick*="claimReward"] {
 // Live stat updates driven by tap engine
 let sessionTaps = 0;
 let sessionPxc  = 0;
-// Progress to next level: simple formula — each level costs 100 PXC more
-const LVL      = {{ user.mining_level or 1 }};
-const BAL      = {{ (user.se_balance or 0)|float }};
-const threshold = LVL * 100;  // 100 per level
-const pct       = Math.min(100, Math.round((BAL % threshold) / threshold * 100));
-document.getElementById('stat-next-pct').textContent = pct + '%';
+// Nivel basado en referidos validados — datos reales del servidor
+const LEVEL_DATA = {
+    level:       {{ level_info.level if level_info else (user.mining_level or 1) }},
+    name:        "{{ level_info.name if level_info else 'Novato' }}",
+    tap_mult:    {{ level_info.tap_mult if level_info else 1.0 }},
+    refs_needed: {{ level_info.refs_needed if level_info else 3 }},
+    progress:    {{ level_info.progress_pct if level_info else 0 }},
+    is_max:      {{ 'true' if level_info and level_info.is_max else 'false' }},
+    next_name:   "{{ level_info.next_name if level_info and level_info.next_name else '' }}"
+};
+// Barra de progreso animada
 setTimeout(() => {
-    document.getElementById('stat-next-bar').style.width = pct + '%';
+    const bar = document.getElementById('stat-next-bar');
+    if (bar) bar.style.width = LEVEL_DATA.progress + '%';
 }, 400);
 
 function updateStatTaps() {
@@ -771,47 +786,13 @@ window.handleTap = function(e) {
      TAP ENGINE JS
 ══════════════════════════════════════════ -->
 <script>
-const TAP_REWARD  = parseFloat(( {{ (mining_rate or user.mining_power or 0.1)|float }} / 100 ).toFixed(6));
+const TAP_REWARD  = parseFloat(( {{ (mining_rate or user.mining_power or 0.1)|float }} / 100 * {{ level_info.tap_mult if level_info else 1.0 }} ).toFixed(6));
 const MAX_ENERGY  = 500;
 const REGEN_RATE  = 1;
 
 let currentBalance = {{ (user.se_balance or 0)|float }};
+let energy         = MAX_ENERGY;
 let isAnimating    = false;
-
-// Energía real: recuperar lo que se regeneró desde el último guardado
-const _savedEnergy    = {{ (user.energy_current if user.energy_current is not none else 500)|int }};
-const _lastEnergyMs   = {{ (user.energy_last_update.timestamp() * 1000)|int if user.energy_last_update else 0 }};
-const _regenSecs      = _lastEnergyMs > 0 ? Math.floor((Date.now() - _lastEnergyMs) / 1000) : 0;
-let energy            = Math.min(MAX_ENERGY, _savedEnergy + _regenSecs);
-
-// ID del usuario para llamadas a la API
-const _UID = new URLSearchParams(window.location.search).get('user_id')
-          || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString());
-
-// Buffer de taps — se manda al servidor cada 5 taps o 3 segundos
-let _bufTaps   = 0;
-let _bufGained = 0;
-let _bufTimer  = null;
-
-function _saveTaps() {
-    if (!_bufTaps || !_bufGained || !_UID) return;
-    const payload = { taps: _bufTaps, gained: _bufGained, energy: Math.floor(energy) };
-    _bufTaps = 0; _bufGained = 0;
-    fetch('/api/tap?user_id=' + _UID, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        keepalive: true
-    }).then(r => r.json()).then(d => {
-        if (d.success) currentBalance = d.new_balance;
-    }).catch(() => {});
-}
-
-// Guardar al salir / cambiar de pestaña
-window.addEventListener('pagehide', _saveTaps);
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) _saveTaps();
-});
 
 document.getElementById('tap-reward-label').textContent = TAP_REWARD.toFixed(4);
 
@@ -883,16 +864,6 @@ function handleTap(e) {
     energy         = Math.max(0, energy - taps);
     currentBalance += gained;
 
-    // Acumular y guardar en BD
-    _bufTaps   += taps;
-    _bufGained += gained;
-    clearTimeout(_bufTimer);
-    if (_bufTaps >= 5) {
-        _saveTaps();
-    } else {
-        _bufTimer = setTimeout(_saveTaps, 3000);
-    }
-
     updateBalanceUI();
     updateEnergyUI();
     spawnFloat(gained, taps > 1);
@@ -938,11 +909,26 @@ setInterval(() => {
 
 // ── Claim ──
 async function claimReward(e) {
-    if (!_UID) { showToast('Error: Usuario no identificado', 'error'); return; }
-    if (unclaimedLocal <= 0.0001) { showToast('No hay ganancias para reclamar', 'warning'); return; }
-    _saveTaps(); // flush taps pendientes
-    window.pendingClaimData = { userId: _UID, amount: unclaimedLocal };
-    showAdOverlay();
+    const btn = e.currentTarget;
+    try {
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+        const res  = await fetch('/api/claim', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            currentBalance = data.new_balance;
+            unclaimedLocal = 0;
+            updateBalanceUI();
+            document.getElementById('unclaimed-display').textContent = '0.0000';
+            btn.style.background = 'linear-gradient(180deg,#22c55e,#15803d)';
+            setTimeout(() => btn.style.background = '', 700);
+        }
+    } catch(err) {
+        console.error('Claim error', err);
+    } finally {
+        btn.disabled = false;
+        btn.style.opacity = '';
+    }
 }
 
 updateEnergyUI();
@@ -1602,9 +1588,64 @@ updateBalanceUI();
 
 {% block extra_js %}
 <script>
-// updateUnclaimedBalance manejada por ticker del tap engine
+// Auto-update unclaimed balance
+function updateUnclaimedBalance() {
+    // Usar la tasa efectiva (power * mining_rate global)
+    const effectiveRate = {{ mining_rate or user.mining_power or 1.0 }};
+    const ratePerSecond = effectiveRate / 3600;
+    const unclaimedElement = document.getElementById('unclaimed-balance');
+    const progressBar = document.getElementById('mining-progress');
 
-// claimReward unificada arriba
+    // El backend YA calculó el unclaimed real, ahora solo sumamos desde ahí
+    const initialUnclaimed = {{ unclaimed or 0 }};
+    const startTime = Date.now();
+
+    // Actualizar cada segundo
+    setInterval(() => {
+        if (unclaimedElement) {
+            // Calcular segundos desde que cargó la página
+            const secondsPassed = (Date.now() - startTime) / 1000;
+
+            // Sumar al valor inicial que ya incluye todo lo acumulado
+            const newValue = initialUnclaimed + (secondsPassed * ratePerSecond);
+
+            unclaimedElement.textContent = newValue.toFixed(4);
+
+            const progress = Math.min((newValue / 100) * 100, 100);
+            if (progressBar) {
+                progressBar.style.width = progress + '%';
+            }
+        }
+    }, 1000);
+}
+
+// Claim reward function
+async function claimReward() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('user_id');
+
+    if (!userId) {
+        showToast(window.tt ? window.tt('toast_user_not_identified') : 'Error: Usuario no identificado', 'error');
+        return;
+    }
+
+    // Get current unclaimed amount
+    const unclaimedAmount = parseFloat(document.getElementById('unclaimed-balance').textContent);
+    
+    if (unclaimedAmount <= 0) {
+        showToast(window.tt ? window.tt('toast_no_earnings_claim') : 'No hay ganancias para reclamar', 'warning');
+        return;
+    }
+
+    // Store data for after ad
+    window.pendingClaimData = {
+        userId: userId,
+        amount: unclaimedAmount
+    };
+
+    // Show ad first
+    showAdOverlay();
+}
 
 // ========================================
 // AD SYSTEM FUNCTIONS - INTERSTITIAL FOR MINING CLAIM
@@ -1743,11 +1784,9 @@ async function processClaimReward(userId, unclaimedAmount) {
         const data = await response.json();
 
         if (data.success) {
-            currentBalance = data.new_balance;
-            updateBalanceUI();
-            unclaimedLocal = 0;
-            const ud = document.getElementById('unclaimed-display');
-            if (ud) ud.textContent = '0.0000';
+            document.getElementById('total-balance').textContent = data.new_balance.toFixed(4);
+            document.getElementById('unclaimed-balance').textContent = '0.0000';
+            document.getElementById('mining-progress').style.width = '0%';
 
             // Vibrar si está disponible
             if (window.Telegram && window.Telegram.WebApp) {
