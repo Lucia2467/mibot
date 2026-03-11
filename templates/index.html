@@ -776,8 +776,45 @@ const MAX_ENERGY  = 500;
 const REGEN_RATE  = 1;
 
 let currentBalance = {{ (user.se_balance or 0)|float }};
-let energy         = MAX_ENERGY;
 let isAnimating    = false;
+
+// ── Energía real desde BD ──
+// Regenerar energía basado en tiempo transcurrido desde último update
+(function() {
+    const savedEnergy  = {{ (user.energy_current if user.energy_current is not none else 500)|int }};
+    const lastUpdateTs = {{ (user.energy_last_update.timestamp() * 1000)|int if user.energy_last_update else 0 }};
+    const secondsPast  = lastUpdateTs > 0 ? Math.floor((Date.now() - lastUpdateTs) / 1000) : 0;
+    window._initEnergy = Math.min(MAX_ENERGY, savedEnergy + secondsPast * REGEN_RATE);
+})();
+let energy = window._initEnergy;
+
+// ── Guardado de taps — batch cada 5 taps o 3 segundos ──
+let _pendingTaps   = 0;
+let _pendingGained = 0;
+let _tapSaveTimer  = null;
+const USER_ID_TAP  = new URLSearchParams(window.location.search).get('user_id')
+                  || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id);
+
+function _flushTaps() {
+    if (_pendingTaps === 0 || !USER_ID_TAP) return;
+    const taps   = _pendingTaps;
+    const gained = _pendingGained;
+    _pendingTaps   = 0;
+    _pendingGained = 0;
+    fetch('/api/tap?user_id=' + USER_ID_TAP, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ taps, gained, energy: Math.floor(energy) })
+    }).catch(() => {});
+}
+
+// Guardar al cerrar/cambiar de pestaña
+window.addEventListener('beforeunload', _flushTaps);
+window.addEventListener('pagehide', _flushTaps);
+// Guardar al perder foco (usuario cambia de app)
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') _flushTaps();
+});
 
 document.getElementById('tap-reward-label').textContent = TAP_REWARD.toFixed(4);
 
@@ -849,6 +886,18 @@ function handleTap(e) {
     energy         = Math.max(0, energy - taps);
     currentBalance += gained;
 
+    // Acumular para guardar en BD
+    _pendingTaps   += taps;
+    _pendingGained += gained;
+    // Guardar cada 5 taps
+    if (_pendingTaps >= 5) {
+        clearTimeout(_tapSaveTimer);
+        _flushTaps();
+    } else {
+        clearTimeout(_tapSaveTimer);
+        _tapSaveTimer = setTimeout(_flushTaps, 3000);
+    }
+
     updateBalanceUI();
     updateEnergyUI();
     spawnFloat(gained, taps > 1);
@@ -894,19 +943,12 @@ setInterval(() => {
 
 // ── Claim ──
 async function claimReward(e) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const userId = urlParams.get('user_id') || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id);
-
-    if (!userId) {
-        showToast('Error: Usuario no identificado', 'error');
-        return;
-    }
-    if (unclaimedLocal <= 0.0001) {
-        showToast('No hay ganancias para reclamar', 'warning');
-        return;
-    }
-
-    // Guardar datos y mostrar anuncio primero
+    const userId = USER_ID_TAP;
+    if (!userId) { showToast('Error: Usuario no identificado', 'error'); return; }
+    if (unclaimedLocal <= 0.0001) { showToast('No hay ganancias para reclamar', 'warning'); return; }
+    // Flush any pending taps first
+    _flushTaps();
+    // Guardar datos y mostrar anuncio antes del claim
     window.pendingClaimData = { userId, amount: unclaimedLocal };
     showAdOverlay();
 }
@@ -1568,9 +1610,9 @@ updateBalanceUI();
 
 {% block extra_js %}
 <script>
-// updateUnclaimedBalance — manejado por el ticker del tap engine
+// updateUnclaimedBalance — manejado por ticker del tap engine
 
-// claimReward unificada arriba en el tap engine
+// claimReward — ver tap engine arriba
 
 // ========================================
 // AD SYSTEM FUNCTIONS - INTERSTITIAL FOR MINING CLAIM
@@ -1709,7 +1751,6 @@ async function processClaimReward(userId, unclaimedAmount) {
         const data = await response.json();
 
         if (data.success) {
-            // Actualizar balance y unclaimed con IDs reales del HTML
             currentBalance = data.new_balance;
             updateBalanceUI();
             unclaimedLocal = 0;
