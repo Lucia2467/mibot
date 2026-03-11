@@ -203,7 +203,7 @@ body::after {
     padding: 0 4px;
     height: 64px;
     /* Vidrio oscuro premium */
-    background: rgba(8, 8, 20, 0.92);
+    background: rgba(5, 5, 15, 0.88);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     border-radius: 32px;
@@ -212,20 +212,7 @@ body::after {
     overflow: hidden;
 }
 
-/* Shimmer superior ultra sutil */
-.nav-inner::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 20%; right: 20%;
-    height: 1px;
-    background: linear-gradient(90deg,
-        transparent,
-        rgba(255, 255, 255, 0.12) 40%,
-        rgba(255, 255, 255, 0.22) 50%,
-        rgba(255, 255, 255, 0.12) 60%,
-        transparent);
-    pointer-events: none;
-}
+.nav-inner::before { display: none; }
 
 .nav-inner::after { display: none; }
 
