@@ -261,26 +261,9 @@ body::after {
 }
 
 /* Glow difuso detrás del ícono activo — no caja, solo luz */
-.nav-item::before {
-    content: '';
-    position: absolute;
-    top: 8px; left: 50%;
-    transform: translateX(-50%);
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: radial-gradient(circle,
-        rgba(255, 195, 0, 0.28) 0%,
-        rgba(220, 140, 0, 0.12) 50%,
-        transparent 75%);
-    opacity: 0;
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    transform: translateX(-50%) scale(0.6);
-    pointer-events: none;
-}
-
+.nav-item::before,
 .nav-item.active::before {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
+    display: none;
 }
 
 /* Indicador activo — línea delgada debajo del ícono */
