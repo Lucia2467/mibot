@@ -14,14 +14,9 @@ body {
     padding-top: 22px;
 }
 
-/* Excluir zoom solo en header */
+/* Excluir zoom en header */
 .app-top-header {
     zoom: 1.2048;
-}
-
-/* Nav escapa del zoom — reposicionada via JS */
-.bottom-nav {
-    zoom: 1 !important;
 }
 
 
@@ -462,11 +457,7 @@ button[onclick*="claimReward"] {
         </div>
     </div>
 
-    <!-- referrals sub-line -->
-    <div style="display:flex;justify-content:center;gap:4px;align-items:center;margin-bottom:4px;">
-        <i data-lucide="users" style="width:11px;height:11px;color:rgba(255,255,255,0.28);"></i>
-        <span style="font-size:0.62rem;color:rgba(255,255,255,0.28);font-weight:600;">{{ user.referral_count or 0 }} referidos</span>
-    </div>
+
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -902,26 +893,25 @@ setInterval(() => {
 
 // ── Claim ──
 async function claimReward(e) {
-    const btn = e.currentTarget;
-    try {
-        btn.disabled = true;
-        btn.style.opacity = '0.7';
-        const res  = await fetch('/api/claim', { method: 'POST' });
-        const data = await res.json();
-        if (data.success) {
-            currentBalance = data.new_balance;
-            unclaimedLocal = 0;
-            updateBalanceUI();
-            document.getElementById('unclaimed-display').textContent = '0.0000';
-            btn.style.background = 'linear-gradient(180deg,#22c55e,#15803d)';
-            setTimeout(() => btn.style.background = '', 700);
-        }
-    } catch(err) {
-        console.error('Claim error', err);
-    } finally {
-        btn.disabled = false;
-        btn.style.opacity = '';
+    // Funciona tanto con evento (botón tap) como sin él (botón reclamar)
+    const btn = e && e.currentTarget ? e.currentTarget : document.querySelector('[onclick*="claimReward"]');
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('user_id') || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id);
+
+    if (!userId) {
+        showToast('Error: Usuario no identificado', 'error');
+        return;
     }
+
+    const unclaimedAmount = unclaimedLocal;
+    if (unclaimedAmount <= 0.0001) {
+        showToast('No hay ganancias para reclamar', 'warning');
+        return;
+    }
+
+    // Guardar datos y mostrar ad
+    window.pendingClaimData = { userId, amount: unclaimedAmount };
+    showAdOverlay();
 }
 
 updateEnergyUI();
@@ -1583,62 +1573,11 @@ updateBalanceUI();
 <script>
 // Auto-update unclaimed balance
 function updateUnclaimedBalance() {
-    // Usar la tasa efectiva (power * mining_rate global)
-    const effectiveRate = {{ mining_rate or user.mining_power or 1.0 }};
-    const ratePerSecond = effectiveRate / 3600;
-    const unclaimedElement = document.getElementById('unclaimed-balance');
-    const progressBar = document.getElementById('mining-progress');
-
-    // El backend YA calculó el unclaimed real, ahora solo sumamos desde ahí
-    const initialUnclaimed = {{ unclaimed or 0 }};
-    const startTime = Date.now();
-
-    // Actualizar cada segundo
-    setInterval(() => {
-        if (unclaimedElement) {
-            // Calcular segundos desde que cargó la página
-            const secondsPassed = (Date.now() - startTime) / 1000;
-
-            // Sumar al valor inicial que ya incluye todo lo acumulado
-            const newValue = initialUnclaimed + (secondsPassed * ratePerSecond);
-
-            unclaimedElement.textContent = newValue.toFixed(4);
-
-            const progress = Math.min((newValue / 100) * 100, 100);
-            if (progressBar) {
-                progressBar.style.width = progress + '%';
-            }
-        }
-    }, 1000);
+    // Esta función ya está manejada por el ticker del tap engine (unclaimedLocal)
+    // No hace nada para evitar duplicados
 }
 
-// Claim reward function
-async function claimReward() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const userId = urlParams.get('user_id');
-
-    if (!userId) {
-        showToast(window.tt ? window.tt('toast_user_not_identified') : 'Error: Usuario no identificado', 'error');
-        return;
-    }
-
-    // Get current unclaimed amount
-    const unclaimedAmount = parseFloat(document.getElementById('unclaimed-balance').textContent);
-    
-    if (unclaimedAmount <= 0) {
-        showToast(window.tt ? window.tt('toast_no_earnings_claim') : 'No hay ganancias para reclamar', 'warning');
-        return;
-    }
-
-    // Store data for after ad
-    window.pendingClaimData = {
-        userId: userId,
-        amount: unclaimedAmount
-    };
-
-    // Show ad first
-    showAdOverlay();
-}
+// claimReward unificado arriba
 
 // ========================================
 // AD SYSTEM FUNCTIONS - INTERSTITIAL FOR MINING CLAIM
@@ -1777,9 +1716,13 @@ async function processClaimReward(userId, unclaimedAmount) {
         const data = await response.json();
 
         if (data.success) {
-            document.getElementById('total-balance').textContent = data.new_balance.toFixed(4);
-            document.getElementById('unclaimed-balance').textContent = '0.0000';
-            document.getElementById('mining-progress').style.width = '0%';
+            // Actualizar balance principal
+            currentBalance = data.new_balance;
+            updateBalanceUI();
+            // Resetear unclaimed
+            unclaimedLocal = 0;
+            const unclaimedEl = document.getElementById('unclaimed-display');
+            if (unclaimedEl) unclaimedEl.textContent = '0.0000';
 
             // Vibrar si está disponible
             if (window.Telegram && window.Telegram.WebApp) {
@@ -1975,12 +1918,6 @@ document.head.appendChild(shakeStyle);
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    // Mover bottom-nav fuera del body para escapar del zoom
-    const nav = document.querySelector('.bottom-nav');
-    if (nav) {
-        document.documentElement.appendChild(nav);
-    }
-
     // Inicializar iconos
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
