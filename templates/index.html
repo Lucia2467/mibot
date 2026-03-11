@@ -627,77 +627,238 @@ button[onclick*="claimReward"] {
 <!-- ══════════════════════════════════════════
      SECTION 5 — LIVE STATS TICKER
 ══════════════════════════════════════════ -->
-<div style="position:relative;z-index:1;padding:0 16px 24px;">
-    <div style="background:linear-gradient(160deg,#0c0c22 0%,#080818 55%,#050514 100%);border-top:2px solid rgba(60,130,255,0.45);border-left:1px solid rgba(40,100,255,0.22);border-right:1px solid rgba(0,0,0,0.80);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:20px;overflow:hidden;box-shadow:0 3px 0 rgba(80,140,255,0.10) inset,0 -4px 0 rgba(0,0,0,0.95) inset,0 8px 32px rgba(0,0,0,0.80),0 0 0 1px rgba(50,100,255,0.15);position:relative;">
+<div style="position:relative;z-index:1;padding:0 14px 24px;">
 
-        <!-- shimmer line top -->
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.50),transparent);pointer-events:none;"></div>
+<style>
+@keyframes livepulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:0.4; transform:scale(0.85); }
+}
+@keyframes shimmerSlide {
+    0%   { transform:translateX(-100%); }
+    100% { transform:translateX(400%); }
+}
+@keyframes statIn {
+    from { opacity:0; transform:translateY(6px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+.envivo-card {
+    background: #0b0b18;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.07);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.06) inset,
+        0 -1px 0 rgba(0,0,0,0.6) inset,
+        0 12px 40px rgba(0,0,0,0.6);
+    overflow: hidden;
+    position: relative;
+}
+.envivo-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 15px 11px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.envivo-live {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.envivo-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #00E87A;
+    animation: liveplus 1.8s ease-in-out infinite;
+}
+@keyframes liveplus {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,232,122,0.7); }
+    50%      { box-shadow: 0 0 0 5px rgba(0,232,122,0); }
+}
+.envivo-label {
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+}
+.envivo-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px 4px 8px;
+    background: linear-gradient(135deg, rgba(255,184,0,0.12), rgba(255,120,0,0.06));
+    border: 1px solid rgba(255,184,0,0.22);
+    border-radius: 30px;
+}
+.envivo-badge-icon {
+    width: 12px; height: 12px;
+    color: #F5A623;
+}
+.envivo-badge-text {
+    font-size: 0.63rem;
+    font-weight: 800;
+    color: #F5A623;
+    letter-spacing: 0.02em;
+}
+.envivo-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 4px 6px 14px;
+    gap: 4px;
+}
+.stat-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 6px 10px;
+    border-radius: 12px;
+    animation: statIn 0.4s ease both;
+    position: relative;
+}
+.stat-cell:nth-child(1) { animation-delay: 0.05s; }
+.stat-cell:nth-child(2) { animation-delay: 0.12s; background: rgba(255,184,0,0.04); border: 1px solid rgba(255,184,0,0.10); }
+.stat-cell:nth-child(3) { animation-delay: 0.18s; }
+.stat-label {
+    font-size: 0.52rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.25);
+    text-transform: uppercase;
+    margin-bottom: 9px;
+}
+.stat-value {
+    font-size: 1.55rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+}
+.stat-sub {
+    margin-top: 7px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+.stat-pill {
+    font-size: 0.55rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+}
+.stat-pill-green {
+    background: rgba(0,232,122,0.08);
+    border: 1px solid rgba(0,232,122,0.16);
+    color: #00E87A;
+}
+.stat-pill-gold {
+    background: rgba(255,184,0,0.08);
+    border: 1px solid rgba(255,184,0,0.18);
+    color: #F5A623;
+}
+.stat-pill-blue {
+    background: rgba(0,180,255,0.08);
+    border: 1px solid rgba(0,180,255,0.16);
+    color: #00C4FF;
+}
+.stat-progress-wrap {
+    width: 100%;
+    margin-top: 8px;
+    padding: 0 4px;
+}
+.stat-progress-track {
+    height: 2.5px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+.stat-progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #0066FF, #00C4FF);
+    transition: width 1.4s cubic-bezier(0.34,1.2,0.64,1);
+    position: relative;
+    overflow: hidden;
+}
+.stat-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 30px; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+    animation: shimmerSlide 2s ease infinite;
+}
+.stat-next-label {
+    margin-top: 5px;
+    font-size: 0.50rem;
+    color: rgba(255,255,255,0.18);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+}
+</style>
 
-        <!-- header row -->
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-                <div style="width:7px;height:7px;border-radius:50%;background:#00FF88;box-shadow:0 0 10px rgba(0,255,136,1);animation:mining-pulse 1.5s ease-in-out infinite;"></div>
-                <span style="font-size:0.70rem;font-weight:800;letter-spacing:0.14em;color:rgba(255,255,255,0.55);text-transform:uppercase;">En vivo</span>
-            </div>
-            <!-- nivel badge -->
-            <div style="display:flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.20);border-radius:20px;">
-                <i data-lucide="zap" style="width:10px;height:10px;color:#FFD700;"></i>
-                <span style="font-size:0.65rem;font-weight:800;color:#FFD700;">{{ level_info.name if level_info else 'Novato' }} · Nvl {{ level_info.level if level_info else (user.mining_level or 1) }}</span>
+<div class="envivo-card">
+
+    <!-- Header -->
+    <div class="envivo-header">
+        <div class="envivo-live">
+            <div class="envivo-dot"></div>
+            <span class="envivo-label">En vivo</span>
+        </div>
+        <div class="envivo-badge">
+            <i data-lucide="zap" class="envivo-badge-icon"></i>
+            <span class="envivo-badge-text">{{ level_info.name if level_info else 'Novato' }} &nbsp;·&nbsp; Nvl {{ level_info.level if level_info else (user.mining_level or 1) }}</span>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="envivo-stats">
+
+        <!-- TAPS HOY -->
+        <div class="stat-cell">
+            <div class="stat-label">Taps hoy</div>
+            <div class="stat-value" id="stat-taps" style="color:#fff;">0</div>
+            <div class="stat-sub">
+                <i data-lucide="trending-up" style="width:9px;height:9px;color:#00E87A;flex-shrink:0;"></i>
+                <span class="stat-pill stat-pill-green" id="stat-taps-pxc">+0.0000</span>
             </div>
         </div>
 
-        <!-- 3 stat columns -->
-        <div style="display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;padding:0 0 16px;">
+        <!-- MULTIPLICADOR -->
+        <div class="stat-cell">
+            <div class="stat-label">Multiplica</div>
+            <div class="stat-value" style="background:linear-gradient(135deg,#FFD700,#F5830A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">x{{ level_info.tap_mult if level_info else 1.0 }}</div>
+            <div class="stat-sub">
+                <span class="stat-pill stat-pill-gold">por tap</span>
+            </div>
+        </div>
 
-            <!-- COL 1: Taps hoy -->
-            <div style="text-align:center;padding:8px 12px;">
-                <div style="font-size:0.58rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:8px;">Taps Hoy</div>
-                <div id="stat-taps" style="font-size:1.45rem;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;">0</div>
-                <div style="display:inline-flex;align-items:center;gap:3px;margin-top:6px;padding:2px 8px;background:rgba(0,255,136,0.08);border-radius:20px;border:1px solid rgba(0,255,136,0.18);">
-                    <i data-lucide="trending-up" style="width:9px;height:9px;color:#00FF88;"></i>
-                    <span style="font-size:0.58rem;font-weight:700;color:#00FF88;" id="stat-taps-pxc">+0.0000</span>
+        <!-- PRÓXIMO NIVEL -->
+        <div class="stat-cell">
+            {% if level_info and level_info.is_max %}
+            <div class="stat-label">Rango</div>
+            <div class="stat-value" style="font-size:1.4rem;">👑</div>
+            <div class="stat-sub">
+                <span class="stat-pill stat-pill-gold">Máximo</span>
+            </div>
+            {% else %}
+            <div class="stat-label">Próx. nivel</div>
+            <div class="stat-value" id="stat-next-pct" style="font-size:1.15rem;color:#fff;">{{ level_info.refs_needed if level_info else '?' }}<span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.35);margin-left:2px;">refs</span></div>
+            <div class="stat-progress-wrap">
+                <div class="stat-progress-track">
+                    <div class="stat-progress-fill" id="stat-next-bar" style="width:{{ level_info.progress_pct if level_info else 0 }}%;"></div>
                 </div>
             </div>
-
-            <!-- divider -->
-            <div style="background:rgba(255,255,255,0.06);margin:10px 0;"></div>
-
-            <!-- COL 2: Multiplicador -->
-            <div style="text-align:center;padding:8px 12px;">
-                <div style="font-size:0.58rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:8px;">Multiplica</div>
-                <div style="font-size:1.45rem;font-weight:900;line-height:1;letter-spacing:-0.02em;">
-                    <span style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">x{{ level_info.tap_mult if level_info else 1.0 }}</span>
-                </div>
-                <div style="display:inline-flex;align-items:center;gap:3px;margin-top:6px;padding:2px 8px;background:rgba(255,215,0,0.08);border-radius:20px;border:1px solid rgba(255,215,0,0.18);">
-                    <span style="font-size:0.58rem;font-weight:700;color:rgba(255,215,0,0.80);">por tap</span>
-                </div>
-            </div>
-
-            <!-- divider -->
-            <div style="background:rgba(255,255,255,0.06);margin:10px 0;"></div>
-
-            <!-- COL 3: Próximo nivel -->
-            <div style="text-align:center;padding:8px 12px;">
-                <div style="font-size:0.58rem;font-weight:700;letter-spacing:0.10em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:8px;">
-                    {% if level_info and level_info.is_max %}MAX{% else %}Próx. Nvl{% endif %}
-                </div>
-                <div style="font-size:1.45rem;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;">
-                    {% if level_info and level_info.is_max %}
-                    <span style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">👑</span>
-                    {% else %}
-                    <span id="stat-next-pct" style="background:linear-gradient(135deg,#0066FF,#00D4FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">{{ level_info.refs_needed if level_info else '?' }} refs</span>
-                    {% endif %}
-                </div>
-                <div style="margin-top:8px;height:3px;background:rgba(255,255,255,0.07);border-radius:6px;overflow:hidden;margin-left:6px;margin-right:6px;">
-                    <div id="stat-next-bar" style="height:100%;width:{{ level_info.progress_pct if level_info else 0 }}%;background:linear-gradient(90deg,#0066FF,#00D4FF);border-radius:6px;transition:width 1.2s cubic-bezier(0.34,1.2,0.64,1);"></div>
-                </div>
-                {% if level_info and not level_info.is_max %}
-                <div style="margin-top:4px;font-size:0.52rem;color:rgba(255,255,255,0.22);font-weight:600;">para {{ level_info.next_name }}</div>
-                {% endif %}
-            </div>
+            {% if level_info %}
+            <div class="stat-next-label">para {{ level_info.next_name }}</div>
+            {% endif %}
+            {% endif %}
         </div>
 
     </div>
+</div>
 </div>
 
 <style>
@@ -794,28 +955,6 @@ let currentBalance = {{ (user.se_balance or 0)|float }};
 let energy         = MAX_ENERGY;
 let isAnimating    = false;
 
-// ── user_id para API calls ──
-const _UID = new URLSearchParams(window.location.search).get('user_id')
-          || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString());
-
-// ── Buffer de taps ──
-let _bufTaps = 0, _bufGained = 0, _bufTimer = null, _saving = false;
-function _saveTaps() {
-    if (!_bufTaps || !_bufGained || !_UID || _saving) return;
-    const t = _bufTaps, g = _bufGained;
-    _bufTaps = 0; _bufGained = 0; _saving = true;
-    fetch('/api/tap?user_id=' + _UID, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({taps: t, gained: g, energy: Math.floor(energy)}),
-        keepalive: true
-    }).then(r => r.json()).then(d => { if (d.success) currentBalance = d.new_balance; })
-    .catch(()=>{}).finally(()=>{ _saving = false; });
-}
-window.addEventListener('pagehide', _saveTaps);
-window.addEventListener('beforeunload', _saveTaps);
-document.addEventListener('visibilitychange', ()=>{ if(document.hidden) _saveTaps(); });
-
 document.getElementById('tap-reward-label').textContent = TAP_REWARD.toFixed(4);
 
 // ── Energy UI ──
@@ -885,11 +1024,6 @@ function handleTap(e) {
 
     energy         = Math.max(0, energy - taps);
     currentBalance += gained;
-
-    _bufTaps += taps; _bufGained += gained;
-    clearTimeout(_bufTimer);
-    if (_bufTaps >= 5) { _saveTaps(); }
-    else { _bufTimer = setTimeout(_saveTaps, 3000); }
 
     updateBalanceUI();
     updateEnergyUI();
