@@ -321,10 +321,7 @@ body::after {
 .nav-item.active .nav-icon i {
     color: #FFD700;
     stroke: #FFD700;
-    filter:
-        drop-shadow(0 0 3px rgba(255, 230, 100, 0.95))
-        drop-shadow(0 0 8px rgba(255, 195, 0, 0.85))
-        drop-shadow(0 0 18px rgba(220, 130, 0, 0.50));
+    filter: none;
 }
 
 /* ── Label ── */
