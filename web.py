@@ -1235,6 +1235,52 @@ def api_claim():
     })
 
 # ============================================
+# TAP ENDPOINT
+# ============================================
+
+@app.route('/api/tap', methods=['POST'])
+def api_tap():
+    """Guarda taps acumulados: balance + energía en BD"""
+    user_id = get_user_id()
+    if not user_id:
+        return jsonify({'success': False, 'error': 'User ID required'}), 400
+
+    user = get_user(user_id)
+    if not user:
+        return jsonify({'success': False, 'error': 'User not found'}), 404
+
+    if user.get('banned'):
+        return jsonify({'success': False, 'error': 'User banned'}), 403
+
+    data    = request.get_json(silent=True) or {}
+    taps    = int(data.get('taps', 0))
+    gained  = float(data.get('gained', 0))
+    energy  = int(data.get('energy', 500))
+
+    if taps <= 0 or gained <= 0:
+        return jsonify({'success': False, 'error': 'Invalid data'}), 400
+
+    # Límite de seguridad anti-trampas
+    MAX_BATCH = float(get_config('max_tap_reward_per_batch', 10.0))
+    if gained > MAX_BATCH:
+        gained = MAX_BATCH
+
+    balance_before = float(user.get('se_balance', 0))
+    new_balance    = balance_before + gained
+    total_mined    = float(user.get('total_mined', 0) or 0) + gained
+
+    update_user(user_id,
+                se_balance=new_balance,
+                total_mined=total_mined,
+                energy_current=max(0, energy),
+                energy_last_update=datetime.now())
+
+    from database import log_balance_change
+    log_balance_change(user_id, 'SE', gained, 'add', f'Tap x{taps}', balance_before, new_balance)
+
+    return jsonify({'success': True, 'new_balance': new_balance})
+
+# ============================================
 # REWARDED ADS API ENDPOINTS
 # ============================================
 
