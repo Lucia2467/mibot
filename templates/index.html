@@ -794,40 +794,6 @@ let currentBalance = {{ (user.se_balance or 0)|float }};
 let energy         = MAX_ENERGY;
 let isAnimating    = false;
 
-// ── Obtener user_id para llamadas API ──
-const _UID = new URLSearchParams(window.location.search).get('user_id')
-          || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString());
-
-// ── Buffer de taps — guarda en BD cada 5 taps o 3 seg ──
-let _bufTaps   = 0;
-let _bufGained = 0;
-let _bufTimer  = null;
-let _saving    = false;
-
-function _saveTaps() {
-    if (!_bufTaps || !_bufGained || !_UID || _saving) return;
-    const taps   = _bufTaps;
-    const gained = _bufGained;
-    _bufTaps   = 0;
-    _bufGained = 0;
-    _saving = true;
-    fetch('/api/tap?user_id=' + _UID, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ taps, gained, energy: Math.floor(energy) }),
-        keepalive: true
-    })
-    .then(r => r.json())
-    .then(d => { if (d.success) currentBalance = d.new_balance; })
-    .catch(() => {})
-    .finally(() => { _saving = false; });
-}
-
-// Guardar al salir o cambiar de pestaña
-window.addEventListener('pagehide',          _saveTaps);
-window.addEventListener('beforeunload',      _saveTaps);
-document.addEventListener('visibilitychange', () => { if (document.hidden) _saveTaps(); });
-
 document.getElementById('tap-reward-label').textContent = TAP_REWARD.toFixed(4);
 
 // ── Energy UI ──
@@ -897,16 +863,6 @@ function handleTap(e) {
 
     energy         = Math.max(0, energy - taps);
     currentBalance += gained;
-
-    // Acumular y guardar en BD
-    _bufTaps   += taps;
-    _bufGained += gained;
-    clearTimeout(_bufTimer);
-    if (_bufTaps >= 5) {
-        _saveTaps();
-    } else {
-        _bufTimer = setTimeout(_saveTaps, 3000);
-    }
 
     updateBalanceUI();
     updateEnergyUI();
@@ -1619,36 +1575,11 @@ updateBalanceUI();
 <script>
 // Auto-update unclaimed balance
 function updateUnclaimedBalance() {
-    // Usar la tasa efectiva (power * mining_rate global)
-    const effectiveRate = {{ mining_rate or user.mining_power or 1.0 }};
-    const ratePerSecond = effectiveRate / 3600;
-    const unclaimedElement = document.getElementById('unclaimed-display');
-    const progressBar = null; // elemento no usado
-
-    // El backend YA calculó el unclaimed real, ahora solo sumamos desde ahí
-    const initialUnclaimed = {{ unclaimed or 0 }};
-    const startTime = Date.now();
-
-    // Actualizar cada segundo
-    setInterval(() => {
-        if (unclaimedElement) {
-            // Calcular segundos desde que cargó la página
-            const secondsPassed = (Date.now() - startTime) / 1000;
-
-            // Sumar al valor inicial que ya incluye todo lo acumulado
-            const newValue = initialUnclaimed + (secondsPassed * ratePerSecond);
-
-            unclaimedElement.textContent = newValue.toFixed(4);
-
-            const progress = Math.min((newValue / 100) * 100, 100);
-            if (progressBar) {
-                progressBar.style.width = progress + '%';
-            }
-        }
-    }, 1000);
+    // Desactivada — el ticker del tap engine maneja esto
 }
 
-// claimReward unificada arriba
+// Claim reward function
+// claimReward unificada en el tap engine
 
 // ========================================
 // AD SYSTEM FUNCTIONS - INTERSTITIAL FOR MINING CLAIM
