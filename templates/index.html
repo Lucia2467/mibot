@@ -778,42 +778,39 @@ const REGEN_RATE  = 1;
 let currentBalance = {{ (user.se_balance or 0)|float }};
 let isAnimating    = false;
 
-// ── Energía real desde BD ──
-// Regenerar energía basado en tiempo transcurrido desde último update
-(function() {
-    const savedEnergy  = {{ (user.energy_current if user.energy_current is not none else 500)|int }};
-    const lastUpdateTs = {{ (user.energy_last_update.timestamp() * 1000)|int if user.energy_last_update else 0 }};
-    const secondsPast  = lastUpdateTs > 0 ? Math.floor((Date.now() - lastUpdateTs) / 1000) : 0;
-    window._initEnergy = Math.min(MAX_ENERGY, savedEnergy + secondsPast * REGEN_RATE);
-})();
-let energy = window._initEnergy;
+// Energía real: recuperar lo que se regeneró desde el último guardado
+const _savedEnergy    = {{ (user.energy_current if user.energy_current is not none else 500)|int }};
+const _lastEnergyMs   = {{ (user.energy_last_update.timestamp() * 1000)|int if user.energy_last_update else 0 }};
+const _regenSecs      = _lastEnergyMs > 0 ? Math.floor((Date.now() - _lastEnergyMs) / 1000) : 0;
+let energy            = Math.min(MAX_ENERGY, _savedEnergy + _regenSecs);
 
-// ── Guardado de taps — batch cada 5 taps o 3 segundos ──
-let _pendingTaps   = 0;
-let _pendingGained = 0;
-let _tapSaveTimer  = null;
-const USER_ID_TAP  = new URLSearchParams(window.location.search).get('user_id')
-                  || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id);
+// ID del usuario para llamadas a la API
+const _UID = new URLSearchParams(window.location.search).get('user_id')
+          || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString());
 
-function _flushTaps() {
-    if (_pendingTaps === 0 || !USER_ID_TAP) return;
-    const taps   = _pendingTaps;
-    const gained = _pendingGained;
-    _pendingTaps   = 0;
-    _pendingGained = 0;
-    fetch('/api/tap?user_id=' + USER_ID_TAP, {
+// Buffer de taps — se manda al servidor cada 5 taps o 3 segundos
+let _bufTaps   = 0;
+let _bufGained = 0;
+let _bufTimer  = null;
+
+function _saveTaps() {
+    if (!_bufTaps || !_bufGained || !_UID) return;
+    const payload = { taps: _bufTaps, gained: _bufGained, energy: Math.floor(energy) };
+    _bufTaps = 0; _bufGained = 0;
+    fetch('/api/tap?user_id=' + _UID, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ taps, gained, energy: Math.floor(energy) })
+        body: JSON.stringify(payload),
+        keepalive: true
+    }).then(r => r.json()).then(d => {
+        if (d.success) currentBalance = d.new_balance;
     }).catch(() => {});
 }
 
-// Guardar al cerrar/cambiar de pestaña
-window.addEventListener('beforeunload', _flushTaps);
-window.addEventListener('pagehide', _flushTaps);
-// Guardar al perder foco (usuario cambia de app)
+// Guardar al salir / cambiar de pestaña
+window.addEventListener('pagehide', _saveTaps);
 document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') _flushTaps();
+    if (document.hidden) _saveTaps();
 });
 
 document.getElementById('tap-reward-label').textContent = TAP_REWARD.toFixed(4);
@@ -886,16 +883,14 @@ function handleTap(e) {
     energy         = Math.max(0, energy - taps);
     currentBalance += gained;
 
-    // Acumular para guardar en BD
-    _pendingTaps   += taps;
-    _pendingGained += gained;
-    // Guardar cada 5 taps
-    if (_pendingTaps >= 5) {
-        clearTimeout(_tapSaveTimer);
-        _flushTaps();
+    // Acumular y guardar en BD
+    _bufTaps   += taps;
+    _bufGained += gained;
+    clearTimeout(_bufTimer);
+    if (_bufTaps >= 5) {
+        _saveTaps();
     } else {
-        clearTimeout(_tapSaveTimer);
-        _tapSaveTimer = setTimeout(_flushTaps, 3000);
+        _bufTimer = setTimeout(_saveTaps, 3000);
     }
 
     updateBalanceUI();
@@ -943,13 +938,10 @@ setInterval(() => {
 
 // ── Claim ──
 async function claimReward(e) {
-    const userId = USER_ID_TAP;
-    if (!userId) { showToast('Error: Usuario no identificado', 'error'); return; }
+    if (!_UID) { showToast('Error: Usuario no identificado', 'error'); return; }
     if (unclaimedLocal <= 0.0001) { showToast('No hay ganancias para reclamar', 'warning'); return; }
-    // Flush any pending taps first
-    _flushTaps();
-    // Guardar datos y mostrar anuncio antes del claim
-    window.pendingClaimData = { userId, amount: unclaimedLocal };
+    _saveTaps(); // flush taps pendientes
+    window.pendingClaimData = { userId: _UID, amount: unclaimedLocal };
     showAdOverlay();
 }
 
@@ -1610,9 +1602,9 @@ updateBalanceUI();
 
 {% block extra_js %}
 <script>
-// updateUnclaimedBalance — manejado por ticker del tap engine
+// updateUnclaimedBalance manejada por ticker del tap engine
 
-// claimReward — ver tap engine arriba
+// claimReward unificada arriba
 
 // ========================================
 // AD SYSTEM FUNCTIONS - INTERSTITIAL FOR MINING CLAIM
