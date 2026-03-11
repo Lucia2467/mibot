@@ -502,6 +502,86 @@ def calculate_unclaimed(user):
 
     return base_unclaimed
 
+# ============================================
+# SISTEMA DE NIVELES POR REFERIDOS
+# ============================================
+
+# Tabla de niveles: (refs_requeridos, mining_power, tap_multiplier, nombre)
+LEVEL_TABLE = [
+    (0,   1.0,  1.0,  "Novato"),
+    (3,   1.5,  1.5,  "Aprendiz"),
+    (8,   2.0,  2.0,  "Explorador"),
+    (15,  3.0,  2.5,  "Agente"),
+    (25,  4.0,  3.0,  "Veterano"),
+    (40,  5.5,  4.0,  "Elite"),
+    (60,  7.0,  5.0,  "Maestro"),
+    (85,  9.0,  6.5,  "Experto"),
+    (120, 12.0, 8.0,  "Leyenda"),
+    (200, 16.0, 10.0, "Dios"),
+]
+
+def get_level_info(validated_refs):
+    """Retorna info del nivel actual y siguiente basado en referidos validados"""
+    current = LEVEL_TABLE[0]
+    current_idx = 0
+    for i, lvl in enumerate(LEVEL_TABLE):
+        if validated_refs >= lvl[0]:
+            current = lvl
+            current_idx = i
+        else:
+            break
+    
+    next_lvl = LEVEL_TABLE[current_idx + 1] if current_idx + 1 < len(LEVEL_TABLE) else None
+    refs_for_next = next_lvl[0] if next_lvl else current[0]
+    refs_needed   = max(0, refs_for_next - validated_refs)
+    
+    if next_lvl:
+        progress_pct = int(
+            (validated_refs - current[0]) / max(1, next_lvl[0] - current[0]) * 100
+        )
+    else:
+        progress_pct = 100
+
+    return {
+        'level':        current_idx + 1,
+        'name':         current[3],
+        'mining_power': current[1],
+        'tap_mult':     current[2],
+        'refs_current': validated_refs,
+        'refs_needed':  refs_needed,
+        'refs_for_next': refs_for_next,
+        'progress_pct': min(100, progress_pct),
+        'is_max':       next_lvl is None,
+        'next_name':    next_lvl[3] if next_lvl else None,
+        'next_mining':  next_lvl[1] if next_lvl else None,
+        'next_tap':     next_lvl[2] if next_lvl else None,
+    }
+
+def check_and_level_up(user_id):
+    """
+    Verifica si el usuario debe subir de nivel y lo actualiza.
+    Se llama cada vez que se valida un nuevo referido.
+    Retorna dict con info del nivel o None si no cambió.
+    """
+    user = get_user(user_id)
+    if not user:
+        return None
+    
+    validated_refs = get_validated_referrals_count(user_id)
+    info = get_level_info(validated_refs)
+    
+    current_level = int(user.get('mining_level', 1) or 1)
+    
+    if info['level'] > current_level:
+        # ¡Subió de nivel! Actualizar mining_power y nivel
+        update_user(user_id,
+                    mining_level=info['level'],
+                    mining_power=info['mining_power'])
+        print(f"[level_up] ✅ Usuario {user_id} subió a Nivel {info['level']} ({info['name']})")
+        return info
+    
+    return None
+
 def get_effective_rate(user):
     """Calculate effective mining rate per hour"""
     base_rate = float(get_config('base_mining_rate', 0.1))
@@ -663,6 +743,15 @@ def index():
     promo_config = get_config('show_promo_fab', 'true')
     show_promo_fab = str(promo_config).lower() == 'true' and has_available_promo_codes()
 
+    # Calcular nivel actual basado en referidos validados
+    validated_refs = get_validated_referrals_count(user_id)
+    level_info = get_level_info(validated_refs)
+    # Sincronizar mining_power si hay discrepancia
+    if abs(float(user.get('mining_power', 1.0)) - level_info['mining_power']) > 0.01:
+        update_user(user_id, mining_level=level_info['level'], mining_power=level_info['mining_power'])
+        user['mining_level'] = level_info['level']
+        user['mining_power'] = level_info['mining_power']
+
     return render_template('index.html',
                          user=user,
                          unclaimed=unclaimed,
@@ -671,7 +760,8 @@ def index():
                          bot_username=BOT_USERNAME,
                          show_promo_fab=show_promo_fab,
                          show_support_button=True,
-                         hide_header=True)
+                         hide_header=True,
+                         level_info=level_info)
 
 @app.route('/tasks')
 def tasks():
@@ -1233,6 +1323,17 @@ def api_claim():
         'new_balance': new_balance,
         'total_mined': total_mined
     })
+
+
+@app.route('/api/level-info', methods=['GET'])
+def api_level_info():
+    """Retorna info de nivel del usuario actual"""
+    user_id = get_user_id()
+    if not user_id:
+        return jsonify({'success': False, 'error': 'User ID required'}), 400
+    validated_refs = get_validated_referrals_count(user_id)
+    info = get_level_info(validated_refs)
+    return jsonify({'success': True, **info})
 
 # ============================================
 # TAP ENDPOINT
@@ -5803,6 +5904,11 @@ def api_emergency_validate_referral():
 
     try:
         validate_referral(referrer_id, referred_id)
+        # Verificar si el referidor sube de nivel
+        try:
+            check_and_level_up(referrer_id)
+        except Exception as _le:
+            print(f"[level_up] Error: {_le}")
         flash(f'Referido validado y bonus pagado: {referrer_id} <- {referred_id}', 'success')
     except Exception as e:
         flash(f'Error: {str(e)}', 'error')
