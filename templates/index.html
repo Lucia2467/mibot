@@ -14,10 +14,14 @@ body {
     padding-top: 22px;
 }
 
-/* Excluir barras de navegación del zoom */
-.bottom-nav,
+/* Excluir zoom solo en header */
 .app-top-header {
     zoom: 1.2048;
+}
+
+/* Nav escapa del zoom — reposicionada via JS */
+.bottom-nav {
+    zoom: 1 !important;
 }
 
 
@@ -1971,6 +1975,12 @@ document.head.appendChild(shakeStyle);
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
+    // Mover bottom-nav fuera del body para escapar del zoom
+    const nav = document.querySelector('.bottom-nav');
+    if (nav) {
+        document.documentElement.appendChild(nav);
+    }
+
     // Inicializar iconos
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
