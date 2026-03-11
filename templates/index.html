@@ -953,26 +953,11 @@ setInterval(() => {
 
 // ── Claim ──
 async function claimReward(e) {
-    const btn = e.currentTarget;
-    try {
-        btn.disabled = true;
-        btn.style.opacity = '0.7';
-        const res  = await fetch('/api/claim', { method: 'POST' });
-        const data = await res.json();
-        if (data.success) {
-            currentBalance = data.new_balance;
-            unclaimedLocal = 0;
-            updateBalanceUI();
-            document.getElementById('unclaimed-display').textContent = '0.0000';
-            btn.style.background = 'linear-gradient(180deg,#22c55e,#15803d)';
-            setTimeout(() => btn.style.background = '', 700);
-        }
-    } catch(err) {
-        console.error('Claim error', err);
-    } finally {
-        btn.disabled = false;
-        btn.style.opacity = '';
-    }
+    if (!_UID) { showToast('Error: Usuario no identificado', 'error'); return; }
+    if (unclaimedLocal <= 0.0001) { showToast('No hay ganancias para reclamar', 'warning'); return; }
+    _saveTaps();
+    window.pendingClaimData = { userId: _UID, amount: unclaimedLocal };
+    showAdOverlay();
 }
 
 updateEnergyUI();
@@ -1637,8 +1622,8 @@ function updateUnclaimedBalance() {
     // Usar la tasa efectiva (power * mining_rate global)
     const effectiveRate = {{ mining_rate or user.mining_power or 1.0 }};
     const ratePerSecond = effectiveRate / 3600;
-    const unclaimedElement = document.getElementById('unclaimed-balance');
-    const progressBar = document.getElementById('mining-progress');
+    const unclaimedElement = document.getElementById('unclaimed-display');
+    const progressBar = null; // elemento no usado
 
     // El backend YA calculó el unclaimed real, ahora solo sumamos desde ahí
     const initialUnclaimed = {{ unclaimed or 0 }};
@@ -1663,33 +1648,7 @@ function updateUnclaimedBalance() {
     }, 1000);
 }
 
-// Claim reward function
-async function claimReward() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const userId = urlParams.get('user_id');
-
-    if (!userId) {
-        showToast(window.tt ? window.tt('toast_user_not_identified') : 'Error: Usuario no identificado', 'error');
-        return;
-    }
-
-    // Get current unclaimed amount
-    const unclaimedAmount = parseFloat(document.getElementById('unclaimed-balance').textContent);
-    
-    if (unclaimedAmount <= 0) {
-        showToast(window.tt ? window.tt('toast_no_earnings_claim') : 'No hay ganancias para reclamar', 'warning');
-        return;
-    }
-
-    // Store data for after ad
-    window.pendingClaimData = {
-        userId: userId,
-        amount: unclaimedAmount
-    };
-
-    // Show ad first
-    showAdOverlay();
-}
+// claimReward unificada arriba
 
 // ========================================
 // AD SYSTEM FUNCTIONS - INTERSTITIAL FOR MINING CLAIM
@@ -1828,9 +1787,11 @@ async function processClaimReward(userId, unclaimedAmount) {
         const data = await response.json();
 
         if (data.success) {
-            document.getElementById('total-balance').textContent = data.new_balance.toFixed(4);
-            document.getElementById('unclaimed-balance').textContent = '0.0000';
-            document.getElementById('mining-progress').style.width = '0%';
+            currentBalance = data.new_balance;
+            updateBalanceUI();
+            unclaimedLocal = 0;
+            const _ud = document.getElementById('unclaimed-display');
+            if (_ud) _ud.textContent = '0.0000';
 
             // Vibrar si está disponible
             if (window.Telegram && window.Telegram.WebApp) {
