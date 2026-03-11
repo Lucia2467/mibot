@@ -794,6 +794,26 @@ let currentBalance = {{ (user.se_balance or 0)|float }};
 let energy         = MAX_ENERGY;
 let isAnimating    = false;
 
+const _UID = new URLSearchParams(window.location.search).get('user_id')
+          || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString());
+
+let _bufTaps = 0, _bufGained = 0, _bufTimer = null, _saving = false;
+function _saveTaps() {
+    if (!_bufTaps || !_bufGained || !_UID || _saving) return;
+    const t = _bufTaps, g = _bufGained;
+    _bufTaps = 0; _bufGained = 0; _saving = true;
+    fetch('/api/tap?user_id=' + _UID, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({taps: t, gained: g, energy: Math.floor(energy)}),
+        keepalive: true
+    }).then(r => r.json()).then(d => { if (d.success) currentBalance = d.new_balance; })
+    .catch(()=>{}).finally(()=>{ _saving = false; });
+}
+window.addEventListener('pagehide', _saveTaps);
+window.addEventListener('beforeunload', _saveTaps);
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden) _saveTaps(); });
+
 document.getElementById('tap-reward-label').textContent = TAP_REWARD.toFixed(4);
 
 // ── Energy UI ──
@@ -863,6 +883,11 @@ function handleTap(e) {
 
     energy         = Math.max(0, energy - taps);
     currentBalance += gained;
+
+    _bufTaps += taps; _bufGained += gained;
+    clearTimeout(_bufTimer);
+    if (_bufTaps >= 5) { _saveTaps(); }
+    else { _bufTimer = setTimeout(_saveTaps, 3000); }
 
     updateBalanceUI();
     updateEnergyUI();
