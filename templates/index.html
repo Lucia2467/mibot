@@ -630,229 +630,374 @@ button[onclick*="claimReward"] {
 <div style="position:relative;z-index:1;padding:0 14px 24px;">
 
 <style>
-@keyframes livepulse {
-    0%,100% { opacity:1; transform:scale(1); }
-    50%      { opacity:0.4; transform:scale(0.85); }
+/* ══ HUD TÁCTICO — EN VIVO ══ */
+@keyframes hud-scan {
+    0%   { transform: translateY(-100%); opacity: 0.6; }
+    100% { transform: translateY(400%);  opacity: 0; }
 }
-@keyframes shimmerSlide {
-    0%   { transform:translateX(-100%); }
-    100% { transform:translateX(400%); }
+@keyframes hud-flicker {
+    0%,100% { opacity:1; }
+    92%     { opacity:1; }
+    93%     { opacity:0.4; }
+    94%     { opacity:1; }
+    97%     { opacity:0.6; }
+    98%     { opacity:1; }
 }
-@keyframes statIn {
-    from { opacity:0; transform:translateY(6px); }
-    to   { opacity:1; transform:translateY(0); }
+@keyframes hud-in {
+    from { opacity:0; transform:translateY(10px) scale(0.97); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
 }
-.envivo-card {
-    background: #0b0b18;
-    border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.07);
-    box-shadow:
-        0 1px 0 rgba(255,255,255,0.06) inset,
-        0 -1px 0 rgba(0,0,0,0.6) inset,
-        0 12px 40px rgba(0,0,0,0.6);
-    overflow: hidden;
+@keyframes corner-pulse {
+    0%,100% { opacity:0.6; }
+    50%     { opacity:1; }
+}
+@keyframes num-count {
+    from { opacity:0; transform:scale(0.8); }
+    to   { opacity:1; transform:scale(1); }
+}
+@keyframes bar-grow {
+    from { width:0 !important; }
+}
+@keyframes live-ring {
+    0%   { transform:scale(1);   opacity:0.8; }
+    100% { transform:scale(2.8); opacity:0; }
+}
+@keyframes gold-shift {
+    0%,100% { background-position: 0% 50%; }
+    50%     { background-position: 100% 50%; }
+}
+
+.hud-wrap {
+    animation: hud-in 0.5s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+/* Tarjeta principal */
+.hud-card {
     position: relative;
+    background: linear-gradient(160deg, #0d0d1a 0%, #080812 60%, #060610 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow:
+        0 0 0 1px rgba(0,0,0,0.8),
+        0 20px 60px rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.05);
 }
-.envivo-header {
+
+/* Línea superior de acento */
+.hud-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(245,166,35,0.8) 20%,
+        rgba(255,220,80,1) 50%,
+        rgba(245,166,35,0.8) 80%,
+        transparent 100%);
+    z-index: 2;
+}
+
+/* Scan line animada */
+.hud-scanline {
+    position: absolute;
+    left: 0; right: 0;
+    height: 60px;
+    background: linear-gradient(180deg, transparent 0%, rgba(245,166,35,0.025) 50%, transparent 100%);
+    animation: hud-scan 4s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Esquinas tácticas */
+.hud-corner {
+    position: absolute;
+    width: 10px; height: 10px;
+    animation: corner-pulse 2s ease-in-out infinite;
+    z-index: 3;
+}
+.hud-corner-tl { top:6px; left:6px;
+    border-top: 1.5px solid rgba(245,166,35,0.7);
+    border-left: 1.5px solid rgba(245,166,35,0.7); }
+.hud-corner-tr { top:6px; right:6px;
+    border-top: 1.5px solid rgba(245,166,35,0.7);
+    border-right: 1.5px solid rgba(245,166,35,0.7);
+    animation-delay: 0.5s; }
+.hud-corner-bl { bottom:6px; left:6px;
+    border-bottom: 1.5px solid rgba(245,166,35,0.7);
+    border-left: 1.5px solid rgba(245,166,35,0.7);
+    animation-delay: 1s; }
+.hud-corner-br { bottom:6px; right:6px;
+    border-bottom: 1.5px solid rgba(245,166,35,0.7);
+    border-right: 1.5px solid rgba(245,166,35,0.7);
+    animation-delay: 1.5s; }
+
+/* Header */
+.hud-header {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 13px 15px 11px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 12px 16px 10px;
+    border-bottom: 1px solid rgba(245,166,35,0.10);
 }
-.envivo-live {
+.hud-live {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
 }
-.envivo-dot {
-    width: 6px; height: 6px;
+.hud-live-dot {
+    position: relative;
+    width: 7px; height: 7px;
+}
+.hud-live-dot-core {
+    position: absolute;
+    inset: 0;
     border-radius: 50%;
-    background: #00E87A;
-    animation: liveplus 1.8s ease-in-out infinite;
+    background: #00FF88;
+    box-shadow: 0 0 6px #00FF88;
 }
-@keyframes liveplus {
-    0%,100% { box-shadow: 0 0 0 0 rgba(0,232,122,0.7); }
-    50%      { box-shadow: 0 0 0 5px rgba(0,232,122,0); }
+.hud-live-dot-ring {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 1px solid #00FF88;
+    animation: live-ring 1.6s ease-out infinite;
 }
-.envivo-label {
-    font-size: 0.62rem;
-    font-weight: 800;
-    letter-spacing: 0.18em;
-    color: rgba(255,255,255,0.35);
+.hud-live-text {
+    font-size: 0.60rem;
+    font-weight: 900;
+    letter-spacing: 0.22em;
+    color: rgba(255,255,255,0.40);
     text-transform: uppercase;
+    animation: hud-flicker 6s linear infinite;
 }
-.envivo-badge {
+.hud-level-badge {
     display: flex;
     align-items: center;
     gap: 5px;
-    padding: 4px 10px 4px 8px;
-    background: linear-gradient(135deg, rgba(255,184,0,0.12), rgba(255,120,0,0.06));
-    border: 1px solid rgba(255,184,0,0.22);
-    border-radius: 30px;
+    padding: 4px 11px 4px 8px;
+    border-radius: 4px;
+    background: rgba(12,10,4,0.9);
+    border: 1px solid rgba(245,166,35,0.35);
+    position: relative;
+    overflow: hidden;
 }
-.envivo-badge-icon {
-    width: 12px; height: 12px;
+.hud-level-badge::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(245,166,35,0.10) 0%, transparent 60%);
+}
+.hud-level-badge i {
+    width: 11px; height: 11px;
     color: #F5A623;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
 }
-.envivo-badge-text {
-    font-size: 0.63rem;
-    font-weight: 800;
+.hud-level-text {
+    font-size: 0.62rem;
+    font-weight: 900;
     color: #F5A623;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
+    position: relative;
+    z-index: 1;
+    text-transform: uppercase;
 }
-.envivo-stats {
+
+/* Grid de stats */
+.hud-stats {
+    position: relative;
+    z-index: 2;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    padding: 4px 6px 14px;
-    gap: 4px;
+    padding: 6px 8px 14px;
+    gap: 6px;
 }
-.stat-cell {
+
+/* Celda stat */
+.hud-stat {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 6px 10px;
-    border-radius: 12px;
-    animation: statIn 0.4s ease both;
+    padding: 11px 4px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
     position: relative;
+    overflow: hidden;
+    animation: hud-in 0.4s cubic-bezier(0.16,1,0.3,1) both;
 }
-.stat-cell:nth-child(1) { animation-delay: 0.05s; }
-.stat-cell:nth-child(2) { animation-delay: 0.12s; background: rgba(255,184,0,0.04); border: 1px solid rgba(255,184,0,0.10); }
-.stat-cell:nth-child(3) { animation-delay: 0.18s; }
-.stat-label {
-    font-size: 0.52rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: rgba(255,255,255,0.25);
+.hud-stat:nth-child(1) { animation-delay:0.08s; }
+.hud-stat:nth-child(2) {
+    animation-delay:0.16s;
+    background: rgba(245,166,35,0.05);
+    border-color: rgba(245,166,35,0.20);
+    box-shadow: inset 0 1px 0 rgba(245,166,35,0.12), 0 0 20px rgba(245,166,35,0.06);
+}
+.hud-stat:nth-child(3) { animation-delay:0.24s; }
+
+/* Número de referencia táctico en fondo */
+.hud-stat-bg-num {
+    position: absolute;
+    bottom: -6px; right: 4px;
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.02);
+    line-height: 1;
+    user-select: none;
+    pointer-events: none;
+    letter-spacing: -0.05em;
+}
+
+.hud-stat-label {
+    font-size: 0.50rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    color: rgba(255,255,255,0.22);
     text-transform: uppercase;
-    margin-bottom: 9px;
+    margin-bottom: 8px;
 }
-.stat-value {
-    font-size: 1.55rem;
+.hud-stat-value {
+    font-size: 1.60rem;
     font-weight: 900;
     line-height: 1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.04em;
     font-variant-numeric: tabular-nums;
+    margin-bottom: 7px;
 }
-.stat-sub {
-    margin-top: 7px;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-}
-.stat-pill {
-    font-size: 0.55rem;
+.hud-stat-sub {
+    font-size: 0.53rem;
     font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 20px;
-    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }
-.stat-pill-green {
-    background: rgba(0,232,122,0.08);
-    border: 1px solid rgba(0,232,122,0.16);
-    color: #00E87A;
+.hud-sub-green {
+    background: rgba(0,255,136,0.07);
+    border: 1px solid rgba(0,255,136,0.18);
+    color: #00FF88;
 }
-.stat-pill-gold {
-    background: rgba(255,184,0,0.08);
-    border: 1px solid rgba(255,184,0,0.18);
+.hud-sub-gold {
+    background: rgba(245,166,35,0.08);
+    border: 1px solid rgba(245,166,35,0.22);
     color: #F5A623;
 }
-.stat-pill-blue {
-    background: rgba(0,180,255,0.08);
-    border: 1px solid rgba(0,180,255,0.16);
-    color: #00C4FF;
+.hud-sub-blue {
+    background: rgba(0,160,255,0.07);
+    border: 1px solid rgba(0,160,255,0.18);
+    color: #00AAFF;
 }
-.stat-progress-wrap {
+
+/* Barra de progreso */
+.hud-bar-wrap {
     width: 100%;
-    margin-top: 8px;
-    padding: 0 4px;
+    padding: 0 2px;
+    margin-top: 7px;
 }
-.stat-progress-track {
-    height: 2.5px;
+.hud-bar-track {
+    height: 3px;
     background: rgba(255,255,255,0.06);
-    border-radius: 10px;
+    border-radius: 2px;
     overflow: hidden;
     position: relative;
 }
-.stat-progress-fill {
+.hud-bar-fill {
     height: 100%;
-    border-radius: 10px;
-    background: linear-gradient(90deg, #0066FF, #00C4FF);
-    transition: width 1.4s cubic-bezier(0.34,1.2,0.64,1);
+    border-radius: 2px;
+    background: linear-gradient(90deg, #0055FF, #00C4FF, #00FFDD);
+    background-size: 200% 100%;
+    animation: gold-shift 3s ease infinite, bar-grow 1.2s cubic-bezier(0.34,1.2,0.64,1) both;
+    animation-delay: 0s, 0.3s;
     position: relative;
-    overflow: hidden;
 }
-.stat-progress-fill::after {
+.hud-bar-fill::after {
     content: '';
     position: absolute;
-    top: 0; left: 0;
-    width: 30px; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-    animation: shimmerSlide 2s ease infinite;
+    top: 0; left: -40px;
+    width: 40px; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+    animation: hud-scan 1.8s ease infinite;
+    animation-delay: 0.6s;
 }
-.stat-next-label {
+.hud-bar-label {
     margin-top: 5px;
-    font-size: 0.50rem;
+    font-size: 0.48rem;
     color: rgba(255,255,255,0.18);
-    font-weight: 600;
-    letter-spacing: 0.06em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 </style>
 
-<div class="envivo-card">
+<div class="hud-wrap">
+<div class="hud-card">
+
+    <!-- Scan line -->
+    <div class="hud-scanline"></div>
+
+    <!-- Esquinas tácticas -->
+    <div class="hud-corner hud-corner-tl"></div>
+    <div class="hud-corner hud-corner-tr"></div>
+    <div class="hud-corner hud-corner-bl"></div>
+    <div class="hud-corner hud-corner-br"></div>
 
     <!-- Header -->
-    <div class="envivo-header">
-        <div class="envivo-live">
-            <div class="envivo-dot"></div>
-            <span class="envivo-label">En vivo</span>
+    <div class="hud-header">
+        <div class="hud-live">
+            <div class="hud-live-dot">
+                <div class="hud-live-dot-core"></div>
+                <div class="hud-live-dot-ring"></div>
+            </div>
+            <span class="hud-live-text">En vivo</span>
         </div>
-        <div class="envivo-badge">
-            <i data-lucide="zap" class="envivo-badge-icon"></i>
-            <span class="envivo-badge-text">{{ level_info.name if level_info else 'Novato' }} &nbsp;·&nbsp; Nvl {{ level_info.level if level_info else (user.mining_level or 1) }}</span>
+        <div class="hud-level-badge">
+            <i data-lucide="zap"></i>
+            <span class="hud-level-text">{{ level_info.name if level_info else 'Novato' }} · NVL {{ level_info.level if level_info else (user.mining_level or 1) }}</span>
         </div>
     </div>
 
-    <!-- Stats -->
-    <div class="envivo-stats">
+    <!-- Stats grid -->
+    <div class="hud-stats">
 
         <!-- TAPS HOY -->
-        <div class="stat-cell">
-            <div class="stat-label">Taps hoy</div>
-            <div class="stat-value" id="stat-taps" style="color:#fff;">0</div>
-            <div class="stat-sub">
-                <i data-lucide="trending-up" style="width:9px;height:9px;color:#00E87A;flex-shrink:0;"></i>
-                <span class="stat-pill stat-pill-green" id="stat-taps-pxc">+0.0000</span>
-            </div>
+        <div class="hud-stat">
+            <div class="hud-stat-bg-num">T</div>
+            <div class="hud-stat-label">Taps hoy</div>
+            <div class="hud-stat-value" id="stat-taps" style="color:#fff;">0</div>
+            <div class="hud-stat-sub hud-sub-green" id="stat-taps-pxc">+0.0000</div>
         </div>
 
         <!-- MULTIPLICADOR -->
-        <div class="stat-cell">
-            <div class="stat-label">Multiplica</div>
-            <div class="stat-value" style="background:linear-gradient(135deg,#FFD700,#F5830A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">x{{ level_info.tap_mult if level_info else 1.0 }}</div>
-            <div class="stat-sub">
-                <span class="stat-pill stat-pill-gold">por tap</span>
-            </div>
+        <div class="hud-stat">
+            <div class="hud-stat-bg-num">×</div>
+            <div class="hud-stat-label">Potencia</div>
+            <div class="hud-stat-value" style="background:linear-gradient(135deg,#FFE566,#F5A623,#E07000);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gold-shift 2.5s ease infinite;">x{{ level_info.tap_mult if level_info else 1.0 }}</div>
+            <div class="hud-stat-sub hud-sub-gold">por tap</div>
         </div>
 
         <!-- PRÓXIMO NIVEL -->
-        <div class="stat-cell">
+        <div class="hud-stat">
             {% if level_info and level_info.is_max %}
-            <div class="stat-label">Rango</div>
-            <div class="stat-value" style="font-size:1.4rem;">👑</div>
-            <div class="stat-sub">
-                <span class="stat-pill stat-pill-gold">Máximo</span>
-            </div>
+            <div class="hud-stat-bg-num">👑</div>
+            <div class="hud-stat-label">Rango</div>
+            <div class="hud-stat-value" style="font-size:1.3rem;">👑</div>
+            <div class="hud-stat-sub hud-sub-gold">Máximo</div>
             {% else %}
-            <div class="stat-label">Próx. nivel</div>
-            <div class="stat-value" id="stat-next-pct" style="font-size:1.15rem;color:#fff;">{{ level_info.refs_needed if level_info else '?' }}<span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.35);margin-left:2px;">refs</span></div>
-            <div class="stat-progress-wrap">
-                <div class="stat-progress-track">
-                    <div class="stat-progress-fill" id="stat-next-bar" style="width:{{ level_info.progress_pct if level_info else 0 }}%;"></div>
+            <div class="hud-stat-bg-num">↑</div>
+            <div class="hud-stat-label">Próx. nivel</div>
+            <div class="hud-stat-value" id="stat-next-pct" style="color:#fff;font-size:1.30rem;">{{ level_info.refs_needed if level_info else '?' }}<span style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.28);margin-left:2px;-webkit-text-fill-color:rgba(255,255,255,0.28);">refs</span></div>
+            <div class="hud-bar-wrap">
+                <div class="hud-bar-track">
+                    <div class="hud-bar-fill" id="stat-next-bar" style="width:{{ level_info.progress_pct if level_info else 0 }}%;"></div>
                 </div>
             </div>
             {% if level_info %}
-            <div class="stat-next-label">para {{ level_info.next_name }}</div>
+            <div class="hud-bar-label">→ {{ level_info.next_name }}</div>
             {% endif %}
             {% endif %}
         </div>
