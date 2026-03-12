@@ -328,10 +328,11 @@ def api_cron_check_penalties():
     
     Ejemplo cron: 0 * * * * curl -X POST https://tudominio.com/api/user-tasks/cron/check-penalties?key=SECRET_KEY
     """
-    # Verificar clave secreta (opcional pero recomendado)
+    # Verificar clave secreta
     secret_key = request.args.get('key', '')
-    expected_key = os.environ.get('CRON_SECRET_KEY', 'sally-e-cron-2024')
-    
+    expected_key = os.environ.get('CRON_SECRET_KEY', '')
+    if not expected_key:
+        return jsonify({'success': False, 'message': 'CRON_SECRET_KEY no configurada en variables de entorno'}), 500
     if secret_key != expected_key:
         return jsonify({'success': False, 'message': 'Unauthorized'}), 401
     

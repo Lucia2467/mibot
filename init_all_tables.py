@@ -1492,7 +1492,7 @@ DEFAULT_CONFIG = [
     ('se_to_doge_rate', '0.06'),
     ('auto_ban_duplicate_ip', 'false'),
     ('show_promo_fab', 'true'),
-    ('admin_password', 'admin123'),
+    ('admin_password', ''),  # OBLIGATORIO: Configura la contraseña desde el panel de administración antes de usar el sistema.
     ('ad_task_cooldown_seconds', '30'),
     ('ad_task_default_reward', '0.1'),
     ('ad_task_max_daily_completions', '50'),

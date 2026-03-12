@@ -154,7 +154,20 @@ except ImportError as e:
     logger.warning(f"⚠️ Withdrawal notifications not available: {e}")
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(32))
+_secret_key = os.environ.get('SECRET_KEY', '')
+if not _secret_key:
+    # En desarrollo local se genera uno temporal (las sesiones no persisten entre reinicios).
+    # En producción (Railway) SECRET_KEY DEBE estar configurada como variable de entorno.
+    _is_production = os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('RAILWAY_PROJECT_ID')
+    if _is_production:
+        logger.critical("❌ FATAL: SECRET_KEY no está configurada en las variables de entorno de Railway. "
+                        "Las sesiones serán inseguras. Configura SECRET_KEY en el dashboard de Railway.")
+        raise RuntimeError("SECRET_KEY es obligatoria en producción. Configúrala en Railway.")
+    else:
+        _secret_key = secrets.token_hex(32)
+        logger.warning("⚠️ SECRET_KEY no configurada. Usando clave temporal (solo válido en desarrollo local).")
+
+app.secret_key = _secret_key
 app.permanent_session_lifetime = timedelta(days=7)
 
 # Enable CORS for API routes
@@ -171,8 +184,9 @@ if BAN_SYSTEM_AVAILABLE:
 
 # ============== TELEGRAM WEB LOGIN SYSTEM ==============
 try:
-    from telegram_web_login import register_telegram_web_login
+    from telegram_web_login import register_telegram_web_login, validate_init_data as _validate_init_data
     register_telegram_web_login(app)
+    globals()['_validate_init_data'] = _validate_init_data
     TELEGRAM_WEB_LOGIN_AVAILABLE = True
     logger.info("✅ Telegram Web Login system loaded successfully")
 except ImportError as e:
@@ -406,28 +420,87 @@ def check_channel_or_redirect(user_id):
 # ============== HELPER FUNCTIONS ==============
 
 def get_user_id():
-    """Extract user_id from request - MEJORADO para múltiples fuentes incluyendo sesión web"""
-    user_id = request.args.get('user_id') or request.args.get('userId')
+    """
+    Extrae y VALIDA el user_id del request.
 
-    if not user_id:
-        data = request.get_json(silent=True) or {}
-        user_id = data.get('user_id') or data.get('userId')
+    Orden de prioridad:
+    1. initData de Telegram MiniApp (validación HMAC-SHA256) — fuente más segura
+    2. Sesión Flask establecida por Telegram Web Login (también validada previamente)
+    3. Fuentes sin validación criptográfica (query params, cookies, headers) — solo
+       se aceptan si el usuario ya existe en BD, como medida de compatibilidad.
 
-    if not user_id:
-        user_id = request.form.get('user_id') or request.form.get('userId')
+    IMPORTANTE: Nunca confiar en user_id de fuentes no validadas para operaciones
+    que modifiquen balances, retiros o datos sensibles. Usar get_verified_user_id()
+    en esos endpoints.
+    """
+    # --- FUENTE 1: initData de Telegram MiniApp (más segura) ---
+    data = request.get_json(silent=True) or {}
+    init_data = (data.get('init_data') or data.get('initData')
+                 or request.form.get('init_data')
+                 or request.headers.get('X-Telegram-Init-Data'))
 
-    if not user_id:
-        user_id = request.cookies.get('user_id')
+    if init_data:
+        _validator = globals().get('_validate_init_data')
+        if _validator:
+            is_valid, user_data, error = _validator(init_data)
+            if is_valid and user_data.get('id'):
+                validated_id = str(user_data['id'])
+                # Guardar en sesión para requests posteriores del mismo flujo
+                session['validated_user_id'] = validated_id
+                session['init_data_validated'] = True
+                return validated_id
+            else:
+                logger.warning(f"[get_user_id] initData inválido: {error} | IP: {get_client_ip()}")
+                # No continuar con otras fuentes si se envió initData pero era inválido
+                return None
 
-    if not user_id:
-        user_id = request.headers.get('X-User-Id') or request.headers.get('X-Telegram-User-Id')
-    
-    # NUEVO: Verificar sesión web de Telegram Login
-    if not user_id:
-        if session.get('web_logged_in') and session.get('telegram_id'):
-            user_id = session.get('telegram_id')
+    # --- FUENTE 2: Sesión Flask de Telegram Web Login ---
+    if session.get('web_logged_in') and session.get('telegram_id'):
+        return str(session['telegram_id'])
 
-    return str(user_id) if user_id else None
+    # Sesión validada previamente (MiniApp)
+    if session.get('validated_user_id') and session.get('init_data_validated'):
+        return str(session['validated_user_id'])
+
+    # --- FUENTE 3: Fuentes sin validación (compatibilidad) ---
+    # Solo para endpoints de solo lectura. Endpoints sensibles deben usar get_verified_user_id().
+    unverified_id = (request.args.get('user_id') or request.args.get('userId')
+                     or data.get('user_id') or data.get('userId')
+                     or request.form.get('user_id') or request.form.get('userId')
+                     or request.cookies.get('user_id')
+                     or request.headers.get('X-User-Id')
+                     or request.headers.get('X-Telegram-User-Id'))
+
+    return str(unverified_id) if unverified_id else None
+
+
+def get_verified_user_id():
+    """
+    Igual que get_user_id() pero SOLO acepta fuentes validadas criptográficamente.
+    Usar en endpoints que modifiquen balances, retiros, transferencias o datos sensibles.
+    Retorna None si el user_id no fue validado por HMAC o sesión de Telegram Login.
+    """
+    data = request.get_json(silent=True) or {}
+    init_data = (data.get('init_data') or data.get('initData')
+                 or request.form.get('init_data')
+                 or request.headers.get('X-Telegram-Init-Data'))
+
+    if init_data:
+        _validator = globals().get('_validate_init_data')
+        if _validator:
+            is_valid, user_data, error = _validator(init_data)
+            if is_valid and user_data.get('id'):
+                return str(user_data['id'])
+        logger.warning(f"[get_verified_user_id] initData inválido | IP: {get_client_ip()}")
+        return None
+
+    if session.get('web_logged_in') and session.get('telegram_id'):
+        return str(session['telegram_id'])
+
+    if session.get('validated_user_id') and session.get('init_data_validated'):
+        return str(session['validated_user_id'])
+
+    return None
 
 def get_client_ip():
     """Get client IP address"""
@@ -1196,9 +1269,9 @@ def api_channel_verify():
 @app.route('/api/claim', methods=['POST'])
 def api_claim():
     """Claim mining rewards"""
-    user_id = get_user_id()
+    user_id = get_verified_user_id()
     if not user_id:
-        return jsonify({'success': False, 'error': 'User ID required'}), 400
+        return jsonify({'success': False, 'error': 'Autenticación requerida. Envía initData de Telegram.'}), 401
 
     user = get_user(user_id)
     if not user:
@@ -1299,9 +1372,9 @@ def api_tap():
 @app.route('/api/ads/task-center/complete', methods=['POST'])
 def api_ads_task_center_complete():
     """Complete a task center ad view and grant reward"""
-    user_id = get_user_id()
+    user_id = get_verified_user_id()
     if not user_id:
-        return jsonify({'success': False, 'error': 'User ID required'}), 400
+        return jsonify({'success': False, 'error': 'Autenticación requerida. Envía initData de Telegram.'}), 401
 
     user = get_user(user_id)
     if not user:
@@ -2381,10 +2454,10 @@ def api_task_complete():
     """
     Complete a task - FIXED with referral validation on first task.
     """
-    user_id = get_user_id()
+    user_id = get_verified_user_id()
     if not user_id:
-        print(f"[api_task_complete] ❌ No user_id provided")
-        return jsonify({'success': False, 'error': 'User ID required'}), 400
+        logger.warning(f"[api_task_complete] ❌ Sin autenticación válida | IP: {get_client_ip()}")
+        return jsonify({'success': False, 'error': 'Autenticación requerida. Envía initData de Telegram.'}), 401
 
     data = request.get_json() or {}
     task_id = data.get('task_id')
@@ -2482,9 +2555,9 @@ def api_task_verify():
 @app.route('/api/promo/redeem', methods=['POST'])
 def api_promo_redeem():
     """Redeem promo code"""
-    user_id = get_user_id()
+    user_id = get_verified_user_id()
     if not user_id:
-        return jsonify({'success': False, 'error': 'User ID required'}), 400
+        return jsonify({'success': False, 'error': 'Autenticación requerida. Envía initData de Telegram.'}), 401
 
     data = request.get_json() or {}
     code = data.get('code', '').strip()
@@ -2556,9 +2629,9 @@ def api_swap():
 @app.route('/api/withdraw', methods=['POST'])
 def api_withdraw():
     """Create withdrawal request"""
-    user_id = get_user_id()
+    user_id = get_verified_user_id()
     if not user_id:
-        return jsonify({'success': False, 'error': 'User ID required'}), 400
+        return jsonify({'success': False, 'error': 'Autenticación requerida. Envía initData de Telegram.'}), 401
 
     user = get_user(user_id)
     if not user:
@@ -4099,7 +4172,10 @@ def admin_login():
     if request.method == 'POST':
         password = request.form.get('password', '')
 
-        admin_password = get_config('admin_password', 'admin123')
+        admin_password = get_config('admin_password', '')
+        if not admin_password:
+            flash('Error: La contraseña de administrador no está configurada. Configúrala en el panel de configuración del sistema.', 'error')
+            return render_template('admin_login.html')
 
         if password == admin_password:
             session.permanent = True

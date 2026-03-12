@@ -31,8 +31,8 @@ from database import get_user, create_user, update_user
 logger = logging.getLogger(__name__)
 
 # Token del bot de Telegram
-BOT_TOKEN = os.environ.get('BOT_TOKEN', '8490899064:AAHIlp5USATGbOokgxu0IWkGPWbG3E8wnok')
-BOT_USERNAME = os.environ.get('BOT_USERNAME', 'Nuevo18282bot')
+BOT_TOKEN = os.environ.get('BOT_TOKEN', '')
+BOT_USERNAME = os.environ.get('BOT_USERNAME', '')
 WEBAPP_URL = os.environ.get('WEBAPP_URL', '')
 
 # Tiempo máximo de validez del auth_date (24 horas)

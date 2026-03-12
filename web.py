@@ -144,7 +144,17 @@ except ImportError as e:
     logger.warning(f"⚠️ Withdrawal notifications not available: {e}")
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(32))
+_secret_key = os.environ.get('SECRET_KEY', '')
+if not _secret_key:
+    _is_production = os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('RAILWAY_PROJECT_ID')
+    if _is_production:
+        logger.critical("❌ FATAL: SECRET_KEY no está configurada en las variables de entorno de Railway.")
+        raise RuntimeError("SECRET_KEY es obligatoria en producción. Configúrala en Railway.")
+    else:
+        _secret_key = secrets.token_hex(32)
+        logger.warning("⚠️ SECRET_KEY no configurada. Usando clave temporal (solo válido en desarrollo local).")
+
+app.secret_key = _secret_key
 app.permanent_session_lifetime = timedelta(days=7)
 
 # ============================================================
@@ -173,8 +183,9 @@ if BAN_SYSTEM_AVAILABLE:
 
 # ============== TELEGRAM WEB LOGIN SYSTEM ==============
 try:
-    from telegram_web_login import register_telegram_web_login
+    from telegram_web_login import register_telegram_web_login, validate_init_data as _validate_init_data
     register_telegram_web_login(app)
+    globals()['_validate_init_data'] = _validate_init_data
     TELEGRAM_WEB_LOGIN_AVAILABLE = True
     logger.info("✅ Telegram Web Login system loaded successfully")
 except ImportError as e:
@@ -408,28 +419,70 @@ def check_channel_or_redirect(user_id):
 # ============== HELPER FUNCTIONS ==============
 
 def get_user_id():
-    """Extract user_id from request - MEJORADO para múltiples fuentes incluyendo sesión web"""
-    user_id = request.args.get('user_id') or request.args.get('userId')
+    """
+    Extrae y VALIDA el user_id del request.
+    Ver implementación completa y comentarios en app.py.
+    """
+    data = request.get_json(silent=True) or {}
+    init_data = (data.get('init_data') or data.get('initData')
+                 or request.form.get('init_data')
+                 or request.headers.get('X-Telegram-Init-Data'))
 
-    if not user_id:
-        data = request.get_json(silent=True) or {}
-        user_id = data.get('user_id') or data.get('userId')
+    if init_data:
+        _validator = globals().get('_validate_init_data')
+        if _validator:
+            is_valid, user_data, error = _validator(init_data)
+            if is_valid and user_data.get('id'):
+                validated_id = str(user_data['id'])
+                session['validated_user_id'] = validated_id
+                session['init_data_validated'] = True
+                return validated_id
+            else:
+                logger.warning(f"[get_user_id] initData inválido: {error} | IP: {get_client_ip()}")
+                return None
 
-    if not user_id:
-        user_id = request.form.get('user_id') or request.form.get('userId')
+    if session.get('web_logged_in') and session.get('telegram_id'):
+        return str(session['telegram_id'])
 
-    if not user_id:
-        user_id = request.cookies.get('user_id')
+    if session.get('validated_user_id') and session.get('init_data_validated'):
+        return str(session['validated_user_id'])
 
-    if not user_id:
-        user_id = request.headers.get('X-User-Id') or request.headers.get('X-Telegram-User-Id')
+    unverified_id = (request.args.get('user_id') or request.args.get('userId')
+                     or data.get('user_id') or data.get('userId')
+                     or request.form.get('user_id') or request.form.get('userId')
+                     or request.cookies.get('user_id')
+                     or request.headers.get('X-User-Id')
+                     or request.headers.get('X-Telegram-User-Id'))
 
-    # NUEVO: Verificar sesión web de Telegram Login
-    if not user_id:
-        if session.get('web_logged_in') and session.get('telegram_id'):
-            user_id = session.get('telegram_id')
+    return str(unverified_id) if unverified_id else None
 
-    return str(user_id) if user_id else None
+
+def get_verified_user_id():
+    """
+    Solo acepta fuentes validadas criptográficamente.
+    Usar en endpoints que modifiquen balances, retiros o datos sensibles.
+    """
+    data = request.get_json(silent=True) or {}
+    init_data = (data.get('init_data') or data.get('initData')
+                 or request.form.get('init_data')
+                 or request.headers.get('X-Telegram-Init-Data'))
+
+    if init_data:
+        _validator = globals().get('_validate_init_data')
+        if _validator:
+            is_valid, user_data, error = _validator(init_data)
+            if is_valid and user_data.get('id'):
+                return str(user_data['id'])
+        logger.warning(f"[get_verified_user_id] initData inválido | IP: {get_client_ip()}")
+        return None
+
+    if session.get('web_logged_in') and session.get('telegram_id'):
+        return str(session['telegram_id'])
+
+    if session.get('validated_user_id') and session.get('init_data_validated'):
+        return str(session['validated_user_id'])
+
+    return None
 
 def get_client_ip():
     """Get client IP address"""
@@ -3965,7 +4018,10 @@ def admin_login():
     if request.method == 'POST':
         password = request.form.get('password', '')
 
-        admin_password = get_config('admin_password', 'admin123')
+        admin_password = get_config('admin_password', '')
+        if not admin_password:
+            flash('Error: La contraseña de administrador no está configurada. Configúrala en el panel de configuración del sistema.', 'error')
+            return render_template('admin_login.html')
 
         if password == admin_password:
             session.permanent = True
