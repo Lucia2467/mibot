@@ -144,21 +144,15 @@
     color: rgba(255,255,255,0.4);
 }
 
-/* Overlay fullscreen para el juego - Telegram compatible */
+/* Overlay fullscreen para el juego - portrait vertical */
 .game-overlay {
     display: none;
     position: fixed;
     top: 0; left: 0;
-    width: 100vh;       /* ancho = alto de pantalla (rotado) */
-    height: 100vw;      /* alto = ancho de pantalla (rotado) */
+    width: 100vw;
+    height: 100vh;
     background: #000;
     z-index: 99999;
-    /* Rotar 90 grados y centrar - simula landscape sin permisos */
-    transform: rotate(90deg);
-    transform-origin: top left;
-    position: fixed;
-    top: 0;
-    left: 100vw;
 }
 .game-overlay.visible { display: block; }
 
