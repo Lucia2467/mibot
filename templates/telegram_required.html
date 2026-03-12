@@ -160,7 +160,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="content" id="main-content">
+        <div class="content hidden" id="main-content">
             <div class="logo">🔐</div>
             <h1>Acceso desde Telegram Requerido</h1>
             <p>SALLY-E es una Telegram Mini App. Para acceder, debes abrir la aplicación desde Telegram.</p>
@@ -206,7 +206,11 @@
         // =====================================================
         
         (function() {
-            const loading = document.getElementById('loading');
+            // Mostrar los 3 puntos inmediatamente, antes de cualquier verificación
+            var l = document.getElementById('loading');
+            if (l) l.classList.add('active');
+
+            const loading = l;
             const mainContent = document.getElementById('main-content');
             const errorMsg = document.getElementById('error-msg');
             
