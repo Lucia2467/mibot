@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cargando SALLY-E...</title>
+    <title>Autenticación Requerida - SALLY-E</title>
+    
+    <!-- Telegram WebApp Script - CRÍTICO -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -26,18 +29,11 @@
         .container {
             text-align: center;
             max-width: 500px;
-            width: 100%;
         }
         
         .logo {
             font-size: 80px;
             margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
         }
         
         h1 {
@@ -52,21 +48,6 @@
             line-height: 1.6;
         }
         
-        .loading {
-            display: inline-block;
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s linear infinite;
-            margin: 20px 0;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
         .btn {
             display: inline-block;
             padding: 16px 40px;
@@ -78,201 +59,293 @@
             font-size: 16px;
             transition: transform 0.2s;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            cursor: pointer;
-            border: none;
-            margin-top: 20px;
         }
         
         .btn:hover {
             transform: translateY(-2px);
         }
         
-        .error {
-            display: none;
-            padding: 20px;
-            background: rgba(255,0,0,0.2);
-            border-radius: 12px;
-            margin-top: 20px;
-        }
-        
-        .success {
-            display: none;
-            padding: 20px;
-            background: rgba(0,255,0,0.2);
-            border-radius: 12px;
-            margin-top: 20px;
-        }
-        
-        .debug {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 12px;
-            font-family: monospace;
-            font-size: 12px;
+        .features {
+            margin-top: 50px;
             text-align: left;
-            max-height: 300px;
-            overflow-y: auto;
+        }
+        
+        .feature {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .feature-desc {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        /* Loading state */
+        .loading {
             display: none;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+
+        .fb-dots {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 auto 20px;
+        }
+
+        .fb-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: white;
+            animation: fbDotBounce 1.4s ease-in-out infinite both;
+        }
+
+        .fb-dot:nth-child(1) { animation-delay: 0s; }
+        .fb-dot:nth-child(2) { animation-delay: 0.2s; }
+        .fb-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes fbDotBounce {
+            0%, 80%, 100% {
+                transform: scale(0.7);
+                opacity: 0.35;
+            }
+            40% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+        
+        .content.hidden {
+            display: none;
+        }
+        
+        .error-msg {
+            background: rgba(255,100,100,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">🚀</div>
-        <h1 id="status-title">Conectando con Telegram...</h1>
-        <p id="status-message">Por favor espera un momento</p>
-        <div class="loading" id="loader"></div>
-        
-        <div class="error" id="error-box">
-            <h3>⚠️ Error de Conexión</h3>
-            <p id="error-message"></p>
+        <!-- Loading State -->
+        <div class="loading" id="loading">
+            <div class="fb-dots">
+                <div class="fb-dot"></div>
+                <div class="fb-dot"></div>
+                <div class="fb-dot"></div>
+            </div>
+            <h1>Conectando...</h1>
+            <p>Verificando tu cuenta de Telegram</p>
         </div>
         
-        <div class="success" id="success-box">
-            <h3>✅ ¡Conectado!</h3>
-            <p>Redirigiendo a la aplicación...</p>
+        <!-- Main Content -->
+        <div class="content" id="main-content">
+            <div class="logo">🔐</div>
+            <h1>Acceso desde Telegram Requerido</h1>
+            <p>SALLY-E es una Telegram Mini App. Para acceder, debes abrir la aplicación desde Telegram.</p>
+            
+            <a href="https://t.me/SallyEbot" class="btn">
+                🚀 Abrir en Telegram
+            </a>
+            
+            <!-- NEW: Web Login Option -->
+            <div style="margin-top: 20px;">
+                <p style="font-size: 14px; opacity: 0.7; margin-bottom: 15px;">
+                    ¿Prefieres acceder desde el navegador?
+                </p>
+                <a href="/web-login" style="display: inline-block; padding: 12px 28px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; color: white; text-decoration: none; font-weight: 500; transition: all 0.3s ease;">
+                    🌐 Login con Telegram Web
+                </a>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-title">⛏️ Minería Automática</div>
+                    <div class="feature-desc">Mina S-E automáticamente 24/7 sin esfuerzo</div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-title">💰 Gana S-E</div>
+                    <div class="feature-desc">Completa tareas, invita amigos y mejora tu minero</div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-title">💸 Retira tus Ganancias</div>
+                    <div class="feature-desc">Convierte tus S-E a USDT, DOGE o TON</div>
+                </div>
+            </div>
+            
+            <div class="error-msg" id="error-msg" style="display: none;"></div>
         </div>
-        
-        <button class="btn" id="retry-btn" style="display: none;" onclick="retryAuth()">
-            🔄 Reintentar
-        </button>
-        
-        <a href="https://t.me/{{ bot_username if bot_username else 'SallyeeBot' }}" class="btn" id="open-telegram-btn" style="display: none;">
-            📱 Abrir en Telegram
-        </a>
-        
-        <div class="debug" id="debug-info"></div>
     </div>
 
     <script>
-        const tg = window.Telegram?.WebApp;
-        let attemptCount = 0;
-        const maxAttempts = 3;
+        // =====================================================
+        // DETECCIÓN AUTOMÁTICA DE TELEGRAM Y CREACIÓN DE CUENTA
+        // =====================================================
         
-        function log(message) {
-            console.log(message);
-            const debugBox = document.getElementById('debug-info');
-            debugBox.style.display = 'block';
-            debugBox.innerHTML += message + '<br>';
-        }
-        
-        function updateStatus(title, message, showLoader = true) {
-            document.getElementById('status-title').textContent = title;
-            document.getElementById('status-message').textContent = message;
-            document.getElementById('loader').style.display = showLoader ? 'block' : 'none';
-        }
-        
-        function showError(message) {
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('error-box').style.display = 'block';
-            document.getElementById('error-message').textContent = message;
-            document.getElementById('retry-btn').style.display = 'inline-block';
-            document.getElementById('open-telegram-btn').style.display = 'inline-block';
-        }
-        
-        function showSuccess() {
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('success-box').style.display = 'block';
-            document.getElementById('error-box').style.display = 'none';
-        }
-        
-        async function authenticateWithTelegram() {
-            attemptCount++;
-            log(`🔄 Intento ${attemptCount} de ${maxAttempts}`);
+        (function() {
+            const loading = document.getElementById('loading');
+            const mainContent = document.getElementById('main-content');
+            const errorMsg = document.getElementById('error-msg');
             
-            if (!tg) {
-                log('❌ Telegram WebApp no disponible');
-                showError('Esta aplicación debe abrirse desde Telegram. Por favor, abre el bot en Telegram y presiona "Abrir SALLY-E".');
-                return;
+            // Función para mostrar error
+            function showError(msg) {
+                loading.classList.remove('active');
+                mainContent.classList.remove('hidden');
+                errorMsg.textContent = msg;
+                errorMsg.style.display = 'block';
             }
             
-            try {
-                log('✅ Telegram WebApp detectado');
-                tg.ready();
-                tg.expand();
-                
-                const initData = tg.initData || '';
-                const user = tg.initDataUnsafe?.user;
-                
-                log(`📱 InitData: ${initData ? 'Presente' : 'Ausente'}`);
-                log(`👤 Usuario: ${user ? JSON.stringify(user) : 'No disponible'}`);
-                
-                if (!user || !user.id) {
-                    log('⚠️ No se detectó usuario de Telegram');
-                    if (attemptCount < maxAttempts) {
-                        updateStatus('Reintentando...', `Intento ${attemptCount + 1} de ${maxAttempts}`);
-                        setTimeout(authenticateWithTelegram, 2000);
-                        return;
-                    } else {
-                        showError('No se pudo detectar tu usuario de Telegram. Por favor, cierra la app y ábrela nuevamente desde el bot.');
-                        return;
-                    }
+            // Función para redirigir
+            function redirectToApp(userId) {
+                const currentUrl = new URL(window.location.href);
+                const path = currentUrl.pathname === '/' ? '/' : currentUrl.pathname;
+                window.location.href = path + '?user_id=' + userId;
+            }
+            
+            // NUEVO: Verificar si hay sesión web activa primero
+            fetch('/api/web-session/status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.logged_in && data.user_id) {
+                    console.log('✅ Sesión web detectada:', data.user_id);
+                    redirectToApp(data.user_id);
+                    return;
                 }
                 
-                updateStatus('Autenticando...', `Conectando como ${user.first_name || 'Usuario'}`);
-                log(`🔐 Enviando autenticación para usuario ${user.id}`);
-                
-                const response = await fetch('/api/telegram_auth', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        initData: initData,
-                        user: user
-                    })
-                });
-                
-                const data = await response.json();
-                log(`📥 Respuesta: ${JSON.stringify(data)}`);
-                
-                if (data.success) {
-                    log('✅ Autenticación exitosa');
-                    showSuccess();
-                    updateStatus('¡Conectado!', `Bienvenido ${user.first_name}!`, false);
+                // Si no hay sesión web, continuar con la detección de Telegram
+                checkTelegramWebApp();
+            })
+            .catch(error => {
+                console.log('No hay sesión web previa, verificando Telegram...');
+                checkTelegramWebApp();
+            });
+            
+            function checkTelegramWebApp() {
+                // Verificar si estamos en Telegram WebApp
+                if (window.Telegram && window.Telegram.WebApp) {
+                    const tg = window.Telegram.WebApp;
                     
-                    // Redirigir a la página principal
-                    setTimeout(() => {
-                        log('🔄 Redirigiendo a la app...');
-                        window.location.href = '/';
-                    }, 1500);
-                } else {
-                    log(`❌ Autenticación fallida: ${data.message}`);
-                    if (attemptCount < maxAttempts) {
-                        updateStatus('Reintentando...', `Intento ${attemptCount + 1} de ${maxAttempts}`);
-                        setTimeout(authenticateWithTelegram, 2000);
+                    // Inicializar Telegram WebApp
+                    tg.ready();
+                    tg.expand();
+                    
+                    // Obtener datos del usuario
+                    const initDataUnsafe = tg.initDataUnsafe;
+                    const telegramUser = initDataUnsafe?.user;
+                    
+                    console.log('📱 Telegram WebApp detectado');
+                    console.log('👤 Usuario:', telegramUser);
+                    console.log('📦 initData:', tg.initData);
+                    
+                    if (telegramUser && telegramUser.id) {
+                        // ¡Tenemos un usuario de Telegram!
+                        loading.classList.add('active');
+                        mainContent.classList.add('hidden');
+                        
+                        const userId = telegramUser.id.toString();
+                        const username = telegramUser.username || null;
+                        const firstName = telegramUser.first_name || 'Usuario';
+                        
+                        console.log('🔄 Sincronizando usuario:', userId);
+                        
+                        // Sincronizar/crear usuario en el backend
+                        fetch('/api/sync-telegram-data', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                user_id: userId,
+                                username: username,
+                                first_name: firstName,
+                                last_name: telegramUser.last_name || null,
+                                init_data: tg.initData
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('✅ Respuesta del servidor:', data);
+                            if (data.success) {
+                                // Redirigir con el user_id
+                                redirectToApp(userId);
+                            } else {
+                                showError('Error al crear cuenta: ' + (data.error || 'Desconocido'));
+                            }
+                        })
+                        .catch(error => {
+                            console.error('❌ Error:', error);
+                            showError('Error de conexión. Por favor, intenta de nuevo.');
+                        });
+                        
                     } else {
-                        showError(`No se pudo autenticar: ${data.message}. Por favor, intenta cerrar y abrir la app nuevamente.`);
+                        // Telegram WebApp sin datos de usuario
+                        console.log('⚠️ Telegram detectado pero sin datos de usuario');
+                        console.log('initDataUnsafe:', JSON.stringify(initDataUnsafe));
+                        
+                        // Verificar si hay user_id en la URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const urlUserId = urlParams.get('user_id') || urlParams.get('userId');
+                        
+                        if (urlUserId) {
+                            redirectToApp(urlUserId);
+                        }
+                    }
+                } else {
+                    // No estamos en Telegram WebApp
+                    console.log('🌐 Acceso desde navegador normal (no Telegram)');
+                    
+                    // Verificar si hay user_id en la URL de todos modos
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const urlUserId = urlParams.get('user_id') || urlParams.get('userId');
+                    
+                    if (urlUserId) {
+                        // Intentar con el user_id de la URL
+                        loading.classList.add('active');
+                        mainContent.classList.add('hidden');
+                        
+                        fetch('/api/sync-telegram-data', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                user_id: urlUserId
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                redirectToApp(urlUserId);
+                            } else {
+                                showError('Usuario no encontrado');
+                            }
+                        })
+                        .catch(() => {
+                            showError('Error de conexión');
+                        });
                     }
                 }
-                
-            } catch (error) {
-                log(`❌ Error: ${error.message}`);
-                if (attemptCount < maxAttempts) {
-                    updateStatus('Error de conexión', `Reintentando en 2 segundos...`);
-                    setTimeout(authenticateWithTelegram, 2000);
-                } else {
-                    showError(`Error de conexión: ${error.message}. Verifica tu conexión a internet.`);
-                }
             }
-        }
-        
-        function retryAuth() {
-            attemptCount = 0;
-            document.getElementById('error-box').style.display = 'none';
-            document.getElementById('retry-btn').style.display = 'none';
-            document.getElementById('open-telegram-btn').style.display = 'none';
-            document.getElementById('loader').style.display = 'block';
-            updateStatus('Conectando con Telegram...', 'Por favor espera un momento');
-            authenticateWithTelegram();
-        }
-        
-        // Iniciar autenticación automáticamente al cargar
-        window.addEventListener('DOMContentLoaded', () => {
-            log('🚀 Página cargada, iniciando autenticación...');
-            setTimeout(authenticateWithTelegram, 1000);
-        });
+        })();
     </script>
 </body>
 </html>
