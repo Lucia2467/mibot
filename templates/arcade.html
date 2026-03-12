@@ -144,65 +144,70 @@
     color: rgba(255,255,255,0.4);
 }
 
-/* Overlay fullscreen para el juego */
+/* Overlay fullscreen para el juego - Telegram compatible */
 .game-overlay {
     display: none;
     position: fixed;
     top: 0; left: 0;
-    width: 100vw; height: 100vh;
+    width: 100vh;       /* ancho = alto de pantalla (rotado) */
+    height: 100vw;      /* alto = ancho de pantalla (rotado) */
     background: #000;
     z-index: 99999;
-    flex-direction: column;
+    /* Rotar 90 grados y centrar - simula landscape sin permisos */
+    transform: rotate(90deg);
+    transform-origin: top left;
+    position: fixed;
+    top: 0;
+    left: 100vw;
 }
-.game-overlay.visible { display: flex; }
+.game-overlay.visible { display: block; }
 
-/* HUD superior dentro del overlay */
+/* HUD - va en la parte superior del contenido rotado */
 .game-hud {
     position: absolute;
     top: 0; left: 0; right: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 14px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+    padding: 6px 12px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
     z-index: 10;
     pointer-events: none;
+    height: 44px;
 }
 .game-hud-title {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: white;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.9);
 }
 .game-hud-right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 .game-hud-timer {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #00FF88;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.9);
 }
 .game-close-btn {
     pointer-events: all;
-    background: rgba(255,255,255,0.15);
-    border: none;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
     border-radius: 8px;
     color: white;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    padding: 5px 12px;
+    padding: 4px 10px;
     cursor: pointer;
-    backdrop-filter: blur(4px);
 }
 
 .game-iframe-wrap {
-    width: 100%;
-    height: 100%;
-    flex: 1;
+    position: absolute;
+    top: 44px; left: 0; right: 0; bottom: 0;
 }
 .game-iframe-wrap iframe {
     width: 100%;
@@ -345,57 +350,34 @@
             return;
         }
 
-        // Marcar juego activo en grid
         document.querySelectorAll('.game-thumb').forEach(el => el.classList.remove('active'));
         event.currentTarget.classList.add('active');
 
-        // Cargar iframe en overlay fullscreen
         activeGame = { id, name };
         document.getElementById('gamePanelTitle').textContent = icon + ' ' + name;
         document.getElementById('gameFrame').src = url;
-        document.getElementById('gameOverlay').classList.add('visible');
 
-        // Forzar landscape y bloquear scroll
+        // Mostrar overlay y bloquear scroll del body
+        var overlay = document.getElementById('gameOverlay');
+        overlay.classList.add('visible');
         document.body.style.overflow = 'hidden';
 
-        // Solicitar pantalla completa + orientación landscape
-        var overlay = document.getElementById('gameOverlay');
-        if (overlay.requestFullscreen) {
-            overlay.requestFullscreen().then(function() {
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(function(){});
-                }
-            }).catch(function(){});
-        } else if (overlay.webkitRequestFullscreen) {
-            overlay.webkitRequestFullscreen();
+        // Ocultar la UI de Telegram (header) si es posible
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.expand();
         }
 
-        // Resetear timer de sesión
         sessionSeconds = 0;
         sessionEarnedSE = 0;
         document.getElementById('hudEarned').textContent = '0';
         updateTimerDisplay();
 
-        // Iniciar timer si no está corriendo
         if (!timerInterval) {
             timerInterval = setInterval(tick, 1000);
         }
     };
 
     window.closeGame = function() {
-        // Salir de fullscreen
-        if (document.exitFullscreen) {
-            document.exitFullscreen().catch(function(){});
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        }
-
-        // Restaurar orientación portrait
-        if (screen.orientation && screen.orientation.unlock) {
-            screen.orientation.unlock();
-        }
-
-        // Ocultar overlay y pausar timer
         document.getElementById('gameOverlay').classList.remove('visible');
         document.getElementById('gameFrame').src = '';
         document.body.style.overflow = '';
@@ -406,21 +388,6 @@
         }
         activeGame = null;
     };
-
-    // Detectar salida de fullscreen por botón del sistema
-    document.addEventListener('fullscreenchange', function() {
-        if (!document.fullscreenElement) {
-            var overlay = document.getElementById('gameOverlay');
-            if (overlay.classList.contains('visible')) {
-                overlay.classList.remove('visible');
-                document.getElementById('gameFrame').src = '';
-                document.body.style.overflow = '';
-                if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-                activeGame = null;
-                if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
-            }
-        }
-    });
 
     function tick() {
         if (!activeGame || !pageVisible) return;
