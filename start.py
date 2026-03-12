@@ -38,6 +38,12 @@ def run_migrations_once():
     except Exception as e:
         logger.error(f"⚠️ Error en migraciones: {e}")
 
+    try:
+        from migrate_arcade import run_arcade_migration
+        run_arcade_migration()
+    except Exception as e:
+        logger.error(f"⚠️ Error en migración arcade: {e}")
+
 
 # ─────────────────────────────────────────────────────────────
 # FLASK — corre en un hilo daemon

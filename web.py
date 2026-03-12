@@ -929,6 +929,102 @@ def explore_mines():
                          user_id=user_id,
                          show_support_button=True)
 
+@app.route('/explore/games/arcade')
+def explore_arcade():
+    """Arcade - juegos externos con recompensa por tiempo"""
+    user_id = get_user_id()
+    if not user_id:
+        return render_template('telegram_required.html')
+
+    user = get_user(user_id)
+    if not user:
+        return render_template('telegram_required.html')
+
+    user = safe_user_dict(user)
+
+    try:
+        from db import get_cursor
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT COALESCE(SUM(minutes_played), 0)
+                FROM arcade_sessions
+                WHERE user_id = %s AND DATE(created_at) = CURDATE()
+            """, (user_id,))
+            row = cursor.fetchone()
+            minutes_today = int(row[0] if row else 0)
+    except Exception:
+        minutes_today = 0
+
+    return render_template('arcade.html',
+                         user=user,
+                         user_id=user_id,
+                         minutes_today=minutes_today,
+                         show_support_button=True)
+
+
+@app.route('/api/arcade/claim-minute', methods=['POST'])
+def api_arcade_claim_minute():
+    """Otorga 1 S-E por minuto jugado en arcade. Máximo 30 min/día."""
+    data = request.get_json() or {}
+    user_id = data.get('user_id') or get_user_id()
+
+    if not user_id:
+        return jsonify({'success': False, 'error': 'No autenticado'}), 401
+
+    user = get_user(user_id)
+    if not user:
+        return jsonify({'success': False, 'error': 'Usuario no encontrado'}), 404
+
+    if user.get('banned'):
+        return jsonify({'success': False, 'error': 'Usuario bloqueado'}), 403
+
+    game_id = data.get('game_id', 'unknown')
+    REWARD_PER_MIN = 1.0
+    MAX_MINS_DAY = 30
+
+    try:
+        from db import get_cursor, execute_query
+
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT COALESCE(SUM(minutes_played), 0)
+                FROM arcade_sessions
+                WHERE user_id = %s AND DATE(created_at) = CURDATE()
+            """, (user_id,))
+            row = cursor.fetchone()
+            minutes_today = int(row[0] if row else 0)
+
+        if minutes_today >= MAX_MINS_DAY:
+            return jsonify({
+                'success': False,
+                'error': 'Límite diario alcanzado',
+                'minutes_today': minutes_today
+            }), 429
+
+        execute_query("""
+            INSERT INTO arcade_sessions (user_id, game_id, minutes_played, created_at)
+            VALUES (%s, %s, 1, NOW())
+        """, (user_id, game_id))
+
+        current_balance = float(user.get('se_balance', 0))
+        new_balance = round(current_balance + REWARD_PER_MIN, 4)
+        update_user(user_id, se_balance=new_balance)
+
+        minutes_today += 1
+        logger.info(f"[Arcade] user={user_id} game={game_id} +{REWARD_PER_MIN} S-E | hoy={minutes_today}min")
+
+        return jsonify({
+            'success': True,
+            'reward': REWARD_PER_MIN,
+            'minutes_today': minutes_today,
+            'new_balance': new_balance
+        })
+
+    except Exception as e:
+        logger.error(f"[Arcade] Error claim-minute user={user_id}: {e}")
+        return jsonify({'success': False, 'error': 'Error interno'}), 500
+
+
 @app.route('/explore/games/roulette')
 def explore_roulette():
     """Roulette game page"""
