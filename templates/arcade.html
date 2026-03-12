@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+
+{% block title %}SALLY-E | Arcade{% endblock %}
+
+{% block extra_head %}
+<style>
+/* =============================================
+   ARCADE - Juegos externos con recompensa por tiempo
+   ============================================= */
+
+.arcade-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.arcade-back-btn {
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+.arcade-back-btn:hover { background: rgba(255,255,255,0.1); }
+
+/* Barra de progreso de recompensa */
+.reward-bar-wrap {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(0,255,136,0.2);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.reward-bar-icon {
+    width: 40px; height: 40px;
+    background: rgba(0,255,136,0.12);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.reward-bar-info { flex: 1; }
+.reward-bar-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 4px;
+}
+.reward-bar-track {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+.reward-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00FF88, #00CC66);
+    border-radius: 99px;
+    transition: width 1s linear;
+}
+.reward-bar-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6875rem;
+    color: rgba(255,255,255,0.4);
+}
+.reward-bar-earned {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #00FF88;
+    white-space: nowrap;
+}
+
+/* Toast de recompensa */
+.reward-toast {
+    position: fixed;
+    top: 20px; left: 50%;
+    transform: translateX(-50%) translateY(-80px);
+    background: linear-gradient(135deg, #00FF88, #00CC66);
+    color: #0B0B0F;
+    font-weight: 700;
+    font-size: 0.875rem;
+    padding: 10px 20px;
+    border-radius: 99px;
+    z-index: 9999;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+    white-space: nowrap;
+}
+.reward-toast.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Grid de juegos */
+.games-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.game-thumb {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 16px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.game-thumb:hover, .game-thumb.active {
+    border-color: rgba(0,102,255,0.5);
+    background: rgba(0,102,255,0.08);
+}
+.game-thumb.active::after {
+    content: '▶';
+    position: absolute;
+    top: 8px; right: 8px;
+    font-size: 0.6rem;
+    color: #0066FF;
+}
+.game-thumb-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    display: block;
+}
+.game-thumb-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 2px;
+}
+.game-thumb-tag {
+    font-size: 0.625rem;
+    color: rgba(255,255,255,0.4);
+}
+
+/* Panel del juego activo */
+.game-panel {
+    display: none;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+.game-panel.visible { display: block; }
+
+.game-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.game-panel-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: white;
+}
+.game-panel-timer {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+    font-variant-numeric: tabular-nums;
+}
+.game-panel-timer span {
+    color: #00FF88;
+    font-weight: 700;
+}
+
+.game-iframe-wrap {
+    width: 100%;
+    height: 520px;
+    position: relative;
+}
+.game-iframe-wrap iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+/* Límite diario alcanzado */
+.limit-banner {
+    background: rgba(255,80,80,0.1);
+    border: 1px solid rgba(255,80,80,0.25);
+    border-radius: 12px;
+    padding: 14px 16px;
+    text-align: center;
+    font-size: 0.8125rem;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 16px;
+}
+.limit-banner strong { color: #FF5050; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <!-- Header -->
+    <div class="arcade-header">
+        <a href="/explore?user_id={{ user_id }}" class="arcade-back-btn">
+            <i data-lucide="arrow-left" style="width:20px;height:20px;color:rgba(255,255,255,0.7);"></i>
+        </a>
+        <div>
+            <h1 style="font-size:1.4rem;font-weight:700;color:white;margin-bottom:2px;">🕹️ Arcade</h1>
+            <p style="font-size:0.8rem;color:rgba(255,255,255,0.45);">Juega y gana 1 S-E por minuto · Máx 30 min/día</p>
+        </div>
+    </div>
+
+    <!-- Barra de progreso diario -->
+    {% if minutes_today >= 30 %}
+    <div class="limit-banner">
+        <strong>Límite diario alcanzado.</strong> Vuelve mañana para seguir ganando S-E.
+    </div>
+    {% endif %}
+
+    <div class="reward-bar-wrap">
+        <div class="reward-bar-icon">
+            <i data-lucide="timer" style="width:20px;height:20px;color:#00FF88;"></i>
+        </div>
+        <div class="reward-bar-info">
+            <div class="reward-bar-label">Tiempo jugado hoy</div>
+            <div class="reward-bar-track">
+                <div class="reward-bar-fill" id="dailyBar" style="width: {{ [(minutes_today / 30 * 100), 100] | min }}%;"></div>
+            </div>
+            <div class="reward-bar-stats">
+                <span id="dailyMinLabel">{{ minutes_today }} / 30 min</span>
+                <span id="sessionEarned">+0.00 S-E hoy</span>
+            </div>
+        </div>
+        <div class="reward-bar-earned" id="liveEarned">+0.00</div>
+    </div>
+
+    <!-- Selección de juegos -->
+    <div style="font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Elige un juego</div>
+    <div class="games-grid" id="gamesGrid">
+        <div class="game-thumb" onclick="loadGame('chess','♟️','Ajedrez','https://playpager.com/embed/chess/index.html')">
+            <span class="game-thumb-icon">♟️</span>
+            <div class="game-thumb-name">Ajedrez</div>
+            <div class="game-thumb-tag">Estrategia</div>
+        </div>
+        <div class="game-thumb" onclick="loadGame('sudoku','🔢','Sudoku','https://playpager.com/embed/sudoku/index.html')">
+            <span class="game-thumb-icon">🔢</span>
+            <div class="game-thumb-name">Sudoku</div>
+            <div class="game-thumb-tag">Puzzle</div>
+        </div>
+        <div class="game-thumb" onclick="loadGame('solitaire','🃏','Solitario','https://playpager.com/embed/solitaire/index.html')">
+            <span class="game-thumb-icon">🃏</span>
+            <div class="game-thumb-name">Solitario</div>
+            <div class="game-thumb-tag">Cartas</div>
+        </div>
+        <div class="game-thumb" onclick="loadGame('cubes','🧱','Cubes','https://playpager.com/embed/cubes/index.html')">
+            <span class="game-thumb-icon">🧱</span>
+            <div class="game-thumb-name">Falling Cubes</div>
+            <div class="game-thumb-tag">Arcade</div>
+        </div>
+        <div class="game-thumb" onclick="loadGame('wordpuzzle','🔤','Palabras','https://playpager.com/embed/wordpuzzle/index.html')">
+            <span class="game-thumb-icon">🔤</span>
+            <div class="game-thumb-name">Word Puzzle</div>
+            <div class="game-thumb-tag">Palabras</div>
+        </div>
+        <div class="game-thumb" onclick="loadGame('checkers','⬛','Damas','https://playpager.com/embed/checkers/index.html')">
+            <span class="game-thumb-icon">⬛</span>
+            <div class="game-thumb-name">Damas</div>
+            <div class="game-thumb-tag">Estrategia</div>
+        </div>
+    </div>
+
+    <!-- Panel del juego activo -->
+    <div class="game-panel" id="gamePanel">
+        <div class="game-panel-header">
+            <div class="game-panel-title" id="gamePanelTitle">—</div>
+            <div class="game-panel-timer">⏱ Sesión: <span id="sessionTimer">0:00</span></div>
+        </div>
+        <div class="game-iframe-wrap">
+            <iframe id="gameFrame" src="" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+        </div>
+    </div>
+
+</div>
+
+<!-- Toast de recompensa -->
+<div class="reward-toast" id="rewardToast">+1 S-E 🎉</div>
+
+<script>
+(function() {
+    const USER_ID = "{{ user_id }}";
+    const REWARD_PER_MIN = 1.0;
+    const MAX_MINS_DAY = 30;
+
+    let minutesToday = {{ minutes_today | int }};
+    let sessionSeconds = 0;
+    let sessionEarnedSE = 0;
+    let activeGame = null;
+    let timerInterval = null;
+    let pageVisible = true;
+
+    // Detectar si la pestaña está activa (no contar tiempo en segundo plano)
+    document.addEventListener('visibilitychange', function() {
+        pageVisible = !document.hidden;
+    });
+
+    window.loadGame = function(id, icon, name, url) {
+        if (minutesToday >= MAX_MINS_DAY) {
+            alert('Has alcanzado el límite diario de 30 minutos. ¡Vuelve mañana!');
+            return;
+        }
+
+        // Marcar juego activo en grid
+        document.querySelectorAll('.game-thumb').forEach(el => el.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+
+        // Cargar iframe
+        activeGame = { id, name };
+        document.getElementById('gamePanelTitle').textContent = icon + ' ' + name;
+        document.getElementById('gameFrame').src = url;
+        document.getElementById('gamePanel').classList.add('visible');
+        document.getElementById('gamePanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Resetear timer de sesión si cambia de juego
+        sessionSeconds = 0;
+        updateTimerDisplay();
+
+        // Iniciar timer si no está corriendo
+        if (!timerInterval) {
+            timerInterval = setInterval(tick, 1000);
+        }
+    };
+
+    function tick() {
+        if (!activeGame || !pageVisible) return;
+        if (minutesToday >= MAX_MINS_DAY) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            return;
+        }
+
+        sessionSeconds++;
+        updateTimerDisplay();
+
+        // Cada 60 segundos = 1 S-E
+        if (sessionSeconds % 60 === 0) {
+            claimMinute();
+        }
+    }
+
+    function updateTimerDisplay() {
+        const m = Math.floor(sessionSeconds / 60);
+        const s = sessionSeconds % 60;
+        document.getElementById('sessionTimer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function claimMinute() {
+        fetch('/api/arcade/claim-minute', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: USER_ID, game_id: activeGame.id })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                minutesToday = data.minutes_today;
+                sessionEarnedSE += REWARD_PER_MIN;
+
+                // Actualizar UI
+                const pct = Math.min(minutesToday / MAX_MINS_DAY * 100, 100);
+                document.getElementById('dailyBar').style.width = pct + '%';
+                document.getElementById('dailyMinLabel').textContent = minutesToday + ' / 30 min';
+                document.getElementById('sessionEarned').textContent = '+' + sessionEarnedSE.toFixed(2) + ' S-E hoy';
+                document.getElementById('liveEarned').textContent = '+' + sessionEarnedSE.toFixed(2);
+
+                // Toast
+                showToast('+1 S-E 🎉');
+
+                if (minutesToday >= MAX_MINS_DAY) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    document.getElementById('dailyBar').style.background = 'linear-gradient(90deg, #FF5050, #CC0000)';
+                    showToast('¡Límite diario alcanzado! 🏆');
+                }
+            }
+        })
+        .catch(() => {/* silencioso, reintentará en el próximo minuto */});
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('rewardToast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
+})();
+</script>
+{% endblock %}
