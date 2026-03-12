@@ -93,9 +93,16 @@
         .loading {
             display: none;
         }
-        
+
         .loading.active {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000000;
+            z-index: 9999;
         }
 
         .fb-dots {
@@ -103,14 +110,13 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin: 0 auto 20px;
         }
 
         .fb-dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: white;
+            background: #0066FF;
             animation: fbDotBounce 1.4s ease-in-out infinite both;
         }
 
@@ -151,8 +157,6 @@
                 <div class="fb-dot"></div>
                 <div class="fb-dot"></div>
             </div>
-            <h1>Conectando...</h1>
-            <p>Verificando tu cuenta de Telegram</p>
         </div>
         
         <!-- Main Content -->
