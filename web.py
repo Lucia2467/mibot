@@ -169,6 +169,12 @@ try:
 except Exception as e:
     logger.error(f"⚠️ Error en migraciones (no crítico): {e}")
 
+try:
+    from migrate_arcade import run_arcade_migration
+    run_arcade_migration()
+except Exception as e:
+    logger.error(f"⚠️ Error en migración arcade (no crítico): {e}")
+
 # Enable CORS for API routes
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
