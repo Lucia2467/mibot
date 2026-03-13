@@ -908,11 +908,10 @@ def api_arcade_claim_minute():
     REWARD_PER_MIN = 1.0
     MAX_MINS_DAY = 30
 
+    # Asegurar que la tabla existe (fallback si migración no corrió)
     try:
-        from db import get_cursor, execute_query
-
-        # Asegurar que la tabla existe (por si migración no corrió)
-        execute_query("""
+        from db import execute_query as _eq
+        _eq("""
             CREATE TABLE IF NOT EXISTS arcade_sessions (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
                 user_id VARCHAR(64) NOT NULL,
@@ -922,6 +921,13 @@ def api_arcade_claim_minute():
                 INDEX idx_arcade_user_date (user_id, created_at)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
+    except Exception:
+        pass
+
+    try:
+        from db import get_cursor, execute_query
+
+        # Verificar minutos jugados hoy
         with get_cursor() as cursor:
             cursor.execute("""
                 SELECT COALESCE(SUM(minutes_played), 0)
