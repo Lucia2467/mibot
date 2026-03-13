@@ -320,17 +320,11 @@
     let activeGame = null;
     let timerInterval = null;
     let isClaiming = false;
-    let pendingClaims = 0;  // reintentos pendientes
+    let pendingClaims = 0;
 
-    // NO usar visibilitychange — el iframe hace que document.hidden=true en mobile
-    // y el timer se detiene permanentemente. Solo pausamos si la app va al fondo real.
-    let appInBackground = false;
-    document.addEventListener('visibilitychange', function() {
-        // Solo pausar si NO hay overlay de juego activo
-        if (!document.getElementById('gameOverlay').classList.contains('visible')) {
-            appInBackground = document.hidden;
-        }
-    });
+    function isGameVisible() {
+        return document.getElementById('gameOverlay').classList.contains('visible');
+    }
 
     window.loadGame = function(id, icon, name, url) {
         if (minutesToday >= MAX_MINS_DAY) {
@@ -342,13 +336,14 @@
         event.currentTarget.classList.add('active');
 
         activeGame = { id, name };
-        appInBackground = false; // reset al abrir juego
         document.getElementById('gamePanelTitle').textContent = icon + ' ' + name;
-        document.getElementById('gameFrame').src = url;
 
         var overlay = document.getElementById('gameOverlay');
         overlay.classList.add('visible');
         document.body.style.overflow = 'hidden';
+
+        // Cargar iframe después de mostrar overlay
+        document.getElementById('gameFrame').src = url;
 
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.expand();
@@ -357,10 +352,10 @@
         sessionSeconds = 0;
         sessionEarnedSE = 0;
         pendingClaims = 0;
+        isClaiming = false;
         document.getElementById('hudEarned').textContent = '0';
         updateTimerDisplay();
 
-        // Limpiar interval anterior si existe
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(tick, 1000);
     };
@@ -378,8 +373,9 @@
     };
 
     function tick() {
-        if (!activeGame) return;
-        if (appInBackground) return;  // solo pausar si app realmente en fondo
+        // Contar siempre que el overlay esté visible — ignorar visibilitychange del iframe
+        if (!activeGame || !isGameVisible()) return;
+
         if (minutesToday >= MAX_MINS_DAY) {
             clearInterval(timerInterval);
             timerInterval = null;
@@ -388,9 +384,8 @@
 
         sessionSeconds++;
         updateTimerDisplay();
-        document.getElementById("hudEarned").textContent = sessionEarnedSE.toFixed(0);
+        document.getElementById('hudEarned').textContent = sessionEarnedSE.toFixed(0);
 
-        // Cada 60 segundos = 1 S-E
         if (sessionSeconds % 60 === 0) {
             pendingClaims++;
             processClaims();
@@ -412,53 +407,51 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: USER_ID, game_id: activeGame ? activeGame.id : 'unknown' })
         })
-        .then(r => r.json())
-        .then(data => {
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
             isClaiming = false;
             if (data.success) {
-                pendingClaims--;
+                pendingClaims = Math.max(0, pendingClaims - 1);
                 minutesToday = data.minutes_today;
                 sessionEarnedSE += REWARD_PER_MIN;
 
-                const pct = Math.min(minutesToday / MAX_MINS_DAY * 100, 100);
+                var pct = Math.min(minutesToday / MAX_MINS_DAY * 100, 100);
                 document.getElementById('dailyBar').style.width = pct + '%';
                 document.getElementById('dailyMinLabel').textContent = minutesToday + ' / 30 min';
                 document.getElementById('sessionEarned').textContent = '+' + sessionEarnedSE.toFixed(2) + ' S-E hoy';
                 document.getElementById('liveEarned').textContent = '+' + sessionEarnedSE.toFixed(2);
-                document.getElementById("hudEarned").textContent = sessionEarnedSE.toFixed(0);
+                document.getElementById('hudEarned').textContent = sessionEarnedSE.toFixed(0);
 
                 showToast('+1 S-E 🎉');
 
                 if (minutesToday >= MAX_MINS_DAY) {
-                    clearInterval(timerInterval);
-                    timerInterval = null;
+                    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
                     document.getElementById('dailyBar').style.background = 'linear-gradient(90deg, #FF5050, #CC0000)';
                     showToast('¡Límite diario alcanzado! 🏆');
                 }
 
-                // Si hay más claims pendientes, procesar el siguiente
                 if (pendingClaims > 0) setTimeout(processClaims, 500);
 
-            } else if (data.error === 'Límite diario alcanzado') {
-                pendingClaims = 0; // no seguir intentando
-                minutesToday = data.minutes_today || MAX_MINS_DAY;
+            } else if (data.minutes_today >= MAX_MINS_DAY) {
+                pendingClaims = 0;
+                minutesToday = MAX_MINS_DAY;
             } else {
-                // Error del servidor: reintentar en 5 segundos
-                setTimeout(() => { isClaiming = false; processClaims(); }, 5000);
+                // Error servidor: reintentar en 5s sin perder el claim
+                setTimeout(function() { isClaiming = false; processClaims(); }, 5000);
             }
         })
-        .catch(() => {
+        .catch(function() {
             isClaiming = false;
-            // Error de red: reintentar en 8 segundos, sin perder el claim
+            // Error de red: reintentar en 8s
             setTimeout(processClaims, 8000);
         });
     }
 
     function showToast(msg) {
-        const t = document.getElementById('rewardToast');
+        var t = document.getElementById('rewardToast');
         t.textContent = msg;
         t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 2500);
+        setTimeout(function() { t.classList.remove('show'); }, 2500);
     }
 })();
 </script>
