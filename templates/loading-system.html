@@ -200,6 +200,9 @@ function initSaturationSystem() {
             target.closest('#promo-modal') ||
             target.closest('.toast') ||
             target.closest('#support-fab') ||
+            target.closest('.language-btn') ||
+            target.closest('#language-modal') ||
+            target.closest('.lang-toggle-wrapper') ||
             target.closest('[data-no-saturation]');
         if (isInteractive && !isExcluded && !isSaturationActive) {
             showSaturationBlocker();
