@@ -1256,26 +1256,43 @@ document.addEventListener('DOMContentLoaded',()=>{
 // ── Apply translations based on user language ──
 function applyTaskTranslations() {
     const lang = (typeof getCurrentLanguage === 'function') ? getCurrentLanguage() : 'es';
-    if (lang === 'es') return; // Spanish is the original, no translation needed
+    if (lang === 'es') return;
 
-    // 1. Translate task row titles (social tasks with data-translations attr)
-    document.querySelectorAll('[data-task-id][data-translations]').forEach(el => {
+    // 1. Translate task row titles
+    document.querySelectorAll('[data-task-id]').forEach(el => {
         try {
-            const raw = el.getAttribute('data-translations');
-            if (!raw || raw === 'null') return;
-            const translations = JSON.parse(raw.replace(/&quot;/g,'"').replace(/&#34;/g,'"'));
+            // Try data-translations attribute first
+            let raw = el.getAttribute('data-translations');
+            if (!raw || raw === 'null' || raw === 'None') return;
+            // Fix HTML entity encoding
+            raw = raw.replace(/&quot;/g,'"').replace(/&#34;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');
+            const translations = JSON.parse(raw);
             const langData = translations[lang];
             if (langData && langData.title) {
                 el.textContent = langData.title;
             }
-        } catch(e) {}
+        } catch(e) {
+            // Also try reading from _stask_ window object
+            const taskId = el.getAttribute('data-task-id');
+            if (!taskId) return;
+            const key = '_stask_' + taskId.replace(/-/g,'_');
+            const task = window[key];
+            if (task && task.translations) {
+                const langData = task.translations[lang];
+                if (langData && langData.title) el.textContent = langData.title;
+            }
+        }
     });
 
     // 2. Patch window._stask_* objects so modal uses translated text
     Object.keys(window).filter(k => k.startsWith('_stask_')).forEach(k => {
         const task = window[k];
         if (!task || !task.translations) return;
-        const langData = task.translations[lang];
+        let tr = task.translations;
+        if (typeof tr === 'string') {
+            try { tr = JSON.parse(tr); } catch(e) { return; }
+        }
+        const langData = tr[lang];
         if (!langData) return;
         if (langData.title)        task.title        = langData.title;
         if (langData.description)  task.description  = langData.description;
@@ -2173,7 +2190,7 @@ async function stModalSubmit() {
                         <i data-lucide="clipboard-list" style="width:16px;height:16px;color:#fff;"></i>
                     </div>
                     <div>
-                        <div id="stask-instr-label" style="font-size:0.65rem;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">Instrucciones</div>
+                        <div id="stask-instr-label" style="font-size:0.65rem;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;"><span data-i18n="stask_instructions_label">Instrucciones</span></div>
                         <p id="stask-modal-instr" style="margin:0;font-size:0.85rem;color:rgba(255,255,255,0.6);line-height:1.65;"></p>
                     </div>
                 </div>
@@ -2181,10 +2198,10 @@ async function stModalSubmit() {
 
             <!-- Step 1 -->
             <div id="stask-step1" style="display:none;">
-                <div class="sm-step-lbl"><span class="sm-step-n" id="stask-num1">1</span> Ir a la plataforma</div>
+                <div class="sm-step-lbl"><span class="sm-step-n" id="stask-num1">1</span> <span data-i18n="stask_step1_label">Ir a la plataforma</span></div>
                 <a id="stask-modal-link" href="#" target="_blank" class="sm-go-btn">
                     <i data-lucide="external-link" style="width:16px;height:16px;"></i>
-                    <span id="stask-modal-link-label">Ir a la plataforma</span>
+                    <span id="stask-modal-link-label"><span data-i18n="stask_go_platform">Ir a la plataforma</span></span>
                     <i data-lucide="arrow-right" style="width:15px;height:15px;margin-left:auto;opacity:0.6;"></i>
                 </a>
             </div>
@@ -2193,8 +2210,8 @@ async function stModalSubmit() {
             <div id="stask-step2" style="display:none;">
                 <div class="sm-step-lbl">
                     <span class="sm-step-n" id="stask-num2">2</span>
-                    Captura de pantalla
-                    <span class="sm-tag-req">Requerido</span>
+                    <span data-i18n="stask_step2_label">Captura de pantalla</span>
+                    <span class="sm-tag-req"><span data-i18n="stask_required">Requerido</span></span>
                 </div>
                 <div id="stask-upload-area" onclick="document.getElementById('stask-file-input').click()" class="sm-upload-area">
                     <img id="stask-preview-img" style="display:none;width:100%;max-height:220px;object-fit:cover;border-radius:14px;" alt="">
@@ -2203,8 +2220,8 @@ async function stModalSubmit() {
                             <i data-lucide="image-plus" style="width:26px;height:26px;"></i>
                         </div>
                         <div style="text-align:center;">
-                            <div style="font-size:0.88rem;font-weight:700;color:rgba(255,255,255,0.65);">Toca para subir captura</div>
-                            <div style="font-size:0.72rem;color:rgba(255,255,255,0.25);margin-top:3px;">JPG · PNG · máx 5MB</div>
+                            <div style="font-size:0.88rem;font-weight:700;color:rgba(255,255,255,0.65);"><span data-i18n="stask_upload_tap">Toca para subir captura</span></div>
+                            <div style="font-size:0.72rem;color:rgba(255,255,255,0.25);margin-top:3px;"><span data-i18n="stask_upload_hint">JPG · PNG · máx 5MB</span></div>
                         </div>
                     </div>
                     <div id="stask-upload-success" style="display:none;position:absolute;bottom:10px;right:10px;padding:5px 11px;border-radius:10px;background:#22c55e;display:flex;align-items:center;gap:5px;box-shadow:0 4px 14px rgba(34,197,94,0.4);">
@@ -2217,7 +2234,7 @@ async function stModalSubmit() {
 
             <!-- Step 3 -->
             <div id="stask-step3">
-                <div class="sm-step-lbl"><span class="sm-step-n" id="stask-num3">3</span> Link de la publicación <span class="sm-tag-opt">Opcional</span></div>
+                <div class="sm-step-lbl"><span class="sm-step-n" id="stask-num3">3</span> <span data-i18n="stask_step3_label">Link de la publicación</span> <span class="sm-tag-opt" data-i18n="stask_optional">Opcional</span></div>
                 <div class="sm-field" id="stask-link-row">
                     <i data-lucide="link-2" style="width:17px;height:17px;flex-shrink:0;opacity:0.35;"></i>
                     <input id="stask-post-link" type="url" placeholder="https://..." autocomplete="off"
@@ -2227,7 +2244,7 @@ async function stModalSubmit() {
 
             <!-- Step 4 -->
             <div id="stask-step4" style="padding-bottom:18px;">
-                <div class="sm-step-lbl"><span class="sm-step-n" id="stask-num4">4</span> Tu usuario en <b id="stask-step4-platform" style="font-weight:800;"></b> <span class="sm-tag-opt">Opcional</span></div>
+                <div class="sm-step-lbl"><span class="sm-step-n" id="stask-num4">4</span> <span data-i18n="stask_step4_label">Tu usuario en</span> <b id="stask-step4-platform" style="font-weight:800;"></b> <span class="sm-tag-opt" data-i18n="stask_optional">Opcional</span></div>
                 <div class="sm-field" id="stask-user-row">
                     <i data-lucide="at-sign" style="width:17px;height:17px;flex-shrink:0;opacity:0.35;"></i>
                     <input id="stask-username" type="text" placeholder="@tu_usuario" autocomplete="off"
@@ -2247,7 +2264,7 @@ async function stModalSubmit() {
                 box-shadow:0 1px 0 rgba(255,255,255,0.2) inset, 0 -2px 0 rgba(0,0,0,0.3) inset;
             ">
                 <i data-lucide="send" style="width:17px;height:17px;"></i>
-                Enviar para revisión
+                <span data-i18n="stask_submit_btn">Enviar para revisión</span>
             </button>
         </div>
     </div>
