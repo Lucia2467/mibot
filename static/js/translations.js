@@ -1148,7 +1148,7 @@ const LANG = {
         arcade_close: "✕ Exit",
         arcade_toast: "🎮 Reward earned!",
         arcade_daily_bar: "/ 2h",
-        arcade_session_earned: " earned today"
+        arcade_session_earned: " earned today",
         index_balance_label: "TOTAL BALANCE",
         index_pxc_tokens: "PXC TOKENS",
         index_tap_to_earn: "TAP TO EARN",
@@ -2302,7 +2302,7 @@ const LANG = {
         arcade_close: "✕ Salir",
         arcade_toast: "🎮 ¡Recompensa ganada!",
         arcade_daily_bar: "/ 2h",
-        arcade_session_earned: " ganado hoy"
+        arcade_session_earned: " ganado hoy",
         index_balance_label: "BALANCE TOTAL",
         index_pxc_tokens: "PXC TOKENS",
         index_tap_to_earn: "TOCA PARA GANAR",
@@ -3418,7 +3418,7 @@ const LANG = {
         arcade_close: "✕ Sair",
         arcade_toast: "🎮 Recompensa recebida!",
         arcade_daily_bar: "/ 2h",
-        arcade_session_earned: " ganho hoje"
+        arcade_session_earned: " ganho hoje",
         index_balance_label: "SALDO TOTAL",
         index_pxc_tokens: "PXC TOKENS",
         index_tap_to_earn: "TOQUE PARA GANHAR",
@@ -4505,7 +4505,7 @@ const LANG = {
         arcade_close: "✕ Выход",
         arcade_toast: "🎮 Награда получена!",
         arcade_daily_bar: "/ 2ч",
-        arcade_session_earned: " заработано сегодня"
+        arcade_session_earned: " заработано сегодня",
         index_balance_label: "ОБЩИЙ БАЛАНС",
         index_pxc_tokens: "PXC ТОКЕНЫ",
         index_tap_to_earn: "НАЖМИ ЧТОБЫ ЗАРАБОТАТЬ",
@@ -5592,7 +5592,7 @@ const LANG = {
         arcade_close: "✕ خروج",
         arcade_toast: "🎮 تم الحصول على المكافأة!",
         arcade_daily_bar: "/ ساعتان",
-        arcade_session_earned: " مكتسب اليوم"
+        arcade_session_earned: " مكتسب اليوم",
         index_balance_label: "الرصيد الإجمالي",
         index_pxc_tokens: "رموز PXC",
         index_tap_to_earn: "اضغط للربح",
