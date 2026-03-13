@@ -734,75 +734,6 @@
     </style>
 </head>
 <body>
-    <style>
-    /* ── Language Button ── */
-    .language-btn {
-        position: fixed;
-        bottom: 90px; right: 16px;
-        z-index: 8000;
-        width: 46px; height: 46px;
-        border-radius: 50%;
-        background: rgba(15,15,25,0.85);
-        border: 1px solid rgba(99,102,241,0.4);
-        color: white; font-size: 1.3rem;
-        display: flex; align-items: center; justify-content: center;
-        cursor: pointer;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 4px 20px rgba(99,102,241,0.25);
-        transition: transform 0.15s;
-    }
-    .language-btn:active { transform: scale(0.9); }
-    /* ── Modal overlay ── */
-    .language-modal {
-        display: none; position: fixed; inset: 0; z-index: 9999;
-        background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-        align-items: flex-end; justify-content: center;
-    }
-    .language-modal.open { display: flex; }
-    .language-modal-content {
-        width: 100%; max-width: 480px;
-        background: #12121e;
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 24px 24px 0 0;
-        padding: 0 0 32px;
-        animation: slideUpLang 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    @keyframes slideUpLang {
-        from { transform: translateY(100%); opacity: 0; }
-        to   { transform: translateY(0);    opacity: 1; }
-    }
-    .language-modal-content::before {
-        content: ''; display: block;
-        width: 40px; height: 4px;
-        background: rgba(255,255,255,0.15);
-        border-radius: 99px; margin: 12px auto 0;
-    }
-    .language-modal-header {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 14px 20px 10px;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        margin-bottom: 6px;
-    }
-    .language-modal-title { font-size: 1rem; font-weight: 700; color: white; margin: 0; }
-    .language-modal-close {
-        width: 30px; height: 30px; border-radius: 50%;
-        background: rgba(255,255,255,0.07); border: none;
-        color: rgba(255,255,255,0.6); font-size: 0.8rem;
-        cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-    .language-list { padding: 4px 12px; }
-    .language-option {
-        display: flex; align-items: center; gap: 14px;
-        padding: 12px 12px; border-radius: 14px;
-        cursor: pointer; transition: background 0.15s; margin-bottom: 2px;
-    }
-    .language-option:active { background: rgba(99,102,241,0.15); }
-    .language-option.active { background: rgba(99,102,241,0.1); }
-    .language-flag { font-size: 1.4rem; line-height: 1; }
-    .language-name { flex: 1; font-size: 0.95rem; font-weight: 500; color: rgba(255,255,255,0.85); }
-    .language-check { font-size: 0.75rem; color: #6366F1; font-weight: 800; opacity: 0; transition: opacity 0.15s; }
-    .language-option.active .language-check { opacity: 1; }
-    </style>
     <!-- ❄️ Snow Effect Container -->
     <div class="snow-container" id="snow-container"></div>
 
@@ -833,46 +764,8 @@
                     <div class="header-user-id" id="header-user-id">ID: {{ user_id or user.user_id or '---' }}</div>
                 </div>
 
-                <!-- Botón de Idioma Premium con Dropdown -->
-                <div class="lang-toggle-wrapper" id="lang-wrapper">
-                    <button class="lang-toggle-btn-premium" onclick="toggleLangDropdown()" title="Change Language">
-                        <div class="lang-globe-icon">
-                            <i data-lucide="globe" class="lang-icon-svg"></i>
-                        </div>
-                        <span class="lang-code" id="lang-btn-text">ES</span>
-                        <i data-lucide="chevron-down" class="lang-dropdown-arrow" style="width: 14px; height: 14px; color: #3B82F6;"></i>
-                        <div class="lang-glow"></div>
-                    </button>
-
-                    <!-- Dropdown de idiomas -->
-                    <div class="lang-dropdown" id="lang-dropdown">
-                        <div class="lang-dropdown-item" data-lang="en" onclick="selectLangFromDropdown('en')">
-                            <span class="lang-flag">🇺🇸</span>
-                            <span class="lang-name">English</span>
-                            <span class="lang-check">✓</span>
-                        </div>
-                        <div class="lang-dropdown-item" data-lang="es" onclick="selectLangFromDropdown('es')">
-                            <span class="lang-flag">🇪🇸</span>
-                            <span class="lang-name">Español</span>
-                            <span class="lang-check">✓</span>
-                        </div>
-                        <div class="lang-dropdown-item" data-lang="pt" onclick="selectLangFromDropdown('pt')">
-                            <span class="lang-flag">🇧🇷</span>
-                            <span class="lang-name">Português</span>
-                            <span class="lang-check">✓</span>
-                        </div>
-                        <div class="lang-dropdown-item" data-lang="ru" onclick="selectLangFromDropdown('ru')">
-                            <span class="lang-flag">🇷🇺</span>
-                            <span class="lang-name">Русский</span>
-                            <span class="lang-check">✓</span>
-                        </div>
-                        <div class="lang-dropdown-item" data-lang="ar" onclick="selectLangFromDropdown('ar')">
-                            <span class="lang-flag">🇸🇦</span>
-                            <span class="lang-name">العربية</span>
-                            <span class="lang-check">✓</span>
-                        </div>
-                    </div>
-                </div>
+                <!-- Botón de Idioma -->
+                <button id="lang-open-btn" style="display:flex;align-items:center;gap:5px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.35);border-radius:18px;padding:5px 11px;color:white;font-size:0.72rem;font-weight:700;cursor:pointer;letter-spacing:.06em;white-space:nowrap;">🌐 <span id="lang-btn-text">ES</span></button>
             </div>
         </header>
         {% endif %}
@@ -940,123 +833,9 @@
     <div class="toast-container" id="toast-container"></div>
 
     <!-- Language Selector Button -->
-    <button class="language-btn" id="lang-modal-btn" data-no-saturation="true" title="Change Language">🌐</button>
+    
 
 
-
-    <!-- Language Modal Script -->
-    <script>
-        // Toggle language dropdown
-        function toggleLangDropdown() {
-            const wrapper = document.getElementById('lang-wrapper');
-            const dropdown = document.getElementById('lang-dropdown');
-            wrapper.classList.toggle('open');
-            dropdown.classList.toggle('show');
-
-            // Update dropdown items to show current language
-            updateDropdownItems();
-
-            // Haptic feedback
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-            }
-        }
-
-        // Select language from dropdown
-        function selectLangFromDropdown(lang) {
-            if (typeof setLanguage === 'function') {
-                setLanguage(lang);
-            }
-
-            // Close dropdown
-            const wrapper = document.getElementById('lang-wrapper');
-            const dropdown = document.getElementById('lang-dropdown');
-            wrapper.classList.remove('open');
-            dropdown.classList.remove('show');
-
-            // Haptic feedback
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-            }
-
-            updateDropdownItems();
-        }
-
-        // Update dropdown items to show current selection
-        function updateDropdownItems() {
-            const currentLang = typeof getCurrentLanguage === 'function' ? getCurrentLanguage() : 'es';
-            document.querySelectorAll('.lang-dropdown-item').forEach(item => {
-                item.classList.toggle('active', item.getAttribute('data-lang') === currentLang);
-            });
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            const wrapper = document.getElementById('lang-wrapper');
-            const dropdown = document.getElementById('lang-dropdown');
-            if (wrapper && dropdown && !wrapper.contains(e.target)) {
-                wrapper.classList.remove('open');
-                dropdown.classList.remove('show');
-            }
-        });
-
-        // Update active language indicator (for modal)
-        function updateLanguageOptions() {
-            const currentLang = typeof getCurrentLanguage === 'function' ? getCurrentLanguage() : 'es';
-            document.querySelectorAll('.language-option').forEach(opt => {
-                opt.classList.toggle('active', opt.getAttribute('data-lang') === currentLang);
-            });
-            updateDropdownItems();
-        }
-
-        // Language modal functions
-        function openLanguageModal() {
-            const modal = document.getElementById('language-modal');
-            if (modal) { modal.classList.add('open'); updateLanguageOptions(); }
-            if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        }
-        function closeLanguageModal() {
-            const modal = document.getElementById('language-modal');
-            if (modal) modal.classList.remove('open');
-        }
-        function selectLanguage(lang) {
-            if (typeof setLanguage === 'function') setLanguage(lang);
-            closeLanguageModal();
-            updateLanguageOptions();
-            if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-        }
-
-        // Listen for language changes
-        window.addEventListener('languageChanged', updateLanguageOptions);
-
-        // Dedicated listener for language button - bypasses saturation system
-        document.addEventListener('DOMContentLoaded', function() {
-            var btn = document.getElementById('lang-modal-btn');
-            if (btn) {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    openLanguageModal();
-                }, true); // capture phase - runs before saturation interceptor
-            }
-        });
-
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', function() {
-            updateLanguageOptions();
-            updateDropdownItems();
-
-            // Close modal when clicking outside
-            const modal = document.getElementById('language-modal');
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        closeLanguageModal();
-                    }
-                });
-            }
-        });
-    </script>
 
     <!-- Sistema de Animaciones de Carga -->
     {% include 'loading-system.html' %}
@@ -1320,41 +1099,80 @@
     <!-- GigaPub SDK (Reward-based Ads) -->
 
 <script src="https://ad.gigapub.tech/script?id=5226"></script>
-    <!-- Language Selection Modal - z-index above everything -->
-    <div class="language-modal" id="language-modal" style="z-index:99999999;">
-        <div class="language-modal-content">
-            <div class="language-modal-header">
-                <h3 class="language-modal-title" data-i18n="select_language">Select Language</h3>
-                <button class="language-modal-close" onclick="closeLanguageModal()">✕</button>
-            </div>
-            <div class="language-list">
-                <div class="language-option" onclick="selectLanguage('en')" data-lang="en">
-                    <span class="language-flag">🇺🇸</span>
-                    <span class="language-name">English</span>
-                    <span class="language-check">✓</span>
-                </div>
-                <div class="language-option" onclick="selectLanguage('es')" data-lang="es">
-                    <span class="language-flag">🇪🇸</span>
-                    <span class="language-name">Español</span>
-                    <span class="language-check">✓</span>
-                </div>
-                <div class="language-option" onclick="selectLanguage('pt')" data-lang="pt">
-                    <span class="language-flag">🇧🇷</span>
-                    <span class="language-name">Português</span>
-                    <span class="language-check">✓</span>
-                </div>
-                <div class="language-option" onclick="selectLanguage('ru')" data-lang="ru">
-                    <span class="language-flag">🇷🇺</span>
-                    <span class="language-name">Русский</span>
-                    <span class="language-check">✓</span>
-                </div>
-                <div class="language-option" onclick="selectLanguage('ar')" data-lang="ar">
-                    <span class="language-flag">🇸🇦</span>
-                    <span class="language-name">العربية</span>
-                    <span class="language-check">✓</span>
-                </div>
-            </div>
-        </div>
-    </div>
+
+<!-- ═══ LANGUAGE DIALOG ═══ -->
+<dialog id="lang-dialog" style="border:none;border-radius:20px;background:#13131f;padding:0;width:290px;max-width:88vw;color:white;box-shadow:0 25px 80px rgba(0,0,0,0.9);outline:none;">
+  <div style="padding:18px 18px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.07);">
+    <span style="font-size:.95rem;font-weight:700;letter-spacing:.02em;" data-i18n="select_language">Seleccionar idioma</span>
+    <button id="lang-dlg-close" style="background:rgba(255,255,255,0.07);border:none;color:rgba(255,255,255,0.7);width:28px;height:28px;border-radius:50%;font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+  </div>
+  <div style="padding:8px 10px 14px;">
+    <div class="li-opt" data-lang="en" style="display:flex;align-items:center;gap:13px;padding:11px 10px;border-radius:12px;cursor:pointer;transition:background .15s;"><span style="font-size:1.35rem;">🇺🇸</span><span style="flex:1;font-size:.9rem;font-weight:500;">English</span><span class="li-chk" style="color:#6366F1;font-weight:800;font-size:.8rem;opacity:0;">✓</span></div>
+    <div class="li-opt" data-lang="es" style="display:flex;align-items:center;gap:13px;padding:11px 10px;border-radius:12px;cursor:pointer;transition:background .15s;"><span style="font-size:1.35rem;">🇪🇸</span><span style="flex:1;font-size:.9rem;font-weight:500;">Español</span><span class="li-chk" style="color:#6366F1;font-weight:800;font-size:.8rem;opacity:0;">✓</span></div>
+    <div class="li-opt" data-lang="pt" style="display:flex;align-items:center;gap:13px;padding:11px 10px;border-radius:12px;cursor:pointer;transition:background .15s;"><span style="font-size:1.35rem;">🇧🇷</span><span style="flex:1;font-size:.9rem;font-weight:500;">Português</span><span class="li-chk" style="color:#6366F1;font-weight:800;font-size:.8rem;opacity:0;">✓</span></div>
+    <div class="li-opt" data-lang="ru" style="display:flex;align-items:center;gap:13px;padding:11px 10px;border-radius:12px;cursor:pointer;transition:background .15s;"><span style="font-size:1.35rem;">🇷🇺</span><span style="flex:1;font-size:.9rem;font-weight:500;">Русский</span><span class="li-chk" style="color:#6366F1;font-weight:800;font-size:.8rem;opacity:0;">✓</span></div>
+    <div class="li-opt" data-lang="ar" style="display:flex;align-items:center;gap:13px;padding:11px 10px;border-radius:12px;cursor:pointer;transition:background .15s;"><span style="font-size:1.35rem;">🇸🇦</span><span style="flex:1;font-size:.9rem;font-weight:500;">العربية</span><span class="li-chk" style="color:#6366F1;font-weight:800;font-size:.8rem;opacity:0;">✓</span></div>
+  </div>
+</dialog>
+<style>#lang-dialog::backdrop{background:rgba(0,0,0,0.75);backdrop-filter:blur(3px);}</style>
+<script>
+!function(){
+  function getCurLang(){
+    return (typeof getCurrentLanguage==='function'?getCurrentLanguage():null)
+      || localStorage.getItem('sally_lang') || localStorage.getItem('pixie_lang') || 'es';
+  }
+  function refreshUI(){
+    var lang=getCurLang();
+    var btn=document.getElementById('lang-btn-text');
+    if(btn) btn.textContent=lang.toUpperCase();
+    document.querySelectorAll('.li-opt').forEach(function(el){
+      var active=el.dataset.lang===lang;
+      el.style.background=active?'rgba(99,102,241,0.13)':'';
+      el.querySelector('.li-chk').style.opacity=active?'1':'0';
+    });
+  }
+  function openDlg(){
+    refreshUI();
+    var d=document.getElementById('lang-dialog');
+    if(d) d.showModal();
+  }
+  function closeDlg(){
+    var d=document.getElementById('lang-dialog');
+    if(d) d.close();
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    // Open button
+    var openBtn=document.getElementById('lang-open-btn');
+    if(openBtn) openBtn.addEventListener('click',function(e){
+      e.stopImmediatePropagation(); openDlg();
+    }, true);
+    // Close button
+    var closeBtn=document.getElementById('lang-dlg-close');
+    if(closeBtn) closeBtn.addEventListener('click',function(e){
+      e.stopImmediatePropagation(); closeDlg();
+    }, true);
+    // Language options - pure JS, no onclick
+    document.querySelectorAll('.li-opt').forEach(function(el){
+      el.addEventListener('click',function(e){
+        e.stopImmediatePropagation();
+        var lang=el.dataset.lang;
+        if(typeof setLanguage==='function') setLanguage(lang);
+        closeDlg();
+        refreshUI();
+        if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)
+          window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+      }, true);
+    });
+    // Click backdrop to close
+    var dlg=document.getElementById('lang-dialog');
+    if(dlg) dlg.addEventListener('click',function(e){
+      var r=dlg.getBoundingClientRect();
+      if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom) closeDlg();
+    });
+    refreshUI();
+    window.addEventListener('languageChanged',refreshUI);
+  });
+}();
+</script>
 </body>
 </html>
