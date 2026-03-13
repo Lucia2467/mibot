@@ -183,16 +183,16 @@ input[type="file"] { display: none; }
 <div class="st-container">
     <!-- Header -->
     <div class="st-header">
-        <h1>📱 Tareas Sociales</h1>
-        <p>Completa tareas en redes sociales y gana recompensas</p>
+        <h1 data-i18n="social_tasks_title">📱 Tareas Sociales</h1>
+        <p data-i18n="social_tasks_subtitle">Completa tareas en redes sociales y gana recompensas</p>
     </div>
 
     <!-- Tabs -->
     <div class="st-tabs">
-        <button class="st-tab active" onclick="switchTab('available')">
+        <button class="st-tab active" onclick="switchTab('available')" data-i18n="social_tasks_tab_available">
             Disponibles
         </button>
-        <button class="st-tab" onclick="switchTab('my')">
+        <button class="st-tab" onclick="switchTab('my')" data-i18n="social_tasks_tab_mine">
             Mis Tareas
             {% set pending_subs = submissions|selectattr('status','equalto','pending')|list %}
             {% if pending_subs %}
@@ -229,11 +229,11 @@ input[type="file"] { display: none; }
                     <!-- Already submitted -->
                     <div class="user-status-row {{ task.user_status }}">
                         {% if task.user_status == 'pending' %}
-                            ⏳ Enviado — En revisión
+                            <span data-i18n="social_tasks_status_pending">⏳ Enviado — En revisión</span>
                         {% elif task.user_status == 'approved' %}
-                            ✅ Completado — Recompensa acreditada
+                            <span data-i18n="social_tasks_status_approved">✅ Completado — Recompensa acreditada</span>
                         {% else %}
-                            ❌ Rechazado — Revisa tus envíos
+                            <span data-i18n="social_tasks_status_rejected">❌ Rechazado — Revisa tus envíos</span>
                         {% endif %}
                     </div>
                 {% else %}
@@ -245,20 +245,20 @@ input[type="file"] { display: none; }
 
                         {% if task.target_url %}
                         <a href="{{ task.target_url }}" target="_blank" class="task-url-btn">
-                            🔗 Ir a {{ plat.name }}
+                            <span data-i18n="social_tasks_go_to">🔗 Ir a</span> {{ plat.name }}
                         </a>
                         {% endif %}
 
                         {% if task.instructions %}
                         <div class="instructions-box">
-                            <strong>📋 Instrucciones:</strong><br>
+                            <strong data-i18n="social_tasks_instructions">📋 Instrucciones:</strong><br>
                             {{ task.instructions }}
                         </div>
                         {% endif %}
 
                         <div class="task-progress-row">
-                            <span>{{ task.current_completions }} completadas</span>
-                            <span>{{ task.max_completions - task.current_completions }} cupos restantes</span>
+                            <span>{{ task.current_completions }} <span data-i18n="social_tasks_completed_count">completadas</span></span>
+                            <span>{{ task.max_completions - task.current_completions }} <span data-i18n="social_tasks_slots_left">cupos restantes</span></span>
                         </div>
                         <div class="task-progress-bar">
                             <div class="task-progress-fill" style="width:{{ progress }}%"></div>
@@ -271,8 +271,9 @@ input[type="file"] { display: none; }
                             <img class="upload-preview" id="preview-{{ task.task_id }}" alt="preview">
                             <div id="upload-placeholder-{{ task.task_id }}">
                                 <div class="upload-icon">📸</div>
-                                <div class="upload-text">Toca para subir captura de pantalla<br>
-                                    <small style="opacity:0.6;">JPG, PNG — máx 5MB</small>
+                                <div class="upload-text">
+                                    <span data-i18n="social_tasks_upload_tap">Toca para subir captura de pantalla</span><br>
+                                    <small style="opacity:0.6;" data-i18n="social_tasks_upload_hint">JPG, PNG — máx 5MB</small>
                                 </div>
                             </div>
                         </div>
@@ -283,7 +284,7 @@ input[type="file"] { display: none; }
                         <button class="task-submit-btn" id="submit-btn-{{ task.task_id }}"
                                 onclick="submitTask('{{ task.task_id }}', {{ task.requires_screenshot|tojson }})"
                                 {% if task.requires_screenshot %}disabled{% endif %}>
-                            📤 Enviar para revisión
+                            <span data-i18n="social_tasks_submit_btn">📤 Enviar para revisión</span>
                         </button>
                     </div>
                 {% endif %}
@@ -292,8 +293,8 @@ input[type="file"] { display: none; }
         {% else %}
             <div class="empty-state">
                 <div class="big">📭</div>
-                <p>No hay tareas disponibles por ahora</p>
-                <p style="font-size:0.8rem;margin-top:8px;opacity:0.6;">Vuelve más tarde</p>
+                <p data-i18n="social_tasks_empty_available">No hay tareas disponibles por ahora</p>
+                <p style="font-size:0.8rem;margin-top:8px;opacity:0.6;" data-i18n="social_tasks_empty_available_sub">Vuelve más tarde</p>
             </div>
         {% endif %}
     </div>
@@ -322,16 +323,16 @@ input[type="file"] { display: none; }
                     {% endif %}
                 </div>
                 <div class="sub-status {{ sub.status }}">
-                    {% if sub.status == 'pending' %}⏳ Revisión
-                    {% elif sub.status == 'approved' %}✅ Aprobado
-                    {% else %}❌ Rechazado{% endif %}
+                    {% if sub.status == 'pending' %}<span data-i18n="social_tasks_review_label">⏳ Revisión</span>
+                    {% elif sub.status == 'approved' %}<span data-i18n="social_tasks_approved_label">✅ Aprobado</span>
+                    {% else %}<span data-i18n="social_tasks_rejected_label">❌ Rechazado</span>{% endif %}
                 </div>
             </div>
             {% endfor %}
         {% else %}
             <div class="empty-state">
                 <div class="big">📋</div>
-                <p>No has completado ninguna tarea todavía</p>
+                <p data-i18n="social_tasks_empty_mine">No has completado ninguna tarea todavía</p>
             </div>
         {% endif %}
     </div>
@@ -352,7 +353,7 @@ function previewImage(taskId, input) {
     const file = input.files[0];
     if (!file) return;
     if (file.size > 5_000_000) {
-        showToast('La imagen es muy grande (máx 5MB)', 'error'); return;
+        showToast(t('social_tasks_toast_image_large'), 'error'); return;
     }
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -370,11 +371,11 @@ function previewImage(taskId, input) {
 
 async function submitTask(taskId, requiresScreenshot) {
     if (requiresScreenshot && !screenshots[taskId]) {
-        showToast('Sube una captura de pantalla primero', 'error'); return;
+        showToast(t('social_tasks_toast_no_screenshot'), 'error'); return;
     }
     const btn = document.getElementById(`submit-btn-${taskId}`);
     btn.disabled = true;
-    btn.innerHTML = '⏳ Enviando...';
+    btn.innerHTML = t('social_tasks_submitting');
 
     try {
         const res = await fetch('/api/social-tasks/submit', {
@@ -390,28 +391,27 @@ async function submitTask(taskId, requiresScreenshot) {
         const data = await res.json();
 
         if (data.success) {
-            showToast('✅ Enviado correctamente — en revisión');
-            // Update UI
+            showToast(t('social_tasks_toast_submitted'));
             const card = document.getElementById(`stask-${taskId}`);
             const body = card.querySelector('.task-card-body');
             if (body) {
                 body.outerHTML = `
                     <div class="user-status-row pending">
-                        ⏳ Enviado — En revisión
+                        ${t('social_tasks_status_pending')}
                     </div>`;
             }
             if (window.Telegram?.WebApp) {
                 window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
             }
         } else {
-            showToast(data.error || 'Error al enviar', 'error');
+            showToast(data.error || t('social_tasks_toast_error'), 'error');
             btn.disabled = false;
-            btn.innerHTML = '📤 Enviar para revisión';
+            btn.innerHTML = t('social_tasks_submit_btn');
         }
     } catch (e) {
-        showToast('Error de conexión', 'error');
+        showToast(t('social_tasks_toast_connection'), 'error');
         btn.disabled = false;
-        btn.innerHTML = '📤 Enviar para revisión';
+        btn.innerHTML = t('social_tasks_submit_btn');
     }
 }
 </script>
