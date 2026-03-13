@@ -1246,9 +1246,18 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(typeof lucide!=='undefined')lucide.createIcons();
     loadUserTasks();
     switchTab('all');
-    // Apply AI translations to task titles and modal data
-    setTimeout(applyTaskTranslations, 100);
+    // Run translations after language is fully initialized
+    setTimeout(applyTaskTranslations, 300);
+    setTimeout(applyTaskTranslations, 1000);
+    setTimeout(applyTaskTranslations, 2500);
 });
+
+// Also re-apply when language changes
+const _origSetLang = window.setLanguage;
+window.setLanguage = function(lang) {
+    if (_origSetLang) _origSetLang(lang);
+    setTimeout(applyTaskTranslations, 50);
+};
 
 // ── Apply translations based on user language ──
 // ── Task translations map (injected from server) ──
