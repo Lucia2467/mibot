@@ -778,7 +778,11 @@ def tasks():
 
     for task in all_tasks:
         task_id = str(task.get('task_id', ''))
-
+        # Parse translations JSON string → dict
+        tr = task.get('translations')
+        if isinstance(tr, str):
+            try: task['translations'] = json.loads(tr)
+            except: task['translations'] = None
         if task_id in completed_ids_set:
             completed_tasks[task_id] = task
         else:
@@ -788,13 +792,20 @@ def tasks():
 
     # Usar el nuevo template con sistema PTS
     # Social tasks with screenshot
-    social_tasks = get_active_social_tasks(user_id=user_id) if globals().get("SOCIAL_TASKS_AVAILABLE") else []
+    social_tasks_raw = get_active_social_tasks(user_id=user_id) if globals().get("SOCIAL_TASKS_AVAILABLE") else []
+    # Parse translations for social tasks too
+    import json as _j
+    for st in social_tasks_raw:
+        tr = st.get('translations')
+        if isinstance(tr, str):
+            try: st['translations'] = _j.loads(tr)
+            except: st['translations'] = None
 
     return render_template('tasks_pts.html',
                          user=user,
                          available_tasks=available_tasks,
                          completed_tasks=completed_tasks,
-                         social_tasks=social_tasks,
+                         social_tasks=social_tasks_raw,
                          user_id=user_id,
                          show_support_button=True)
 
