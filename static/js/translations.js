@@ -1149,6 +1149,14 @@ const LANG = {
         arcade_toast: "🎮 Reward earned!",
         arcade_daily_bar: "/ 2h",
         arcade_session_earned: " earned today"
+        index_balance_label: "TOTAL BALANCE",
+        index_pxc_tokens: "PXC TOKENS",
+        index_tap_to_earn: "TAP TO EARN",
+        index_per_tap: "PXC per tap",
+        index_energy: "ENERGY",
+        index_claim_btn: "Claim PXC",
+        index_pending: "PENDING TO CLAIM",
+        index_live: "LIVE",
     },
     
     es: {
@@ -2295,6 +2303,14 @@ const LANG = {
         arcade_toast: "🎮 ¡Recompensa ganada!",
         arcade_daily_bar: "/ 2h",
         arcade_session_earned: " ganado hoy"
+        index_balance_label: "BALANCE TOTAL",
+        index_pxc_tokens: "PXC TOKENS",
+        index_tap_to_earn: "TOCA PARA GANAR",
+        index_per_tap: "PXC por tap",
+        index_energy: "ENERGÍA",
+        index_claim_btn: "Reclamar PXC",
+        index_pending: "PENDIENTE DE RECLAMAR",
+        index_live: "EN VIVO",
     },
     
     pt: {
@@ -3403,6 +3419,14 @@ const LANG = {
         arcade_toast: "🎮 Recompensa recebida!",
         arcade_daily_bar: "/ 2h",
         arcade_session_earned: " ganho hoje"
+        index_balance_label: "SALDO TOTAL",
+        index_pxc_tokens: "PXC TOKENS",
+        index_tap_to_earn: "TOQUE PARA GANHAR",
+        index_per_tap: "PXC por toque",
+        index_energy: "ENERGIA",
+        index_claim_btn: "Resgatar PXC",
+        index_pending: "PENDENTE PARA RESGATAR",
+        index_live: "AO VIVO",
     },
 
     ru: {
@@ -4482,6 +4506,14 @@ const LANG = {
         arcade_toast: "🎮 Награда получена!",
         arcade_daily_bar: "/ 2ч",
         arcade_session_earned: " заработано сегодня"
+        index_balance_label: "ОБЩИЙ БАЛАНС",
+        index_pxc_tokens: "PXC ТОКЕНЫ",
+        index_tap_to_earn: "НАЖМИ ЧТОБЫ ЗАРАБОТАТЬ",
+        index_per_tap: "PXC за нажатие",
+        index_energy: "ЭНЕРГИЯ",
+        index_claim_btn: "Получить PXC",
+        index_pending: "ОЖИДАЕТ ПОЛУЧЕНИЯ",
+        index_live: "ПРЯМОЙ ЭФИР",
     },
 
     ar: {
@@ -5561,6 +5593,14 @@ const LANG = {
         arcade_toast: "🎮 تم الحصول على المكافأة!",
         arcade_daily_bar: "/ ساعتان",
         arcade_session_earned: " مكتسب اليوم"
+        index_balance_label: "الرصيد الإجمالي",
+        index_pxc_tokens: "رموز PXC",
+        index_tap_to_earn: "اضغط للربح",
+        index_per_tap: "PXC لكل ضغطة",
+        index_energy: "الطاقة",
+        index_claim_btn: "استلام PXC",
+        index_pending: "في انتظار الاستلام",
+        index_live: "مباشر",
     }
 };
 
