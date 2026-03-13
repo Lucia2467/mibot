@@ -56,6 +56,7 @@ def init_social_tasks_tables():
             current_completions INT       NOT NULL DEFAULT 0,
             requires_screenshot TINYINT(1) NOT NULL DEFAULT 1,
             is_active      TINYINT(1)    NOT NULL DEFAULT 1,
+            translations   JSON           DEFAULT NULL,
             created_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
@@ -78,6 +79,12 @@ def init_social_tasks_tables():
             UNIQUE KEY uq_user_task (task_id, user_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     """)
+
+    # Migración: agregar translations si tabla ya existe
+    try:
+        execute_query("ALTER TABLE social_tasks ADD COLUMN translations JSON DEFAULT NULL")
+    except:
+        pass
 
     print("[social_tasks] ✅ Tablas inicializadas")
 
@@ -147,14 +154,17 @@ def get_social_task(task_id):
 
 def create_social_task(data):
     """Crea una tarea social. Retorna task_id o None."""
+    import json as _json
     try:
         task_id = str(uuid.uuid4())
+        translations = data.get('translations')
+        translations_json = _json.dumps(translations, ensure_ascii=False) if translations else None
         execute_query("""
             INSERT INTO social_tasks
                 (task_id, title, description, platform, action_type,
                  target_url, instructions, reward_amount, reward_currency,
-                 max_completions, requires_screenshot, is_active)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
+                 max_completions, requires_screenshot, is_active, translations)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1, %s)
         """, (
             task_id,
             data.get('title', '').strip(),
@@ -167,6 +177,7 @@ def create_social_task(data):
             data.get('reward_currency', 'se').lower(),
             int(data.get('max_completions', 100)),
             1 if data.get('requires_screenshot') else 0,
+            translations_json,
         ))
         return task_id
     except Exception as e:
@@ -175,12 +186,16 @@ def create_social_task(data):
 
 
 def update_social_task(task_id, data):
+    import json as _json
     try:
+        translations = data.get('translations')
+        translations_json = _json.dumps(translations, ensure_ascii=False) if translations else None
         execute_query("""
             UPDATE social_tasks SET
                 title = %s, description = %s, platform = %s, action_type = %s,
                 target_url = %s, instructions = %s, reward_amount = %s,
-                reward_currency = %s, max_completions = %s, requires_screenshot = %s
+                reward_currency = %s, max_completions = %s, requires_screenshot = %s,
+                translations = COALESCE(%s, translations)
             WHERE task_id = %s
         """, (
             data.get('title', '').strip(),
@@ -193,6 +208,7 @@ def update_social_task(task_id, data):
             data.get('reward_currency', 'se').lower(),
             int(data.get('max_completions', 100)),
             1 if data.get('requires_screenshot') else 0,
+            translations_json,
             task_id,
         ))
         return True

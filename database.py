@@ -871,9 +871,9 @@ def get_task(task_id):
             task['active'] = bool(task.get('active', 1))
         return task
 
-def create_task(title, description, reward, url=None, task_type='link', active=True, requires_channel_join=False, channel_username=None):
+def create_task(title, description, reward, url=None, task_type='link', active=True, requires_channel_join=False, channel_username=None, translations=None):
     """Crea una nueva tarea"""
-    import uuid
+    import uuid, json as _json
     task_id = f"task_{uuid.uuid4().hex[:8]}"
     try:
         if channel_username:
@@ -884,11 +884,18 @@ def create_task(title, description, reward, url=None, task_type='link', active=T
             channel_username = None
         
         requires_channel_join = 1 if requires_channel_join else 0
+        translations_json = _json.dumps(translations, ensure_ascii=False) if translations else None
+        
+        # Migration: add translations column if missing
+        try:
+            execute_query("ALTER TABLE tasks ADD COLUMN IF NOT EXISTS translations JSON DEFAULT NULL")
+        except:
+            pass
         
         execute_query("""
-            INSERT INTO tasks (task_id, title, description, reward, url, task_type, active, requires_channel_join, channel_username, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
-        """, (task_id, title, description, float(reward), url, task_type, active, requires_channel_join, channel_username))
+            INSERT INTO tasks (task_id, title, description, reward, url, task_type, active, requires_channel_join, channel_username, translations, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+        """, (task_id, title, description, float(reward), url, task_type, active, requires_channel_join, channel_username, translations_json))
         
         print(f"[create_task] ✅ Tarea creada: {task_id}")
         return True
@@ -918,6 +925,11 @@ def update_task(task_id, **kwargs):
     
     if 'active' in kwargs:
         kwargs['active'] = 1 if kwargs['active'] else 0
+
+    if 'translations' in kwargs and kwargs['translations'] is not None:
+        import json as _json
+        if isinstance(kwargs['translations'], (dict, list)):
+            kwargs['translations'] = _json.dumps(kwargs['translations'], ensure_ascii=False)
     
     set_clause = ", ".join([f"{k} = %s" for k in kwargs.keys()])
     values = list(kwargs.values()) + [task_id]
@@ -1278,6 +1290,11 @@ def update_promo_code(code, **kwargs):
     
     if 'active' in kwargs:
         kwargs['active'] = 1 if kwargs['active'] else 0
+
+    if 'translations' in kwargs and kwargs['translations'] is not None:
+        import json as _json
+        if isinstance(kwargs['translations'], (dict, list)):
+            kwargs['translations'] = _json.dumps(kwargs['translations'], ensure_ascii=False)
     
     set_clause = ", ".join([f"{k} = %s" for k in kwargs.keys()])
     values = list(kwargs.values()) + [code.upper()]

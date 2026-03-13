@@ -247,3 +247,101 @@ def admin_reject_submission(submission_id):
     if ok:
         return jsonify({'success': True, 'message': msg})
     return jsonify({'success': False, 'error': msg}), 400
+
+# ──────────────────────────────────────────────────
+#  AUTO-TRADUCCIÓN CON IA
+# ──────────────────────────────────────────────────
+@social_tasks_bp.route('/admin/social-tasks/auto-translate', methods=['POST'])
+@_admin_required
+def admin_auto_translate():
+    """
+    Recibe title/description/instructions en español,
+    devuelve traducciones a EN, PT, RU, AR usando Claude AI.
+    """
+    import os, json
+
+    data = request.json or {}
+    title        = (data.get('title') or '').strip()
+    description  = (data.get('description') or '').strip()
+    instructions = (data.get('instructions') or '').strip()
+
+    if not title:
+        return jsonify({'success': False, 'error': 'Se requiere al menos el título'}), 400
+
+    api_key = os.environ.get('ANTHROPIC_API_KEY')
+    if not api_key:
+        return jsonify({'success': False, 'error': 'ANTHROPIC_API_KEY no configurada'}), 500
+
+    import requests as req
+
+    fields = {}
+    if title:        fields['title']        = title
+    if description:  fields['description']  = description
+    if instructions: fields['instructions'] = instructions
+
+    fields_json = json.dumps(fields, ensure_ascii=False)
+
+    prompt = f"""Translate the following task fields from Spanish to English (en), Portuguese (pt), Russian (ru), and Arabic (ar).
+
+Return ONLY a valid JSON object with this exact structure (no markdown, no explanations):
+{{
+  "en": {{}},
+  "pt": {{}},
+  "ru": {{}},
+  "ar": {{}}
+}}
+
+Each inner object must contain only the keys present in the input.
+
+Input fields (Spanish):
+{fields_json}
+
+Rules:
+- Keep it natural and engaging for each language
+- For Arabic, use right-to-left friendly phrasing
+- Preserve any @usernames, URLs, or numbers exactly as-is
+- Return ONLY the JSON, nothing else"""
+
+    try:
+        response = req.post(
+            'https://api.anthropic.com/v1/messages',
+            headers={
+                'x-api-key': api_key,
+                'anthropic-version': '2023-06-01',
+                'content-type': 'application/json',
+            },
+            json={
+                'model': 'claude-haiku-4-5-20251001',
+                'max_tokens': 1024,
+                'messages': [{'role': 'user', 'content': prompt}]
+            },
+            timeout=30
+        )
+        result = response.json()
+
+        if 'error' in result:
+            return jsonify({'success': False, 'error': result['error'].get('message', 'API error')}), 500
+
+        raw_text = result['content'][0]['text'].strip()
+
+        # Clean possible markdown fences
+        if raw_text.startswith('```'):
+            raw_text = raw_text.split('```')[1]
+            if raw_text.startswith('json'):
+                raw_text = raw_text[4:]
+        raw_text = raw_text.strip()
+
+        translations = json.loads(raw_text)
+
+        # Validate structure
+        for lang in ['en', 'pt', 'ru', 'ar']:
+            if lang not in translations:
+                translations[lang] = {}
+
+        return jsonify({'success': True, 'translations': translations})
+
+    except json.JSONDecodeError as e:
+        return jsonify({'success': False, 'error': f'IA devolvió formato inválido: {str(e)}'}), 500
+    except Exception as e:
+        print(f'[auto-translate] Error: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500

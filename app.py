@@ -5199,7 +5199,14 @@ def admin_task_new():
         requires_channel_join = request.form.get('requires_channel_join') == 'on'
         channel_username = request.form.get('channel_username', '').strip() or None
 
-        if create_task(title, description, reward, url, task_type, True, requires_channel_join, channel_username):
+        import json as _json
+        translations_raw = request.form.get('translations', '').strip()
+        translations = None
+        if translations_raw:
+            try: translations = _json.loads(translations_raw)
+            except: pass
+
+        if create_task(title, description, reward, url, task_type, True, requires_channel_join, channel_username, translations=translations):
             flash('Tarea creada exitosamente', 'success')
         else:
             flash('Error al crear tarea', 'error')
@@ -5233,9 +5240,17 @@ def admin_task_edit(task_id):
         requires_channel_join = request.form.get('requires_channel_join') == 'on'
         channel_username = request.form.get('channel_username', '').strip() or None
 
+        import json as _json
+        translations_raw = request.form.get('translations', '').strip()
+        translations = None
+        if translations_raw:
+            try: translations = _json.loads(translations_raw)
+            except: pass
+
         if update_task(task_id, title=title, description=description, reward=reward,
                       url=url, task_type=task_type, active=active,
-                      requires_channel_join=requires_channel_join, channel_username=channel_username):
+                      requires_channel_join=requires_channel_join, channel_username=channel_username,
+                      translations=translations):
             flash('Tarea actualizada', 'success')
         else:
             flash('Error al actualizar tarea', 'error')

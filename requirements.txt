@@ -26,3 +26,6 @@ python-dateutil>=2.8.2
 
 # Optional: PDF generation for reports
 reportlab>=4.0.0
+
+# AI Translation
+anthropic>=0.25.0
