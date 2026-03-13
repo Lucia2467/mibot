@@ -734,6 +734,75 @@
     </style>
 </head>
 <body>
+    <style>
+    /* ── Language Button ── */
+    .language-btn {
+        position: fixed;
+        bottom: 90px; right: 16px;
+        z-index: 8000;
+        width: 46px; height: 46px;
+        border-radius: 50%;
+        background: rgba(15,15,25,0.85);
+        border: 1px solid rgba(99,102,241,0.4);
+        color: white; font-size: 1.3rem;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 4px 20px rgba(99,102,241,0.25);
+        transition: transform 0.15s;
+    }
+    .language-btn:active { transform: scale(0.9); }
+    /* ── Modal overlay ── */
+    .language-modal {
+        display: none; position: fixed; inset: 0; z-index: 9999;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+        align-items: flex-end; justify-content: center;
+    }
+    .language-modal.open { display: flex; }
+    .language-modal-content {
+        width: 100%; max-width: 480px;
+        background: #12121e;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 24px 24px 0 0;
+        padding: 0 0 32px;
+        animation: slideUpLang 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes slideUpLang {
+        from { transform: translateY(100%); opacity: 0; }
+        to   { transform: translateY(0);    opacity: 1; }
+    }
+    .language-modal-content::before {
+        content: ''; display: block;
+        width: 40px; height: 4px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 99px; margin: 12px auto 0;
+    }
+    .language-modal-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 20px 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        margin-bottom: 6px;
+    }
+    .language-modal-title { font-size: 1rem; font-weight: 700; color: white; margin: 0; }
+    .language-modal-close {
+        width: 30px; height: 30px; border-radius: 50%;
+        background: rgba(255,255,255,0.07); border: none;
+        color: rgba(255,255,255,0.6); font-size: 0.8rem;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .language-list { padding: 4px 12px; }
+    .language-option {
+        display: flex; align-items: center; gap: 14px;
+        padding: 12px 12px; border-radius: 14px;
+        cursor: pointer; transition: background 0.15s; margin-bottom: 2px;
+    }
+    .language-option:active { background: rgba(99,102,241,0.15); }
+    .language-option.active { background: rgba(99,102,241,0.1); }
+    .language-flag { font-size: 1.4rem; line-height: 1; }
+    .language-name { flex: 1; font-size: 0.95rem; font-weight: 500; color: rgba(255,255,255,0.85); }
+    .language-check { font-size: 0.75rem; color: #6366F1; font-weight: 800; opacity: 0; transition: opacity 0.15s; }
+    .language-option.active .language-check { opacity: 1; }
+    </style>
     <!-- ❄️ Snow Effect Container -->
     <div class="snow-container" id="snow-container"></div>
 
@@ -973,6 +1042,23 @@
                 opt.classList.toggle('active', opt.getAttribute('data-lang') === currentLang);
             });
             updateDropdownItems();
+        }
+
+        // Language modal functions
+        function openLanguageModal() {
+            const modal = document.getElementById('language-modal');
+            if (modal) { modal.classList.add('open'); updateLanguageOptions(); }
+            if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        }
+        function closeLanguageModal() {
+            const modal = document.getElementById('language-modal');
+            if (modal) modal.classList.remove('open');
+        }
+        function selectLanguage(lang) {
+            if (typeof setLanguage === 'function') setLanguage(lang);
+            closeLanguageModal();
+            updateLanguageOptions();
+            if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
         }
 
         // Listen for language changes
