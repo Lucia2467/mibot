@@ -1139,7 +1139,18 @@ const LANG = {
         pts_be_first: "Be the first to publish!",
 
         // tasks_pts UI
-        pts_page_title: "Tasks",
+        pts_page_title: "Tasks"
+        stask_step1_label: "Go to platform",
+        stask_step2_label: "Screenshot",
+        stask_step3_label: "Post link",
+        stask_step4_label: "Your username on",
+        stask_optional: "Optional",
+        stask_required: "Required",
+        stask_upload_tap: "Tap to upload screenshot",
+        stask_upload_hint: "JPG · PNG · max 5MB",
+        stask_go_platform: "Go to platform",
+        stask_instructions_label: "Instructions",
+        stask_submit_btn: "Submit for review",,
         pts_btn_create: "Create",
         pts_btn_history: "History",
         pts_btn_tc: "T&C",
@@ -2358,7 +2369,18 @@ const LANG = {
         pts_be_first: "¡Sé el primero en publicar!",
 
         // tasks_pts UI
-        pts_page_title: "Tareas",
+        pts_page_title: "Tareas"
+        stask_step1_label: "Ir a la plataforma",
+        stask_step2_label: "Captura de pantalla",
+        stask_step3_label: "Link de la publicación",
+        stask_step4_label: "Tu usuario en",
+        stask_optional: "Opcional",
+        stask_required: "Requerido",
+        stask_upload_tap: "Toca para subir captura",
+        stask_upload_hint: "JPG · PNG · máx 5MB",
+        stask_go_platform: "Ir a la plataforma",
+        stask_instructions_label: "Instrucciones",
+        stask_submit_btn: "Enviar para revisión",,
         pts_btn_create: "Crear",
         pts_btn_history: "Historial",
         pts_btn_tc: "T&C",
@@ -3539,7 +3561,18 @@ const LANG = {
         pts_be_first: "Seja o primeiro a publicar!",
 
         // tasks_pts UI
-        pts_page_title: "Tarefas",
+        pts_page_title: "Tarefas"
+        stask_step1_label: "Ir para a plataforma",
+        stask_step2_label: "Captura de tela",
+        stask_step3_label: "Link da publicação",
+        stask_step4_label: "Seu usuário em",
+        stask_optional: "Opcional",
+        stask_required: "Obrigatório",
+        stask_upload_tap: "Toque para enviar captura",
+        stask_upload_hint: "JPG · PNG · máx 5MB",
+        stask_go_platform: "Ir para a plataforma",
+        stask_instructions_label: "Instruções",
+        stask_submit_btn: "Enviar para revisão",,
         pts_btn_create: "Criar",
         pts_btn_history: "Histórico",
         pts_btn_tc: "T&C",
@@ -4691,7 +4724,18 @@ const LANG = {
         pts_be_first: "Будьте первым, кто опубликует!",
 
         // tasks_pts UI
-        pts_page_title: "Задания",
+        pts_page_title: "Задания"
+        stask_step1_label: "Перейти на платформу",
+        stask_step2_label: "Скриншот",
+        stask_step3_label: "Ссылка на публикацию",
+        stask_step4_label: "Ваш аккаунт в",
+        stask_optional: "Необязательно",
+        stask_required: "Обязательно",
+        stask_upload_tap: "Нажмите для загрузки скриншота",
+        stask_upload_hint: "JPG · PNG · макс 5МБ",
+        stask_go_platform: "Перейти на платформу",
+        stask_instructions_label: "Инструкции",
+        stask_submit_btn: "Отправить на проверку",,
         pts_btn_create: "Создать",
         pts_btn_history: "История",
         pts_btn_tc: "У&С",
@@ -5843,7 +5887,18 @@ const LANG = {
         pts_be_first: "كن أول من ينشر!",
 
         // tasks_pts UI
-        pts_page_title: "المهام",
+        pts_page_title: "المهام"
+        stask_step1_label: "الذهاب إلى المنصة",
+        stask_step2_label: "لقطة الشاشة",
+        stask_step3_label: "رابط المنشور",
+        stask_step4_label: "اسم المستخدم في",
+        stask_optional: "اختياري",
+        stask_required: "مطلوب",
+        stask_upload_tap: "انقر لرفع لقطة الشاشة",
+        stask_upload_hint: "JPG · PNG · حد أقصى 5MB",
+        stask_go_platform: "الذهاب إلى المنصة",
+        stask_instructions_label: "التعليمات",
+        stask_submit_btn: "إرسال للمراجعة",,
         pts_btn_create: "إنشاء",
         pts_btn_history: "السجل",
         pts_btn_tc: "الشروط",
