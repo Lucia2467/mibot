@@ -319,11 +319,17 @@
     let sessionEarnedSE = 0;
     let activeGame = null;
     let timerInterval = null;
-    let pageVisible = true;
+    let isClaiming = false;
+    let pendingClaims = 0;  // reintentos pendientes
 
-    // Detectar si la pestaña está activa (no contar tiempo en segundo plano)
+    // NO usar visibilitychange — el iframe hace que document.hidden=true en mobile
+    // y el timer se detiene permanentemente. Solo pausamos si la app va al fondo real.
+    let appInBackground = false;
     document.addEventListener('visibilitychange', function() {
-        pageVisible = !document.hidden;
+        // Solo pausar si NO hay overlay de juego activo
+        if (!document.getElementById('gameOverlay').classList.contains('visible')) {
+            appInBackground = document.hidden;
+        }
     });
 
     window.loadGame = function(id, icon, name, url) {
@@ -336,27 +342,27 @@
         event.currentTarget.classList.add('active');
 
         activeGame = { id, name };
+        appInBackground = false; // reset al abrir juego
         document.getElementById('gamePanelTitle').textContent = icon + ' ' + name;
         document.getElementById('gameFrame').src = url;
 
-        // Mostrar overlay y bloquear scroll del body
         var overlay = document.getElementById('gameOverlay');
         overlay.classList.add('visible');
         document.body.style.overflow = 'hidden';
 
-        // Ocultar la UI de Telegram (header) si es posible
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.expand();
         }
 
         sessionSeconds = 0;
         sessionEarnedSE = 0;
+        pendingClaims = 0;
         document.getElementById('hudEarned').textContent = '0';
         updateTimerDisplay();
 
-        if (!timerInterval) {
-            timerInterval = setInterval(tick, 1000);
-        }
+        // Limpiar interval anterior si existe
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(tick, 1000);
     };
 
     window.closeGame = function() {
@@ -372,7 +378,8 @@
     };
 
     function tick() {
-        if (!activeGame || !pageVisible) return;
+        if (!activeGame) return;
+        if (appInBackground) return;  // solo pausar si app realmente en fondo
         if (minutesToday >= MAX_MINS_DAY) {
             clearInterval(timerInterval);
             timerInterval = null;
@@ -381,13 +388,13 @@
 
         sessionSeconds++;
         updateTimerDisplay();
+        document.getElementById("hudEarned").textContent = sessionEarnedSE.toFixed(0);
 
         // Cada 60 segundos = 1 S-E
         if (sessionSeconds % 60 === 0) {
-            claimMinute();
+            pendingClaims++;
+            processClaims();
         }
-        // Actualizar HUD earned en tiempo real
-        document.getElementById("hudEarned").textContent = sessionEarnedSE.toFixed(0);
     }
 
     function updateTimerDisplay() {
@@ -396,26 +403,30 @@
         document.getElementById('sessionTimer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
     }
 
-    function claimMinute() {
+    function processClaims() {
+        if (isClaiming || pendingClaims <= 0 || !activeGame) return;
+        isClaiming = true;
+
         fetch('/api/arcade/claim-minute', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: USER_ID, game_id: activeGame.id })
+            body: JSON.stringify({ user_id: USER_ID, game_id: activeGame ? activeGame.id : 'unknown' })
         })
         .then(r => r.json())
         .then(data => {
+            isClaiming = false;
             if (data.success) {
+                pendingClaims--;
                 minutesToday = data.minutes_today;
                 sessionEarnedSE += REWARD_PER_MIN;
 
-                // Actualizar UI
                 const pct = Math.min(minutesToday / MAX_MINS_DAY * 100, 100);
                 document.getElementById('dailyBar').style.width = pct + '%';
                 document.getElementById('dailyMinLabel').textContent = minutesToday + ' / 30 min';
                 document.getElementById('sessionEarned').textContent = '+' + sessionEarnedSE.toFixed(2) + ' S-E hoy';
                 document.getElementById('liveEarned').textContent = '+' + sessionEarnedSE.toFixed(2);
+                document.getElementById("hudEarned").textContent = sessionEarnedSE.toFixed(0);
 
-                // Toast
                 showToast('+1 S-E 🎉');
 
                 if (minutesToday >= MAX_MINS_DAY) {
@@ -424,9 +435,23 @@
                     document.getElementById('dailyBar').style.background = 'linear-gradient(90deg, #FF5050, #CC0000)';
                     showToast('¡Límite diario alcanzado! 🏆');
                 }
+
+                // Si hay más claims pendientes, procesar el siguiente
+                if (pendingClaims > 0) setTimeout(processClaims, 500);
+
+            } else if (data.error === 'Límite diario alcanzado') {
+                pendingClaims = 0; // no seguir intentando
+                minutesToday = data.minutes_today || MAX_MINS_DAY;
+            } else {
+                // Error del servidor: reintentar en 5 segundos
+                setTimeout(() => { isClaiming = false; processClaims(); }, 5000);
             }
         })
-        .catch(() => {/* silencioso, reintentará en el próximo minuto */});
+        .catch(() => {
+            isClaiming = false;
+            // Error de red: reintentar en 8 segundos, sin perder el claim
+            setTimeout(processClaims, 8000);
+        });
     }
 
     function showToast(msg) {
