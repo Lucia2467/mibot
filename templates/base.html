@@ -940,7 +940,7 @@
     <div class="toast-container" id="toast-container"></div>
 
     <!-- Language Selector Button -->
-    <button class="language-btn" onclick="openLanguageModal()" title="Change Language">🌐</button>
+    <button class="language-btn" id="lang-modal-btn" data-no-saturation="true" title="Change Language">🌐</button>
 
 
 
@@ -1028,6 +1028,18 @@
 
         // Listen for language changes
         window.addEventListener('languageChanged', updateLanguageOptions);
+
+        // Dedicated listener for language button - bypasses saturation system
+        document.addEventListener('DOMContentLoaded', function() {
+            var btn = document.getElementById('lang-modal-btn');
+            if (btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    openLanguageModal();
+                }, true); // capture phase - runs before saturation interceptor
+            }
+        });
 
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
