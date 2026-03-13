@@ -942,42 +942,7 @@
     <!-- Language Selector Button -->
     <button class="language-btn" onclick="openLanguageModal()" title="Change Language">🌐</button>
 
-    <!-- Language Selection Modal -->
-    <div class="language-modal" id="language-modal">
-        <div class="language-modal-content">
-            <div class="language-modal-header">
-                <h3 class="language-modal-title" data-i18n="select_language">Select Language</h3>
-                <button class="language-modal-close" onclick="closeLanguageModal()">✕</button>
-            </div>
-            <div class="language-list">
-                <div class="language-option" onclick="selectLanguage('en')" data-lang="en">
-                    <span class="language-flag">🇺🇸</span>
-                    <span class="language-name">English</span>
-                    <span class="language-check">✓</span>
-                </div>
-                <div class="language-option" onclick="selectLanguage('es')" data-lang="es">
-                    <span class="language-flag">🇪🇸</span>
-                    <span class="language-name">Español</span>
-                    <span class="language-check">✓</span>
-                </div>
-                <div class="language-option" onclick="selectLanguage('pt')" data-lang="pt">
-                    <span class="language-flag">🇧🇷</span>
-                    <span class="language-name">Português</span>
-                    <span class="language-check">✓</span>
-                </div>
-                <div class="language-option" onclick="selectLanguage('ru')" data-lang="ru">
-                    <span class="language-flag">🇷🇺</span>
-                    <span class="language-name">Русский</span>
-                    <span class="language-check">✓</span>
-                </div>
-                <div class="language-option" onclick="selectLanguage('ar')" data-lang="ar">
-                    <span class="language-flag">🇸🇦</span>
-                    <span class="language-name">العربية</span>
-                    <span class="language-check">✓</span>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Language Modal Script -->
     <script>
@@ -1343,5 +1308,41 @@
     <!-- GigaPub SDK (Reward-based Ads) -->
 
 <script src="https://ad.gigapub.tech/script?id=5226"></script>
+    <!-- Language Selection Modal - z-index above everything -->
+    <div class="language-modal" id="language-modal" style="z-index:99999999;">
+        <div class="language-modal-content">
+            <div class="language-modal-header">
+                <h3 class="language-modal-title" data-i18n="select_language">Select Language</h3>
+                <button class="language-modal-close" onclick="closeLanguageModal()">✕</button>
+            </div>
+            <div class="language-list">
+                <div class="language-option" onclick="selectLanguage('en')" data-lang="en">
+                    <span class="language-flag">🇺🇸</span>
+                    <span class="language-name">English</span>
+                    <span class="language-check">✓</span>
+                </div>
+                <div class="language-option" onclick="selectLanguage('es')" data-lang="es">
+                    <span class="language-flag">🇪🇸</span>
+                    <span class="language-name">Español</span>
+                    <span class="language-check">✓</span>
+                </div>
+                <div class="language-option" onclick="selectLanguage('pt')" data-lang="pt">
+                    <span class="language-flag">🇧🇷</span>
+                    <span class="language-name">Português</span>
+                    <span class="language-check">✓</span>
+                </div>
+                <div class="language-option" onclick="selectLanguage('ru')" data-lang="ru">
+                    <span class="language-flag">🇷🇺</span>
+                    <span class="language-name">Русский</span>
+                    <span class="language-check">✓</span>
+                </div>
+                <div class="language-option" onclick="selectLanguage('ar')" data-lang="ar">
+                    <span class="language-flag">🇸🇦</span>
+                    <span class="language-name">العربية</span>
+                    <span class="language-check">✓</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
