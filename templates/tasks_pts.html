@@ -216,10 +216,7 @@ a.task-row {
                     <i data-lucide="{{ ticon }}" style="width:20px;height:20px;color:{{ tcolor }};"></i>
                 </div>
                 <div class="task-row-body">
-                    <div class="task-row-title"
-                         data-task-id="{{ task_id }}"
-                         data-orig-title={{ task.title | tojson }}
-                         data-translations='{{ (task.translations or None) | tojson }}'>{{ task.title }}</div>
+                    <div class="task-row-title" data-task-id="{{ task_id }}">{{ task.title }}</div>
                     <div class="task-row-meta">
                         <span class="task-chip task-chip-reward">+{{ task.reward }} S-E</span>
                         <span class="task-chip" style="color:{{ tcolor }};">{{ tlabel }}</span>
@@ -1254,45 +1251,43 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 // ── Apply translations based on user language ──
+// ── Task translations map (injected from server) ──
+window._taskTranslations = {
+    {% for task_id, task in available_tasks.items() %}
+    {% if task.translations %}
+    "{{ task_id }}": {{ task.translations | tojson }},
+    {% endif %}
+    {% endfor %}
+    {% for task in social_tasks %}
+    {% if task.translations %}
+    "{{ task.task_id }}": {{ task.translations | tojson }},
+    {% endif %}
+    {% endfor %}
+};
+
 function applyTaskTranslations() {
     const lang = (typeof getCurrentLanguage === 'function') ? getCurrentLanguage() : 'es';
     if (lang === 'es') return;
 
-    // 1. Translate task row titles
+    const map = window._taskTranslations || {};
+
+    // 1. Translate all task row titles using the server-injected map
     document.querySelectorAll('[data-task-id]').forEach(el => {
-        try {
-            // Try data-translations attribute first
-            let raw = el.getAttribute('data-translations');
-            if (!raw || raw === 'null' || raw === 'None') return;
-            // Fix HTML entity encoding
-            raw = raw.replace(/&quot;/g,'"').replace(/&#34;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');
-            const translations = JSON.parse(raw);
-            const langData = translations[lang];
-            if (langData && langData.title) {
-                el.textContent = langData.title;
-            }
-        } catch(e) {
-            // Also try reading from _stask_ window object
-            const taskId = el.getAttribute('data-task-id');
-            if (!taskId) return;
-            const key = '_stask_' + taskId.replace(/-/g,'_');
-            const task = window[key];
-            if (task && task.translations) {
-                const langData = task.translations[lang];
-                if (langData && langData.title) el.textContent = langData.title;
-            }
+        const taskId = el.getAttribute('data-task-id');
+        if (!taskId) return;
+        const tr = map[taskId];
+        if (tr && tr[lang] && tr[lang].title) {
+            el.textContent = tr[lang].title;
         }
     });
 
-    // 2. Patch window._stask_* objects so modal uses translated text
+    // 2. Patch _stask_* modal objects with translations from map
     Object.keys(window).filter(k => k.startsWith('_stask_')).forEach(k => {
         const task = window[k];
-        if (!task || !task.translations) return;
-        let tr = task.translations;
-        if (typeof tr === 'string') {
-            try { tr = JSON.parse(tr); } catch(e) { return; }
-        }
-        const langData = tr[lang];
+        if (!task) return;
+        const tr = map[task.id] || task.translations;
+        if (!tr) return;
+        const langData = typeof tr === 'string' ? JSON.parse(tr)[lang] : tr[lang];
         if (!langData) return;
         if (langData.title)        task.title        = langData.title;
         if (langData.description)  task.description  = langData.description;
