@@ -6159,6 +6159,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Save language to server for notifications
     saveLanguageToServer(currentLang);
+
+    // Notificar a otros módulos (ej. tasks_pts.html) que el idioma ya está resuelto
+    window.dispatchEvent(new Event('languageResolved'));
 });
 
 // Make functions globally available
