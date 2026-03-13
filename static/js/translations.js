@@ -1157,6 +1157,10 @@ const LANG = {
         index_claim_btn: "Claim PXC",
         index_pending: "PENDING TO CLAIM",
         index_live: "LIVE",
+        index_taps_today: "TAPS TODAY",
+        index_multiplier: "MULTIPLIER",
+        index_next_lvl: "NEXT LVL",
+        index_per_legend: "to Legend",
     },
     
     es: {
@@ -2311,6 +2315,10 @@ const LANG = {
         index_claim_btn: "Reclamar PXC",
         index_pending: "PENDIENTE DE RECLAMAR",
         index_live: "EN VIVO",
+        index_taps_today: "TAPS HOY",
+        index_multiplier: "MULTIPLICA",
+        index_next_lvl: "PRÓX. NVL",
+        index_per_legend: "para Leyenda",
     },
     
     pt: {
@@ -3427,6 +3435,10 @@ const LANG = {
         index_claim_btn: "Resgatar PXC",
         index_pending: "PENDENTE PARA RESGATAR",
         index_live: "AO VIVO",
+        index_taps_today: "TAPS HOJE",
+        index_multiplier: "MULTIPLICADOR",
+        index_next_lvl: "PRÓX. NÍV",
+        index_per_legend: "para Lenda",
     },
 
     ru: {
@@ -4514,6 +4526,10 @@ const LANG = {
         index_claim_btn: "Получить PXC",
         index_pending: "ОЖИДАЕТ ПОЛУЧЕНИЯ",
         index_live: "ПРЯМОЙ ЭФИР",
+        index_taps_today: "ТАПОВ СЕГОДНЯ",
+        index_multiplier: "МНОЖИТЕЛЬ",
+        index_next_lvl: "СЛЕД. УР.",
+        index_per_legend: "до Легенды",
     },
 
     ar: {
@@ -5601,6 +5617,10 @@ const LANG = {
         index_claim_btn: "استلام PXC",
         index_pending: "في انتظار الاستلام",
         index_live: "مباشر",
+        index_taps_today: "نقرات اليوم",
+        index_multiplier: "المضاعف",
+        index_next_lvl: "المستوى التالي",
+        index_per_legend: "للأسطورة",
     }
 };
 
