@@ -8,6 +8,9 @@
     <!-- VPN Detection System - MUST LOAD FIRST -->
     <script src="{{ url_for('static', filename='js/vpn_detector.js') }}"></script>
 
+    <!-- Translations - load early so setLanguage() is available -->
+    <script src="{{ url_for('static', filename='js/translations.js') }}?v=2"></script>
+
     <!-- CSS Ultra Pro -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <!-- Multi-Language System CSS -->
@@ -1162,8 +1165,6 @@
         });
     </script>
 
-    <!-- Multi-Language Translation System (MUST LOAD BEFORE main.js) -->
-    <script src="{{ url_for('static', filename='js/translations.js') }}?v=2"></script>
 
     <!-- Efectos Especiales Ultra Pro -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
