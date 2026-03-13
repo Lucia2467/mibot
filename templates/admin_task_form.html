@@ -253,6 +253,20 @@
                     <small>Solo las tareas activas son visibles para los usuarios</small>
                 </div>
 
+                <!-- Translations hidden field -->
+                <input type="hidden" name="translations" id="task-translations" value="{{ task.translations | tojson if task and task.translations else '' }}">
+
+                <!-- AI Translate -->
+                <div style="margin-bottom:12px;">
+                    <button type="button" onclick="autoTranslateTask()"
+                        id="btn-ai-translate"
+                        style="width:100%;padding:12px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;">
+                        🤖 Auto-traducir con IA (EN, PT, RU, AR)
+                    </button>
+                    <div id="translate-result" style="display:none;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;"></div>
+                    <div id="translate-preview" style="display:none;padding:10px 14px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;font-size:12px;color:#166534;"></div>
+                </div>
+
                 <button type="submit" class="btn-submit">
                     {{ '💾 Guardar Cambios' if task else '➕ Crear Tarea' }}
                 </button>
@@ -285,6 +299,58 @@
                 e.target.value = value.substring(1);
             }
         });
+
+        async function autoTranslateTask() {
+            const title        = document.querySelector('[name="title"]').value.trim();
+            const description  = document.querySelector('[name="description"]').value.trim();
+
+            if (!title) { alert('Escribe el título primero'); return; }
+
+            const btn    = document.getElementById('btn-ai-translate');
+            const result = document.getElementById('translate-result');
+            const preview = document.getElementById('translate-preview');
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Traduciendo con IA...';
+            result.style.display = 'block';
+            result.style.background = '#eff6ff';
+            result.style.color = '#1d4ed8';
+            result.textContent = '🤖 Generando traducciones...';
+            preview.style.display = 'none';
+
+            try {
+                const res = await fetch('/admin/social-tasks/auto-translate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({title, description, instructions: ''})
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('task-translations').value = JSON.stringify(data.translations);
+                    result.style.background = '#f0fdf4';
+                    result.style.color = '#166534';
+                    result.textContent = '✅ Traducciones listas — se guardarán con la tarea';
+                    const flags = {en:'🇬🇧 EN', pt:'🇧🇷 PT', ru:'🇷🇺 RU', ar:'🇸🇦 AR'};
+                    preview.style.display = 'block';
+                    preview.innerHTML = '<b>Traducciones generadas:</b><br>' +
+                        Object.keys(data.translations)
+                            .filter(l => data.translations[l].title)
+                            .map(l => `${flags[l]||l}: <i>${data.translations[l].title}</i>`)
+                            .join('<br>');
+                } else {
+                    result.style.background = '#fef2f2';
+                    result.style.color = '#dc2626';
+                    result.textContent = '❌ ' + (data.error || 'Error al traducir');
+                }
+            } catch(e) {
+                result.style.background = '#fef2f2';
+                result.style.color = '#dc2626';
+                result.textContent = '❌ Error de conexión';
+            }
+            btn.disabled = false;
+            btn.textContent = '🤖 Auto-traducir con IA (EN, PT, RU, AR)';
+        }
     </script>
 </body>
 </html>

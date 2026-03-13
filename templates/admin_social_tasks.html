@@ -355,6 +355,17 @@
                 <label for="f-screenshot" style="font-size:13px;cursor:pointer;">Requiere captura de pantalla</label>
             </div>
 
+            <!-- AI Translation -->
+            <div id="translate-status" style="display:none;margin-bottom:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;"></div>
+            <div style="display:flex;gap:10px;margin-bottom:10px;">
+                <button type="button" id="btn-translate" onclick="autoTranslate()" style="flex:1;padding:11px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">🤖 Auto-traducir con IA</button>
+            </div>
+            <!-- Translations preview (collapsed) -->
+            <div id="translations-preview" style="display:none;margin-bottom:12px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;">
+                <div style="font-size:12px;font-weight:700;color:#166534;margin-bottom:8px;">✅ Traducciones generadas:</div>
+                <div id="translations-langs" style="display:flex;flex-wrap:wrap;gap:6px;font-size:12px;"></div>
+            </div>
+            <input type="hidden" id="f-translations" value="">
             <button class="btn-create" onclick="createTask()">➕ Crear Tarea</button>
         </div>
     </div>
@@ -393,6 +404,13 @@
             </div>
         </div>
 
+        <div id="edit-translate-status" style="display:none;margin-bottom:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;"></div>
+        <button type="button" onclick="autoTranslateEdit()" style="width:100%;padding:10px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;">🤖 Re-traducir con IA</button>
+        <div id="edit-translations-preview" style="display:none;margin-bottom:12px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;">
+            <div style="font-size:12px;font-weight:700;color:#166534;margin-bottom:8px;">✅ Traducciones generadas:</div>
+            <div id="edit-translations-langs" style="display:flex;flex-wrap:wrap;gap:6px;font-size:12px;"></div>
+        </div>
+        <input type="hidden" id="edit-translations" value="">
         <div class="modal-actions">
             <button class="btn-approve" onclick="saveEdit()">💾 Guardar</button>
             <button class="btn-reject" onclick="closeEdit()">Cancelar</button>
@@ -432,6 +450,11 @@ async function createTask() {
         max_completions:  parseInt(document.getElementById('f-cupos').value),
         requires_screenshot: document.getElementById('f-screenshot').checked
     };
+    // Attach translations if generated
+    const translationsVal = document.getElementById('f-translations').value;
+    if (translationsVal) {
+        try { body.translations = JSON.parse(translationsVal); } catch(e) {}
+    }
     if (!body.title || !body.target_url) {
         showToast('Título y URL son obligatorios', 'error'); return;
     }
@@ -491,6 +514,11 @@ async function saveEdit() {
         reward_amount: parseFloat(document.getElementById('edit-reward').value),
         max_completions: parseInt(document.getElementById('edit-cupos').value),
     };
+    // Attach translations if generated
+    const editTranslationsVal = document.getElementById('edit-translations').value;
+    if (editTranslationsVal) {
+        try { body.translations = JSON.parse(editTranslationsVal); } catch(e) {}
+    }
     const res = await fetch(`/admin/social-tasks/${taskId}/update`, {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify(body)
@@ -500,6 +528,100 @@ async function saveEdit() {
         showToast('✅ Tarea actualizada'); closeEdit();
         setTimeout(() => location.reload(), 800);
     } else showToast(data.error || 'Error', 'error');
+}
+
+// ── AUTO-TRANSLATE FUNCTIONS ──
+async function autoTranslate() {
+    const title        = document.getElementById('f-title').value.trim();
+    const description  = document.getElementById('f-desc').value.trim();
+    const instructions = document.getElementById('f-instructions').value.trim();
+
+    if (!title) { showToast('Escribe el título primero', 'error'); return; }
+
+    const btn    = document.getElementById('btn-translate');
+    const status = document.getElementById('translate-status');
+    btn.disabled = true;
+    btn.textContent = '⏳ Traduciendo...';
+    status.style.display = 'block';
+    status.style.background = '#eff6ff';
+    status.style.color = '#1d4ed8';
+    status.textContent = '🤖 Generando traducciones con IA...';
+
+    try {
+        const res  = await fetch('/admin/social-tasks/auto-translate', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({title, description, instructions})
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            document.getElementById('f-translations').value = JSON.stringify(data.translations);
+            showTranslationsPreview(data.translations, 'translations-preview', 'translations-langs');
+            status.style.background = '#f0fdf4';
+            status.style.color = '#166534';
+            status.textContent = '✅ Traducciones generadas — se guardarán al crear la tarea';
+        } else {
+            status.style.background = '#fef2f2';
+            status.style.color = '#dc2626';
+            status.textContent = '❌ ' + (data.error || 'Error al traducir');
+        }
+    } catch(e) {
+        status.style.background = '#fef2f2';
+        status.style.color = '#dc2626';
+        status.textContent = '❌ Error de conexión';
+    }
+    btn.disabled = false;
+    btn.textContent = '🤖 Auto-traducir con IA';
+}
+
+async function autoTranslateEdit() {
+    const title        = document.getElementById('edit-title').value.trim();
+    const description  = document.getElementById('edit-desc').value.trim();
+    const instructions = document.getElementById('edit-instructions').value.trim();
+
+    if (!title) { showToast('Escribe el título primero', 'error'); return; }
+
+    const status = document.getElementById('edit-translate-status');
+    status.style.display = 'block';
+    status.style.background = '#eff6ff';
+    status.style.color = '#1d4ed8';
+    status.textContent = '🤖 Generando traducciones con IA...';
+
+    try {
+        const res  = await fetch('/admin/social-tasks/auto-translate', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({title, description, instructions})
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            document.getElementById('edit-translations').value = JSON.stringify(data.translations);
+            showTranslationsPreview(data.translations, 'edit-translations-preview', 'edit-translations-langs');
+            status.style.background = '#f0fdf4';
+            status.style.color = '#166534';
+            status.textContent = '✅ Traducciones listas — se guardarán al guardar la tarea';
+        } else {
+            status.style.background = '#fef2f2';
+            status.style.color = '#dc2626';
+            status.textContent = '❌ ' + (data.error || 'Error al traducir');
+        }
+    } catch(e) {
+        status.style.background = '#fef2f2';
+        status.style.color = '#dc2626';
+        status.textContent = '❌ Error de conexión';
+    }
+}
+
+function showTranslationsPreview(translations, previewId, langsId) {
+    const flags = {en:'🇬🇧 EN', pt:'🇧🇷 PT', ru:'🇷🇺 RU', ar:'🇸🇦 AR'};
+    const container = document.getElementById(langsId);
+    container.innerHTML = Object.keys(translations)
+        .filter(lang => translations[lang].title)
+        .map(lang => `<span style="padding:3px 10px;background:#dcfce7;border-radius:6px;color:#166534;font-weight:700;">${flags[lang]||lang.toUpperCase()}</span>`)
+        .join('');
+    document.getElementById(previewId).style.display = 'block';
 }
 </script>
 </body>

@@ -216,7 +216,10 @@ a.task-row {
                     <i data-lucide="{{ ticon }}" style="width:20px;height:20px;color:{{ tcolor }};"></i>
                 </div>
                 <div class="task-row-body">
-                    <div class="task-row-title">{{ task.title }}</div>
+                    <div class="task-row-title"
+                         data-task-id="{{ task_id }}"
+                         data-orig-title={{ task.title | tojson }}
+                         data-translations='{{ (task.translations or None) | tojson }}'>{{ task.title }}</div>
                     <div class="task-row-meta">
                         <span class="task-chip task-chip-reward">+{{ task.reward }} S-E</span>
                         <span class="task-chip" style="color:{{ tcolor }};">{{ tlabel }}</span>
@@ -330,7 +333,10 @@ a.task-row {
                     {% else %}<i data-lucide="share-2" style="width:20px;height:20px;"></i>{% endif %}
                 </div>
                 <div class="task-row-body">
-                    <div class="task-row-title">{{ task.title }}</div>
+                    <div class="task-row-title"
+                         data-task-id="{{ task.task_id }}"
+                         data-orig-title={{ task.title | tojson }}
+                         data-translations='{{ (task.translations or 'null') | tojson | e }}'>{{ task.title }}</div>
                     <div class="task-row-meta">
                         <span class="task-chip task-chip-reward">+{{ '%.2f'|format(task.reward_amount|float) }} {{ task.reward_currency|upper }}</span>
                         <span class="task-chip" style="color:{{ pcolor }};">{{ pname }}</span>
@@ -362,7 +368,8 @@ a.task-row {
                 instructions: {{ (task.instructions or '') | tojson }},
                 target_url: {{ (task.target_url or '') | tojson }},
                 requires_screenshot: {{ task.requires_screenshot | tojson }},
-                reward: "+{{ '%.2f'|format(task.reward_amount|float) }} {{ task.reward_currency|upper }}"
+                reward: "+{{ '%.2f'|format(task.reward_amount|float) }} {{ task.reward_currency|upper }}",
+                translations: {{ (task.translations or 'null') | safe }}
             };
             </script>
 
@@ -1237,7 +1244,44 @@ function translateModalElements(modal) {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-document.addEventListener('DOMContentLoaded',()=>{PTS.init();if(typeof lucide!=='undefined')lucide.createIcons();loadUserTasks();switchTab('all');});
+document.addEventListener('DOMContentLoaded',()=>{
+    PTS.init();
+    if(typeof lucide!=='undefined')lucide.createIcons();
+    loadUserTasks();
+    switchTab('all');
+    // Apply AI translations to task titles and modal data
+    setTimeout(applyTaskTranslations, 100);
+});
+
+// ── Apply translations based on user language ──
+function applyTaskTranslations() {
+    const lang = (typeof getCurrentLanguage === 'function') ? getCurrentLanguage() : 'es';
+    if (lang === 'es') return; // Spanish is the original, no translation needed
+
+    // 1. Translate task row titles (social tasks with data-translations attr)
+    document.querySelectorAll('[data-task-id][data-translations]').forEach(el => {
+        try {
+            const raw = el.getAttribute('data-translations');
+            if (!raw || raw === 'null') return;
+            const translations = JSON.parse(raw.replace(/&quot;/g,'"').replace(/&#34;/g,'"'));
+            const langData = translations[lang];
+            if (langData && langData.title) {
+                el.textContent = langData.title;
+            }
+        } catch(e) {}
+    });
+
+    // 2. Patch window._stask_* objects so modal uses translated text
+    Object.keys(window).filter(k => k.startsWith('_stask_')).forEach(k => {
+        const task = window[k];
+        if (!task || !task.translations) return;
+        const langData = task.translations[lang];
+        if (!langData) return;
+        if (langData.title)        task.title        = langData.title;
+        if (langData.description)  task.description  = langData.description;
+        if (langData.instructions) task.instructions = langData.instructions;
+    });
+}
 
 // ============ SOCIAL TASKS JS ============
 const stScreenshots = {};
