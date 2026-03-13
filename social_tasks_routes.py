@@ -249,16 +249,16 @@ def admin_reject_submission(submission_id):
     return jsonify({'success': False, 'error': msg}), 400
 
 # ──────────────────────────────────────────────────
-#  AUTO-TRADUCCIÓN CON IA (Google Gemini)
+#  AUTO-TRADUCCIÓN CON IA (MyMemory - Gratis, sin key)
 # ──────────────────────────────────────────────────
 @social_tasks_bp.route('/admin/social-tasks/auto-translate', methods=['POST'])
 @_admin_required
 def admin_auto_translate():
     """
-    Recibe title/description/instructions en español,
-    devuelve traducciones a EN, PT, RU, AR usando Google Gemini.
+    Traduce title/description/instructions del español a EN, PT, RU, AR
+    usando MyMemory API (gratuita, sin API key).
     """
-    import os, json
+    import requests as req
 
     data = request.json or {}
     title        = (data.get('title') or '').strip()
@@ -268,73 +268,35 @@ def admin_auto_translate():
     if not title:
         return jsonify({'success': False, 'error': 'Se requiere al menos el título'}), 400
 
-    api_key = os.environ.get('GEMINI_API_KEY')
-    if not api_key:
-        return jsonify({'success': False, 'error': 'GEMINI_API_KEY no configurada en Railway'}), 500
+    def translate_text(text, target_lang):
+        """Traduce un texto de ES a target_lang usando MyMemory."""
+        if not text:
+            return ''
+        try:
+            r = req.get(
+                'https://api.mymemory.translated.net/get',
+                params={'q': text, 'langpair': f'es|{target_lang}'},
+                timeout=10
+            )
+            result = r.json()
+            translated = result.get('responseData', {}).get('translatedText', '')
+            # Si retorna error o vacío, devolver original
+            if not translated or 'MYMEMORY WARNING' in translated.upper():
+                return text
+            return translated
+        except Exception:
+            return text
 
-    import requests as req
+    target_langs = ['en', 'pt', 'ru', 'ar']
+    translations = {}
 
-    fields = {}
-    if title:        fields['title']        = title
-    if description:  fields['description']  = description
-    if instructions: fields['instructions'] = instructions
+    for lang in target_langs:
+        translations[lang] = {}
+        if title:
+            translations[lang]['title'] = translate_text(title, lang)
+        if description:
+            translations[lang]['description'] = translate_text(description, lang)
+        if instructions:
+            translations[lang]['instructions'] = translate_text(instructions, lang)
 
-    fields_json = json.dumps(fields, ensure_ascii=False)
-
-    prompt = f"""Translate the following task fields from Spanish to English (en), Portuguese (pt), Russian (ru), and Arabic (ar).
-
-Return ONLY a valid JSON object with this exact structure (no markdown, no explanations):
-{{
-  "en": {{}},
-  "pt": {{}},
-  "ru": {{}},
-  "ar": {{}}
-}}
-
-Each inner object must contain only the keys present in the input.
-
-Input fields (Spanish):
-{fields_json}
-
-Rules:
-- Keep it natural and engaging for each language
-- Preserve any @usernames, URLs, or numbers exactly as-is
-- Return ONLY the JSON, nothing else"""
-
-    try:
-        response = req.post(
-            f'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}',
-            headers={'Content-Type': 'application/json'},
-            json={
-                'contents': [{'parts': [{'text': prompt}]}],
-                'generationConfig': {'temperature': 0.3, 'maxOutputTokens': 1024}
-            },
-            timeout=30
-        )
-        result = response.json()
-
-        if 'error' in result:
-            return jsonify({'success': False, 'error': result['error'].get('message', 'Gemini API error')}), 500
-
-        raw_text = result['candidates'][0]['content']['parts'][0]['text'].strip()
-
-        # Clean possible markdown fences
-        if '```' in raw_text:
-            raw_text = raw_text.split('```')[1]
-            if raw_text.startswith('json'):
-                raw_text = raw_text[4:]
-        raw_text = raw_text.strip()
-
-        translations = json.loads(raw_text)
-
-        for lang in ['en', 'pt', 'ru', 'ar']:
-            if lang not in translations:
-                translations[lang] = {}
-
-        return jsonify({'success': True, 'translations': translations})
-
-    except json.JSONDecodeError as e:
-        return jsonify({'success': False, 'error': f'Formato inválido de IA: {str(e)}'}), 500
-    except Exception as e:
-        print(f'[auto-translate] Error: {e}')
-        return jsonify({'success': False, 'error': str(e)}), 500
+    return jsonify({'success': True, 'translations': translations})
