@@ -172,7 +172,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Tipo de Tarea</label>
-                        <select name="type">
+                        <select name="task_type">
                             <option value="telegram" {% if task and task.task_type == 'telegram' %}selected{% endif %}>📱 Telegram</option>
                             <option value="social" {% if task and task.task_type == 'social' %}selected{% endif %}>🐦 Red Social</option>
                             <option value="external" {% if task and task.task_type == 'external' %}selected{% endif %}>🌐 Sitio Externo</option>

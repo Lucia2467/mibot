@@ -177,19 +177,52 @@ a.task-row {
     <!-- ══ TAB: TELEGRAM + COMUNIDAD (all / telegram / community) ══ -->
     <div id="tab-content-all" class="tab-content">
 
-        <!-- Tareas normales -->
+        <!-- Tareas normales (telegram, link, external, other) -->
         <div data-filter="telegram">
-        {% if available_tasks %}
-            {% for task_id, task in available_tasks.items() %}
-            <div class="task-row" onclick="completeTask('{{ task_id }}','{{ task.url or '' }}','{{ task.task_type or 'link' }}')">
-                <div class="task-row-icon" style="background:rgba(42,171,238,0.15);">
-                    <i data-lucide="send" style="width:20px;height:20px;color:#2AABEE;"></i>
+        {% set telegram_tasks = available_tasks.items() | selectattr('1.task_type', 'in', ['telegram', 'link', 'external', 'other', 'none', None]) | list %}
+        {% set non_social_tasks = [] %}
+        {% for task_id, task in available_tasks.items() %}
+            {% if task.task_type not in ['social'] %}
+                {% if non_social_tasks.append((task_id, task)) %}{% endif %}
+            {% endif %}
+        {% endfor %}
+        {% if non_social_tasks %}
+            {% for task_id, task in non_social_tasks %}
+            {# ── Detect icon/color by task_type ── #}
+            {% set tt = task.task_type or 'link' %}
+            {% if tt == 'telegram' %}
+                {% set ticon = 'send' %}{% set tcolor = '#2AABEE' %}{% set tlabel = 'Telegram' %}
+            {% elif tt == 'social' %}
+                {% set ticon = 'share-2' %}{% set tcolor = '#E1306C' %}{% set tlabel = 'Social' %}
+            {% elif tt == 'youtube' %}
+                {% set ticon = 'youtube' %}{% set tcolor = '#FF0000' %}{% set tlabel = 'YouTube' %}
+            {% elif tt == 'instagram' %}
+                {% set ticon = 'instagram' %}{% set tcolor = '#E1306C' %}{% set tlabel = 'Instagram' %}
+            {% elif tt == 'twitter' or tt == 'x' %}
+                {% set ticon = 'twitter' %}{% set tcolor = '#1DA1F2' %}{% set tlabel = 'Twitter/X' %}
+            {% elif tt == 'facebook' %}
+                {% set ticon = 'facebook' %}{% set tcolor = '#1877F2' %}{% set tlabel = 'Facebook' %}
+            {% elif tt == 'discord' %}
+                {% set ticon = 'gamepad-2' %}{% set tcolor = '#5865F2' %}{% set tlabel = 'Discord' %}
+            {% elif tt == 'tiktok' %}
+                {% set ticon = 'music-2' %}{% set tcolor = '#EE1D52' %}{% set tlabel = 'TikTok' %}
+            {% elif tt == 'external' %}
+                {% set ticon = 'globe' %}{% set tcolor = '#6B7280' %}{% set tlabel = 'Web' %}
+            {% else %}
+                {% set ticon = 'link' %}{% set tcolor = '#6B7280' %}{% set tlabel = tt|replace('_',' ')|capitalize %}
+            {% endif %}
+            <div class="task-row" onclick="completeTask('{{ task_id }}','{{ task.url or '' }}','{{ tt }}')">
+                <div class="task-row-icon" style="background:{{ tcolor }}22;">
+                    <i data-lucide="{{ ticon }}" style="width:20px;height:20px;color:{{ tcolor }};"></i>
                 </div>
                 <div class="task-row-body">
                     <div class="task-row-title">{{ task.title }}</div>
                     <div class="task-row-meta">
                         <span class="task-chip task-chip-reward">+{{ task.reward }} S-E</span>
-                        <span class="task-chip">{{ task.task_type|replace('_',' ')|capitalize }}</span>
+                        <span class="task-chip" style="color:{{ tcolor }};">{{ tlabel }}</span>
+                        {% if task.max_completions %}
+                        <span class="task-chip">{{ task.current_completions or 0 }}/{{ task.max_completions }}</span>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="task-row-arrow">
@@ -200,7 +233,7 @@ a.task-row {
         {% else %}
             <div class="tasks-empty tasks-empty-telegram">
                 <i data-lucide="inbox" style="width:40px;height:40px;opacity:0.3;"></i>
-                <p>No hay tareas disponibles</p>
+                <p data-i18n="pts_no_tasks_available">No hay tareas disponibles</p>
             </div>
         {% endif %}
         </div>
@@ -218,6 +251,49 @@ a.task-row {
 
     <!-- ══ TAB: SOCIALES ══ -->
     <div id="tab-content-social" class="tab-content" style="display:none;">
+
+        {# ── Tareas tipo 'social' de la tabla tasks (sin screenshot) ── #}
+        {% for task_id, task in available_tasks.items() %}
+        {% if task.task_type == 'social' %}
+        {% set tt = task.task_type %}
+        {# Detect platform from URL #}
+        {% if 'instagram' in (task.url or '') %}
+            {% set pcolor='#E1306C' %}{% set pname='Instagram' %}{% set picon='instagram' %}
+        {% elif 'youtube' in (task.url or '') or 'youtu.be' in (task.url or '') %}
+            {% set pcolor='#FF0000' %}{% set pname='YouTube' %}{% set picon='youtube' %}
+        {% elif 'tiktok' in (task.url or '') %}
+            {% set pcolor='#EE1D52' %}{% set pname='TikTok' %}{% set picon='music-2' %}
+        {% elif 'twitter' in (task.url or '') or 'x.com' in (task.url or '') %}
+            {% set pcolor='#1DA1F2' %}{% set pname='Twitter/X' %}{% set picon='twitter' %}
+        {% elif 'facebook' in (task.url or '') %}
+            {% set pcolor='#1877F2' %}{% set pname='Facebook' %}{% set picon='facebook' %}
+        {% elif 'discord' in (task.url or '') %}
+            {% set pcolor='#5865F2' %}{% set pname='Discord' %}{% set picon='gamepad-2' %}
+        {% else %}
+            {% set pcolor='#E1306C' %}{% set pname='Social' %}{% set picon='share-2' %}
+        {% endif %}
+        <div class="task-row" onclick="completeTask('{{ task_id }}','{{ task.url or '' }}','social')">
+            <div class="task-row-icon" style="background:{{ pcolor }}22;">
+                <i data-lucide="{{ picon }}" style="width:20px;height:20px;color:{{ pcolor }};"></i>
+            </div>
+            <div class="task-row-body">
+                <div class="task-row-title">{{ task.title }}</div>
+                <div class="task-row-meta">
+                    <span class="task-chip task-chip-reward">+{{ task.reward }} S-E</span>
+                    <span class="task-chip" style="color:{{ pcolor }};">{{ pname }}</span>
+                    {% if task.max_completions %}
+                    <span class="task-chip">{{ task.current_completions or 0 }}/{{ task.max_completions }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="task-row-arrow">
+                <i data-lucide="chevron-right" style="width:18px;height:18px;"></i>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        {# ── Tareas sociales con screenshot (social_tasks table) ── #}
         {% set visible_tasks = social_tasks | selectattr('user_status', '!=', 'approved') | list if social_tasks else [] %}
         {% if visible_tasks %}
             {% for task in visible_tasks %}
@@ -292,10 +368,13 @@ a.task-row {
 
             {% endfor %}
         {% else %}
+            {% set has_social_from_tasks = available_tasks.values() | selectattr('task_type', 'equalto', 'social') | list | length > 0 %}
+            {% if not has_social_from_tasks %}
             <div class="tasks-empty">
                 <i data-lucide="share-2" style="width:40px;height:40px;opacity:0.3;"></i>
-                <p>No hay tareas sociales disponibles</p>
+                <p data-i18n="social_tasks_empty_available">No hay tareas sociales disponibles</p>
             </div>
+            {% endif %}
         {% endif %}
     </div>
 
