@@ -272,15 +272,15 @@
             <i data-lucide="arrow-left" style="width:20px;height:20px;color:rgba(255,255,255,0.7);"></i>
         </a>
         <div>
-            <h1 style="font-size:1.4rem;font-weight:700;color:white;margin-bottom:2px;">🕹️ Arcade</h1>
-            <p style="font-size:0.8rem;color:rgba(255,255,255,0.45);">Juega y gana 1 S-E por minuto · Máx 30 min/día</p>
+            <h1 style="font-size:1.4rem;font-weight:700;color:white;margin-bottom:2px;">🕹️ <span data-i18n="arcade_title">Arcade</span></h1>
+            <p style="font-size:0.8rem;color:rgba(255,255,255,0.45);" data-i18n="arcade_subtitle">Juega y gana recompensas · Hasta 2h/día</p>
         </div>
     </div>
 
     <!-- Barra de progreso diario -->
-    {% if minutes_today >= 30 %}
+    {% if minutes_today >= 120 %}
     <div class="limit-banner">
-        <strong>Límite diario alcanzado.</strong> Vuelve mañana para seguir ganando S-E.
+        <strong data-i18n="arcade_limit_reached">Límite diario alcanzado.</strong>
     </div>
     {% endif %}
 
@@ -289,20 +289,20 @@
             <i data-lucide="timer" style="width:20px;height:20px;color:#00FF88;"></i>
         </div>
         <div class="reward-bar-info">
-            <div class="reward-bar-label">Tiempo jugado hoy</div>
+            <div class="reward-bar-label" data-i18n="arcade_time_label">Tiempo jugado hoy</div>
             <div class="reward-bar-track">
-                <div class="reward-bar-fill" id="dailyBar" style="width: {{ [(minutes_today / 30 * 100), 100] | min }}%;"></div>
+                <div class="reward-bar-fill" id="dailyBar" style="width: {{ [(minutes_today / 120 * 100), 100] | min }}%;"></div>
             </div>
             <div class="reward-bar-stats">
-                <span id="dailyMinLabel">{{ minutes_today }} / 30 min</span>
-                <span id="sessionEarned">+0.00 S-E hoy</span>
+                <span id="dailyMinLabel">{{ minutes_today }} / 120 min</span>
+                <span id="sessionEarned">+0.00<span data-i18n="arcade_session_earned"> ganado hoy</span></span>
             </div>
         </div>
         <div class="reward-bar-earned" id="liveEarned">+0.00</div>
     </div>
 
     <!-- Selección de juegos -->
-    <div style="font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Elige un juego</div>
+    <div style="font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;" data-i18n="arcade_choose">Elige un juego</div>
     <div class="games-grid" id="gamesGrid">
         <div class="game-thumb" onclick="loadGame('antivirus','Anti-Virus','https://theme.cloudarcade.net/full/anti-virus-game/')">
             <div class="game-thumb-badge">NUEVO</div>
@@ -316,16 +316,15 @@
         </div>
     </div>
 
-    <!-- Panel del juego activo -->
     <!-- Overlay fullscreen del juego -->
     <div class="game-overlay" id="gameOverlay">
         <div class="game-hud">
             <div class="game-hud-title" id="gamePanelTitle">—</div>
             <div class="game-hud-right">
-                <div class="game-hud-timer">⏱ <span id="sessionTimer">0:00</span> · +<span id="hudEarned">0</span> S-E</div>
+                <div class="game-hud-timer">⏱ <span id="sessionTimer">0:00</span></div>
             </div>
         </div>
-        <button class="game-close-btn" onclick="closeGame()">✕ Salir</button>
+        <button class="game-close-btn" data-i18n="arcade_close" onclick="closeGame()">✕ Salir</button>
         <div class="game-iframe-wrap">
             <iframe id="gameFrame" src="" allowfullscreen
                 sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock"
@@ -336,21 +335,33 @@
 </div>
 
 <!-- Toast de recompensa -->
-<div class="reward-toast" id="rewardToast">+1 S-E 🎉</div>
+<div class="reward-toast" id="rewardToast">🎮 ¡Recompensa ganada!</div>
 
 <script>
 (function() {
     const USER_ID = "{{ user_id }}";
     const REWARD_PER_MIN = 1.0;
-    const MAX_MINS_DAY = 30;
+    const MAX_MINS_DAY = 120;
 
-    let minutesToday = {{ minutes_today | int }};
-    let sessionSeconds = 0;
-    let sessionEarnedSE = 0;
-    let activeGame = null;
-    let timerInterval = null;
-    let isClaiming = false;
-    let pendingClaims = 0;
+    var minutesToday = {{ minutes_today | int }};
+    var sessionSeconds = 0;
+    var sessionEarnedSE = 0;
+    var activeGame = null;
+    var timerInterval = null;
+    var isClaiming = false;
+    var pendingClaims = 0;
+
+    function t(key, fallback) {
+        try {
+            var lang = window.currentLang || localStorage.getItem('sally_lang') || 'es';
+            return (window.LANG && LANG[lang] && LANG[lang][key]) ? LANG[lang][key] : (LANG && LANG['es'] && LANG['es'][key] ? LANG['es'][key] : (fallback || key));
+        } catch(e) { return fallback || key; }
+    }
+
+    function updateDailyLabel() {
+        var bar = t('arcade_daily_bar', '/ 2h');
+        document.getElementById('dailyMinLabel').textContent = minutesToday + ' min ' + bar;
+    }
 
     function isGameVisible() {
         return document.getElementById('gameOverlay').classList.contains('visible');
@@ -358,34 +369,22 @@
 
     window.loadGame = function(id, name, url) {
         if (minutesToday >= MAX_MINS_DAY) {
-            alert('Has alcanzado el límite diario de 30 minutos. ¡Vuelve mañana!');
+            alert(t('arcade_limit_reached', '¡Límite diario alcanzado! Vuelve mañana.'));
             return;
         }
-
-        document.querySelectorAll('.game-thumb').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.game-thumb').forEach(function(el) { el.classList.remove('active'); });
         event.currentTarget.classList.add('active');
-
-        activeGame = { id, name };
+        activeGame = { id: id, name: name };
         document.getElementById('gamePanelTitle').textContent = name;
-
-        var overlay = document.getElementById('gameOverlay');
-        overlay.classList.add('visible');
+        document.getElementById('gameOverlay').classList.add('visible');
         document.body.style.overflow = 'hidden';
-
-        // Cargar iframe después de mostrar overlay
         document.getElementById('gameFrame').src = url;
-
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.expand();
-        }
-
+        if (window.Telegram && window.Telegram.WebApp) window.Telegram.WebApp.expand();
         sessionSeconds = 0;
         sessionEarnedSE = 0;
         pendingClaims = 0;
         isClaiming = false;
-        document.getElementById('hudEarned').textContent = '0';
         updateTimerDisplay();
-
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(tick, 1000);
     };
@@ -394,44 +393,27 @@
         document.getElementById('gameOverlay').classList.remove('visible');
         document.getElementById('gameFrame').src = '';
         document.body.style.overflow = '';
-
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-        }
+        if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
         activeGame = null;
     };
 
     function tick() {
-        // Contar siempre que el overlay esté visible — ignorar visibilitychange del iframe
         if (!activeGame || !isGameVisible()) return;
-
-        if (minutesToday >= MAX_MINS_DAY) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            return;
-        }
-
+        if (minutesToday >= MAX_MINS_DAY) { clearInterval(timerInterval); timerInterval = null; return; }
         sessionSeconds++;
         updateTimerDisplay();
-        document.getElementById('hudEarned').textContent = sessionEarnedSE.toFixed(0);
-
-        if (sessionSeconds % 60 === 0) {
-            pendingClaims++;
-            processClaims();
-        }
+        if (sessionSeconds % 60 === 0) { pendingClaims++; processClaims(); }
     }
 
     function updateTimerDisplay() {
-        const m = Math.floor(sessionSeconds / 60);
-        const s = sessionSeconds % 60;
+        var m = Math.floor(sessionSeconds / 60);
+        var s = sessionSeconds % 60;
         document.getElementById('sessionTimer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
     }
 
     function processClaims() {
         if (isClaiming || pendingClaims <= 0 || !activeGame) return;
         isClaiming = true;
-
         fetch('/api/arcade/claim-minute', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -444,44 +426,40 @@
                 pendingClaims = Math.max(0, pendingClaims - 1);
                 minutesToday = data.minutes_today;
                 sessionEarnedSE += REWARD_PER_MIN;
-
                 var pct = Math.min(minutesToday / MAX_MINS_DAY * 100, 100);
                 document.getElementById('dailyBar').style.width = pct + '%';
-                document.getElementById('dailyMinLabel').textContent = minutesToday + ' / 30 min';
-                document.getElementById('sessionEarned').textContent = '+' + sessionEarnedSE.toFixed(2) + ' S-E hoy';
+                updateDailyLabel();
+                document.getElementById('sessionEarned').textContent = '+' + sessionEarnedSE.toFixed(2) + t('arcade_session_earned', ' ganado hoy');
                 document.getElementById('liveEarned').textContent = '+' + sessionEarnedSE.toFixed(2);
-                document.getElementById('hudEarned').textContent = sessionEarnedSE.toFixed(0);
-
-                showToast('+1 S-E 🎉');
-
+                showToast(t('arcade_toast', '🎮 ¡Recompensa ganada!'));
                 if (minutesToday >= MAX_MINS_DAY) {
                     if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
                     document.getElementById('dailyBar').style.background = 'linear-gradient(90deg, #FF5050, #CC0000)';
-                    showToast('¡Límite diario alcanzado! 🏆');
+                    showToast(t('arcade_limit_msg', '¡Límite diario alcanzado! 🏆'));
                 }
-
                 if (pendingClaims > 0) setTimeout(processClaims, 500);
-
             } else if (data.minutes_today >= MAX_MINS_DAY) {
-                pendingClaims = 0;
-                minutesToday = MAX_MINS_DAY;
+                pendingClaims = 0; minutesToday = MAX_MINS_DAY;
             } else {
-                // Error servidor: reintentar en 5s sin perder el claim
                 setTimeout(function() { isClaiming = false; processClaims(); }, 5000);
             }
         })
-        .catch(function() {
-            isClaiming = false;
-            // Error de red: reintentar en 8s
-            setTimeout(processClaims, 8000);
-        });
+        .catch(function() { isClaiming = false; setTimeout(processClaims, 8000); });
     }
 
     function showToast(msg) {
-        var t = document.getElementById('rewardToast');
-        t.textContent = msg;
-        t.classList.add('show');
-        setTimeout(function() { t.classList.remove('show'); }, 2500);
+        var el = document.getElementById('rewardToast');
+        el.textContent = msg;
+        el.classList.add('show');
+        setTimeout(function() { el.classList.remove('show'); }, 2500);
+    }
+
+    // El sistema global de translations.js aplica data-i18n automáticamente
+    // Solo actualizamos la barra de progreso dinámica
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateDailyLabel);
+    } else {
+        updateDailyLabel();
     }
 })();
 </script>
