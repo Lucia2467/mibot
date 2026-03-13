@@ -1,3 +1,4 @@
+/* v2 */
 /**
  * SALLY-E Multi-Language Translation System
  * Languages: English (en), Spanish (es), Portuguese (pt), Russian (ru), Arabic (ar)
