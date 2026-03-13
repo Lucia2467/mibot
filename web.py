@@ -946,12 +946,12 @@ def explore_arcade():
         from db import get_cursor
         with get_cursor() as cursor:
             cursor.execute("""
-                SELECT COALESCE(SUM(minutes_played), 0)
+                SELECT COALESCE(SUM(minutes_played), 0) AS mins
                 FROM arcade_sessions
                 WHERE user_id = %s AND DATE(created_at) = CURDATE()
             """, (user_id,))
             row = cursor.fetchone()
-            minutes_today = int(row[0] if row else 0)
+            minutes_today = int(row['mins'] if row and row['mins'] is not None else 0)
     except Exception:
         minutes_today = 0
 
@@ -982,17 +982,28 @@ def api_arcade_claim_minute():
     REWARD_PER_MIN = 1.0
     MAX_MINS_DAY = 30
 
+    # Crear tabla si no existe
+    try:
+        from db import execute_query as _eq
+        _eq("CREATE TABLE IF NOT EXISTS arcade_sessions (id BIGINT AUTO_INCREMENT PRIMARY KEY, user_id VARCHAR(64) NOT NULL, game_id VARCHAR(64) NOT NULL DEFAULT 'unknown', minutes_played INT NOT NULL DEFAULT 1, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4")
+        try:
+            _eq("CREATE INDEX idx_arcade_user_date ON arcade_sessions (user_id, created_at)")
+        except Exception:
+            pass
+    except Exception:
+        pass
+
     try:
         from db import get_cursor, execute_query
 
         with get_cursor() as cursor:
             cursor.execute("""
-                SELECT COALESCE(SUM(minutes_played), 0)
+                SELECT COALESCE(SUM(minutes_played), 0) AS mins
                 FROM arcade_sessions
                 WHERE user_id = %s AND DATE(created_at) = CURDATE()
             """, (user_id,))
             row = cursor.fetchone()
-            minutes_today = int(row[0] if row else 0)
+            minutes_today = int(row['mins'] if row and row['mins'] is not None else 0)
 
         if minutes_today >= MAX_MINS_DAY:
             return jsonify({
