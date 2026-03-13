@@ -1241,22 +1241,41 @@ function translateModalElements(modal) {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
+// ── Esperar idioma resuelto antes de traducir títulos ──
+function applyTaskTranslationsWhenReady() {
+    let attempts = 0;
+    const maxAttempts = 15; // hasta ~4.5 segundos
+    const interval = 300;
+
+    const tryApply = () => {
+        const lang = (typeof getCurrentLanguage === 'function') ? getCurrentLanguage() : null;
+        if (lang && lang !== 'es') {
+            applyTaskTranslations();
+        } else if (!lang && attempts < maxAttempts) {
+            attempts++;
+            setTimeout(tryApply, interval);
+        }
+        // Si lang === 'es' no hay nada que traducir
+    };
+    tryApply();
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
     PTS.init();
     if(typeof lucide!=='undefined')lucide.createIcons();
     loadUserTasks();
     switchTab('all');
-    // Run translations after language is fully initialized
-    setTimeout(applyTaskTranslations, 300);
-    setTimeout(applyTaskTranslations, 1000);
-    setTimeout(applyTaskTranslations, 2500);
+    // Esperar a que el idioma esté disponible antes de traducir
+    applyTaskTranslationsWhenReady();
+    // Escuchar evento de idioma resuelto por el sistema i18n
+    window.addEventListener('languageResolved', applyTaskTranslations);
 });
 
-// Also re-apply when language changes
+// Re-aplicar cuando el usuario cambia el idioma manualmente
 const _origSetLang = window.setLanguage;
 window.setLanguage = function(lang) {
     if (_origSetLang) _origSetLang(lang);
-    setTimeout(applyTaskTranslations, 50);
+    setTimeout(applyTaskTranslations, 100);
 };
 
 // ── Apply translations based on user language ──
