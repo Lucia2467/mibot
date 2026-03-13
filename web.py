@@ -144,6 +144,14 @@ except ImportError as e:
     logger.warning(f"⚠️ Withdrawal notifications not available: {e}")
 
 app = Flask(__name__)
+
+@app.after_request
+def add_cache_headers(response):
+    if request.path.startswith('/static/js/') or request.path.startswith('/static/css/'):
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    return response
 _secret_key = os.environ.get('SECRET_KEY', '')
 if not _secret_key:
     _is_production = os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('RAILWAY_PROJECT_ID')
