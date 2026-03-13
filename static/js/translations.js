@@ -1135,7 +1135,19 @@ const LANG = {
         pts_watch_5_ads: "Watch 5 ads",
         pts_bonus: "bonus",
         pts_no_community_tasks: "No community tasks",
-        pts_be_first: "Be the first to publish!"
+        pts_be_first: "Be the first to publish!",
+
+        // Arcade
+        arcade_title: "Arcade",
+        arcade_subtitle: "Play & earn rewards · Up to 2h/day",
+        arcade_time_label: "Time played today",
+        arcade_limit_reached: "Daily limit reached. Come back tomorrow!",
+        arcade_limit_msg: "You've reached today's 2-hour limit. See you tomorrow! 🏆",
+        arcade_choose: "Choose a game",
+        arcade_close: "✕ Exit",
+        arcade_toast: "🎮 Reward earned!",
+        arcade_daily_bar: "/ 2h",
+        arcade_session_earned: " earned today"
     },
     
     es: {
@@ -2269,7 +2281,19 @@ const LANG = {
         pts_watch_5_ads: "Ver 5 anuncios",
         pts_bonus: "bonus",
         pts_no_community_tasks: "No hay tareas de la comunidad",
-        pts_be_first: "¡Sé el primero en publicar!"
+        pts_be_first: "¡Sé el primero en publicar!",
+
+        // Arcade
+        arcade_title: "Arcade",
+        arcade_subtitle: "Juega y gana recompensas · Hasta 2h/día",
+        arcade_time_label: "Tiempo jugado hoy",
+        arcade_limit_reached: "¡Límite diario alcanzado! Vuelve mañana.",
+        arcade_limit_msg: "Alcanzaste el límite de 2 horas de hoy. ¡Hasta mañana! 🏆",
+        arcade_choose: "Elige un juego",
+        arcade_close: "✕ Salir",
+        arcade_toast: "🎮 ¡Recompensa ganada!",
+        arcade_daily_bar: "/ 2h",
+        arcade_session_earned: " ganado hoy"
     },
     
     pt: {
@@ -3365,10 +3389,20 @@ const LANG = {
         pts_watch_5_ads: "Assistir 5 anúncios",
         pts_bonus: "bônus",
         pts_no_community_tasks: "Nenhuma tarefa da comunidade",
-        pts_be_first: "Seja o primeiro a publicar!"
+        pts_be_first: "Seja o primeiro a publicar!",
+
+        // Arcade
+        arcade_title: "Arcade",
+        arcade_subtitle: "Jogue e ganhe recompensas · Até 2h/dia",
+        arcade_time_label: "Tempo jogado hoje",
+        arcade_limit_reached: "Limite diário atingido. Volte amanhã!",
+        arcade_limit_msg: "Você atingiu o limite de 2 horas de hoje. Até amanhã! 🏆",
+        arcade_choose: "Escolha um jogo",
+        arcade_close: "✕ Sair",
+        arcade_toast: "🎮 Recompensa recebida!",
+        arcade_daily_bar: "/ 2h",
+        arcade_session_earned: " ganho hoje"
     },
-    
-    ru: {
         // Навигация
         nav_home: "Главная",
         nav_tasks: "Задания",
@@ -4432,10 +4466,20 @@ const LANG = {
         pts_watch_5_ads: "Посмотреть 5 реклам",
         pts_bonus: "бонус",
         pts_no_community_tasks: "Нет задач сообщества",
-        pts_be_first: "Будьте первым, кто опубликует!"
+        pts_be_first: "Будьте первым, кто опубликует!",
+
+        // Arcade
+        arcade_title: "Аркада",
+        arcade_subtitle: "Играй и зарабатывай · До 2ч/день",
+        arcade_time_label: "Время игры сегодня",
+        arcade_limit_reached: "Дневной лимит достигнут. Возвращайтесь завтра!",
+        arcade_limit_msg: "Вы достигли лимита 2 часов на сегодня. До завтра! 🏆",
+        arcade_choose: "Выберите игру",
+        arcade_close: "✕ Выход",
+        arcade_toast: "🎮 Награда получена!",
+        arcade_daily_bar: "/ 2ч",
+        arcade_session_earned: " заработано сегодня"
     },
-    
-    ar: {
         // التنقل
         nav_home: "الرئيسية",
         nav_tasks: "المهام",
@@ -5499,7 +5543,19 @@ const LANG = {
         pts_watch_5_ads: "شاهد 5 إعلانات",
         pts_bonus: "مكافأة",
         pts_no_community_tasks: "لا توجد مهام مجتمع",
-        pts_be_first: "كن أول من ينشر!"
+        pts_be_first: "كن أول من ينشر!",
+
+        // Arcade
+        arcade_title: "الألعاب",
+        arcade_subtitle: "العب واكسب مكافآت · حتى ساعتين/يوم",
+        arcade_time_label: "وقت اللعب اليوم",
+        arcade_limit_reached: "تم الوصول للحد اليومي. عد غداً!",
+        arcade_limit_msg: "لقد وصلت إلى حد ساعتين اليوم. إلى اللقاء غداً! 🏆",
+        arcade_choose: "اختر لعبة",
+        arcade_close: "✕ خروج",
+        arcade_toast: "🎮 تم الحصول على المكافأة!",
+        arcade_daily_bar: "/ ساعتان",
+        arcade_session_earned: " مكتسب اليوم"
     }
 };
 
