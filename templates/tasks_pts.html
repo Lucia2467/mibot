@@ -1157,7 +1157,16 @@ async function loadUserTasks(){
         
         const c=document.getElementById('user-tasks-list');
         if(d.success&&d.tasks&&d.tasks.length>0){
-            c.innerHTML=d.tasks.map(task=>`<div class="user-task-item" style="display:flex;align-items:center;padding:var(--space-3);background:var(--glass-ultra);border-radius:var(--radius-md);border:1px solid rgba(255,215,0,0.15);"><div style="flex-shrink:0;width:40px;height:40px;background:linear-gradient(135deg,${getTaskColor(task.task_type)});border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin-right:var(--space-3);">${getTaskIcon(task.task_type)}</div><div style="flex:1;min-width:0;"><div style="font-weight:600;color:var(--color-text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(task.title)}</div><div style="display:flex;align-items:center;gap:var(--space-2);font-size:0.75rem;"><span style="color:var(--color-neon-cyan);">+${task.reward} S-E</span><span style="color:var(--color-text-muted);">•</span><span style="color:var(--color-text-tertiary);">${task.completions}</span>${task.requires_join?'<i data-lucide="lock" style="width:11px;height:11px;color:#FFD700;"></i>':''}</div></div><button class="pts-btn-small" onclick="completeUserTask('${task.task_id}','${escapeHtml(task.url)}',${task.requires_join},'${escapeHtml(task.channel_username||'')}')"><span data-i18n="pts_complete">${t('pts_complete')}</span></button></div>`).join('');
+            // Traducir títulos en tiempo real si el idioma no es español
+            const lang = (typeof getCurrentLanguage === 'function') ? getCurrentLanguage() : 'es';
+            let tasks = d.tasks;
+            if (lang && lang !== 'es') {
+                tasks = await Promise.all(d.tasks.map(async task => {
+                    const translatedTitle = await translateTextRT(task.title, lang);
+                    return Object.assign({}, task, {title: translatedTitle});
+                }));
+            }
+            c.innerHTML=tasks.map(task=>`<div class="user-task-item" style="display:flex;align-items:center;padding:var(--space-3);background:var(--glass-ultra);border-radius:var(--radius-md);border:1px solid rgba(255,215,0,0.15);"><div style="flex-shrink:0;width:40px;height:40px;background:linear-gradient(135deg,${getTaskColor(task.task_type)});border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin-right:var(--space-3);">${getTaskIcon(task.task_type)}</div><div style="flex:1;min-width:0;"><div style="font-weight:600;color:var(--color-text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(task.title)}</div><div style="display:flex;align-items:center;gap:var(--space-2);font-size:0.75rem;"><span style="color:var(--color-neon-cyan);">+${task.reward} S-E</span><span style="color:var(--color-text-muted);">•</span><span style="color:var(--color-text-tertiary);">${task.completions}</span>${task.requires_join?'<i data-lucide="lock" style="width:11px;height:11px;color:#FFD700;"></i>':''}</div></div><button class="pts-btn-small" onclick="completeUserTask('${task.task_id}','${escapeHtml(task.url)}',${task.requires_join},'${escapeHtml(task.channel_username||'')}')"><span data-i18n="pts_complete">${t('pts_complete')}</span></button></div>`).join('');
             if(typeof lucide!=='undefined')lucide.createIcons();
         }else{
             const currentTab = document.querySelector('.task-tab.active')?.dataset?.tab || 'all';
@@ -1293,23 +1302,60 @@ window._taskTranslations = {
     {% endfor %}
 };
 
-function applyTaskTranslations() {
+// Cache de traducciones en tiempo real para no repetir llamadas
+window._rtCache = window._rtCache || {};
+
+async function translateTextRT(text, lang) {
+    const cacheKey = lang + ':' + text;
+    if (window._rtCache[cacheKey]) return window._rtCache[cacheKey];
+    try {
+        const res = await fetch(
+            `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=es|${lang}`,
+            { signal: AbortSignal.timeout(4000) }
+        );
+        const data = await res.json();
+        const translated = data?.responseData?.translatedText || '';
+        if (translated && !translated.toUpperCase().includes('MYMEMORY WARNING')) {
+            window._rtCache[cacheKey] = translated;
+            return translated;
+        }
+    } catch(e) {}
+    return text; // fallback: texto original
+}
+
+async function applyTaskTranslations() {
     const lang = (typeof getCurrentLanguage === 'function') ? getCurrentLanguage() : 'es';
     if (lang === 'es') return;
 
     const map = window._taskTranslations || {};
 
-    // 1. Translate all task row titles using the server-injected map
+    // 1. Traducir títulos de tareas en el DOM
+    const pendingRT = []; // tareas sin traducción guardada → traducir en tiempo real
     document.querySelectorAll('[data-task-id]').forEach(el => {
         const taskId = el.getAttribute('data-task-id');
         if (!taskId) return;
         const tr = map[taskId];
         if (tr && tr[lang] && tr[lang].title) {
+            // Traducción guardada en DB → aplicar inmediatamente
             el.textContent = tr[lang].title;
+        } else {
+            // Sin traducción guardada → marcar para traducción en tiempo real
+            const originalText = el.textContent.trim();
+            if (originalText) pendingRT.push({ el, originalText, taskId });
         }
     });
 
-    // 2. Patch _stask_* modal objects with translations from map
+    // 2. Traducir en tiempo real las que no tienen traducción guardada
+    if (pendingRT.length > 0) {
+        await Promise.all(pendingRT.map(async ({ el, originalText }) => {
+            const translated = await translateTextRT(originalText, lang);
+            if (translated && translated !== originalText) {
+                el.textContent = translated;
+            }
+        }));
+    }
+
+    // 3. Patch _stask_* modal objects con traducciones del mapa
     Object.keys(window).filter(k => k.startsWith('_stask_')).forEach(k => {
         const task = window[k];
         if (!task) return;
