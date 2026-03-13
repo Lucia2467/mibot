@@ -764,8 +764,7 @@
                     <div class="header-user-id" id="header-user-id">ID: {{ user_id or user.user_id or '---' }}</div>
                 </div>
 
-                <!-- Botón de Idioma -->
-                <button id="lang-open-btn" style="display:flex;align-items:center;gap:5px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.35);border-radius:18px;padding:5px 11px;color:white;font-size:0.72rem;font-weight:700;cursor:pointer;letter-spacing:.06em;white-space:nowrap;">🌐 <span id="lang-btn-text">ES</span></button>
+                <!-- Botón de Idioma movido a posición fija -->
             </div>
         </header>
         {% endif %}
@@ -832,7 +831,18 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- Language Selector Button -->
+    <!-- Language Selector Button - fixed, always visible -->
+    <button id="lang-open-btn" style="
+        position:fixed; bottom:78px; right:12px; z-index:7000;
+        display:flex; align-items:center; gap:5px;
+        background:rgba(13,13,22,0.9);
+        border:1px solid rgba(99,102,241,0.5);
+        border-radius:20px; padding:7px 13px;
+        color:white; font-size:0.7rem; font-weight:700;
+        cursor:pointer; letter-spacing:.06em;
+        backdrop-filter:blur(10px);
+        box-shadow:0 4px 16px rgba(99,102,241,0.2);
+    ">🌐 <span id="lang-btn-text">ES</span></button>
     
 
 
