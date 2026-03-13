@@ -911,7 +911,17 @@ def api_arcade_claim_minute():
     try:
         from db import get_cursor, execute_query
 
-        # Verificar minutos jugados hoy
+        # Asegurar que la tabla existe (por si migración no corrió)
+        execute_query("""
+            CREATE TABLE IF NOT EXISTS arcade_sessions (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                user_id VARCHAR(64) NOT NULL,
+                game_id VARCHAR(64) NOT NULL DEFAULT 'unknown',
+                minutes_played INT NOT NULL DEFAULT 1,
+                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_arcade_user_date (user_id, created_at)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        """)
         with get_cursor() as cursor:
             cursor.execute("""
                 SELECT COALESCE(SUM(minutes_played), 0)
