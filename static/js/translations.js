@@ -3403,6 +3403,8 @@ const LANG = {
         arcade_daily_bar: "/ 2h",
         arcade_session_earned: " ganho hoje"
     },
+
+    ru: {
         // Навигация
         nav_home: "Главная",
         nav_tasks: "Задания",
@@ -4480,6 +4482,8 @@ const LANG = {
         arcade_daily_bar: "/ 2ч",
         arcade_session_earned: " заработано сегодня"
     },
+
+    ar: {
         // التنقل
         nav_home: "الرئيسية",
         nav_tasks: "المهام",
