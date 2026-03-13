@@ -980,7 +980,7 @@ def api_arcade_claim_minute():
 
     game_id = data.get('game_id', 'unknown')
     REWARD_PER_MIN = 1.0
-    MAX_MINS_DAY = 30
+    MAX_MINS_DAY = 120
 
     # Crear tabla si no existe
     try:
