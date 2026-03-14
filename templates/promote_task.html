@@ -649,10 +649,10 @@
 
     <!-- Balance Display -->
     <div class="balance-display">
-        <div class="balance-label" data-i18n="your_doge_balance">YOUR DOGE BALANCE</div>
+        <div class="balance-label">YOUR PXC BALANCE</div>
         <div class="balance-value">
-            <span id="userDogeBalance">{{ "%.4f"|format(user.doge_balance|default(0)|float) }}</span>
-            <span>DOGE</span>
+            <span id="userDogeBalance">{{ "%.4f"|format(user.se_balance|default(0)|float) }}</span>
+            <span>PXC</span>
         </div>
     </div>
 
@@ -684,7 +684,7 @@
                         <span class="package-icon">{{ pkg.icon }}</span>
                         <span class="package-name">{{ pkg.name }}</span>
                     </div>
-                    <div class="package-price">{{ pkg.price_doge }} DOGE</div>
+                    <div class="package-price">{{ pkg.price_se }} PXC</div>
                     <div class="package-completions">
                         <i data-lucide="users"></i>
                         <span>{{ pkg.max_completions }} <span data-i18n="total_completions">Completions</span></span>
@@ -882,7 +882,7 @@
             </div>
             <div class="stat-mini-card">
                 <div class="stat-mini-value">{{ "%.2f"|format(stats.created.total_spent|default(0)|float) }}</div>
-                <div class="stat-mini-label" data-i18n="doge_spent">DOGE Gastado</div>
+                <div class="stat-mini-label">PXC Gastado</div>
             </div>
         </div>
 
@@ -935,7 +935,7 @@
 // Variables globales
 let selectedPackage = null;
 const userId = '{{ user_id }}';
-const userDogeBalance = {{ user.doge_balance|default(0)|float }};
+const userDogeBalance = {{ user.se_balance|default(0)|float }};
 
 const packages = {{ packages|tojson|safe }};
 
@@ -997,14 +997,6 @@ function validateForm() {
         isValid = false;
     }
     
-    // Verificar balance
-    if (selectedPackage) {
-        const pkg = packages[selectedPackage];
-        if (pkg && userDogeBalance < pkg.price_doge) {
-            isValid = false;
-        }
-    }
-    
     // Para Telegram con verificación, necesita username
     if ((taskType === 'telegram_channel' || taskType === 'telegram_group') && 
         document.getElementById('requiresJoin').checked) {
@@ -1041,8 +1033,8 @@ async function createTask() {
     }
     
     const pkg = packages[selectedPackage];
-    if (userDogeBalance < pkg.price_doge) {
-        showToast(`Balance insuficiente. Necesitas ${pkg.price_doge} DOGE`, 'error');
+    if (userDogeBalance < pkg.price_se) {
+        showToast(`Balance insuficiente. Necesitas ${pkg.price_se} PXC`, 'error');
         return;
     }
     
@@ -1079,7 +1071,7 @@ async function createTask() {
             showToast('¡Tarea publicada exitosamente!', 'success');
             
             // Actualizar balance
-            const newBalance = userDogeBalance - pkg.price_doge;
+            const newBalance = userDogeBalance - pkg.price_se;
             document.getElementById('userDogeBalance').textContent = newBalance.toFixed(4);
             
             // Vibración de éxito
