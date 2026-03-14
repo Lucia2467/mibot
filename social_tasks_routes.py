@@ -231,7 +231,7 @@ def admin_delete_task(task_id):
 @_admin_required
 def admin_approve_submission(submission_id):
     data = request.json or {}
-    admin_note = data.get('note', '').strip() or None
+    admin_note = (data.get('admin_note') or data.get('note') or '').strip() or None
     ok, msg = approve_submission(submission_id, admin_note=admin_note)
     if ok:
         return jsonify({'success': True, 'message': msg})
@@ -242,7 +242,7 @@ def admin_approve_submission(submission_id):
 @_admin_required
 def admin_reject_submission(submission_id):
     data = request.json or {}
-    admin_note = data.get('note', '').strip() or None
+    admin_note = (data.get('admin_note') or data.get('note') or '').strip() or None
     ok, msg = reject_submission(submission_id, admin_note=admin_note)
     if ok:
         return jsonify({'success': True, 'message': msg})
