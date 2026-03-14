@@ -677,10 +677,19 @@ def api_pts_status():
     boost = get_boost_status(user_id)
     ads_today = get_daily_ads_count(user_id)
 
+    # Get se_balance (PXC) from users table
+    try:
+        from database import get_user
+        user_data = get_user(user_id)
+        se_balance = float(user_data.get('se_balance', 0) or 0) if user_data else 0
+    except Exception:
+        se_balance = 0
+
     return jsonify({
         'success': True,
         'pts': pts,
-        'pts_balance': pts,
+        'pts_balance': se_balance,
+        'se_balance': se_balance,
         'checkin': checkin,
         # Campos de check-in en el nivel superior para compatibilidad con frontend
         'checkin_done': checkin.get('done_today', False),
