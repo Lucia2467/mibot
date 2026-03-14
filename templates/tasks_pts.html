@@ -342,7 +342,7 @@ a.task-row {
                         {% endif %}
                         {% if task.user_status == 'pending' %}
                         <span class="task-chip" style="color:#FBB23F;border-color:rgba(251,178,63,0.3);display:inline-flex;align-items:center;gap:4px;">
-                            <i data-lucide="clock" style="width:11px;height:11px;"></i> En revisión
+                            <i data-lucide="clock" style="width:11px;height:11px;"></i> <span data-i18n="stask_in_review">En revisión</span>
                         </span>
                         {% endif %}
                     </div>
@@ -1522,8 +1522,8 @@ async function stSubmit(taskId, requiresScreenshot) {
                     <div style="margin:0 16px 14px;padding:10px 14px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:10px;display:flex;align-items:center;gap:8px;">
                         <i data-lucide="clock" style="width:18px;height:18px;color:#FBB23F;flex-shrink:0;"></i>
                         <div>
-                            <div style="font-weight:700;font-size:0.82rem;color:#FBB23F;">En revisión</div>
-                            <div style="font-size:0.72rem;color:rgba(255,255,255,0.4);">El admin revisará tu envío pronto</div>
+                            <div style="font-weight:700;font-size:0.82rem;color:#FBB23F;">${t('stask_in_review')}</div>
+                            <div style="font-size:0.72rem;color:rgba(255,255,255,0.4);">${t('stask_review_soon') || 'El admin revisará tu envío pronto'}</div>
                         </div>
                     </div>`;
             }
@@ -1817,7 +1817,7 @@ function stOpenModal(taskId) {
         link.style.background        = `linear-gradient(135deg, ${pc}40, ${pc}22)`;
         link.style.border            = `1px solid ${pc}55`;
         link.style.color             = '#fff';
-        document.getElementById('stask-modal-link-label').textContent = 'Ir a ' + pn;
+        document.getElementById('stask-modal-link-label').textContent = (t('stask_go_to') || 'Ir a') + ' ' + pn;
         step1.style.display = 'block';
     } else { step1.style.display = 'none'; }
 
