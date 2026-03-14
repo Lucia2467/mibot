@@ -914,7 +914,7 @@ const PTS = {
                     cb.style.color = 'rgba(255,255,255,0.45)';
                     cb.style.cursor = 'default';
                     const lbl = document.getElementById('checkin-btn-label');
-                    if (lbl) lbl.textContent = 'Completado';
+                    if (lbl) lbl.textContent = t('pts_checkin_done') || t('pts_checkin_completed') || 'Completado';
                     if (!d.checkin_doubled) {
                         db.style.display = 'flex';
                     } else {
@@ -942,7 +942,7 @@ const PTS = {
                         adTaskCard.style.opacity = '0.7';
                         const progressText = document.getElementById('ad-task-progress');
                         if (progressText) {
-                            progressText.innerHTML = '✓ Completado';
+                            progressText.innerHTML = '✓ ' + (t('status_completed') || 'Completado');
                             progressText.style.color = 'var(--color-success, #22c55e)';
                         }
                     } else {
