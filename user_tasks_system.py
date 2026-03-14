@@ -354,7 +354,14 @@ def complete_user_task(task_id, user_id):
         
         # Pagar recompensa
         update_balance(user_id, 'se', reward, 'add', f'Task: {task_id}')
-        
+
+        # Notificar al usuario vía bot
+        try:
+            from task_notifications import notify_task_completed
+            notify_task_completed(user_id, task.get('title', ''), reward)
+        except Exception as _ne:
+            print(f"[user_tasks] ⚠️ Error notificación completado: {_ne}")
+
         print(f"[user_tasks] ✅ {user_id} completó {task_id}, +{reward} S-E")
         return True, f"¡Tarea completada! +{reward} S-E", reward
         
@@ -423,6 +430,23 @@ def resume_user_task(task_id, user_id):
         return False, "Solo puedes reactivar tareas pausadas"
     execute_query("UPDATE user_tasks SET status = 'active' WHERE task_id = %s", (task_id,))
     return True, "Tarea reactivada"
+
+def delete_user_task(task_id, user_id):
+    """Elimina una tarea (solo el creador puede hacerlo)"""
+    from database import update_balance
+    task = get_user_task(task_id)
+    if not task or str(task['creator_id']) != str(user_id):
+        return False, "No autorizado"
+    # Reembolso proporcional si quedan cupos sin completar
+    completed = int(task.get('current_completions', 0))
+    max_comp   = int(task.get('max_completions', 0))
+    price_paid = float(task.get('price_paid', 0))
+    if price_paid > 0 and max_comp > 0 and completed < max_comp:
+        remaining_ratio = (max_comp - completed) / max_comp
+        refund = round(price_paid * remaining_ratio, 4)
+        update_balance(user_id, 'se', refund, 'add', f'Refund delete: {task_id}')
+    execute_query("DELETE FROM user_tasks WHERE task_id = %s", (task_id,))
+    return True, "Tarea eliminada"
 
 # ============== SISTEMA DE VERIFICACIÓN Y PENALIZACIÓN ==============
 

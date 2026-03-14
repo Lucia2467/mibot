@@ -97,6 +97,21 @@ def api_create_task():
     )
     
     if success:
+        # Notificar a todos los usuarios en su idioma (background thread)
+        try:
+            from task_notifications import notify_new_task
+            from user_tasks_system import USER_TASK_COMPLETION_REWARD, USER_TASK_PACKAGES
+            pkg    = USER_TASK_PACKAGES.get(package_id, {})
+            spots  = pkg.get('max_completions', '?')
+            notify_new_task(
+                task_id=task_id,
+                title=title,
+                description=description,
+                reward=USER_TASK_COMPLETION_REWARD,
+                spots=spots,
+            )
+        except Exception as e:
+            print(f"[user_tasks] ⚠️ Error iniciando notificación: {e}")
         return jsonify({'success': True, 'message': message, 'task_id': task_id})
     return jsonify({'success': False, 'message': message}), 400
 
@@ -318,6 +333,21 @@ def api_resume_task():
         return jsonify({'success': False, 'message': 'Parámetros faltantes'}), 400
     
     success, message = resume_user_task(task_id, user_id)
+    return jsonify({'success': success, 'message': message})
+
+@user_tasks_bp.route('/api/user-tasks/delete', methods=['POST'])
+def api_delete_task():
+    """Elimina una tarea del creador"""
+    from user_tasks_system import delete_user_task
+
+    user_id = request.args.get('user_id')
+    data    = request.get_json()
+    task_id = data.get('task_id')
+
+    if not user_id or not task_id:
+        return jsonify({'success': False, 'message': 'Parámetros faltantes'}), 400
+
+    success, message = delete_user_task(task_id, user_id)
     return jsonify({'success': success, 'message': message})
 
 # ============== CRON JOB PARA VERIFICACIÓN ==============
