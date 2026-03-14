@@ -230,6 +230,11 @@ a.task-row {
                 </div>
             </div>
             {% endfor %}
+        {% else %}
+            <div class="tasks-empty tasks-empty-telegram" style="display:none;">
+                <i data-lucide="send" style="width:40px;height:40px;opacity:0.3;"></i>
+                <p data-i18n="pts_no_tasks_available">No hay tareas disponibles</p>
+            </div>
         {% endif %}
         </div>
 
@@ -369,6 +374,11 @@ a.task-row {
             </script>
 
             {% endfor %}
+        {% else %}
+            <div class="tasks-empty tasks-empty-social" style="display:none;">
+                <i data-lucide="share-2" style="width:40px;height:40px;opacity:0.3;"></i>
+                <p data-i18n="social_tasks_empty_available">No hay tareas sociales disponibles</p>
+            </div>
         {% endif %}
     </div>
 
@@ -1563,12 +1573,14 @@ function switchTab(tab) {
     } else if (tab === 'social') {
         if (socialEl) socialEl.style.display = 'block';
         if (comp) comp.style.display = 'none';
+        document.querySelectorAll('.tasks-empty-social').forEach(el => el.style.display = 'flex');
 
     } else if (tab === 'community') {
         if (allEl) allEl.style.display = 'block';
         if (telegramWrap)  telegramWrap.style.display  = 'none';
         if (communityWrap) communityWrap.style.display = 'block';
         if (comp) comp.style.display = 'none';
+        document.querySelectorAll('.tasks-empty-community').forEach(el => el.style.display = 'flex');
 
     } else if (tab === 'ads') {
         if (adsEl) adsEl.style.display = 'block';
