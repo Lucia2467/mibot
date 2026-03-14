@@ -269,7 +269,7 @@
                 {% if sub.status == 'pending' %}
                 <div class="sub-actions">
                     <textarea class="admin-note-input" id="note-{{ sub.submission_id }}"
-                              placeholder="Nota al usuario (opcional)..."></textarea>
+                              placeholder="Motivo del rechazo (obligatorio para rechazar)..."></textarea>
                     <div class="action-btns">
                         <button class="btn-approve" onclick="approveSubmission('{{ sub.submission_id }}')">
                             ✅ Aprobar
@@ -357,8 +357,12 @@ async function approveSubmission(subId) {
 }
 
 async function rejectSubmission(subId) {
-    const note = document.getElementById(`note-${subId}`)?.value || '';
-    if (!note && !confirm('¿Rechazar sin nota al usuario?')) return;
+    const note = document.getElementById(`note-${subId}`)?.value?.trim() || '';
+    if (!note) {
+        alert('⚠️ Debes escribir un motivo de rechazo. El usuario recibirá esta explicación.');
+        document.getElementById(`note-${subId}`)?.focus();
+        return;
+    }
 
     const btn = event.target;
     btn.disabled = true; btn.textContent = 'Procesando...';
