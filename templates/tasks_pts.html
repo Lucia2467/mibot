@@ -60,7 +60,7 @@ a.task-row {
                 <div>
                     <div style="font-weight:800;font-size:1rem;color:#fff;letter-spacing:-0.01em;" data-i18n="pts_checkin_daily_label">Check-in Diario</div>
                     <div style="display:flex;align-items:center;gap:8px;margin-top:3px;">
-                        <span style="font-size:0.78rem;font-weight:700;color:#7EB8FF;">+10 PTS</span>
+                        <span style="font-size:0.78rem;font-weight:700;color:#7EB8FF;">+10 PXC</span>
                         <span style="color:rgba(255,255,255,0.3);font-size:0.7rem;">·</span>
                         <span style="display:flex;align-items:center;gap:3px;font-size:0.75rem;color:rgba(255,255,255,0.6);">
                             <i data-lucide="flame" style="width:13px;height:13px;color:#FF6B00;"></i>
@@ -218,7 +218,7 @@ a.task-row {
                 <div class="task-row-body">
                     <div class="task-row-title" data-task-id="{{ task_id }}">{{ task.title }}</div>
                     <div class="task-row-meta">
-                        <span class="task-chip task-chip-reward">+{{ task.reward }} S-E</span>
+                        <span class="task-chip task-chip-reward">+{{ task.reward }} PXC</span>
                         <span class="task-chip" style="color:{{ tcolor }};">{{ tlabel }}</span>
                         {% if task.max_completions %}
                         <span class="task-chip">{{ task.current_completions or 0 }}/{{ task.max_completions }}</span>
@@ -279,7 +279,7 @@ a.task-row {
             <div class="task-row-body">
                 <div class="task-row-title">{{ task.title }}</div>
                 <div class="task-row-meta">
-                    <span class="task-chip task-chip-reward">+{{ task.reward }} S-E</span>
+                    <span class="task-chip task-chip-reward">+{{ task.reward }} PXC</span>
                     <span class="task-chip" style="color:{{ pcolor }};">{{ pname }}</span>
                     {% if task.max_completions %}
                     <span class="task-chip">{{ task.current_completions or 0 }}/{{ task.max_completions }}</span>
@@ -393,7 +393,7 @@ a.task-row {
             <div class="task-row-body">
                 <div class="task-row-title" data-i18n="pts_watch_1_ad">Ver un anuncio</div>
                 <div class="task-row-meta">
-                    <span class="task-chip task-chip-reward">+5 PTS</span>
+                    <span class="task-chip task-chip-reward">+5 PXC</span>
                     <span class="task-chip"><span data-i18n="pts_ads_available_chip">Disponibles</span>: <span id="ads-remaining">10</span>/10</span>
                 </div>
             </div>
@@ -410,7 +410,7 @@ a.task-row {
             <div class="task-row-body">
                 <div class="task-row-title" data-i18n="pts_watch_5_ads">Ver 5 anuncios (bonus)</div>
                 <div class="task-row-meta">
-                    <span class="task-chip task-chip-reward">+20 PTS</span>
+                    <span class="task-chip task-chip-reward">+20 PXC</span>
                     <span class="task-chip" id="ad-task-progress" style="color:#FFD700;">0/5</span>
                 </div>
                 <div style="margin-top:6px;background:rgba(255,255,255,0.08);border-radius:4px;height:4px;overflow:hidden;">
@@ -442,7 +442,7 @@ a.task-row {
                     <div class="task-row-body">
                         <div class="task-row-title">{{ task.title }}</div>
                         <div class="task-row-meta">
-                            <span class="task-chip" style="color:#22c55e;">✓ {{ task.reward }} S-E</span>
+                            <span class="task-chip" style="color:#22c55e;">✓ {{ task.reward }} PXC</span>
                         </div>
                     </div>
                 </div>
@@ -1127,7 +1127,7 @@ const PTS = {
     }
 };
 
-async function completeTask(taskId,taskUrl,taskType){try{const u=new URLSearchParams(window.location.search);const userId=u.get('user_id');if(!userId){showToast('Error','error');return}const b=event.target.closest('button');b.disabled=true;b.textContent=t('pts_verifying');if(taskUrl&&(taskType==='telegram'||taskUrl.includes('t.me'))){if(window.Telegram?.WebApp){window.Telegram.WebApp.openTelegramLink(taskUrl)}else{window.open(taskUrl,'_blank')}await new Promise(r=>setTimeout(r,5000))}else if(taskUrl){window.open(taskUrl,'_blank');await new Promise(r=>setTimeout(r,2000))}const r=await fetch(`/api/task/complete?user_id=${userId}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task_id:taskId})});const d=await r.json();if(d.success){showToast(`✓ +${d.reward} S-E`,'success');if(window.Telegram?.WebApp)window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');setTimeout(()=>location.reload(),1500)}else{showToast(d.message||'Error','error');b.disabled=false;b.textContent=t('pts_complete')}}catch(e){showToast('Error','error');event.target.closest('button').disabled=false;event.target.closest('button').textContent=t('pts_complete')}}
+async function completeTask(taskId,taskUrl,taskType){try{const u=new URLSearchParams(window.location.search);const userId=u.get('user_id');if(!userId){showToast('Error','error');return}const b=event.target.closest('button');b.disabled=true;b.textContent=t('pts_verifying');if(taskUrl&&(taskType==='telegram'||taskUrl.includes('t.me'))){if(window.Telegram?.WebApp){window.Telegram.WebApp.openTelegramLink(taskUrl)}else{window.open(taskUrl,'_blank')}await new Promise(r=>setTimeout(r,5000))}else if(taskUrl){window.open(taskUrl,'_blank');await new Promise(r=>setTimeout(r,2000))}const r=await fetch(`/api/task/complete?user_id=${userId}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task_id:taskId})});const d=await r.json();if(d.success){showToast(`✓ +${d.reward} PXC`,'success');if(window.Telegram?.WebApp)window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');setTimeout(()=>location.reload(),1500)}else{showToast(d.message||'Error','error');b.disabled=false;b.textContent=t('pts_complete')}}catch(e){showToast('Error','error');event.target.closest('button').disabled=false;event.target.closest('button').textContent=t('pts_complete')}}
 
 async function loadUserTasks(){
     const u=new URLSearchParams(window.location.search);
@@ -1177,7 +1177,7 @@ async function loadUserTasks(){
                     <div class="task-row-body">
                         <div class="task-row-title">${escapeHtml(task.title)}</div>
                         <div class="task-row-meta">
-                            <span class="task-chip task-chip-reward">+${task.reward} S-E</span>
+                            <span class="task-chip task-chip-reward">+${task.reward} PXC</span>
                             <span class="task-chip" style="color:${m.color};">${m.label}</span>
                             <span class="task-chip" style="color:rgba(255,255,255,0.45);">${current}/${maxC}</span>
                             ${task.requires_join?'<span class="task-chip"><i data-lucide="lock" style="width:10px;height:10px;color:#FFD700;vertical-align:middle;"></i></span>':''}
@@ -1216,7 +1216,7 @@ function showPenaltyWarning(channel, amount){
                 </p>
                 <div style="background:rgba(220,38,38,0.3);border-radius:8px;padding:12px;margin-bottom:16px;">
                     <span style="color:#fca5a5;font-size:0.85rem;">${t('pts_penalty_deducted')}</span>
-                    <div style="color:#ef4444;font-size:1.5rem;font-weight:800;">-${amount.toFixed(4)} S-E</div>
+                    <div style="color:#ef4444;font-size:1.5rem;font-weight:800;">-${amount.toFixed(4)} PXC</div>
                 </div>
                 <p style="color:#9ca3af;font-size:0.75rem;margin:0 0 16px;">
                     ${t('pts_penalty_rule')}
@@ -1283,7 +1283,7 @@ async function completeUserTask(taskId, taskUrl, requiresJoin, channelUsername) 
         });
         const d = await r.json();
         if (d.success) {
-            showToast(`✓ +${d.reward} S-E`, 'success');
+            showToast(`✓ +${d.reward} PXC`, 'success');
             if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
             setTimeout(() => loadUserTasks(), 1500);
         } else {
@@ -1665,7 +1665,7 @@ async function loadHistory() {
                     type:     'normal',
                     platform: t.task_type || 'telegram',
                     status:   'completed',
-                    reward:   t.reward ? `+${t.reward} S-E` : '',
+                    reward:   t.reward ? `+${t.reward} PXC` : '',
                     date:     t.completed_at || '',
                     note:     ''
                 });

@@ -776,7 +776,7 @@
         <div class="info-box">
             <div class="info-box-text">
                 <i data-lucide="info"></i>
-                <span data-i18n="reward_info">Cada usuario que complete tu tarea recibirá <strong>{{ reward_per_completion }} S-E</strong> como recompensa.</span>
+                <span data-i18n="reward_info">Cada usuario que complete tu tarea recibirá <strong>{{ reward_per_completion }} PXC</strong> como recompensa.</span>
             </div>
         </div>
 
@@ -891,7 +891,7 @@
             </div>
             <div class="stat-mini-card">
                 <div class="stat-mini-value">{{ "%.2f"|format(stats.created.total_spent|default(0)|float) }}</div>
-                <div class="stat-mini-label">PXC Gastado</div>
+                <div class="stat-mini-label" data-i18n="pxc_spent">PXC Gastado</div>
             </div>
         </div>
 
@@ -902,7 +902,7 @@
                 <div class="my-task-card" data-task-id="{{ task.task_id }}">
                     <div class="my-task-header">
                         <div class="my-task-title">{{ task.title }}</div>
-                        <div class="my-task-status status-{{ task.status }}">{{ task.status }}</div>
+                        <div class="my-task-status status-{{ task.status }}" data-status="{{ task.status }}"></div>
                     </div>
                     <div class="my-task-progress">
                         {% set progress = (task.current_completions / task.max_completions * 100)|int if task.max_completions > 0 else 0 %}
@@ -917,18 +917,18 @@
                     <div class="my-task-actions">
                         {% if task.status == 'active' %}
                         <button class="action-btn" onclick="pauseTask('{{ task.task_id }}')">
-                            <i data-lucide="pause"></i> Pausar
+                            <i data-lucide="pause"></i> <span data-i18n="task_pause">Pausar</span>
                         </button>
                         {% elif task.status == 'paused' %}
                         <button class="action-btn" onclick="resumeTask('{{ task.task_id }}')">
-                            <i data-lucide="play"></i> Reanudar
+                            <i data-lucide="play"></i> <span data-i18n="task_resume">Reanudar</span>
                         </button>
                         {% endif %}
                         <button class="action-btn" onclick="window.open('{{ task.url }}', '_blank')">
-                            <i data-lucide="external-link"></i> Ver
+                            <i data-lucide="external-link"></i> <span data-i18n="task_view">Ver</span>
                         </button>
                         <button class="action-btn action-btn-danger" onclick="deleteTask('{{ task.task_id }}', '{{ task.title }}')">
-                            <i data-lucide="trash-2"></i> Eliminar
+                            <i data-lucide="trash-2"></i> <span data-i18n="task_delete">Eliminar</span>
                         </button>
                     </div>
                 </div>
@@ -1189,6 +1189,28 @@ document.addEventListener('DOMContentLoaded', function() {
         lucide.createIcons();
     }
     updateFormFields();
+
+    // Translate status badges
+    const statusLabels = {
+        active:    { key: 'status_active',    fallback: 'ACTIVE' },
+        paused:    { key: 'status_paused',    fallback: 'PAUSED' },
+        completed: { key: 'status_completed', fallback: 'COMPLETED' },
+    };
+    document.querySelectorAll('[data-status]').forEach(el => {
+        const s = el.getAttribute('data-status');
+        const cfg = statusLabels[s] || { key: s, fallback: s.toUpperCase() };
+        el.textContent = (typeof t === 'function' ? t(cfg.key) : null) || cfg.fallback;
+    });
+
+    // Dispatch languageResolved so page re-translates when language is set
+    window.addEventListener('languageResolved', function() {
+        document.querySelectorAll('[data-status]').forEach(el => {
+            const s = el.getAttribute('data-status');
+            const cfg = statusLabels[s] || { key: s, fallback: s.toUpperCase() };
+            el.textContent = (typeof t === 'function' ? t(cfg.key) : null) || cfg.fallback;
+        });
+        if (typeof applyTranslations === 'function') applyTranslations();
+    });
 });
 </script>
 {% endblock %}
