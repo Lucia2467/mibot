@@ -179,6 +179,20 @@ def create_social_task(data):
             1 if data.get('requires_screenshot') else 0,
             translations_json,
         ))
+        # Notificar a todos los usuarios sobre la nueva tarea
+        try:
+            from task_notifications import notify_new_task
+            notify_new_task(
+                task_id=task_id,
+                title=data.get('title', '').strip(),
+                description=data.get('description', '').strip() or '',
+                reward=float(data.get('reward_amount', 1.0)),
+                spots=int(data.get('max_completions', 100)),
+            )
+        except Exception as _ne:
+            import traceback
+            print(f"[social_tasks] ⚠️ Error notificación nueva tarea: {_ne}")
+            traceback.print_exc()
         return task_id
     except Exception as e:
         print(f"[social_tasks] create: {e}")
@@ -350,7 +364,7 @@ def approve_submission(submission_id, admin_note=None):
     try:
         with get_cursor() as cursor:
             cursor.execute("""
-                SELECT s.*, t.reward_amount, t.reward_currency, t.task_id
+                SELECT s.*, t.reward_amount, t.reward_currency, t.task_id, t.title AS task_title
                 FROM social_task_submissions s
                 JOIN social_tasks t ON t.task_id = s.task_id
                 WHERE s.submission_id = %s
@@ -383,6 +397,16 @@ def approve_submission(submission_id, admin_note=None):
             "UPDATE social_tasks SET current_completions = current_completions + 1 WHERE task_id = %s",
             (sub['task_id'],)
         )
+
+        # Notificar al usuario que su tarea fue aprobada
+        try:
+            from task_notifications import notify_task_completed
+            task_title = sub.get('task_title') or f"Tarea #{submission_id[:8]}"
+            notify_task_completed(sub['user_id'], task_title, float(sub['reward_amount']))
+        except Exception as _ne:
+            import traceback
+            print(f"[social_tasks] ⚠️ Error notificación aprobación: {_ne}")
+            traceback.print_exc()
 
         return True, 'Aprobado y recompensa enviada'
 
