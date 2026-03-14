@@ -1166,7 +1166,25 @@ async function loadUserTasks(){
                     return Object.assign({}, task, {title: translatedTitle});
                 }));
             }
-            c.innerHTML=tasks.map(task=>`<div class="user-task-item" style="display:flex;align-items:center;padding:var(--space-3);background:var(--glass-ultra);border-radius:var(--radius-md);border:1px solid rgba(255,215,0,0.15);"><div style="flex-shrink:0;width:40px;height:40px;background:linear-gradient(135deg,${getTaskColor(task.task_type)});border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin-right:var(--space-3);">${getTaskIcon(task.task_type)}</div><div style="flex:1;min-width:0;"><div style="font-weight:600;color:var(--color-text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(task.title)}</div><div style="display:flex;align-items:center;gap:var(--space-2);font-size:0.75rem;"><span style="color:var(--color-neon-cyan);">+${task.reward} S-E</span><span style="color:var(--color-text-muted);">•</span><span style="color:var(--color-text-tertiary);">${task.completions}</span>${task.requires_join?'<i data-lucide="lock" style="width:11px;height:11px;color:#FFD700;"></i>':''}</div></div><button class="pts-btn-small" onclick="completeUserTask('${task.task_id}','${escapeHtml(task.url)}',${task.requires_join},'${escapeHtml(task.channel_username||'')}')"><span data-i18n="pts_complete">${t('pts_complete')}</span></button></div>`).join('');
+            c.innerHTML=tasks.map(task=>{
+                const m=getTaskMeta(task.task_type);
+                return `<div class="task-row" onclick="completeUserTask('${task.task_id}','${escapeHtml(task.url)}',${task.requires_join},'${escapeHtml(task.channel_username||'')}')">
+                    <div class="task-row-icon" style="background:${m.color}22;">
+                        <i data-lucide="${m.icon}" style="width:20px;height:20px;color:${m.color};"></i>
+                    </div>
+                    <div class="task-row-body">
+                        <div class="task-row-title">${escapeHtml(task.title)}</div>
+                        <div class="task-row-meta">
+                            <span class="task-chip task-chip-reward">+${task.reward} S-E</span>
+                            <span class="task-chip" style="color:${m.color};">${m.label}</span>
+                            ${task.requires_join?'<span class="task-chip"><i data-lucide="lock" style="width:10px;height:10px;color:#FFD700;vertical-align:middle;"></i></span>':''}
+                        </div>
+                    </div>
+                    <div class="task-row-arrow">
+                        <i data-lucide="chevron-right" style="width:18px;height:18px;"></i>
+                    </div>
+                </div>`;
+            }).join('');
             if(typeof lucide!=='undefined')lucide.createIcons();
         }else{
             const currentTab = document.querySelector('.task-tab.active')?.dataset?.tab || 'all';
@@ -1214,8 +1232,22 @@ function showPenaltyWarning(channel, amount){
     }
 }
 
-function getTaskColor(type){switch(type){case 'telegram_channel':case 'telegram_group':return 'rgba(0,136,204,0.2) 0%,rgba(0,100,180,0.2) 100%';case 'website':return 'rgba(232,82,170,0.2) 0%,rgba(112,11,73,0.2) 100%';case 'social':return 'rgba(0, 82, 204,0.2) 0%,rgba(0, 64, 255,0.2) 100%';default:return 'rgba(255,215,0,0.2) 0%,rgba(255,140,0,0.2) 100%'}}
-function getTaskIcon(type){switch(type){case 'telegram_channel':case 'telegram_group':return '<i data-lucide="send" style="width:20px;height:20px;color:#0088cc;"></i>';case 'website':return '<i data-lucide="globe" style="width:20px;height:20px;color:#3B82F6;"></i>';case 'social':return '<i data-lucide="share-2" style="width:20px;height:20px;color:#0052CC;"></i>';default:return '<i data-lucide="external-link" style="width:20px;height:20px;color:#FFD700;"></i>'}}
+function getTaskMeta(type){
+    switch(type){
+        case 'telegram_channel': case 'telegram_group': return {color:'#2AABEE', icon:'send',        label:'Telegram'};
+        case 'website':                                  return {color:'#3B82F6', icon:'globe',       label:'Web'};
+        case 'social':                                   return {color:'#E1306C', icon:'share-2',     label:'Social'};
+        case 'youtube':                                  return {color:'#FF0000', icon:'youtube',     label:'YouTube'};
+        case 'instagram':                                return {color:'#E1306C', icon:'instagram',   label:'Instagram'};
+        case 'twitter': case 'x':                        return {color:'#1DA1F2', icon:'twitter',     label:'Twitter/X'};
+        case 'facebook':                                 return {color:'#1877F2', icon:'facebook',    label:'Facebook'};
+        case 'discord':                                  return {color:'#5865F2', icon:'gamepad-2',   label:'Discord'};
+        case 'tiktok':                                   return {color:'#EE1D52', icon:'music-2',     label:'TikTok'};
+        default:                                         return {color:'#6B7280', icon:'link',        label:(type||'Link').replace(/_/g,' ')};
+    }
+}
+function getTaskColor(type){ const m=getTaskMeta(type); return m.color+'33 0%,'+m.color+'11 100%'; }
+function getTaskIcon(type){  const m=getTaskMeta(type); return `<i data-lucide="${m.icon}" style="width:20px;height:20px;color:${m.color};"></i>`; }
 function escapeHtml(str){if(!str)return '';const d=document.createElement('div');d.textContent=str;return d.innerHTML}
 
 async function completeUserTask(taskId,taskUrl,requiresJoin,channelUsername){const u=new URLSearchParams(window.location.search);const userId=u.get('user_id');if(!userId){showToast('Error','error');return}const b=event.target.closest('button');const o=b.innerHTML;b.disabled=true;b.innerHTML='<span>'+t('pts_verifying')+'</span>';try{if(taskUrl){if(taskUrl.includes('t.me')&&window.Telegram?.WebApp){window.Telegram.WebApp.openTelegramLink(taskUrl)}else{window.open(taskUrl,'_blank')}if(requiresJoin){showToast(t('pts_join_channel_wait'),'info');await new Promise(r=>setTimeout(r,6000))}else{await new Promise(r=>setTimeout(r,2000))}}const r=await fetch(`/api/user-tasks/complete?user_id=${userId}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task_id:taskId})});const d=await r.json();if(d.success){showToast(`✓ +${d.reward} S-E`,'success');if(window.Telegram?.WebApp){window.Telegram.WebApp.HapticFeedback.notificationOccurred('success')}setTimeout(()=>loadUserTasks(),1500)}else{showToast(d.message||'Error','error');b.disabled=false;b.innerHTML=o}}catch(e){console.error('[UserTasks] Error:',e);showToast('Error','error');b.disabled=false;b.innerHTML=o}}
