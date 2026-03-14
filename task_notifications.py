@@ -108,6 +108,56 @@ COMPLETION_MESSAGES = {
     ),
 }
 
+
+# ═══════════════════════════════════════════════════════════════════
+#  TEXTOS — TAREA RECHAZADA
+# ═══════════════════════════════════════════════════════════════════
+REJECTION_MESSAGES = {
+    'es': (
+        "❌ <b>Tarea rechazada</b>\n\n"
+        "📋 <b>Tarea:</b> {title}\n"
+        "{note_line}"
+        "\n¿Por qué fue rechazada? Revisa los requisitos e inténtalo de nuevo.\n\n"
+        "👉 <b>Tasks → Social</b> para ver más tareas disponibles"
+    ),
+    'en': (
+        "❌ <b>Task rejected</b>\n\n"
+        "📋 <b>Task:</b> {title}\n"
+        "{note_line}"
+        "\nWhy was it rejected? Review the requirements and try again.\n\n"
+        "👉 <b>Tasks → Social</b> for more available tasks"
+    ),
+    'pt': (
+        "❌ <b>Tarefa rejeitada</b>\n\n"
+        "📋 <b>Tarefa:</b> {title}\n"
+        "{note_line}"
+        "\nPor que foi rejeitada? Revise os requisitos e tente novamente.\n\n"
+        "👉 <b>Tasks → Social</b> para mais tarefas disponíveis"
+    ),
+    'ru': (
+        "❌ <b>Задание отклонено</b>\n\n"
+        "📋 <b>Задание:</b> {title}\n"
+        "{note_line}"
+        "\nПочему отклонено? Проверь требования и попробуй снова.\n\n"
+        "👉 <b>Tasks → Social</b> для других заданий"
+    ),
+    'ar': (
+        "❌ <b>تم رفض المهمة</b>\n\n"
+        "📋 <b>المهمة:</b> {title}\n"
+        "{note_line}"
+        "\nلماذا تم الرفض؟ راجع المتطلبات وحاول مجدداً.\n\n"
+        "👉 <b>Tasks → Social</b> لمهام أخرى متاحة"
+    ),
+}
+
+REJECTION_NOTE = {
+    'es': "📝 <b>Motivo del rechazo:</b> {note}\n",
+    'en': "📝 <b>Rejection reason:</b> {note}\n",
+    'pt': "📝 <b>Motivo da rejeição:</b> {note}\n",
+    'ru': "📝 <b>Причина отклонения:</b> {note}\n",
+    'ar': "📝 <b>سبب الرفض:</b> {note}\n",
+}
+
 SUPPORTED_LANGS = set(NEW_TASK_MESSAGES.keys())
 FALLBACK_LANG   = 'es'
 
@@ -231,5 +281,34 @@ def notify_task_completed(user_id, title, reward):
             print(f"[task_notifications] {'✅' if ok else '⚠️'} Completado → {user_id} [{lang}]")
         except Exception as e:
             print(f"[task_notifications] ❌ Error completado {user_id}: {e}")
+
+    threading.Thread(target=_worker, daemon=True).start()
+
+# ═══════════════════════════════════════════════════════════════════
+#  3. NOTIFICACIÓN INDIVIDUAL — tarea rechazada
+# ═══════════════════════════════════════════════════════════════════
+
+def notify_task_rejected(user_id, title, admin_note=None):
+    """Notifica al usuario que su envío fue rechazado, con el motivo del admin."""
+    bot_token = _get_token()
+    if not bot_token:
+        return
+
+    def _worker():
+        try:
+            from database import get_user
+            user = get_user(user_id)
+            if not user:
+                return
+            lang     = _get_lang(user)
+            note_line = REJECTION_NOTE.get(lang, REJECTION_NOTE['es']).format(note=admin_note) if admin_note else ''
+            text = REJECTION_MESSAGES.get(lang, REJECTION_MESSAGES[FALLBACK_LANG]).format(
+                title=title,
+                note_line=note_line,
+            )
+            ok = _send(bot_token, str(user_id), text)
+            print(f"[task_notifications] {'✅' if ok else '⚠️'} Rechazo notificado → {user_id} [{lang}]")
+        except Exception as e:
+            print(f"[task_notifications] ❌ Error rechazo {user_id}: {e}")
 
     threading.Thread(target=_worker, daemon=True).start()

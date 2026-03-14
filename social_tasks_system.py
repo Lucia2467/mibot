@@ -416,13 +416,34 @@ def approve_submission(submission_id, admin_note=None):
 
 
 def reject_submission(submission_id, admin_note=None):
-    """Rechaza un envío."""
+    """Rechaza un envío.""\"
     try:
+        # Obtener datos del envío antes de rechazar
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT s.user_id, t.title AS task_title
+                FROM social_task_submissions s
+                JOIN social_tasks t ON t.task_id = s.task_id
+                WHERE s.submission_id = %s
+            """, (submission_id,))
+            sub = cursor.fetchone()
+
         execute_query("""
             UPDATE social_task_submissions
             SET status = 'rejected', admin_note = %s, reviewed_at = NOW()
             WHERE submission_id = %s AND status = 'pending'
         """, (admin_note, submission_id))
+
+        # Notificar al usuario del rechazo con el motivo
+        if sub:
+            try:
+                from task_notifications import notify_task_rejected
+                notify_task_rejected(sub['user_id'], sub.get('task_title', ''), admin_note)
+            except Exception as _ne:
+                import traceback
+                print(f"[social_tasks] ⚠️ Error notificación rechazo: {_ne}")
+                traceback.print_exc()
+
         return True, 'Rechazado'
     except Exception as e:
         print(f"[social_tasks] reject: {e}")
