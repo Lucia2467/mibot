@@ -230,11 +230,6 @@ a.task-row {
                 </div>
             </div>
             {% endfor %}
-        {% else %}
-            <div class="tasks-empty tasks-empty-telegram">
-                <i data-lucide="inbox" style="width:40px;height:40px;opacity:0.3;"></i>
-                <p data-i18n="pts_no_tasks_available">No hay tareas disponibles</p>
-            </div>
         {% endif %}
         </div>
 
@@ -374,14 +369,6 @@ a.task-row {
             </script>
 
             {% endfor %}
-        {% else %}
-            {% set has_social_from_tasks = available_tasks.values() | selectattr('task_type', 'equalto', 'social') | list | length > 0 %}
-            {% if not has_social_from_tasks %}
-            <div class="tasks-empty">
-                <i data-lucide="share-2" style="width:40px;height:40px;opacity:0.3;"></i>
-                <p data-i18n="social_tasks_empty_available">No hay tareas sociales disponibles</p>
-            </div>
-            {% endif %}
         {% endif %}
     </div>
 
