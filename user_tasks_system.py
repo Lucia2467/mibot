@@ -356,11 +356,14 @@ def complete_user_task(task_id, user_id):
         update_balance(user_id, 'se', reward, 'add', f'Task: {task_id}')
 
         # Notificar al usuario vía bot
+        print(f"[user_tasks] 🔔 Enviando notificación de completado a {user_id}...")
         try:
             from task_notifications import notify_task_completed
             notify_task_completed(user_id, task.get('title', ''), reward)
         except Exception as _ne:
-            print(f"[user_tasks] ⚠️ Error notificación completado: {_ne}")
+            import traceback
+            print(f"[user_tasks] ❌ Error notificación completado: {_ne}")
+            traceback.print_exc()
 
         print(f"[user_tasks] ✅ {user_id} completó {task_id}, +{reward} S-E")
         return True, f"¡Tarea completada! +{reward} S-E", reward

@@ -98,11 +98,16 @@ def api_create_task():
     
     if success:
         # Notificar a todos los usuarios en su idioma (background thread)
+        print(f"[user_tasks] 🔔 Iniciando notificación para tarea {task_id}...")
         try:
+            import sys, os
+            print(f"[user_tasks] 🔍 sys.path: {sys.path[:3]}")
+            print(f"[user_tasks] 🔍 BOT_TOKEN set: {bool(os.environ.get('BOT_TOKEN'))}")
             from task_notifications import notify_new_task
             from user_tasks_system import USER_TASK_COMPLETION_REWARD, USER_TASK_PACKAGES
             pkg    = USER_TASK_PACKAGES.get(package_id, {})
             spots  = pkg.get('max_completions', '?')
+            print(f"[user_tasks] 📦 Paquete: {package_id}, spots: {spots}")
             notify_new_task(
                 task_id=task_id,
                 title=title,
@@ -111,7 +116,9 @@ def api_create_task():
                 spots=spots,
             )
         except Exception as e:
-            print(f"[user_tasks] ⚠️ Error iniciando notificación: {e}")
+            import traceback
+            print(f"[user_tasks] ❌ Error en notificación: {e}")
+            traceback.print_exc()
         return jsonify({'success': True, 'message': message, 'task_id': task_id})
     return jsonify({'success': False, 'message': message}), 400
 
