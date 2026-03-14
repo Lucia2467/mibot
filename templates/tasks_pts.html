@@ -1167,8 +1167,10 @@ async function loadUserTasks(){
                 }));
             }
             c.innerHTML=tasks.map(task=>{
-                const m=getTaskMeta(task.task_type);
-                return `<div class="task-row" onclick="completeUserTask('${task.task_id}','${escapeHtml(task.url)}',${task.requires_join},'${escapeHtml(task.channel_username||'')}')">
+                const m = getTaskMeta(task.task_type);
+                const current = task.current_completions ?? 0;
+                const maxC    = task.max_completions ?? 0;
+                return `<div class="task-row" data-utask-id="${task.task_id}" onclick="completeUserTask('${task.task_id}','${escapeHtml(task.url)}',${task.requires_join},'${escapeHtml(task.channel_username||'')}')">
                     <div class="task-row-icon" style="background:${m.color}22;">
                         <i data-lucide="${m.icon}" style="width:20px;height:20px;color:${m.color};"></i>
                     </div>
@@ -1177,6 +1179,7 @@ async function loadUserTasks(){
                         <div class="task-row-meta">
                             <span class="task-chip task-chip-reward">+${task.reward} S-E</span>
                             <span class="task-chip" style="color:${m.color};">${m.label}</span>
+                            <span class="task-chip" style="color:rgba(255,255,255,0.45);">${current} de ${maxC}</span>
                             ${task.requires_join?'<span class="task-chip"><i data-lucide="lock" style="width:10px;height:10px;color:#FFD700;vertical-align:middle;"></i></span>':''}
                         </div>
                     </div>
@@ -1250,7 +1253,49 @@ function getTaskColor(type){ const m=getTaskMeta(type); return m.color+'33 0%,'+
 function getTaskIcon(type){  const m=getTaskMeta(type); return `<i data-lucide="${m.icon}" style="width:20px;height:20px;color:${m.color};"></i>`; }
 function escapeHtml(str){if(!str)return '';const d=document.createElement('div');d.textContent=str;return d.innerHTML}
 
-async function completeUserTask(taskId,taskUrl,requiresJoin,channelUsername){const u=new URLSearchParams(window.location.search);const userId=u.get('user_id');if(!userId){showToast('Error','error');return}const b=event.target.closest('button');const o=b.innerHTML;b.disabled=true;b.innerHTML='<span>'+t('pts_verifying')+'</span>';try{if(taskUrl){if(taskUrl.includes('t.me')&&window.Telegram?.WebApp){window.Telegram.WebApp.openTelegramLink(taskUrl)}else{window.open(taskUrl,'_blank')}if(requiresJoin){showToast(t('pts_join_channel_wait'),'info');await new Promise(r=>setTimeout(r,6000))}else{await new Promise(r=>setTimeout(r,2000))}}const r=await fetch(`/api/user-tasks/complete?user_id=${userId}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task_id:taskId})});const d=await r.json();if(d.success){showToast(`✓ +${d.reward} S-E`,'success');if(window.Telegram?.WebApp){window.Telegram.WebApp.HapticFeedback.notificationOccurred('success')}setTimeout(()=>loadUserTasks(),1500)}else{showToast(d.message||'Error','error');b.disabled=false;b.innerHTML=o}}catch(e){console.error('[UserTasks] Error:',e);showToast('Error','error');b.disabled=false;b.innerHTML=o}}
+async function completeUserTask(taskId, taskUrl, requiresJoin, channelUsername) {
+    const u = new URLSearchParams(window.location.search);
+    const userId = u.get('user_id');
+    if (!userId) { showToast('Error','error'); return; }
+
+    // Visual feedback: dim the row
+    const row = document.querySelector(`.task-row[data-utask-id="${taskId}"]`);
+    if (row) { row.style.opacity = '0.5'; row.style.pointerEvents = 'none'; }
+
+    try {
+        if (taskUrl) {
+            if (taskUrl.includes('t.me') && window.Telegram?.WebApp) {
+                window.Telegram.WebApp.openTelegramLink(taskUrl);
+            } else {
+                window.open(taskUrl, '_blank');
+            }
+            if (requiresJoin) {
+                showToast(t('pts_join_channel_wait'), 'info');
+                await new Promise(r => setTimeout(r, 6000));
+            } else {
+                await new Promise(r => setTimeout(r, 2000));
+            }
+        }
+        const r = await fetch(`/api/user-tasks/complete?user_id=${userId}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({task_id: taskId})
+        });
+        const d = await r.json();
+        if (d.success) {
+            showToast(`✓ +${d.reward} S-E`, 'success');
+            if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            setTimeout(() => loadUserTasks(), 1500);
+        } else {
+            showToast(d.message || 'Error', 'error');
+            if (row) { row.style.opacity = ''; row.style.pointerEvents = ''; }
+        }
+    } catch(e) {
+        console.error('[UserTasks] Error:', e);
+        showToast('Error', 'error');
+        if (row) { row.style.opacity = ''; row.style.pointerEvents = ''; }
+    }
+}
 
 // Funciones para el modal de reglas
 function openRulesModal() {
