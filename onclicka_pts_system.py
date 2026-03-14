@@ -331,10 +331,11 @@ def record_ad_watched(user_id, task_type='single_ad'):
                 cursor.execute("UPDATE ad_tasks_progress SET completed = 1 WHERE user_id = %s AND task_type = 'watch_5_ads' AND task_date = %s", (str(user_id), today))
                 bonus_earned = PTS_CONFIG['watch_5_ads_bonus']
         total_pts = pts_earned + bonus_earned
-        success, msg = add_pts(user_id, total_pts, 'ad_watched', f'Anuncio visto')
+        from database import update_balance
+        success = update_balance(user_id, 'se', total_pts, 'add', 'Anuncio visto')
         if success:
             return True, "Anuncio completado", total_pts
-        return False, msg, 0
+        return False, "Error al acreditar PXC", 0
     except Exception as e:
         logger.error(f"Error anuncio: {e}")
         return False, "Error", 0
@@ -405,10 +406,11 @@ def do_checkin(user_id):
         streak = status['streak']
         with get_cursor() as cursor:
             cursor.execute("INSERT INTO daily_checkin (user_id, checkin_date, base_reward, total_reward, streak) VALUES (%s, %s, %s, %s, %s)", (str(user_id), today, reward, reward, streak))
-        success, msg = add_pts(user_id, reward, 'checkin', f'Check-in racha {streak}')
+        from database import update_balance
+        success = update_balance(user_id, 'se', reward, 'add', f'Check-in racha {streak}')
         if success:
             return True, f"¡Check-in! Racha: {streak}", reward
-        return False, msg, 0
+        return False, "Error al acreditar PXC", 0
     except Exception as e:
         logger.error(f"Error checkin: {e}")
         return False, "Error", 0
@@ -432,10 +434,11 @@ def double_checkin_reward(user_id):
                 VALUES (%s, 'checkin_double', 1, 1, %s, %s)
                 ON DUPLICATE KEY UPDATE ads_watched = ads_watched + 1, last_ad_at = %s
             """, (str(user_id), today, now, now))
-        success, msg = add_pts(user_id, bonus, 'checkin_double', 'Check-in duplicado')
+        from database import update_balance
+        success = update_balance(user_id, 'se', bonus, 'add', 'Check-in duplicado')
         if success:
             return True, "¡Recompensa duplicada!", bonus
-        return False, msg, 0
+        return False, "Error al acreditar PXC", 0
     except Exception as e:
         logger.error(f"Error double: {e}")
         return False, "Error", 0

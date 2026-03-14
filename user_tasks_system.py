@@ -13,7 +13,7 @@ from db import execute_query, get_cursor
 
 # ============== CONFIGURACIÓN ==============
 STAY_DAYS_REQUIRED = 3  # Días que debe permanecer en el canal
-USER_TASK_COMPLETION_REWARD = 0.5  # S-E por tarea completada
+USER_TASK_COMPLETION_REWARD = 50  # PXC por tarea completada
 
 # ============== PRECIOS DE PAQUETES ==============
 USER_TASK_PACKAGES = {
@@ -83,7 +83,7 @@ def init_user_tasks_table():
                 price_paid DECIMAL(20,8) NOT NULL,
                 max_completions INT NOT NULL,
                 current_completions INT DEFAULT 0,
-                reward_per_completion DECIMAL(10,4) DEFAULT 0.5,
+                reward_per_completion DECIMAL(10,4) DEFAULT 50,
                 status ENUM('pending', 'active', 'paused', 'completed', 'rejected', 'expired') DEFAULT 'active',
                 rejection_reason TEXT DEFAULT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -365,8 +365,8 @@ def complete_user_task(task_id, user_id):
             print(f"[user_tasks] ❌ Error notificación completado: {_ne}")
             traceback.print_exc()
 
-        print(f"[user_tasks] ✅ {user_id} completó {task_id}, +{reward} S-E")
-        return True, f"¡Tarea completada! +{reward} S-E", reward
+        print(f"[user_tasks] ✅ {user_id} completó {task_id}, +{reward} PXC")
+        return True, f"¡Tarea completada! +{reward} PXC", reward
         
     except Exception as e:
         print(f"[user_tasks] ❌ Error: {e}")
@@ -532,8 +532,8 @@ def check_and_penalize_leavers():
                 
                 if not is_member:
                     # Usuario salió del canal - PENALIZAR CON EL DOBLE
-                    penalty_amount = reward * 2  # Penalización es el doble de lo ganado
-                    print(f"[user_tasks] ⚠️ Usuario {user_id} salió de @{channel} - Penalización: {penalty_amount} S-E (doble)")
+                    penalty_amount = 100  # Penalización fija de 100 PXC
+                    print(f"[user_tasks] ⚠️ Usuario {user_id} salió de @{channel} - Penalización: {penalty_amount} PXC (sanción fija)")
                     
                     # Marcar como salido
                     execute_query("""
@@ -542,8 +542,8 @@ def check_and_penalize_leavers():
                         WHERE task_id = %s AND user_id = %s
                     """, (penalty_amount, task_id, user_id))
                     
-                    # Descontar el DOBLE del S-E ganado (permite saldo negativo)
-                    update_balance(user_id, 'se', penalty_amount, 'subtract', f'Penalty (2x): left @{channel}', allow_negative=True)
+                    # Descontar 100 PXC (sanción fija, permite saldo negativo)
+                    update_balance(user_id, 'se', penalty_amount, 'subtract', f'Penalty (100 PXC): left @{channel}', allow_negative=True)
                     
                     # Registrar penalización
                     execute_query("""
@@ -609,7 +609,7 @@ def send_penalty_notification(user_id, channel, amount):
 
 🚫 Hemos detectado que te diste de baja del canal <b>@{channel}</b> antes de cumplir los 3 días requeridos.
 
-💸 <b>Se han deducido -{amount:.4f} S-E de tu saldo.</b>
+💸 <b>Se han deducido -{amount:.4f} PXC de tu saldo.</b>
 ⚠️ <b>(Penalización = 2x la recompensa ganada)</b>
 
 📋 Recuerda: Debes permanecer en los canales por al menos <b>3 días</b> después de completar una tarea.
@@ -720,8 +720,8 @@ def check_user_channel_memberships(user_id):
                 
                 if not is_member:
                     # Usuario salió del canal - PENALIZAR CON EL DOBLE
-                    penalty_amount = reward * 2  # Penalización es el doble de lo ganado
-                    print(f"[user_tasks] ⚠️ PENALIZACIÓN: Usuario {user_id} salió de @{channel} - Penalización: {penalty_amount} S-E (doble)")
+                    penalty_amount = 100  # Penalización fija de 100 PXC
+                    print(f"[user_tasks] ⚠️ PENALIZACIÓN: Usuario {user_id} salió de @{channel} - Penalización: 100 PXC (sanción fija)")
                     
                     # Marcar como salido
                     execute_query("""
@@ -730,9 +730,9 @@ def check_user_channel_memberships(user_id):
                         WHERE task_id = %s AND user_id = %s
                     """, (penalty_amount, task_id, user_id))
                     
-                    # Descontar el DOBLE del S-E ganado (permite saldo negativo)
-                    update_balance(user_id, 'se', penalty_amount, 'subtract', f'Penalty (2x): left @{channel}', allow_negative=True)
-                    print(f"[user_tasks] 💸 Descontados {penalty_amount} S-E a usuario {user_id} (2x penalización)")
+                    # Descontar 100 PXC (sanción fija, permite saldo negativo)
+                    update_balance(user_id, 'se', penalty_amount, 'subtract', f'Penalty (100 PXC): left @{channel}', allow_negative=True)
+                    print(f"[user_tasks] 💸 Descontados 100 PXC a usuario {user_id} (sanción fija)")
                     
                     # Registrar penalización como ya notificada (se notifica por el modal)
                     execute_query("""

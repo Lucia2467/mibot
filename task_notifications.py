@@ -17,7 +17,7 @@ NEW_TASK_MESSAGES = {
         "📋 <b>Tarea:</b> {title}\n"
         "{desc_line}"
         "👥 <b>Espacios:</b> {spots}\n"
-        "💰 <b>Recompensa:</b> +{reward} S-E\n\n"
+        "💰 <b>Recompensa:</b> +{reward} PXC\n\n"
         "¡Completa la tarea para ganar recompensas! 🚀\n\n"
         "👉 <b>Tasks → Community</b>"
     ),
@@ -26,7 +26,7 @@ NEW_TASK_MESSAGES = {
         "📋 <b>Task:</b> {title}\n"
         "{desc_line}"
         "👥 <b>Spots:</b> {spots}\n"
-        "💰 <b>Reward:</b> +{reward} S-E\n\n"
+        "💰 <b>Reward:</b> +{reward} PXC\n\n"
         "Complete the task to earn rewards! 🚀\n\n"
         "👉 <b>Tasks → Community</b>"
     ),
@@ -35,7 +35,7 @@ NEW_TASK_MESSAGES = {
         "📋 <b>Tarefa:</b> {title}\n"
         "{desc_line}"
         "👥 <b>Vagas:</b> {spots}\n"
-        "💰 <b>Recompensa:</b> +{reward} S-E\n\n"
+        "💰 <b>Recompensa:</b> +{reward} PXC\n\n"
         "Complete a tarefa para ganhar recompensas! 🚀\n\n"
         "👉 <b>Tasks → Community</b>"
     ),
@@ -44,7 +44,7 @@ NEW_TASK_MESSAGES = {
         "📋 <b>Задание:</b> {title}\n"
         "{desc_line}"
         "👥 <b>Мест:</b> {spots}\n"
-        "💰 <b>Награда:</b> +{reward} S-E\n\n"
+        "💰 <b>Награда:</b> +{reward} PXC\n\n"
         "Выполни задание и получи награду! 🚀\n\n"
         "👉 <b>Tasks → Community</b>"
     ),
@@ -53,7 +53,7 @@ NEW_TASK_MESSAGES = {
         "📋 <b>المهمة:</b> {title}\n"
         "{desc_line}"
         "👥 <b>الأماكن:</b> {spots}\n"
-        "💰 <b>المكافأة:</b> +{reward} S-E\n\n"
+        "💰 <b>المكافأة:</b> +{reward} PXC\n\n"
         "أتمم المهمة لكسب المكافآت! 🚀\n\n"
         "👉 <b>Tasks → Community</b>"
     ),
@@ -74,36 +74,36 @@ COMPLETION_MESSAGES = {
     'es': (
         "🎉 <b>¡Tarea completada!</b>\n\n"
         "✅ <b>Tarea:</b> {title}\n"
-        "💰 <b>Recompensa:</b> +{reward} S-E\n"
-        "💼 <b>Saldo actual:</b> {balance:.4f} S-E\n\n"
+        "💰 <b>Recompensa:</b> +{reward} PXC\n"
+        "💼 <b>Saldo actual:</b> {balance:.4f} PXC\n\n"
         "¡Sigue completando tareas para más recompensas! 🚀"
     ),
     'en': (
         "🎉 <b>Task completed!</b>\n\n"
         "✅ <b>Task:</b> {title}\n"
-        "💰 <b>Reward:</b> +{reward} S-E\n"
-        "💼 <b>Current balance:</b> {balance:.4f} S-E\n\n"
+        "💰 <b>Reward:</b> +{reward} PXC\n"
+        "💼 <b>Current balance:</b> {balance:.4f} PXC\n\n"
         "Keep completing tasks for more rewards! 🚀"
     ),
     'pt': (
         "🎉 <b>Tarefa concluída!</b>\n\n"
         "✅ <b>Tarefa:</b> {title}\n"
-        "💰 <b>Recompensa:</b> +{reward} S-E\n"
-        "💼 <b>Saldo atual:</b> {balance:.4f} S-E\n\n"
+        "💰 <b>Recompensa:</b> +{reward} PXC\n"
+        "💼 <b>Saldo atual:</b> {balance:.4f} PXC\n\n"
         "Continue completando tarefas para mais recompensas! 🚀"
     ),
     'ru': (
         "🎉 <b>Задание выполнено!</b>\n\n"
         "✅ <b>Задание:</b> {title}\n"
-        "💰 <b>Награда:</b> +{reward} S-E\n"
-        "💼 <b>Баланс:</b> {balance:.4f} S-E\n\n"
+        "💰 <b>Награда:</b> +{reward} PXC\n"
+        "💼 <b>Баланс:</b> {balance:.4f} PXC\n\n"
         "Продолжай выполнять задания для большего заработка! 🚀"
     ),
     'ar': (
         "🎉 <b>تمت المهمة!</b>\n\n"
         "✅ <b>المهمة:</b> {title}\n"
-        "💰 <b>المكافأة:</b> +{reward} S-E\n"
-        "💼 <b>الرصيد الحالي:</b> {balance:.4f} S-E\n\n"
+        "💰 <b>المكافأة:</b> +{reward} PXC\n"
+        "💼 <b>الرصيد الحالي:</b> {balance:.4f} PXC\n\n"
         "واصل إتمام المهام للمزيد من المكافآت! 🚀"
     ),
 }
