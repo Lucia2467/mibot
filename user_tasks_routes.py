@@ -152,7 +152,9 @@ def api_list_tasks():
                 'requires_join': bool(task.get('requires_join', False)),
                 'channel_username': task.get('channel_username', ''),
                 'reward': float(task.get('reward_per_completion', USER_TASK_COMPLETION_REWARD)),
-                'completions': f"{task.get('current_completions', 0)}/{task.get('max_completions', 0)}"
+                'completions': f"{task.get('current_completions', 0)}/{task.get('max_completions', 0)}",
+                'current_completions': int(task.get('current_completions', 0)),
+                'max_completions': int(task.get('max_completions', 0))
             })
         
         print(f"[user_tasks] Tareas encontradas para {user_id}: {len(formatted)}")
