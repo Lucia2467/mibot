@@ -335,7 +335,7 @@ a.task-row {
                          data-orig-title={{ task.title | tojson }}
                          data-translations='{{ (task.translations or 'null') | tojson | e }}'>{{ task.title }}</div>
                     <div class="task-row-meta">
-                        <span class="task-chip task-chip-reward">+{{ '%.2f'|format(task.reward_amount|float) }} {{ task.reward_currency|upper }}</span>
+                        <span class="task-chip task-chip-reward">+{{ '%.2f'|format(task.reward_amount|float) }} {{ 'PXC' if task.reward_currency|upper in ['SE', 'S-E'] else task.reward_currency|upper }}</span>
                         <span class="task-chip" style="color:{{ pcolor }};">{{ pname }}</span>
                         {% if task.current_completions is defined and task.max_completions %}
                         <span class="task-chip" style="color:rgba(255,255,255,0.45);">{{ task.current_completions or 0 }}/{{ task.max_completions }}</span>
@@ -368,7 +368,7 @@ a.task-row {
                 instructions: {{ (task.instructions or '') | tojson }},
                 target_url: {{ (task.target_url or '') | tojson }},
                 requires_screenshot: {{ task.requires_screenshot | tojson }},
-                reward: "+{{ '%.2f'|format(task.reward_amount|float) }} {{ task.reward_currency|upper }}",
+                reward: "+{{ '%.2f'|format(task.reward_amount|float) }} {{ 'PXC' if task.reward_currency|upper in ['SE', 'S-E'] else task.reward_currency|upper }}",
                 translations: {{ (task.translations or 'null') | safe }}
             };
             </script>
@@ -1650,7 +1650,7 @@ async function loadHistory() {
                     type:     'social',
                     platform: s.platform || '',
                     status:   s.status,         // pending | approved | rejected
-                    reward:   s.reward_amount ? `+${parseFloat(s.reward_amount).toFixed(2)} ${(s.reward_currency||'SE').toUpperCase()}` : '',
+                    reward:   s.reward_amount ? `+${parseFloat(s.reward_amount).toFixed(2)} ${ (['SE','S-E'].includes((s.reward_currency||'SE').toUpperCase()) ? 'PXC' : (s.reward_currency||'SE').toUpperCase()) }` : '',
                     date:     s.submitted_at || s.created_at || '',
                     note:     s.admin_note || ''
                 });
