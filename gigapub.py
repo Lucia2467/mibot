@@ -718,13 +718,13 @@ def gigapub_pts_reward():
                 bonus_earned = 20
                 task_completed = True
         
-        # Agregar PTS
+        # Agregar PXC al saldo
         total_pts = pts_earned + bonus_earned
         try:
-            from onclicka_pts_system import add_pts
-            add_pts(user_id, total_pts, 'ad_watched', f'Ad PTS{" + bonus" if bonus_earned > 0 else ""}')
+            from database import update_balance
+            update_balance(user_id, 'se', total_pts, 'add', f'Ad PXC{" + bonus" if bonus_earned > 0 else ""}')
         except Exception as pts_error:
-            logger.warning(f"[GigaPub] Error adding PTS: {pts_error}")
+            logger.warning(f"[GigaPub] Error adding PXC: {pts_error}")
         
         ads_remaining = max(0, DAILY_AD_LIMIT - ads_watched)
         logger.info(f"[GigaPub] PTS reward: user {user_id} +{total_pts} PTS (ads: {ads_watched}/{DAILY_AD_LIMIT})")
