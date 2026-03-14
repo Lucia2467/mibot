@@ -337,6 +337,9 @@ a.task-row {
                     <div class="task-row-meta">
                         <span class="task-chip task-chip-reward">+{{ '%.2f'|format(task.reward_amount|float) }} {{ task.reward_currency|upper }}</span>
                         <span class="task-chip" style="color:{{ pcolor }};">{{ pname }}</span>
+                        {% if task.current_completions is defined and task.max_completions %}
+                        <span class="task-chip" style="color:rgba(255,255,255,0.45);">{{ task.current_completions or 0 }}/{{ task.max_completions }}</span>
+                        {% endif %}
                         {% if task.user_status == 'pending' %}
                         <span class="task-chip" style="color:#FBB23F;border-color:rgba(251,178,63,0.3);display:inline-flex;align-items:center;gap:4px;">
                             <i data-lucide="clock" style="width:11px;height:11px;"></i> En revisión
