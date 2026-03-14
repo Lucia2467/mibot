@@ -416,7 +416,7 @@ def approve_submission(submission_id, admin_note=None):
 
 
 def reject_submission(submission_id, admin_note=None):
-    """Rechaza un envío.""\"
+    """Rechaza un envio."""
     try:
         # Obtener datos del envío antes de rechazar
         with get_cursor() as cursor:
