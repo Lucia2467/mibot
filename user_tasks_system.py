@@ -20,7 +20,7 @@ USER_TASK_PACKAGES = {
     'starter': {
         'id': 'starter',
         'name': 'Starter',
-        'price_doge': 20,
+        'price_se': 20,
         'max_completions': 100,
         'description': 'Ideal para empezar',
         'icon': '🚀',
@@ -29,7 +29,7 @@ USER_TASK_PACKAGES = {
     'basic': {
         'id': 'basic',
         'name': 'Basic',
-        'price_doge': 50,
+        'price_se': 50,
         'max_completions': 300,
         'description': 'Para canales pequeños',
         'icon': '⭐',
@@ -38,7 +38,7 @@ USER_TASK_PACKAGES = {
     'standard': {
         'id': 'standard',
         'name': 'Standard',
-        'price_doge': 100,
+        'price_se': 100,
         'max_completions': 700,
         'description': 'Mejor valor',
         'icon': '💎',
@@ -47,7 +47,7 @@ USER_TASK_PACKAGES = {
     'premium': {
         'id': 'premium',
         'name': 'Premium',
-        'price_doge': 200,
+        'price_se': 200,
         'max_completions': 1500,
         'description': 'Para proyectos serios',
         'icon': '👑',
@@ -56,7 +56,7 @@ USER_TASK_PACKAGES = {
     'enterprise': {
         'id': 'enterprise',
         'name': 'Enterprise',
-        'price_doge': 500,
+        'price_se': 500,
         'max_completions': 4000,
         'description': 'Máxima exposición',
         'icon': '🏆',
@@ -160,11 +160,11 @@ def create_user_task(creator_id, task_type, title, description, url, channel_use
     if not user:
         return False, "Usuario no encontrado", None
     
-    doge_balance = float(user.get('doge_balance', 0))
-    price = package['price_doge']
+    se_balance = float(user.get('se_balance', 0))
+    price = package['price_se']
     
-    if doge_balance < price:
-        return False, f"Balance insuficiente. Necesitas {price} DOGE, tienes {doge_balance:.4f} DOGE", None
+    if se_balance < price:
+        return False, f"Balance insuficiente. Necesitas {price} PXC, tienes {se_balance:.4f} PXC", None
     
     task_id = f"ut_{uuid.uuid4().hex[:12]}"
     
@@ -178,7 +178,7 @@ def create_user_task(creator_id, task_type, title, description, url, channel_use
     
     try:
         # Descontar DOGE
-        success = update_balance(creator_id, 'doge', price, 'subtract', f'User task: {task_id}')
+        success = update_balance(creator_id, 'se', price, 'subtract', f'User task: {task_id}')
         if not success:
             return False, "Error al procesar el pago", None
         
@@ -200,7 +200,7 @@ def create_user_task(creator_id, task_type, title, description, url, channel_use
     except Exception as e:
         print(f"[user_tasks] ❌ Error: {e}")
         try:
-            update_balance(creator_id, 'doge', price, 'add', f'Refund: {task_id}')
+            update_balance(creator_id, 'se', price, 'add', f'Refund: {task_id}')
         except:
             pass
         return False, str(e), None
