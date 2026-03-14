@@ -409,6 +409,15 @@
     border-color: var(--color-neon-pink);
     color: var(--color-neon-pink);
 }
+.action-btn-danger {
+    border-color: rgba(239,68,68,0.3) !important;
+    color: #ef4444 !important;
+}
+.action-btn-danger:hover {
+    background: rgba(239,68,68,0.15) !important;
+    border-color: rgba(239,68,68,0.6) !important;
+}
+
 
 /* Empty State */
 .empty-state {
@@ -918,6 +927,9 @@
                         <button class="action-btn" onclick="window.open('{{ task.url }}', '_blank')">
                             <i data-lucide="external-link"></i> Ver
                         </button>
+                        <button class="action-btn action-btn-danger" onclick="deleteTask('{{ task.task_id }}', '{{ task.title }}')">
+                            <i data-lucide="trash-2"></i> Eliminar
+                        </button>
                     </div>
                 </div>
                 {% endfor %}
@@ -1138,6 +1150,29 @@ async function resumeTask(taskId) {
             showToast(data.message || 'Error', 'error');
         }
     } catch (error) {
+        showToast('Error de conexión', 'error');
+    }
+}
+
+// Eliminar tarea
+async function deleteTask(taskId, taskTitle) {
+    if (!confirm(`¿Eliminar la tarea "${taskTitle}"?\nSe calculará un reembolso proporcional a los cupos no completados.`)) return;
+
+    const userId = new URLSearchParams(window.location.search).get('user_id');
+    try {
+        const response = await fetch(`/api/user-tasks/delete?user_id=${userId}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({task_id: taskId})
+        });
+        const data = await response.json();
+        if (data.success) {
+            showToast('✓ Tarea eliminada', 'success');
+            setTimeout(() => location.reload(), 1200);
+        } else {
+            showToast(data.message || 'Error al eliminar', 'error');
+        }
+    } catch(e) {
         showToast('Error de conexión', 'error');
     }
 }
