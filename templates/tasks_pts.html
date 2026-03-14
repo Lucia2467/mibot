@@ -1560,7 +1560,7 @@ function switchTab(tab) {
         if (communityWrap) communityWrap.style.display = 'block';
         if (comp) comp.style.display = 'block';
         // Hide empty states in "all" tab — they clutter when other sections have content
-        document.querySelectorAll('.tasks-empty-telegram, .tasks-empty-community').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tasks-empty-telegram, .tasks-empty-community, .tasks-empty-social').forEach(el => el.style.display = 'none');
 
     } else if (tab === 'telegram') {
         if (allEl) allEl.style.display = 'block';
