@@ -132,8 +132,9 @@ COMPLETION_MESSAGES = {
     ),
 }
 
-FALLBACK_LANG = 'en'
-DESC_LINE = "📝 {desc}\n\n"
+SUPPORTED_LANGS = set(NEW_TASK_MESSAGES.keys())
+FALLBACK_LANG   = 'es'
+DESC_LINE       = "📝 {desc}\n\n"
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -141,24 +142,44 @@ DESC_LINE = "📝 {desc}\n\n"
 # ═══════════════════════════════════════════════════════════════════
 
 def _get_lang(user):
-    lang = str(user.get('language') or user.get('language_code') or FALLBACK_LANG).lower()[:2]
-    return lang if lang in NEW_TASK_MESSAGES else FALLBACK_LANG
-
-
-def _send(bot_token, chat_id, text):
-    try:
-        resp = requests.post(
-            f"https://api.telegram.org/bot{bot_token}/sendMessage",
-            json={'chat_id': chat_id, 'text': text, 'parse_mode': 'HTML'},
-            timeout=8,
-        )
-        return resp.status_code == 200 and resp.json().get('ok')
-    except Exception:
-        return False
+    """
+    Lee el idioma del usuario desde la DB.
+    La columna puede ser 'language_code' (guardada por update_user)
+    o 'language' (guardada por el endpoint directo de SQL).
+    Toma la primera que tenga valor.
+    """
+    raw = (
+        user.get('language_code') or
+        user.get('language') or
+        FALLBACK_LANG
+    )
+    lang = str(raw).lower()[:2]
+    return lang if lang in SUPPORTED_LANGS else FALLBACK_LANG
 
 
 def _get_token():
-    return os.environ.get('BOT_TOKEN') or os.environ.get('TELEGRAM_BOT_TOKEN')
+    token = os.environ.get('BOT_TOKEN') or os.environ.get('TELEGRAM_BOT_TOKEN', '')
+    return token.strip()
+
+
+def _send(bot_token, chat_id, text):
+    """Envía mensaje HTML. Retorna True si OK."""
+    try:
+        resp = requests.post(
+            f"https://api.telegram.org/bot{bot_token}/sendMessage",
+            json={'chat_id': str(chat_id), 'text': text, 'parse_mode': 'HTML'},
+            timeout=10,
+        )
+        result = resp.json()
+        if not result.get('ok'):
+            err = result.get('description', '')
+            # Silenciar errores de usuario bloqueó el bot
+            if 'blocked' not in err.lower() and 'forbidden' not in err.lower():
+                print(f"[task_notifications] ⚠️ API error para {chat_id}: {err}")
+        return resp.status_code == 200 and result.get('ok', False)
+    except Exception as e:
+        print(f"[task_notifications] ❌ Send error {chat_id}: {e}")
+        return False
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -168,7 +189,7 @@ def _get_token():
 def _broadcast_worker(task_id, title, description, reward, spots):
     bot_token = _get_token()
     if not bot_token:
-        print("[task_notifications] ❌ BOT_TOKEN no configurado")
+        print("[task_notifications] ❌ BOT_TOKEN no configurado — broadcast cancelado")
         return
 
     try:
@@ -178,37 +199,60 @@ def _broadcast_worker(task_id, title, description, reward, spots):
         print(f"[task_notifications] ❌ Error obteniendo usuarios: {e}")
         return
 
-    # Pre-construir mensajes por idioma
+    # Pre-construir mensajes por idioma para no recalcular en cada usuario
     msg_cache = {}
     for lang, tmpl in NEW_TASK_MESSAGES.items():
         desc_line = DESC_LINE.format(desc=description) if description else ''
         msg_cache[lang] = tmpl.format(
-            title=title, desc_line=desc_line, reward=reward, spots=spots
+            title=title,
+            desc_line=desc_line,
+            reward=reward,
+            spots=spots,
         )
 
-    ok = fail = 0
-    print(f"[task_notifications] 📢 Broadcast '{title}' ({spots} plazas) → {len(users)} usuarios")
+    ok = fail = skipped = 0
+    total = len(users)
+    print(f"[task_notifications] 📢 Broadcast '{title}' ({spots} plazas) → {total} usuarios")
 
     for user in users:
         if user.get('banned'):
+            skipped += 1
             continue
-        lang = _get_lang(user)
-        sent = _send(bot_token, str(user.get('user_id', '')), msg_cache[lang])
-        ok   += sent
-        fail += not sent
-        time.sleep(0.04)  # ~25 msg/s
 
-    print(f"[task_notifications] ✅ Broadcast completado — OK: {ok} | Fallos: {fail}")
+        uid  = user.get('user_id', '')
+        if not uid:
+            skipped += 1
+            continue
+
+        lang = _get_lang(user)
+        sent = _send(bot_token, uid, msg_cache[lang])
+        if sent:
+            ok += 1
+        else:
+            fail += 1
+
+        time.sleep(0.04)  # ~25 msg/s, bajo el límite de Telegram (30/s)
+
+    print(
+        f"[task_notifications] ✅ Broadcast completado — "
+        f"OK: {ok} | Fallidos: {fail} | Omitidos: {skipped} | Total: {total}"
+    )
 
 
 def notify_new_task(task_id, title, description, reward, spots):
-    """Lanza broadcast en background al publicar una tarea."""
-    threading.Thread(
+    """Lanza el broadcast en un hilo daemon para no bloquear la respuesta HTTP."""
+    bot_token = _get_token()
+    if not bot_token:
+        print("[task_notifications] ❌ BOT_TOKEN no configurado — no se puede notificar")
+        return
+
+    t = threading.Thread(
         target=_broadcast_worker,
         args=(task_id, title, description, reward, spots),
         daemon=True,
-    ).start()
-    print(f"[task_notifications] 🚀 Broadcast iniciado para tarea {task_id}")
+    )
+    t.start()
+    print(f"[task_notifications] 🚀 Broadcast iniciado en background para tarea {task_id}")
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -216,7 +260,11 @@ def notify_new_task(task_id, title, description, reward, spots):
 # ═══════════════════════════════════════════════════════════════════
 
 def notify_task_completed(user_id, title, reward):
-    """Notifica al usuario que su tarea fue completada y verificada."""
+    """
+    Notifica al usuario que completó una tarea.
+    Obtiene su idioma y saldo actualizado desde la DB.
+    Se ejecuta en un hilo daemon para no bloquear.
+    """
     bot_token = _get_token()
     if not bot_token:
         return
@@ -224,17 +272,22 @@ def notify_task_completed(user_id, title, reward):
     def _worker():
         try:
             from database import get_user
-            user    = get_user(user_id)
+            user = get_user(user_id)
             if not user:
+                print(f"[task_notifications] ⚠️ Usuario {user_id} no encontrado para notificación")
                 return
+
             lang    = _get_lang(user)
-            balance = float(user.get('se_balance', 0))
-            text    = COMPLETION_MESSAGES.get(lang, COMPLETION_MESSAGES[FALLBACK_LANG]).format(
-                title=title, reward=reward, balance=balance
-            )
-            _send(bot_token, str(user_id), text)
-            print(f"[task_notifications] ✅ Notificación completado → {user_id}")
+            balance = float(user.get('se_balance', 0) or 0)
+            tmpl    = COMPLETION_MESSAGES.get(lang, COMPLETION_MESSAGES[FALLBACK_LANG])
+            text    = tmpl.format(title=title, reward=reward, balance=balance)
+
+            ok = _send(bot_token, str(user_id), text)
+            if ok:
+                print(f"[task_notifications] ✅ Notificación completado → {user_id} [{lang}]")
+            else:
+                print(f"[task_notifications] ⚠️ No se pudo notificar a {user_id}")
         except Exception as e:
-            print(f"[task_notifications] ❌ Error notificando a {user_id}: {e}")
+            print(f"[task_notifications] ❌ Error notificando completado a {user_id}: {e}")
 
     threading.Thread(target=_worker, daemon=True).start()
