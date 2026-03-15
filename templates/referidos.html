@@ -443,9 +443,9 @@ SALLY-E | Invitar{% endblock %}
             <div class="inv-pills">
                 <span class="inv-pill inv-pill-cyan">
                     <i data-lucide="zap" style="width:11px;height:11px;"></i>
-                    +{{ config.referral_bonus|default(50)|int }} S-E por referido
+                    +{{ config.referral_bonus|default(50)|int }} PXC por referido
                 </span>
-                <span class="inv-pill inv-pill-blue">+50 PTS</span>
+                
                 <span class="inv-pill inv-pill-green">
                     {{ ((config.referral_commission|default(0.05)) * 100)|int }}% comisión
                 </span>
@@ -474,7 +474,7 @@ SALLY-E | Invitar{% endblock %}
         </div>
         <div class="inv-stat">
             <div class="inv-stat-val" id="se-earned-display" style="color:#00D4FF;">{{ total_se_earned|default(0)|round }}</div>
-            <div class="inv-stat-lbl">Bonus S-E</div>
+            <div class="inv-stat-lbl">Bonus PXC</div>
         </div>
     </div>
 
@@ -519,7 +519,7 @@ SALLY-E | Invitar{% endblock %}
         <div class="inv-step">
             <div class="inv-step-num" style="color:var(--inv-cyan);border-color:rgba(0,229,255,0.30);">05</div>
             <div class="inv-step-text">
-                <strong style="color:var(--inv-cyan);">Ganas</strong> {{ config.referral_bonus|default(50)|int }} S-E + {{ ((config.referral_commission|default(0.05))*100)|int }}% comisión
+                <strong style="color:var(--inv-cyan);">Ganas</strong> {{ config.referral_bonus|default(50)|int }} PXC + {{ ((config.referral_commission|default(0.05))*100)|int }}% comisión
             </div>
         </div>
     </div>
@@ -569,10 +569,10 @@ function shareReferralLink() {
     const link = document.getElementById('referral-link').value;
     if (window.Telegram?.WebApp?.openTelegramLink) {
         window.Telegram.WebApp.openTelegramLink(
-            `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('¡Únete y comienza a ganar S-E! 💎')}`
+            `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('¡Únete y comienza a ganar PXC! 💎')}`
         );
     } else if (navigator.share) {
-        navigator.share({ title:'SALLY-E', text:'¡Únete y gana S-E! 💎', url:link }).catch(()=>{});
+        navigator.share({ title:'SALLY-E', text:'¡Únete y gana PXC! 💎', url:link }).catch(()=>{});
     } else { copyReferralLink(); }
 }
 
@@ -596,7 +596,7 @@ function renderAgent(ref, delay=0) {
     } else if (valid) {
         dotColor = 'var(--inv-green)';
         statusText = window.t ? window.t('referidos_validated') : 'Validado';
-        badgeHtml = `<div class="inv-agent-reward" style="color:var(--inv-green);">+${REFERRAL_BONUS} S-E</div>`;
+        badgeHtml = `<div class="inv-agent-reward" style="color:var(--inv-green);">+${REFERRAL_BONUS} PXC</div>`;
     } else {
         dotColor = 'var(--inv-amber)';
         statusText = window.t ? window.t('referidos_pending') : 'Pendiente';
