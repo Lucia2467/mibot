@@ -2671,6 +2671,12 @@ def api_task_complete():
         print(f"[api_task_complete] ❌ No user_id provided")
         return jsonify({'success': False, 'error': 'User ID required'}), 400
 
+    # Registrar IP antes de procesar para que are_accounts_related funcione correctamente
+    try:
+        record_user_ip(user_id, get_client_ip())
+    except Exception:
+        pass
+
     data = request.get_json() or {}
     task_id = data.get('task_id')
 
@@ -3043,6 +3049,12 @@ def api_sync_telegram():
         return jsonify({'success': False, 'error': 'User ID required'}), 400
 
     user_id = str(user_id)
+
+    # Registrar IP aquí para capturar usuarios que entran via startapp sin pasar por /
+    try:
+        record_user_ip(user_id, get_client_ip())
+    except Exception:
+        pass
 
     # Extraer referrer_id del start_param (?startapp=ref_USERID)
     referrer_id = None
