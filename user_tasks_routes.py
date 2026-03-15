@@ -278,6 +278,14 @@ def api_complete_task():
         except Exception as e:
             print(f"[user_tasks] ⚠️ Error verificación: {e}")
     
+    # Registrar IP antes de completar (necesario para anti-fraude de referidos)
+    try:
+        from database import record_user_ip
+        from web import get_client_ip
+        record_user_ip(user_id, get_client_ip())
+    except Exception:
+        pass
+
     # Completar
     success, message, reward = complete_user_task(task_id, user_id)
 
@@ -293,6 +301,13 @@ def api_complete_task():
         translated = message
 
     if success:
+        # Validar referido en primera tarea (misma lógica que api_task_complete)
+        try:
+            from web import _validate_referral_on_first_task
+            _validate_referral_on_first_task(user_id)
+        except Exception as _vr_err:
+            print(f"[user_tasks] referral validation error: {_vr_err}")
+
         return jsonify({'success': True, 'message': translated, 'reward': reward})
     return jsonify({'success': False, 'message': translated}), 400
 
