@@ -531,7 +531,7 @@ window.showRewardModal = function(message, type) {
     type = type || 'info';
     const palette = {
         success: { c:'#22c55e', cd:'#16a34a', cl:'#4ade80', icon:'check', badge:'✅' },
-        error:   { c:'#EF4444', cd:'#DC2626', cl:'#F87171', icon:'x',     badge:'❌' },
+        error:   { c:'#c0392b', cd:'#96281b', cl:'#e74c3c', icon:'x',     badge:'❌' },
         warning: { c:'#F59E0B', cd:'#D97706', cl:'#FCD34D', icon:'alert', badge:'⚠️' },
         info:    { c:'#3B82F6', cd:'#2563EB', cl:'#93C5FD', icon:'info',  badge:'ℹ️' },
     };
@@ -545,11 +545,13 @@ window.showRewardModal = function(message, type) {
     };
     const svgIcon = icons[p.icon] || icons.info;
     const tt = typeof window.t === 'function' ? window.t : function(k){ return null; };
-    const labels = { success: tt('reward_label')||'Recompensa', error: tt('error_label')||'Error', warning: tt('warning_label')||'Aviso', info: tt('info_label')||'Info' };
-    const subs   = { success: tt('reward_added_balance')||'¡Añadido a tu balance!', error: tt('something_went_wrong')||'Algo salió mal', warning: tt('warning_sub')||'', info: tt('info_sub')||'' };
+    const labels = { success: tt('reward_label')||'Recompensa', error: (tt('error_label')||'Error').toUpperCase(), warning: (tt('warning_label')||'Aviso').toUpperCase(), info: (tt('info_label')||'Info').toUpperCase() };
+    const subs   = { success: tt('reward_added_balance')||'¡Añadido a tu balance!', error: '', warning: tt('warning_sub')||'', info: tt('info_sub')||'' };
     const label = labels[type] || labels.info;
     const sub   = subs[type]   || '';
-    const fontSize = message.length > 25 ? '1.3rem' : '2rem';
+    // Strip leading emoji from message (badge already shows it)
+    const cleanMsg = message.replace(/^[\u{1F000}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}✓✕⚠❌✅ℹ️⚠️❌✓✔\s]+/u, '').trim() || message;
+    const fontSize = cleanMsg.length > 25 ? '1.3rem' : '2rem';
 
     // Inject CSS once
     if (!document.getElementById('_rm_css')) {
