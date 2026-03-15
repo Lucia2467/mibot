@@ -1723,17 +1723,9 @@ function closeAdAndClaim() {
 
 async function processClaimReward(userId, unclaimedAmount) {
     try {
-        // Show ultra professional processing notification
-        if (window.showProcessingToast) {
-            const processingText = window.tt ? window.tt('toast_processing') : 'Procesando...';
-            const claimedText = window.tt ? window.tt('toast_claimed_successfully') : '¡Reclamado!';
-            window.showProcessingToast(
-                processingText,
-                `${claimedText} +${unclaimedAmount.toFixed(4)} PXC`,
-                null,
-                1800
-            );
-        }
+        // Show reward modal after claim
+        const claimedText = t('toast_claimed_successfully') || 'Claimed successfully!';
+        window.showRewardModal(`+${unclaimedAmount.toFixed(4)} PXC`, 'success');
 
         const response = await fetch('/api/claim?user_id=' + userId, {
             method: 'POST',
