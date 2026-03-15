@@ -504,8 +504,8 @@ def add_referral(referrer_id, referred_id, username=None, first_name=None):
 
 def validate_referral(referrer_id, referred_id):
     """
-    Valida un referido y paga el bonus al referrer.
-    Si comparten IP, marca como fraude y NO da el bonus.
+    Marca el referido como validado y paga el bonus.
+    NO hace anti-fraude — eso lo maneja _validate_referral_on_first_task en web.py.
     """
     try:
         with get_cursor() as cursor:
@@ -514,149 +514,73 @@ def validate_referral(referrer_id, referred_id):
                 WHERE referrer_id = %s AND referred_id = %s
             """, (str(referrer_id), str(referred_id)))
             row = cursor.fetchone()
-            
+
             if not row:
-                print(f"[validate_referral] ⚠️ Referral no encontrado: {referrer_id} -> {referred_id}")
+                print(f"[validate_referral] no encontrado: {referrer_id} -> {referred_id}")
                 return False
-            
+
             validated = row.get('validated') if isinstance(row, dict) else row[0]
             bonus_paid = row.get('bonus_paid') if isinstance(row, dict) else row[1]
-            
+
             if validated:
-                print(f"[validate_referral] ⚠️ Referral ya validado: {referrer_id} -> {referred_id}")
                 return True
 
-        # ── ANTI-FRAUD: verificar IP compartida ──
-        if are_accounts_related(str(referrer_id), str(referred_id)):
-            print(f"[validate_referral] 🚨 FRAUDE detectado — IP compartida: {referrer_id} <- {referred_id}")
-            execute_query("""
-                INSERT INTO referrals (referrer_id, referred_id, validated, validated_at, is_fraud)
-                VALUES (%s, %s, 1, NOW(), 1)
-                ON DUPLICATE KEY UPDATE validated=1, validated_at=NOW(), is_fraud=1
-            """, (str(referrer_id), str(referred_id)))
-            # Limpiar pending_referrer para que no reintente validar en cada tarea
-            update_user(referred_id, pending_referrer=None, referral_validated=True)
-            # Notificar al invitador — leer BOT_TOKEN en tiempo de ejecución
-            try:
-                import os, requests as _req
-                _token = os.environ.get('BOT_TOKEN', '')
-                if not _token:
-                    print(f"[validate_referral] ⚠️ BOT_TOKEN no configurado, no se puede notificar")
-                else:
-                    referred_user = get_user(referred_id)
-                    referred_name = (referred_user.get('first_name') or referred_user.get('username') or 'Usuario') if referred_user else 'Usuario'
-                    referrer_user = get_user(referrer_id)
-                    safe_name = str(referred_name).replace('<','&lt;').replace('>','&gt;')
-                    msg = (
-                        "\u26a0\ufe0f <b>Tu referido se ha unido \u2014 pero no recibiste recompensa</b>\n\n"
-                        "\U0001f464 <b>Referido:</b> " + safe_name + "\n\n"
-                        "Tu referido se registr\u00f3 correctamente bajo tu enlace, sin embargo "
-                        "<b>la recompensa no fue acreditada</b> porque se detect\u00f3 actividad anormal entre las cuentas.\n\n"
-                        "\u2705 <b>Tu cuenta no tiene ninguna restricci\u00f3n por ahora.</b>\n\n"
-                        "\u26d4 Por favor, deja de intentar ganar recompensas con cuentas propias o vinculadas. "
-                        "Si este comportamiento contin\u00faa, tu cuenta podr\u00eda ser restringida permanentemente."
-                    )
-                    _req.post(
-                        f"https://api.telegram.org/bot{_token}/sendMessage",
-                        json={'chat_id': int(referrer_id), 'text': msg, 'parse_mode': 'HTML'},
-                        timeout=10
-                    )
-                    print(f"[validate_referral] 📨 Notificación fraude enviada a {referrer_id}")
-            except Exception as _nf:
-                print(f"[validate_referral] ⚠️ Error notificando fraude: {_nf}")
-            return False  # Sin bonus, sin bloqueo de cuenta
-
-        # Get bonus amount from config
         bonus = float(get_config('referral_bonus', 1.0))
-        
-        # Mark as validated and record bonus
+
         execute_query("""
             UPDATE referrals SET validated = 1, validated_at = NOW(), bonus_paid = %s, is_fraud = 0
             WHERE referrer_id = %s AND referred_id = %s
         """, (bonus, str(referrer_id), str(referred_id)))
-        
-        # Pay bonus to referrer if not already paid
+
         if not bonus_paid or float(bonus_paid) == 0:
-            update_balance(referrer_id, 'se', bonus, 'add', f'Referral bonus: user {referred_id} completed first task')
-            print(f"[validate_referral] ✅ Bonus de {bonus} PXC pagado a {referrer_id}")
-            
-            # Enviar notificación al invitador
-            try:
-                referred_user = get_user(referred_id)
-                referred_name = referred_user.get('first_name', 'Usuario') if referred_user else 'Usuario'
-                send_referral_notification(referrer_id, referred_name, bonus)
-            except Exception as notif_error:
-                print(f"[validate_referral] ⚠️ Error enviando notificación: {notif_error}")
-        
-        # Update referral count
+            update_balance(referrer_id, 'se', bonus, 'add',
+                           f'Referral bonus: user {referred_id} completed first task')
+            print(f"[validate_referral] bonus {bonus} PXC -> {referrer_id}")
+
         update_referral_count(referrer_id)
-        
-        # Update stats
         increment_stat('validated_referrals')
-        
-        # Clear pending_referrer from the referred user
         update_user(referred_id, pending_referrer=None, referral_validated=True)
-        
-        # Hook para el módulo de misiones de referidos (si está disponible)
+
         try:
             from referral_missions import on_new_referral
             referred_user = get_user(referred_id)
-            referred_username = referred_user.get('username') if referred_user else None
-            on_new_referral(referrer_id, referred_id, referred_username)
+            on_new_referral(referrer_id, referred_id,
+                            referred_user.get('username') if referred_user else None)
         except ImportError:
-            pass  # El módulo de misiones no está disponible, continuar normalmente
+            pass
         except Exception as e:
-            print(f"[validate_referral] ⚠️ Error notificando misiones de referidos: {e}")
-        
-        print(f"[validate_referral] ✅ Referral validado: {referrer_id} <- {referred_id}")
+            print(f"[validate_referral] missions hook error: {e}")
+
+        print(f"[validate_referral] OK: {referrer_id} <- {referred_id}")
         return True
     except Exception as e:
-        print(f"[validate_referral] ❌ Error validating referral: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"[validate_referral] ERROR: {e}")
+        import traceback; traceback.print_exc()
         return False
 
 def process_first_task_completion(user_id):
     """
-    Procesa la validación de referido cuando un usuario completa su primera tarea.
-    Verifica si el usuario tiene un pending_referrer y valida el referido.
-    Returns: (success, referrer_id, bonus_amount) or (False, None, 0)
+    Solo verifica si existe un pending_referrer sin validar.
+    El anti-fraude y la notificación los maneja web.py.
+    Returns (referrer_id) o None.
     """
     try:
         user = get_user(user_id)
         if not user:
-            return False, None, 0
-        
-        pending_referrer = user.get('pending_referrer')
-        already_validated = user.get('referral_validated', False)
-        
-        # Si ya fue validado o no tiene referrer pendiente, no hacer nada
-        if already_validated or not pending_referrer:
-            print(f"[process_first_task_completion] Usuario {user_id}: no referrer pendiente o ya validado")
-            return False, None, 0
-        
-        # Verificar que sea realmente la primera tarea
-        completed_tasks = user.get('completed_tasks', [])
-        if len(completed_tasks) > 1:
-            print(f"[process_first_task_completion] Usuario {user_id}: ya tiene más de 1 tarea completada")
-            return False, None, 0
-        
-        # Validar el referido (internamente detecta fraude y envía notificación)
-        bonus = float(get_config('referral_bonus', 1.0))
-        success = validate_referral(pending_referrer, user_id)
-        
-        if success:
-            print(f"[process_first_task_completion] ✅ Referido validado exitosamente: {pending_referrer} <- {user_id}")
-            return True, pending_referrer, bonus
-        
-        # Aunque sea fraude, pending_referrer ya fue limpiado en validate_referral
-        return False, None, 0
-        
+            return None
+        if user.get('referral_validated'):
+            return None
+        pending = user.get('pending_referrer') or user.get('referred_by')
+        if not pending:
+            return None
+        completed = user.get('completed_tasks', [])
+        if len(completed) > 1:
+            return None
+        return str(pending)
     except Exception as e:
-        print(f"[process_first_task_completion] ❌ Error: {e}")
-        import traceback
-        traceback.print_exc()
-        return False, None, 0
+        print(f"[process_first_task_completion] ERROR: {e}")
+        return None
+
 
 def is_first_task(user_id):
     """Verifica si el usuario está a punto de completar su primera tarea"""

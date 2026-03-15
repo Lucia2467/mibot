@@ -2661,6 +2661,88 @@ def api_ads_stats():
         }
     })
 
+def _validate_referral_on_first_task(user_id):
+    """
+    Exactamente como _validate_referral_on_purchase de la app de referencia.
+    Detecta fraude por IP, marca is_fraud=1, envía notificación al invitador.
+    Llamar DESPUÉS de que la tarea fue completada exitosamente.
+    """
+    try:
+        referrer_id = process_first_task_completion(user_id)
+        if not referrer_id:
+            return  # Sin referrer o ya validado
+
+        user = get_user(user_id)
+        if not user:
+            return
+
+        referred_name = user.get('first_name') or user.get('username') or 'Usuario'
+
+        # ── Anti-fraude: misma IP ──
+        if are_accounts_related(str(referrer_id), str(user_id)):
+            logger.warning(
+                f"[ANTI-FRAUD] IP compartida: referrer={referrer_id} referred={user_id}"
+            )
+            # Marcar como fraude en DB
+            from db import execute_query as _eq
+            _eq("""
+                INSERT INTO referrals (referrer_id, referred_id, referred_username,
+                    referred_first_name, validated, validated_at, is_fraud)
+                VALUES (%s, %s, %s, %s, 1, NOW(), 1)
+                ON DUPLICATE KEY UPDATE validated=1, validated_at=NOW(), is_fraud=1
+            """, (str(referrer_id), str(user_id),
+                  user.get('username', ''), referred_name))
+            # Limpiar pending para no reintentar
+            update_user(user_id, pending_referrer=None, referral_validated=True)
+            # Notificar al invitador
+            if _NOTIF_OK:
+                try:
+                    referrer_obj = get_user(referrer_id)
+                    lang = referrer_obj.get('language_code') if referrer_obj else None
+                    notify_referral_fraud_skip(
+                        referrer_id=int(referrer_id),
+                        referred_name=referred_name,
+                        language_code=lang
+                    )
+                    logger.info(f"[ANTI-FRAUD] Notificación fraude enviada a {referrer_id}")
+                except Exception as _ne:
+                    logger.warning(f"[ANTI-FRAUD] Error notificando fraude: {_ne}")
+            return
+
+        # ── Referido legítimo: validar y notificar ──
+        ref_exists = execute_query(
+            "SELECT id, validated FROM referrals WHERE referrer_id=%s AND referred_id=%s LIMIT 1",
+            (str(referrer_id), str(user_id)), fetch_one=True
+        )
+        validated = False
+        if not ref_exists:
+            add_referral(referrer_id, user_id, user.get('username'), referred_name)
+            validate_referral(str(referrer_id), str(user_id))
+            validated = True
+        elif not ref_exists.get('validated'):
+            validate_referral(str(referrer_id), str(user_id))
+            validated = True
+
+        if validated and _NOTIF_OK:
+            try:
+                referrer_obj = get_user(referrer_id)
+                lang = referrer_obj.get('language_code') if referrer_obj else None
+                bonus = float(get_config('referral_bonus', 1.0))
+                total_refs = referrer_obj.get('referral_count', 0) if referrer_obj else 0
+                notify_referral_validated(
+                    referrer_id=int(referrer_id),
+                    referred_name=referred_name,
+                    reward=f"{bonus:.2f}",
+                    total_refs=total_refs,
+                    language_code=lang
+                )
+            except Exception as _ne:
+                logger.warning(f"[referral] Error notificando validación: {_ne}")
+
+    except Exception as e:
+        logger.error(f"[_validate_referral_on_first_task] ERROR: {e}")
+
+
 @app.route('/api/task/complete', methods=['POST'])
 def api_task_complete():
     """
@@ -2726,11 +2808,16 @@ def api_task_complete():
     # ====== FIN DE VERIFICACIÓN ======
 
     # Completar la tarea y dar la recompensa
-    # This function now also handles referral validation on first task
     success, message = complete_task(user_id, task_id)
     print(f"[api_task_complete] Resultado: success={success}, message={message}")
 
     if success:
+        # Anti-fraude y validación de referido en primera tarea
+        try:
+            _validate_referral_on_first_task(user_id)
+        except Exception as _vr_err:
+            logger.warning(f"[api_task_complete] referral validation error: {_vr_err}")
+
         user = get_user(user_id)
         new_balance = user.get('se_balance', 0) if user else 0
         completed_count = len(user.get('completed_tasks', [])) if user else 0
