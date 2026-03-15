@@ -377,6 +377,28 @@
 }
 
 /* ── Status dot ── */
+.inv-fraud-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px;
+    background: rgba(255,51,80,0.10);
+    border: 1px solid rgba(255,51,80,0.35);
+    border-radius: 6px;
+    color: #ff3350;
+    font-size: 0.68rem; font-weight: 800;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+.inv-agent.fraud .inv-agent-avatar {
+    border: 1.5px solid rgba(255,51,80,0.45);
+    color: #ff3350;
+}
+.inv-agent.fraud::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; border-radius: 3px 0 0 3px;
+    background: #ff3350;
+}
+.inv-agent { position: relative; }
 .inv-dot {
     width: 6px; height: 6px; border-radius: 50%;
     display: inline-block;
@@ -557,16 +579,32 @@ function shareReferralLink() {
 let currentPage=1, hasMore=true, loading=false, allRefs=[];
 
 function renderAgent(ref, delay=0) {
+    const fraud = ref.referred_fraud || ref.is_fraud;
     const valid = ref.validated;
     const name = ref.username || ref.first_name || 'Usuario';
     const initial = name.charAt(0).toUpperCase();
     const [bg, fg] = getAvatarColor(initial);
-    const dotColor = valid ? 'var(--inv-green)' : 'var(--inv-amber)';
-    const statusText = valid
-        ? (window.t ? window.t('referidos_validated') : 'Validado')
-        : (window.t ? window.t('referidos_pending') : 'Pendiente');
+
+    let dotColor, statusText, badgeHtml;
+    if (fraud) {
+        dotColor = '#ff3350';
+        statusText = window.t ? window.t('referidos_fraud') : 'Cuenta falsa';
+        badgeHtml = `<span class="inv-fraud-badge">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            ${window.t ? window.t('referidos_fraud_badge') : 'Sin recompensa'}
+        </span>`;
+    } else if (valid) {
+        dotColor = 'var(--inv-green)';
+        statusText = window.t ? window.t('referidos_validated') : 'Validado';
+        badgeHtml = `<div class="inv-agent-reward" style="color:var(--inv-green);">+${REFERRAL_BONUS} S-E</div>`;
+    } else {
+        dotColor = 'var(--inv-amber)';
+        statusText = window.t ? window.t('referidos_pending') : 'Pendiente';
+        badgeHtml = '';
+    }
+
     return `
-    <div class="inv-agent" style="animation-delay:${delay}s;">
+    <div class="inv-agent ${fraud ? 'fraud' : ''}" style="animation-delay:${delay}s;">
         <div class="inv-agent-avatar" style="background:${bg};color:${fg};">${initial}</div>
         <div class="inv-agent-info">
             <div class="inv-agent-name">${name}</div>
@@ -575,7 +613,7 @@ function renderAgent(ref, delay=0) {
                 <span style="color:${dotColor};">${statusText}</span>
             </div>
         </div>
-        ${valid ? `<div class="inv-agent-reward" style="color:var(--inv-green);">+${REFERRAL_BONUS} S-E</div>` : ''}
+        ${badgeHtml}
     </div>`;
 }
 
