@@ -548,29 +548,13 @@ def validate_referral(referrer_id, referred_id):
         # Pay bonus to referrer if not already paid
         if not bonus_paid or float(bonus_paid) == 0:
             update_balance(referrer_id, 'se', bonus, 'add', f'Referral bonus: user {referred_id} completed first task')
-            print(f"[validate_referral] ✅ Bonus de {bonus} S-E pagado a {referrer_id}")
+            print(f"[validate_referral] ✅ Bonus de {bonus} PXC pagado a {referrer_id}")
             
-            # Agregar PTS por referido (50 PTS al invitador)
-            pts_reward = 50  # PTS por invitación exitosa
-            pts_added = False
-            try:
-                from onclicka_pts_system import add_pts
-                success_pts, msg_pts = add_pts(referrer_id, pts_reward, 'referral', f'Referido validado: {referred_id}')
-                if success_pts:
-                    pts_added = True
-                    print(f"[validate_referral] ✅ +{pts_reward} PTS agregados a {referrer_id}")
-                else:
-                    print(f"[validate_referral] ⚠️ No se pudieron agregar PTS: {msg_pts}")
-            except Exception as pts_error:
-                print(f"[validate_referral] ⚠️ Error agregando PTS: {pts_error}")
-                import traceback
-                traceback.print_exc()
-            
-            # Enviar notificación al invitador (incluye PTS si se agregaron)
+            # Enviar notificación al invitador
             try:
                 referred_user = get_user(referred_id)
                 referred_name = referred_user.get('first_name', 'Usuario') if referred_user else 'Usuario'
-                send_referral_notification(referrer_id, referred_name, bonus, pts_reward if pts_added else 0)
+                send_referral_notification(referrer_id, referred_name, bonus)
             except Exception as notif_error:
                 print(f"[validate_referral] ⚠️ Error enviando notificación: {notif_error}")
         
@@ -789,8 +773,8 @@ def send_referral_notification(referrer_id, referred_name, bonus, pts_reward=0):
     Args:
         referrer_id: ID de Telegram del invitador
         referred_name: Nombre del referido que completó la tarea
-        bonus: Cantidad de S-E acreditados
-        pts_reward: Cantidad de PTS acreditados (default 0)
+        bonus: Cantidad de PXC acreditados
+        
     Returns: True si se envió correctamente, False en caso contrario
     """
     import os
@@ -806,10 +790,8 @@ def send_referral_notification(referrer_id, referred_name, bonus, pts_reward=0):
         safe_name = referred_name.replace('<', '&lt;').replace('>', '&gt;').replace('&', '&amp;') if referred_name else 'Usuario'
         
         # Construir línea de recompensa
-        reward_line = f"💰 <b>Recompensa:</b> +{bonus:.2f} S-E"
-        if pts_reward > 0:
-            reward_line += f" y +{pts_reward} PTS"
-        
+        reward_line = f"💰 <b>Recompensa:</b> +{bonus:.2f} PXC"
+            
         # Mensaje de notificación en español
         message = (
             f"🎉 <b>¡Nuevo referido validado!</b>\n\n"
@@ -817,7 +799,7 @@ def send_referral_notification(referrer_id, referred_name, bonus, pts_reward=0):
             f"✅ <b>Estado:</b> Tarea completada exitosamente\n"
             f"{reward_line}\n\n"
             f"💎 ¡La recompensa ya fue acreditada a tu cuenta!\n\n"
-            f"Sigue invitando amigos para ganar más S-E 🚀"
+            f"Sigue invitando amigos para ganar más PXC 🚀"
         )
         
         url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
@@ -1034,10 +1016,10 @@ def complete_task(user_id, task_id, reward=None):
         print(f"[complete_task] Primera tarea para usuario {user_id}, procesando referido...")
         success, referrer_id, bonus = process_first_task_completion(user_id)
         if success:
-            referral_message = f" Tu referidor recibió {bonus} S-E."
-            print(f"[complete_task] ✅ Referido validado: {referrer_id} recibió {bonus} S-E")
+            referral_message = f" Tu referidor recibió {bonus} PXC."
+            print(f"[complete_task] ✅ Referido validado: {referrer_id} recibió {bonus} PXC")
     
-    return True, f"¡Tarea completada! +{reward:.4f} S-E{referral_message}"
+    return True, f"¡Tarea completada! +{reward:.4f} PXC{referral_message}"
 
 def is_task_completed(user_id, task_id):
     """Verifica si un usuario completó una tarea"""
