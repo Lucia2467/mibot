@@ -994,7 +994,8 @@ const PTS = {
             const d = await r.json();
             
             if (d.success) {
-                this.toast(`✓ ${d.message}`, 'success');
+                const reward = d.pts_earned || d.pts || 10;
+this.toast(`+${reward} PXC`, 'success');
                 this.haptic('success');
                 this.loadStatus();
             } else {
@@ -1059,9 +1060,9 @@ const PTS = {
                 
                 // Mostrar mensaje con o sin bonus
                 if (data.bonus && data.pts > 5) {
-                    this.toast(`+${data.pts} PXC (${t('toast_bonus_5_ads')||'¡Bonus 5 anuncios!'})`, 'success');
+                    this.toast(`+${data.pts} PXC 🎉 (${t('toast_bonus_5_ads')||'Bonus!'})`, 'success');
                 } else {
-                    this.toast(`✓ +${data.pts || 5} PXC`, 'success');
+                    this.toast(`+${data.pts || 5} PXC`, 'success');
                 }
                 this.loadStatus();
             } else {
@@ -1111,7 +1112,8 @@ const PTS = {
             const d = await r.json();
 
             if (d.success) {
-                this.toast(`✓ ${d.message}`, 'success');
+                const dReward = d.pts_earned || d.pts || 10;
+                this.toast(`+${dReward} PXC (${t('toast_reward_doubled')||'×2'})`, 'success');
                 // Ocultar botón de duplicar
                 const db = document.getElementById('checkin-double-btn');
                 if (db) db.style.display = 'none';
@@ -2606,8 +2608,8 @@ if (!document.getElementById('reward-modal-css')) {
 
 // ── Global showToast (small pill for non-reward messages) ──
 function showToast(message, type = 'info') {
-    // For reward success messages → use the premium modal
-    if (type === 'success' && (message.includes('+') || message.includes('✓'))) {
+    // All success messages → premium modal
+    if (type === 'success') {
         showRewardModal(message, 'success');
         return;
     }
