@@ -6759,6 +6759,381 @@ def explore_link_center():
                          show_support_button=True)
 
 
+
+
+# ══════════════════════════════════════════════════════════════
+# BOT DE TELEGRAM — handlers y thread integrados en web.py
+# ══════════════════════════════════════════════════════════════
+
+_BOT_TITLE        = os.environ.get('BOT_TITLE', 'PixieLand')
+_OFFICIAL_CHANNEL = os.environ.get('OFFICIAL_CHANNEL', '@PixieLand_Community')
+_SUPPORT_GROUP    = os.environ.get('SUPPORT_GROUP', 'https://t.me/PixieLand_Support')
+_ADMIN_IDS        = os.environ.get('ADMIN_IDS', '5515244003').split(',')
+
+# ── Notificaciones ────────────────────────────────────────────
+try:
+    from notifications import (
+        notify_welcome, notify_generic,
+        notify_referral_validated, notify_referral_fraud_skip
+    )
+    _NOTIF_OK = True
+except ImportError:
+    _NOTIF_OK = False
+    logger.warning("notifications.py no disponible — bot sin notificaciones")
+
+# ── Helpers ───────────────────────────────────────────────────
+async def _check_channel_bot(user_id: int, context) -> bool:
+    try:
+        ch = _OFFICIAL_CHANNEL.replace('@', '')
+        member = await context.bot.get_chat_member(f"@{ch}", user_id)
+        return member.status in ['member', 'administrator', 'creator']
+    except Exception:
+        return True
+
+
+def _main_kb(user_id: int):
+    from telegram import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
+    url = f"{WEBAPP_URL}?user_id={user_id}"
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton(f"🚀 Abrir {_BOT_TITLE}", web_app=WebAppInfo(url=url))],
+        [
+            InlineKeyboardButton("👥 Mis Referidos",  callback_data="bot_my_refs"),
+            InlineKeyboardButton("📤 Compartir",      callback_data="bot_share"),
+        ],
+        [
+            InlineKeyboardButton("📢 Canal", url=f"https://t.me/{_OFFICIAL_CHANNEL.replace('@','')}"),
+            InlineKeyboardButton("💬 Soporte", url=_SUPPORT_GROUP),
+        ],
+    ])
+
+
+def _channel_kb():
+    from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+    ch = _OFFICIAL_CHANNEL.replace('@', '')
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("📢 Unirse al Canal", url=f"https://t.me/{ch}")],
+        [InlineKeyboardButton("✅ Ya me uní",        callback_data="bot_verify")],
+    ])
+
+
+# ── /start ────────────────────────────────────────────────────
+async def _bot_start(update, context):
+    user       = update.effective_user
+    user_id    = user.id
+    first_name = user.first_name or 'Usuario'
+    lang_code  = user.language_code
+
+    referrer_id = None
+    if context.args:
+        arg = context.args[0]
+        if arg.startswith('ref_'):
+            raw = arg[4:]
+            if raw.isdigit() and raw != str(user_id):
+                referrer_id = raw
+
+    is_new = False
+    try:
+        existing = get_user(user_id)
+        if existing:
+            update_user(user_id, username=user.username, first_name=first_name)
+        else:
+            create_user(user_id, username=user.username, first_name=first_name)
+            is_new = True
+            if referrer_id and get_user(referrer_id):
+                add_referral(referrer_id, str(user_id))
+                update_user(user_id, referred_by=referrer_id)
+                logger.info(f"[bot /start] referral: {referrer_id} -> {user_id}")
+        increment_stat('total_starts')
+    except Exception as e:
+        logger.warning(f"[bot /start] db error: {e}")
+
+    is_member = await _check_channel_bot(user_id, context)
+    if not is_member:
+        await update.message.reply_text(
+            f"👋 ¡Hola <b>{first_name}</b>!\n\n"
+            f"Para usar <b>{_BOT_TITLE}</b> primero únete al canal:\n\n"
+            f"📢 {_OFFICIAL_CHANNEL}\n\n"
+            f"Luego pulsa <b>Ya me uní ✅</b>",
+            parse_mode='HTML',
+            reply_markup=_channel_kb()
+        )
+        return
+
+    await update.message.reply_text(
+        f"👋 ¡Hola <b>{first_name}</b>!\n\n"
+        f"🌟 Bienvenido/a a <b>{_BOT_TITLE}</b>\n\n"
+        f"💎 Gana <b>PXC</b> completando tareas\n"
+        f"⛏️ Minería automática 24/7\n"
+        f"👥 Invita amigos y gana comisiones\n"
+        f"💸 Retira en <b>USDT o DOGE</b>\n\n"
+        f"👇 Pulsa para abrir la app:",
+        parse_mode='HTML',
+        reply_markup=_main_kb(user_id)
+    )
+
+    if is_new and _NOTIF_OK:
+        try:
+            notify_welcome(user_id, first_name, lang_code)
+        except Exception as e:
+            logger.warning(f"[notify_welcome] {e}")
+
+
+# ── Cualquier mensaje → respuesta genérica ───────────────────
+async def _bot_message(update, context):
+    user       = update.effective_user
+    user_id    = user.id
+    first_name = user.first_name or 'Usuario'
+    lang_code  = user.language_code
+
+    if _NOTIF_OK:
+        try:
+            notify_generic(user_id, first_name, lang_code)
+            return
+        except Exception:
+            pass
+
+    await update.message.reply_text(
+        f"⛏️ <b>{first_name}, tu minero sigue trabajando.</b>\n\n"
+        f"Abre la app para ver tus ganancias 👇",
+        parse_mode='HTML',
+        reply_markup=_main_kb(user_id)
+    )
+
+
+# ── Callbacks ─────────────────────────────────────────────────
+async def _cb_verify(update, context):
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+    if not await _check_channel_bot(user_id, context):
+        await query.answer("❌ Aún no te has unido al canal.", show_alert=True)
+        return
+    await query.edit_message_text(
+        f"✅ ¡Verificado! Ya puedes usar <b>{_BOT_TITLE}</b> 👇",
+        parse_mode='HTML',
+        reply_markup=_main_kb(user_id)
+    )
+
+
+async def _cb_my_refs(update, context):
+    from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+    query   = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+
+    try:
+        referrals = get_referrals(user_id) or []
+    except Exception:
+        referrals = []
+
+    if not referrals:
+        text = (
+            "👥 <b>Mis Referidos</b>\n\n"
+            "Aún no tienes referidos.\n\n"
+            "💡 Comparte tu link y gana <b>PXC</b> por cada amigo."
+        )
+    else:
+        validated = sum(1 for r in referrals if r.get('validated') and not r.get('is_fraud') and not r.get('referred_fraud'))
+        fraud     = sum(1 for r in referrals if r.get('is_fraud') or r.get('referred_fraud'))
+        pending   = sum(1 for r in referrals if not r.get('validated'))
+        text = f"👥 <b>Mis Referidos</b> ({len(referrals)})\n\n"
+        for i, ref in enumerate(referrals[:10], 1):
+            name = ref.get('first_name') or ref.get('username') or str(ref.get('referred_id', '?'))
+            icon = "🚫" if (ref.get('is_fraud') or ref.get('referred_fraud')) else ("✅" if ref.get('validated') else "⏳")
+            text += f"{i}. {name} {icon}\n"
+        if len(referrals) > 10:
+            text += f"\n… y {len(referrals)-10} más"
+        text += f"\n\n✅ {validated}  ⏳ {pending}  🚫 {fraud}"
+
+    await query.edit_message_text(
+        text, parse_mode='HTML',
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Volver", callback_data="bot_back")]])
+    )
+
+
+async def _cb_share(update, context):
+    from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+    query   = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+    link    = f"https://t.me/{BOT_USERNAME.replace('@','')}?startapp=ref_{user_id}"
+    await query.edit_message_text(
+        f"📤 <b>Tu Link de Referido</b>\n\n"
+        f"🔗 <code>{link}</code>\n\n"
+        f"💎 Gana <b>PXC</b> por cada amigo que complete su primera tarea.",
+        parse_mode='HTML',
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("📤 Compartir", switch_inline_query=f"¡Únete a {_BOT_TITLE} y gana PXC! {link}")],
+            [InlineKeyboardButton("⬅️ Volver", callback_data="bot_back")],
+        ])
+    )
+
+
+async def _cb_back(update, context):
+    query = update.callback_query
+    await query.answer()
+    user  = query.from_user
+    await query.edit_message_text(
+        f"👋 <b>{user.first_name}</b> 👇",
+        parse_mode='HTML',
+        reply_markup=_main_kb(user.id)
+    )
+
+
+# ── Admin: /stats y /broadcast ───────────────────────────────
+async def _bot_stats(update, context):
+    if str(update.effective_user.id) not in _ADMIN_IDS:
+        return
+    try:
+        s = get_stats()
+        await update.message.reply_text(
+            f"📊 <b>{_BOT_TITLE} Stats</b>\n\n"
+            f"👥 Inicios: {s.get('total_starts',0)}\n"
+            f"🔗 Referidos: {s.get('total_referrals',0)}\n"
+            f"✅ Tareas: {s.get('total_tasks_completed',0)}\n"
+            f"💸 Retiros: {s.get('total_withdrawals',0)}",
+            parse_mode='HTML'
+        )
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {e}")
+
+
+async def _bot_broadcast(update, context):
+    from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+    if str(update.effective_user.id) not in _ADMIN_IDS:
+        return
+    if not context.args:
+        await update.message.reply_text("Uso: /broadcast Tu mensaje")
+        return
+    msg = ' '.join(context.args).replace('\\n', '\n')
+    context.bot_data['pending_bc']    = msg
+    context.bot_data['bc_admin']      = str(update.effective_user.id)
+    await update.message.reply_text(
+        f"📢 <b>Vista previa:</b>\n\n{msg}\n\n¿Enviar a todos?",
+        parse_mode='HTML',
+        reply_markup=InlineKeyboardMarkup([[
+            InlineKeyboardButton("✅ Confirmar", callback_data="bc_confirm"),
+            InlineKeyboardButton("❌ Cancelar",  callback_data="bc_cancel"),
+        ]])
+    )
+
+
+async def _cb_bc_confirm(update, context):
+    import asyncio as _asyncio
+    query = update.callback_query
+    await query.answer()
+    if str(query.from_user.id) not in _ADMIN_IDS:
+        return
+    msg = context.bot_data.get('pending_bc')
+    if not msg:
+        await query.edit_message_text("❌ No hay mensaje pendiente.")
+        return
+    await query.edit_message_text("📤 Enviando… ⏳")
+    try:
+        users = get_all_users_no_limit()
+    except Exception:
+        users = []
+    success = fail = blocked = 0
+    for i, u in enumerate(users, 1):
+        try:
+            await context.bot.send_message(chat_id=u['user_id'], text=msg, parse_mode='HTML')
+            success += 1
+            if i % 100 == 0:
+                try:
+                    await query.edit_message_text(f"📤 {i}/{len(users)} — ✅{success} 🚫{blocked} ❌{fail}")
+                except Exception:
+                    pass
+            await _asyncio.sleep(0.04)
+        except Exception as e:
+            if 'forbidden' in str(e).lower() or 'blocked' in str(e).lower():
+                blocked += 1
+            else:
+                fail += 1
+    context.bot_data.pop('pending_bc', None)
+    context.bot_data.pop('bc_admin',   None)
+    await query.edit_message_text(
+        f"✅ <b>Listo</b>\n\n👥 {len(users)} usuarios\n✅ {success}  🚫 {blocked}  ❌ {fail}",
+        parse_mode='HTML'
+    )
+
+
+async def _cb_bc_cancel(update, context):
+    query = update.callback_query
+    await query.answer()
+    context.bot_data.pop('pending_bc', None)
+    context.bot_data.pop('bc_admin',   None)
+    await query.edit_message_text("❌ Cancelado.")
+
+
+async def _bot_error(update, context):
+    logger.error(f"[bot error] {context.error}")
+
+
+# ── Thread del bot ─────────────────────────────────────────────
+def _start_bot_thread():
+    import asyncio as _asyncio
+    from telegram import Update
+    from telegram.ext import (
+        Application, CommandHandler, CallbackQueryHandler,
+        MessageHandler, filters
+    )
+
+    async def _run():
+        if not BOT_TOKEN:
+            logger.error("BOT_TOKEN no configurado — bot no arrancará")
+            return
+
+        app_bot = Application.builder().token(BOT_TOKEN).build()
+
+        app_bot.add_handler(CommandHandler("start",     _bot_start))
+        app_bot.add_handler(CommandHandler("stats",     _bot_stats))
+        app_bot.add_handler(CommandHandler("broadcast", _bot_broadcast))
+
+        app_bot.add_handler(CallbackQueryHandler(_cb_verify,     pattern="^bot_verify$"))
+        app_bot.add_handler(CallbackQueryHandler(_cb_my_refs,    pattern="^bot_my_refs$"))
+        app_bot.add_handler(CallbackQueryHandler(_cb_share,      pattern="^bot_share$"))
+        app_bot.add_handler(CallbackQueryHandler(_cb_back,       pattern="^bot_back$"))
+        app_bot.add_handler(CallbackQueryHandler(_cb_bc_confirm, pattern="^bc_confirm$"))
+        app_bot.add_handler(CallbackQueryHandler(_cb_bc_cancel,  pattern="^bc_cancel$"))
+
+        # Cualquier texto → respuesta genérica
+        app_bot.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, _bot_message))
+
+        app_bot.add_error_handler(_bot_error)
+
+        logger.info("🤖 Bot de Telegram arrancando...")
+        await app_bot.initialize()
+        await app_bot.start()
+        await app_bot.updater.start_polling(allowed_updates=Update.ALL_TYPES)
+        logger.info("✅ Bot de Telegram activo")
+
+        stop = _asyncio.Event()
+        try:
+            await stop.wait()
+        except (KeyboardInterrupt, SystemExit):
+            pass
+        finally:
+            await app_bot.updater.stop()
+            await app_bot.stop()
+            await app_bot.shutdown()
+
+    loop = _asyncio.new_event_loop()
+    _asyncio.set_event_loop(loop)
+    try:
+        loop.run_until_complete(_run())
+    except Exception as e:
+        logger.error(f"[bot thread] {e}")
+    finally:
+        loop.close()
+
+
+# Arrancar el bot en hilo daemon al importar el módulo
+import threading as _threading
+_bot_thread = _threading.Thread(target=_start_bot_thread, daemon=True, name="TelegramBot")
+_bot_thread.start()
+logger.info("🤖 Hilo del bot de Telegram iniciado")
+
+
 # ============== MAIN ==============
 
 if __name__ == '__main__':
