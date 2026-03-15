@@ -226,8 +226,9 @@ except Exception as e:
 ADMIN_IDS = os.environ.get('ADMIN_IDS', '5515244003').split(',')
 
 # Bot configuration
-BOT_TOKEN = os.environ.get('BOT_TOKEN', '')
-BOT_USERNAME = os.environ.get('BOT_USERNAME', 'SallyEbot')
+BOT_TOKEN    = os.environ.get('BOT_TOKEN', '')
+BOT_USERNAME = os.environ.get('BOT_USERNAME', 'PixiieLandbot')
+WEBAPP_URL   = os.environ.get('WEBAPP_URL', '')
 SUPPORT_GROUP = os.environ.get('SUPPORT_GROUP', 'https://t.me/Soporte_Sally')
 
 # Official channels - comma separated list
@@ -6793,9 +6794,16 @@ async def _check_channel_bot(user_id: int, context) -> bool:
 
 def _main_kb(user_id: int):
     from telegram import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
-    url = f"{WEBAPP_URL}?user_id={user_id}"
+    # Usar t.me/?startapp= para abrir la Mini App correctamente
+    _bot_name = BOT_USERNAME.replace('@', '')
+    tme_url   = f"https://t.me/{_bot_name}?startapp=home_{user_id}"
+    # Si WEBAPP_URL está definido, usar web_app directo; si no, link t.me
+    if WEBAPP_URL:
+        open_btn = InlineKeyboardButton(f"🚀 Abrir {_BOT_TITLE}", web_app=WebAppInfo(url=f"{WEBAPP_URL}?user_id={user_id}"))
+    else:
+        open_btn = InlineKeyboardButton(f"🚀 Abrir {_BOT_TITLE}", url=tme_url)
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton(f"🚀 Abrir {_BOT_TITLE}", web_app=WebAppInfo(url=url))],
+        [open_btn],
         [
             InlineKeyboardButton("👥 Mis Referidos",  callback_data="bot_my_refs"),
             InlineKeyboardButton("📤 Compartir",      callback_data="bot_share"),
