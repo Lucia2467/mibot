@@ -85,10 +85,12 @@ async def _send(words, to_addr, ton_amount, memo, api_key):
 
     amount_nano = int(round(ton_amount * TON_TO_NANO))
 
-    # tonutils >= 0.1.x requires network as positional arg
+    # tonutils 2.x renamed ToncenterClient → ToncenterV2Client/ToncenterV3Client
     try:
-        client = ToncenterClient('mainnet', api_key=api_key)
-    except TypeError:
+        from tonutils.client import ToncenterV2Client
+        client = ToncenterV2Client(api_key=api_key, is_testnet=False)
+    except ImportError:
+        # older tonutils <2.0: ToncenterClient still exists
         try:
             client = ToncenterClient(api_key=api_key, is_testnet=False)
         except TypeError:
