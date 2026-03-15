@@ -6793,15 +6793,12 @@ async def _check_channel_bot(user_id: int, context) -> bool:
 
 
 def _main_kb(user_id: int):
-    from telegram import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
-    # Usar t.me/?startapp= para abrir la Mini App correctamente
+    from telegram import InlineKeyboardButton, InlineKeyboardMarkup
     _bot_name = BOT_USERNAME.replace('@', '')
-    tme_url   = f"https://t.me/{_bot_name}?startapp=home_{user_id}"
-    # Si WEBAPP_URL está definido, usar web_app directo; si no, link t.me
-    if WEBAPP_URL:
-        open_btn = InlineKeyboardButton(f"🚀 Abrir {_BOT_TITLE}", web_app=WebAppInfo(url=f"{WEBAPP_URL}?user_id={user_id}"))
-    else:
-        open_btn = InlineKeyboardButton(f"🚀 Abrir {_BOT_TITLE}", url=tme_url)
+    open_btn = InlineKeyboardButton(
+        f"🚀 Abrir {_BOT_TITLE}",
+        url=f"https://t.me/{_bot_name}?startapp=All"
+    )
     return InlineKeyboardMarkup([
         [open_btn],
         [
