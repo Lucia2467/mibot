@@ -126,14 +126,13 @@ _TEXTS = {
 
 'referral_fraud_skip':{
   'es':(
-    "⚠️ <b>Tu referido se unió — pero no recibiste recompensa</b>\n\n"
+    "⚠️ <b>Tu referido se ha unido — pero no recibiste recompensa</b>\n\n"
     "👤 <b>Referido:</b> {referred_name}\n\n"
-    "Tu referido se registró con tu enlace, sin embargo "
-    "<b>la recompensa no fue acreditada</b> porque se detectó "
-    "actividad anormal entre las cuentas.\n\n"
+    "Tu referido se registró correctamente bajo tu enlace, sin embargo "
+    "<b>la recompensa no fue acreditada</b> porque se detectó actividad anormal entre las cuentas.\n\n"
     "✅ <b>Tu cuenta no tiene ninguna restricción por ahora.</b>\n\n"
-    "⛔ Por favor, no intentes ganar recompensas con cuentas propias o vinculadas. "
-    "Si esto continúa, tu cuenta podría ser restringida permanentemente."
+    "⛔ Por favor, deja de intentar ganar recompensas con cuentas propias o vinculadas. "
+    "Si este comportamiento continúa, tu cuenta podría ser restringida permanentemente."
   ),
   'en':(
     "⚠️ <b>Your referral joined — but no reward was credited</b>\n\n"

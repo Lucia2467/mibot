@@ -3109,6 +3109,15 @@ def api_sync_telegram():
                     except Exception as _re:
                         logger.warning(f"[referral] Error registrando referido nuevo: {_re}")
 
+                # Enviar mensaje de bienvenida al privado (entró via startapp, no por /start)
+                try:
+                    from notifications import notify_welcome
+                    _lang = data.get('language_code') or None
+                    notify_welcome(int(user_id), first_name, _lang)
+                    logger.info(f"[welcome] Bienvenida enviada a {user_id}")
+                except Exception as _we:
+                    logger.warning(f"[welcome] Error enviando bienvenida: {_we}")
+
                 return jsonify({
                     'success': True,
                     'message': 'User created',

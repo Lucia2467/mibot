@@ -534,6 +534,17 @@ def validate_referral(referrer_id, referred_id):
                 VALUES (%s, %s, 1, NOW(), 1)
                 ON DUPLICATE KEY UPDATE validated=1, validated_at=NOW(), is_fraud=1
             """, (str(referrer_id), str(referred_id)))
+            # Notificar al invitador que no recibirá recompensa
+            try:
+                from notifications import notify_referral_fraud_skip
+                referred_user = get_user(referred_id)
+                referred_name = (referred_user.get('first_name') or referred_user.get('username') or 'Usuario') if referred_user else 'Usuario'
+                referrer_user = get_user(referrer_id)
+                lang = referrer_user.get('language_code') if referrer_user else None
+                notify_referral_fraud_skip(int(referrer_id), referred_name, lang)
+                print(f"[validate_referral] 📨 Notificación de fraude enviada a {referrer_id}")
+            except Exception as _nf:
+                print(f"[validate_referral] ⚠️ Error notificando fraude: {_nf}")
             return False  # Sin bonus, sin bloqueo de cuenta
 
         # Get bonus amount from config
