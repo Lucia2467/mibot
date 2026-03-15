@@ -965,16 +965,7 @@ def complete_task(user_id, task_id, reward=None):
     # Update stats
     increment_stat('total_tasks_completed')
     
-    # Process referral validation if this is the first task
-    referral_message = ""
-    if is_first:
-        print(f"[complete_task] Primera tarea para usuario {user_id}, procesando referido...")
-        success, referrer_id, bonus = process_first_task_completion(user_id)
-        if success:
-            referral_message = f" Tu referidor recibió {bonus} PXC."
-            print(f"[complete_task] ✅ Referido validado: {referrer_id} recibió {bonus} PXC")
-    
-    return True, f"¡Tarea completada! +{reward:.4f} PXC{referral_message}"
+    return True, f"¡Tarea completada! +{reward:.4f} PXC"
 
 def is_task_completed(user_id, task_id):
     """Verifica si un usuario completó una tarea"""
