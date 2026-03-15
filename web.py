@@ -3079,12 +3079,12 @@ def api_sync_telegram():
                            first_name=first_name if first_name else user.get('first_name'))
 
             # Registrar referido si aún no tiene referrer y viene con start_param
-            if referrer_id and not user.get('referred_by'):
+            if referrer_id and not user.get('referred_by') and not user.get('pending_referrer'):
                 try:
                     referrer = get_user(referrer_id)
                     if referrer:
                         add_referral(referrer_id, user_id)
-                        update_user(user_id, referred_by=referrer_id)
+                        update_user(user_id, referred_by=referrer_id, pending_referrer=referrer_id)
                         logger.info(f"[referral] Registrado via startapp: {referrer_id} -> {user_id}")
                 except Exception as _re:
                     logger.warning(f"[referral] Error registrando referido: {_re}")
@@ -3104,7 +3104,8 @@ def api_sync_telegram():
                         referrer = get_user(referrer_id)
                         if referrer:
                             add_referral(referrer_id, user_id)
-                            update_user(user_id, referred_by=referrer_id)
+                            # pending_referrer es lo que lee process_first_task_completion
+                            update_user(user_id, referred_by=referrer_id, pending_referrer=referrer_id)
                             logger.info(f"[referral] Nuevo usuario referido via startapp: {referrer_id} -> {user_id}")
                     except Exception as _re:
                         logger.warning(f"[referral] Error registrando referido nuevo: {_re}")
@@ -6855,7 +6856,7 @@ async def _bot_start(update, context):
             is_new = True
             if referrer_id and get_user(referrer_id):
                 add_referral(referrer_id, str(user_id))
-                update_user(user_id, referred_by=referrer_id)
+                update_user(user_id, referred_by=referrer_id, pending_referrer=referrer_id)
                 logger.info(f"[bot /start] referral: {referrer_id} -> {user_id}")
         increment_stat('total_starts')
     except Exception as e:

@@ -545,6 +545,8 @@ def validate_referral(referrer_id, referred_id):
                 print(f"[validate_referral] 📨 Notificación de fraude enviada a {referrer_id}")
             except Exception as _nf:
                 print(f"[validate_referral] ⚠️ Error notificando fraude: {_nf}")
+            # Limpiar pending_referrer para que no reintente validar en cada tarea
+            update_user(referred_id, pending_referrer=None, referral_validated=True)
             return False  # Sin bonus, sin bloqueo de cuenta
 
         # Get bonus amount from config
@@ -622,7 +624,7 @@ def process_first_task_completion(user_id):
             print(f"[process_first_task_completion] Usuario {user_id}: ya tiene más de 1 tarea completada")
             return False, None, 0
         
-        # Validar el referido
+        # Validar el referido (internamente detecta fraude y envía notificación)
         bonus = float(get_config('referral_bonus', 1.0))
         success = validate_referral(pending_referrer, user_id)
         
@@ -630,6 +632,7 @@ def process_first_task_completion(user_id):
             print(f"[process_first_task_completion] ✅ Referido validado exitosamente: {pending_referrer} <- {user_id}")
             return True, pending_referrer, bonus
         
+        # Aunque sea fraude, pending_referrer ya fue limpiado en validate_referral
         return False, None, 0
         
     except Exception as e:
