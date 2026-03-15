@@ -59,7 +59,7 @@
             if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)
                 window.Telegram.WebApp.HapticFeedback.notificationOccurred(type==='success'?'success':type==='error'?'error':'warning');
             var close=function(){overlay.style.animation='_rmFadeOut 0.35s ease forwards';notif.style.animation='_rmScaleOut 0.35s cubic-bezier(0.16,1,0.3,1) forwards';setTimeout(function(){overlay.remove();},380);};
-            setTimeout(close,3200);
+            setTimeout(close,4200);
             overlay.addEventListener('click',function(e){if(e.target===overlay)close();});
         };
         window.showToast = function(message, type, duration){
