@@ -281,8 +281,8 @@ def api_complete_task():
     # Registrar IP antes de completar (necesario para anti-fraude de referidos)
     try:
         from database import record_user_ip
-        from web import get_client_ip
-        record_user_ip(user_id, get_client_ip())
+        from referral_utils import get_client_ip_safe
+        record_user_ip(user_id, get_client_ip_safe())
     except Exception:
         pass
 
@@ -301,10 +301,10 @@ def api_complete_task():
         translated = message
 
     if success:
-        # Validar referido en primera tarea (misma lógica que api_task_complete)
+        # Validar referido en primera tarea
         try:
-            from web import _validate_referral_on_first_task
-            _validate_referral_on_first_task(user_id)
+            from referral_utils import validate_referral_on_first_task
+            validate_referral_on_first_task(user_id)
         except Exception as _vr_err:
             print(f"[user_tasks] referral validation error: {_vr_err}")
 
