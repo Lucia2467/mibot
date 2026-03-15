@@ -837,17 +837,30 @@ def create_task(title, description, reward, url=None, task_type='link', active=T
         
         requires_channel_join = 1 if requires_channel_join else 0
         translations_json = _json.dumps(translations, ensure_ascii=False) if translations else None
-        
-        # Migration: add translations column if missing
+
+        # Añadir columna translations si no existe (compatible con MySQL antiguo)
         try:
-            execute_query("ALTER TABLE tasks ADD COLUMN IF NOT EXISTS translations JSON DEFAULT NULL")
-        except:
-            pass
-        
-        execute_query("""
-            INSERT INTO tasks (task_id, title, description, reward, url, task_type, active, requires_channel_join, channel_username, translations, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
-        """, (task_id, title, description, float(reward), url, task_type, active, requires_channel_join, channel_username, translations_json))
+            execute_query("ALTER TABLE tasks ADD COLUMN translations JSON DEFAULT NULL")
+        except Exception:
+            pass  # Ya existe o no compatible — continuar
+
+        # Intentar insertar con translations; si falla, insertar sin ella
+        try:
+            execute_query("""
+                INSERT INTO tasks (task_id, title, description, reward, url, task_type, active, requires_channel_join, channel_username, translations, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+            """, (task_id, title, description, float(reward), url, task_type, active,
+                  requires_channel_join, channel_username, translations_json))
+        except Exception as _e:
+            if 'translations' in str(_e).lower() or '1054' in str(_e):
+                # Columna no existe — insertar sin ella
+                execute_query("""
+                    INSERT INTO tasks (task_id, title, description, reward, url, task_type, active, requires_channel_join, channel_username, created_at)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+                """, (task_id, title, description, float(reward), url, task_type, active,
+                      requires_channel_join, channel_username))
+            else:
+                raise
         
         print(f"[create_task] ✅ Tarea creada: {task_id}")
         return True
