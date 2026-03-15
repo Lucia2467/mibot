@@ -1314,6 +1314,19 @@ def wallet():
     ton_min = float(get_config('ton_min_deposit', '0.1'))
     ton_enabled = get_config('ton_deposits_enabled', '1') == '1' and bool(ton_wallet_address)
 
+    # Stats: total retirado (completados) y total ganado (total_mined)
+    try:
+        user_withdrawals = get_user_withdrawals(user_id, limit=1000)
+        total_withdrawn = round(sum(
+            float(w.get('amount', 0))
+            for w in user_withdrawals
+            if w.get('status') == 'completed'
+        ), 4)
+    except Exception:
+        total_withdrawn = 0
+
+    total_earned = round(float(user.get('total_mined', 0) or 0), 4)
+
     return render_template('wallet.html',
                          user=user,
                          se_to_usdt=se_to_usdt,
@@ -1325,7 +1338,9 @@ def wallet():
                          user_deposit_memo=user_deposit_memo,
                          ton_wallet_address=ton_wallet_address,
                          ton_min=ton_min,
-                         ton_enabled=ton_enabled)
+                         ton_enabled=ton_enabled,
+                         total_withdrawn=total_withdrawn,
+                         total_earned=total_earned)
 
 @app.route('/historial')
 def historial():
