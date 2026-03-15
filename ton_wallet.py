@@ -85,60 +85,17 @@ def _extract_hash(tx) -> str:
 
 
 def _make_client(api_key):
-    """Create ToncenterClient — tries every known API variant."""
-    # Try tonutils.client (2.x, no 's') — ToncenterV2Client
-    try:
-        from tonutils.client import ToncenterV2Client
-        logger.info("[ton] Using ToncenterV2Client from tonutils.client")
-        return ToncenterV2Client(api_key=api_key, is_testnet=False)
-    except ImportError:
-        logger.info("[ton] ToncenterV2Client not found")
-    except Exception as e:
-        logger.warning(f"[ton] ToncenterV2Client failed: {e}")
-
-    # Try tonutils.client — ToncenterV3Client
-    try:
-        from tonutils.client import ToncenterV3Client
-        logger.info("[ton] Using ToncenterV3Client from tonutils.client")
-        return ToncenterV3Client(api_key=api_key, is_testnet=False)
-    except ImportError:
-        logger.info("[ton] ToncenterV3Client not found")
-    except Exception as e:
-        logger.warning(f"[ton] ToncenterV3Client failed: {e}")
-
-    # Try tonutils.client — ToncenterClient (new path)
-    try:
-        from tonutils.client import ToncenterClient
-        logger.info("[ton] Using ToncenterClient from tonutils.client")
-        return ToncenterClient(api_key=api_key, is_testnet=False)
-    except ImportError:
-        logger.info("[ton] tonutils.client.ToncenterClient not found")
-    except TypeError:
-        # needs network as positional arg
-        try:
-            from tonutils.client import ToncenterClient
-            return ToncenterClient('https://toncenter.com/api/v2/', api_key=api_key)
-        except Exception as e:
-            logger.warning(f"[ton] tonutils.client.ToncenterClient with URL failed: {e}")
-
-    # Last resort: tonutils.clients (old path, 's') — pass URL as network
+    """Create ToncenterClient para tonutils 2.x (NetworkGlobalID enum)."""
+    # tonutils 2.x: ToncenterClient(NetworkGlobalID, api_key=...)
     try:
         from tonutils.clients import ToncenterClient
-        logger.info("[ton] Using ToncenterClient from tonutils.clients with URL")
-        return ToncenterClient('https://toncenter.com/api/v2/', api_key=api_key)
+        from tonutils.types import NetworkGlobalID
+        logger.info("[ton] Using ToncenterClient (tonutils 2.x) with MAINNET")
+        return ToncenterClient(NetworkGlobalID.MAINNET, api_key=api_key)
+    except ImportError:
+        logger.warning("[ton] tonutils.clients no disponible")
     except Exception as e:
-        logger.error(f"[ton] All client variants failed. Last error: {e}")
-        # Log what IS available
-        try:
-            import tonutils.client as tc
-            logger.error(f"[ton] tonutils.client has: {dir(tc)}")
-        except Exception:
-            pass
-        try:
-            import tonutils.clients as tcs
-            logger.error(f"[ton] tonutils.clients has: {dir(tcs)}")
-        except Exception:
-            pass
+        logger.error(f"[ton] ToncenterClient (2.x) failed: {e}")
         raise
 
 
