@@ -546,7 +546,7 @@ window.showRewardModal = function(message, type) {
     const svgIcon = icons[p.icon] || icons.info;
     const tt = function(k) { try { var v = typeof window.t==='function' ? window.t(k) : null; return (v && v !== k) ? v : null; } catch(e){ return null; } };
     const labels = { success: tt('reward_label')||'Recompensa', error: tt('error_label')||'Error', warning: tt('warning_label')||'Aviso', info: tt('info_label')||'Info' };
-    const subs   = { success: tt('reward_added_balance')||'¡Añadido a tu balance!', error: '', warning: tt('warning_sub')||'', info: tt('info_sub')||'' };
+    const subs   = { success: tt('reward_added_balance')||'¡Añadido a tu balance!', error: tt('something_went_wrong')||'', warning: tt('warning_sub')||'', info: tt('info_sub')||'' };
     const label = labels[type] || labels.info;
     const sub   = subs[type]   || '';
     // Strip leading emoji/symbols from message
