@@ -531,7 +531,7 @@ window.showRewardModal = function(message, type) {
     type = type || 'info';
     const palette = {
         success: { c:'#22c55e', cd:'#16a34a', cl:'#4ade80', icon:'check', badge:'✅' },
-        error:   { c:'#c0392b', cd:'#96281b', cl:'#e74c3c', icon:'x',     badge:'❌' },
+        error:   { c:'#991b1b', cd:'#7f1d1d', cl:'#dc2626', icon:'x',     badge:'❌' },
         warning: { c:'#F59E0B', cd:'#D97706', cl:'#FCD34D', icon:'alert', badge:'⚠️' },
         info:    { c:'#3B82F6', cd:'#2563EB', cl:'#93C5FD', icon:'info',  badge:'ℹ️' },
     };
@@ -544,7 +544,7 @@ window.showRewardModal = function(message, type) {
         info:  '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>',
     };
     const svgIcon = icons[p.icon] || icons.info;
-    const tt = typeof window.t === 'function' ? window.t : function(k){ return null; };
+    const tt = function(k) { try { var v = typeof window.t==='function' ? window.t(k) : null; return (v && v !== k) ? v : null; } catch(e){ return null; } };
     const labels = { success: tt('reward_label')||'Recompensa', error: (tt('error_label')||'Error').toUpperCase(), warning: (tt('warning_label')||'Aviso').toUpperCase(), info: (tt('info_label')||'Info').toUpperCase() };
     const subs   = { success: tt('reward_added_balance')||'¡Añadido a tu balance!', error: '', warning: tt('warning_sub')||'', info: tt('info_sub')||'' };
     const label = labels[type] || labels.info;
@@ -571,7 +571,7 @@ window.showRewardModal = function(message, type) {
 
     const header = document.createElement('div');
     header.style.cssText = 'background:linear-gradient(135deg,'+c+'26,'+c+'0d);padding:36px 28px 24px;border-bottom:1px solid '+c+'33;position:relative;overflow:hidden;';
-    header.innerHTML = '<div style="position:absolute;top:10%;left:10%;width:4px;height:4px;background:'+c+';border-radius:50%;animation:_rmP1 2s ease-in-out infinite;"></div><div style="position:absolute;top:30%;right:15%;width:3px;height:3px;background:'+cl+';border-radius:50%;animation:_rmP2 2.5s ease-in-out infinite;"></div><div style="position:absolute;bottom:20%;left:20%;width:5px;height:5px;background:'+cd+';border-radius:50%;animation:_rmP3 3s ease-in-out infinite;"></div><div style="position:relative;width:90px;height:90px;margin:0 auto 18px;"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90px;height:90px;border:2px solid transparent;border-top-color:'+c+';border-right-color:'+c+';border-radius:50%;animation:_rmSpin 2s linear infinite;opacity:0.6;"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;background:'+c+'3d;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 28px '+c+'66;animation:_rmPulse 1.5s ease-in-out infinite;">'+svgIcon+'</div></div><div style="font-size:0.7rem;font-weight:700;color:'+cl+';text-transform:uppercase;letter-spacing:2px;position:relative;z-index:1;">'+p.badge+' '+label+'</div>';
+    header.innerHTML = '<div style="position:absolute;top:10%;left:10%;width:4px;height:4px;background:'+c+';border-radius:50%;animation:_rmP1 2s ease-in-out infinite;"></div><div style="position:absolute;top:30%;right:15%;width:3px;height:3px;background:'+cl+';border-radius:50%;animation:_rmP2 2.5s ease-in-out infinite;"></div><div style="position:absolute;bottom:20%;left:20%;width:5px;height:5px;background:'+cd+';border-radius:50%;animation:_rmP3 3s ease-in-out infinite;"></div><div style="position:relative;width:90px;height:90px;margin:0 auto 18px;"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90px;height:90px;border:2px solid transparent;border-top-color:'+c+';border-right-color:'+c+';border-radius:50%;animation:_rmSpin 2s linear infinite;opacity:0.6;"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;background:'+c+'3d;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 28px '+c+'66;animation:_rmPulse 1.5s ease-in-out infinite;">'+svgIcon+'</div></div><div style="font-size:0.7rem;font-weight:700;color:'+cl+';text-transform:uppercase;letter-spacing:2px;position:relative;z-index:1;">'+label+'</div>';
 
     const body = document.createElement('div');
     body.style.cssText = 'padding:26px 28px 30px;';
