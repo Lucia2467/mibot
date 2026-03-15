@@ -84,38 +84,12 @@ async def _send(words, to_addr, ton_amount, memo, api_key):
 
     amount_nano = int(round(ton_amount * TON_TO_NANO))
 
-    # Try each known API variant in order of newest → oldest
-    client = None
-    # 1) tonutils >= some version: tonutils.client (no 's'), is_testnet kwarg
-    try:
-        from tonutils.client import ToncenterClient as _TC
-        client = _TC(api_key=api_key, is_testnet=False)
-    except (ImportError, TypeError):
-        pass
-
-    # 2) tonutils.client with ToncenterV2Client name
-    if client is None:
-        try:
-            from tonutils.client import ToncenterV2Client as _TC2
-            client = _TC2(api_key=api_key, is_testnet=False)
-        except (ImportError, TypeError):
-            pass
-
-    # 3) tonutils.clients (with 's'): pass base_url explicitly (avoids network arg)
-    if client is None:
-        try:
-            from tonutils.clients import ToncenterClient as _TC3
-            client = _TC3(
-                base_url='https://toncenter.com/api/v2/',
-                api_key=api_key
-            )
-        except (ImportError, TypeError):
-            pass
-
-    # 4) tonutils.clients with is_testnet kwarg (older)
-    if client is None:
-        from tonutils.clients import ToncenterClient as _TC4
-        client = _TC4(api_key=api_key, is_testnet=False)
+    # tonutils.clients ToncenterClient requires network as positional URL
+    from tonutils.clients import ToncenterClient as _TC
+    client = _TC(
+        'https://toncenter.com/api/v2/',
+        api_key=api_key
+    )
 
     async with client:
         result = WalletV5R1.from_mnemonic(client, words)
