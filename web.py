@@ -3036,11 +3036,19 @@ def api_sync_telegram():
     first_name = data.get('first_name') or data.get('firstName') or 'Usuario'
     last_name = data.get('last_name') or data.get('lastName')
     init_data = data.get('init_data')
+    start_param = data.get('start_param') or ''  # ej: "ref_123456789"
 
     if not user_id:
         return jsonify({'success': False, 'error': 'User ID required'}), 400
 
     user_id = str(user_id)
+
+    # Extraer referrer_id del start_param (?startapp=ref_USERID)
+    referrer_id = None
+    if start_param and start_param.startswith('ref_'):
+        raw = start_param[4:]  # quitar "ref_"
+        if raw.isdigit() and raw != user_id:
+            referrer_id = raw
 
     try:
         user = get_user(user_id)
@@ -3068,23 +3076,38 @@ def api_sync_telegram():
                 update_user(user_id,
                            username=username if username else user.get('username'),
                            first_name=first_name if first_name else user.get('first_name'))
-                return jsonify({
-                    'success': True,
-                    'message': 'User updated',
-                    'user_id': user_id,
-                    'is_new': False
-                })
-            else:
-                # No actualizar, pero confirmar que existe
-                return jsonify({
-                    'success': True,
-                    'message': 'User exists (no update needed)',
-                    'user_id': user_id,
-                    'is_new': False
-                })
+
+            # Registrar referido si aún no tiene referrer y viene con start_param
+            if referrer_id and not user.get('referred_by'):
+                try:
+                    referrer = get_user(referrer_id)
+                    if referrer:
+                        add_referral(referrer_id, user_id)
+                        update_user(user_id, referred_by=referrer_id)
+                        logger.info(f"[referral] Registrado via startapp: {referrer_id} -> {user_id}")
+                except Exception as _re:
+                    logger.warning(f"[referral] Error registrando referido: {_re}")
+
+            return jsonify({
+                'success': True,
+                'message': 'User updated' if should_update else 'User exists',
+                'user_id': user_id,
+                'is_new': False
+            })
         else:
             new_user = create_user(user_id, username=username, first_name=first_name)
             if new_user:
+                # Registrar referido para usuario nuevo
+                if referrer_id:
+                    try:
+                        referrer = get_user(referrer_id)
+                        if referrer:
+                            add_referral(referrer_id, user_id)
+                            update_user(user_id, referred_by=referrer_id)
+                            logger.info(f"[referral] Nuevo usuario referido via startapp: {referrer_id} -> {user_id}")
+                    except Exception as _re:
+                        logger.warning(f"[referral] Error registrando referido nuevo: {_re}")
+
                 return jsonify({
                     'success': True,
                     'message': 'User created',
