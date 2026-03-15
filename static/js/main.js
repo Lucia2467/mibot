@@ -549,8 +549,8 @@ window.showRewardModal = function(message, type) {
     const subs   = { success: tt('reward_added_balance')||'¡Añadido a tu balance!', error: '', warning: tt('warning_sub')||'', info: tt('info_sub')||'' };
     const label = labels[type] || labels.info;
     const sub   = subs[type]   || '';
-    // Strip leading emoji from message (badge already shows it)
-    const cleanMsg = message.replace(/^[\u{1F000}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}✓✕⚠❌✅ℹ️⚠️❌✓✔\s]+/u, '').trim() || message;
+    // Strip leading emoji/symbols from message
+    const cleanMsg = message.replace(/^[\s✓✕✗⚠❌✅ℹ️⚠️❌✓✔×✘]+/, '').trim() || message;
     const fontSize = cleanMsg.length > 25 ? '1.3rem' : '2rem';
 
     // Inject CSS once
@@ -596,7 +596,9 @@ window.showRewardModal = function(message, type) {
 window.toastSystem = new ToastSystem();
 window.showToast = function(message, type, duration) {
     if (typeof window.showRewardModal === 'function') {
-        window.showRewardModal(message, type || 'info');
+        // Strip emoji prefixes added by callers
+        const cleanMessage = String(message).replace(/^\W+/, '').trim() || message;
+        window.showRewardModal(cleanMessage, type || 'info');
         return;
     }
     window.toastSystem.show(message, type, duration);
