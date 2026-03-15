@@ -984,7 +984,7 @@ const PTS = {
         
         const b = document.getElementById('checkin-btn');
         b.disabled = true;
-        b.innerHTML = '<span>Procesando...</span>';
+        b.innerHTML = `<span>${t('toast_processing')||'Procesando...'}</span>`;
         
         try {
             const r = await fetch(`/api/checkin?user_id=${this.userId}`, {
@@ -1003,7 +1003,7 @@ const PTS = {
                 b.innerHTML = '<div class="pts-icon pts-icon-check" style="width:20px;height:20px;"></div><span>'+t('pts_checkin_do')+'</span>';
             }
         } catch (e) {
-            this.toast('Error de conexión', 'error');
+            this.toast(t('toast_connection_error')||'Error de conexión', 'error');
             b.disabled = false;
             b.innerHTML = '<div class="pts-icon pts-icon-check" style="width:20px;height:20px;"></div><span>'+t('pts_checkin_do')+'</span>';
         }
@@ -1015,13 +1015,13 @@ const PTS = {
     // ============================================
     async watchAd() {
         if (!this.userId) {
-            this.toast('Error', 'error');
+            this.toast(t('toast_error')||'Error', 'error');
             return;
         }
 
         // Verificar SDK de GigaPub
         if (typeof window.showGiga !== 'function') {
-            this.toast('Anuncios no disponibles', 'warning');
+            this.toast(t('toast_ads_unavailable')||'Anuncios no disponibles', 'warning');
             return;
         }
 
@@ -1030,7 +1030,7 @@ const PTS = {
         const currentRemaining = parseInt(adsRemainingEl?.textContent || '10');
         
         if (currentRemaining <= 0) {
-            this.toast('Límite diario alcanzado (10 anuncios)', 'error');
+            this.toast(t('toast_daily_limit')||'Límite diario alcanzado', 'error');
             this.haptic('error');
             return;
         }
@@ -1059,15 +1059,15 @@ const PTS = {
                 
                 // Mostrar mensaje con o sin bonus
                 if (data.bonus && data.pts > 5) {
-                    this.toast(`+${data.pts} PTS (¡Bonus 5 anuncios!)`, 'success');
+                    this.toast(`+${data.pts} PXC (${t('toast_bonus_5_ads')||'¡Bonus 5 anuncios!'})`, 'success');
                 } else {
-                    this.toast(`✓ +${data.pts || 5} PTS`, 'success');
+                    this.toast(`✓ +${data.pts || 5} PXC`, 'success');
                 }
                 this.loadStatus();
             } else {
                 // Verificar si es error de límite
                 if (data.limit_reached) {
-                    this.toast('Límite diario alcanzado (10 anuncios)', 'error');
+                    this.toast(t('toast_daily_limit')||'Límite diario alcanzado', 'error');
                     document.getElementById('ads-remaining').textContent = '0';
                 } else {
                     this.toast(data.error || 'Error', 'error');
@@ -1076,7 +1076,7 @@ const PTS = {
 
         } catch (e) {
             console.warn('[PTS] Ad error:', e);
-            this.toast('Anuncio cancelado', 'warning');
+            this.toast(t('toast_ad_cancelled')||'Anuncio cancelado', 'warning');
         }
     },
 
@@ -1085,13 +1085,13 @@ const PTS = {
     // ============================================
     async doubleCheckin() {
         if (!this.userId) {
-            this.toast('Error', 'error');
+            this.toast(t('toast_error')||'Error', 'error');
             return;
         }
 
         // Verificar SDK de GigaPub
         if (typeof window.showGiga !== 'function') {
-            this.toast('Anuncios no disponibles', 'error');
+            this.toast(t('toast_ads_unavailable')||'Anuncios no disponibles', 'error');
             return;
         }
 
@@ -1101,7 +1101,7 @@ const PTS = {
             
             // Anuncio completado - duplicar check-in inmediatamente
             this.haptic('success');
-            this.toast('Procesando...', 'info');
+            this.toast(t('toast_processing')||'Procesando...', 'info');
 
             // Llamar al endpoint de duplicar
             const r = await fetch(`/api/checkin/double?user_id=${this.userId}`, {
@@ -1122,7 +1122,7 @@ const PTS = {
 
         } catch (e) {
             console.warn('[PTS] Double checkin error:', e);
-            this.toast('Anuncio cancelado', 'warning');
+            this.toast(t('toast_ad_cancelled')||'Anuncio cancelado', 'warning');
         }
     }
 };
@@ -1292,7 +1292,7 @@ async function completeUserTask(taskId, taskUrl, requiresJoin, channelUsername) 
         }
     } catch(e) {
         console.error('[UserTasks] Error:', e);
-        showToast('Error', 'error');
+        showToast(t('toast_error')||'Error', 'error');
         if (row) { row.style.opacity = ''; row.style.pointerEvents = ''; }
     }
 }
@@ -1469,7 +1469,7 @@ function stToggle(taskId) {
 function stPreview(taskId, input) {
     const file = input.files[0];
     if (!file) return;
-    if (file.size > 5000000) { showToast('Imagen muy grande (máx 5MB)', 'error'); return; }
+    if (file.size > 5000000) { showToast(t('toast_image_too_large')||'Imagen muy grande (máx 5MB)', 'error'); return; }
     const reader = new FileReader();
     reader.onload = (e) => {
         stScreenshots[taskId] = e.target.result;
@@ -1490,9 +1490,9 @@ function stPreview(taskId, input) {
 async function stSubmit(taskId, requiresScreenshot) {
     const urlParams = new URLSearchParams(window.location.search);
     const userId = urlParams.get('user_id');
-    if (!userId) { showToast('Usuario no identificado', 'error'); return; }
+    if (!userId) { showToast(t('toast_user_not_identified')||'Usuario no identificado', 'error'); return; }
     if (requiresScreenshot && !stScreenshots[taskId]) {
-        showToast('Sube una captura primero', 'error'); return;
+        showToast(t('toast_upload_screenshot_first')||'Sube una captura primero', 'error'); return;
     }
     const btn = document.getElementById('stsubmit-' + taskId);
     btn.disabled = true; btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;"><i data-lucide="loader" class="spin" style="width:14px;height:14px;"></i> Enviando...</span>'; if(typeof lucide!=='undefined')lucide.createIcons();
@@ -1510,7 +1510,7 @@ async function stSubmit(taskId, requiresScreenshot) {
         });
         const data = await res.json();
         if (data.success) {
-            showToast('Enviado para revisión', 'success');
+            showToast(t('toast_submitted_review')||'Enviado para revisión', 'success');
             if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
             // Replace card content with pending state
             const card = document.getElementById('stask-' + taskId);
@@ -1532,7 +1532,7 @@ async function stSubmit(taskId, requiresScreenshot) {
             btn.disabled = false; btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;"><i data-lucide="upload" style="width:14px;height:14px;"></i> Enviar para revisión</span>'; if(typeof lucide!=='undefined')lucide.createIcons();
         }
     } catch(e) {
-        showToast('Error de conexión', 'error');
+        showToast(t('toast_connection_error')||'Error de conexión', 'error');
         btn.disabled = false; btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;"><i data-lucide="upload" style="width:14px;height:14px;"></i> Enviar para revisión</span>'; if(typeof lucide!=='undefined')lucide.createIcons();
     }
 }
@@ -1877,7 +1877,7 @@ function stGetIcon(platform, color) {
 function stModalPreview(input) {
     const file = input.files[0];
     if (!file) return;
-    if (file.size > 5000000) { showToast('Imagen muy grande (máx 5MB)', 'error'); return; }
+    if (file.size > 5000000) { showToast(t('toast_image_too_large')||'Imagen muy grande (máx 5MB)', 'error'); return; }
     const reader = new FileReader();
     reader.onload = e => {
         _stScreenshot = e.target.result;
@@ -1908,10 +1908,10 @@ async function stModalSubmit() {
     if (!_stCurrentTask) return;
     const needsScreenshot = _stCurrentTask.requires_screenshot;
     if (needsScreenshot && !_stScreenshot) {
-        showToast('Sube una captura primero', 'error'); return;
+        showToast(t('toast_upload_screenshot_first')||'Sube una captura primero', 'error'); return;
     }
     const userId = new URLSearchParams(window.location.search).get('user_id');
-    if (!userId) { showToast('Usuario no identificado', 'error'); return; }
+    if (!userId) { showToast(t('toast_user_not_identified')||'Usuario no identificado', 'error'); return; }
 
     const btn = document.getElementById('stask-modal-submit');
     btn.disabled = true;
@@ -1938,7 +1938,7 @@ async function stModalSubmit() {
         });
         const data = await res.json();
         if (data.success) {
-            showToast('Enviado para revisión', 'success');
+            showToast(t('toast_submitted_review')||'Enviado para revisión', 'success');
             if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
             stCloseModal();
             setTimeout(() => location.reload(), 1000);
@@ -1949,7 +1949,7 @@ async function stModalSubmit() {
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     } catch(e) {
-        showToast('Error de conexión', 'error');
+        showToast(t('toast_connection_error')||'Error de conexión', 'error');
         btn.disabled = false;
         btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><i data-lucide=\'send\' style=\'width:16px;height:16px;\'></i> Enviar para revisión</span>';
         if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -2456,5 +2456,193 @@ async function stModalSubmit() {
 #stask-modal-body::-webkit-scrollbar { display:none; }
 #stask-modal-body { scrollbar-width:none; }
 </style>
+
+<script>
+// ════════════════════════════════════════════════════
+//  REWARD MODAL  (estilo monetag) + showToast global
+// ════════════════════════════════════════════════════
+
+function showRewardModal(message, type = 'success') {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed; inset: 0; z-index: 99999;
+        background: rgba(0,0,0,0.75);
+        backdrop-filter: blur(12px);
+        display: flex; align-items: center; justify-content: center;
+        animation: fadeIn 0.35s ease;
+    `;
+
+    const isSuccess = type === 'success';
+    const color     = isSuccess ? '#FF6B35' : '#EF4444';
+    const colorDark = isSuccess ? '#E65100' : '#DC2626';
+    const colorLight= isSuccess ? '#FF8A5B' : '#F87171';
+
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: relative;
+        background: linear-gradient(135deg, rgba(18,18,18,0.98) 0%, rgba(30,30,30,0.98) 100%);
+        border-radius: 32px;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px ${color}44, 0 30px 90px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+        animation: scaleIn 0.45s cubic-bezier(0.34,1.56,0.64,1);
+        min-width: 300px; max-width: 88vw;
+        text-align: center;
+    `;
+
+    // Glow border
+    const glow = document.createElement('div');
+    glow.style.cssText = `
+        position:absolute; top:-2px; left:-2px; right:-2px; bottom:-2px;
+        background: linear-gradient(135deg, ${color}, ${colorDark}, ${color});
+        border-radius: 32px; opacity: 0.5; filter: blur(18px);
+        animation: rotateGlow 3s linear infinite; z-index: -1;
+    `;
+
+    // Header
+    const header = document.createElement('div');
+    header.style.cssText = `
+        background: linear-gradient(135deg, ${color}26 0%, ${color}0d 100%);
+        padding: 36px 28px 24px;
+        border-bottom: 1px solid ${color}33;
+        position: relative; overflow: hidden;
+    `;
+
+    // Particles
+    header.innerHTML = `
+        <div style="position:absolute;top:10%;left:10%;width:4px;height:4px;background:${color};border-radius:50%;animation:particle1 2s ease-in-out infinite;"></div>
+        <div style="position:absolute;top:30%;right:15%;width:3px;height:3px;background:${colorLight};border-radius:50%;animation:particle2 2.5s ease-in-out infinite;"></div>
+        <div style="position:absolute;bottom:20%;left:20%;width:5px;height:5px;background:${colorDark};border-radius:50%;animation:particle3 3s ease-in-out infinite;"></div>
+    `;
+
+    // Icon ring + icon
+    const iconWrap = document.createElement('div');
+    iconWrap.style.cssText = `position:relative;width:90px;height:90px;margin:0 auto 18px;z-index:1;`;
+    iconWrap.innerHTML = `
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+            width:90px;height:90px;border:2px solid transparent;
+            border-top-color:${color};border-right-color:${color};
+            border-radius:50%;animation:spin 2s linear infinite;opacity:0.6;"></div>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+            width:62px;height:62px;background:${color}3d;border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            box-shadow:0 0 28px ${color}66;animation:iconPulse 1.5s ease-in-out infinite;">
+            ${isSuccess
+                ? `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`
+                : `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`
+            }
+        </div>
+    `;
+    header.appendChild(iconWrap);
+
+    const badge = document.createElement('div');
+    badge.style.cssText = `font-size:0.7rem;font-weight:700;color:${colorLight};text-transform:uppercase;letter-spacing:2px;position:relative;z-index:1;`;
+    badge.textContent = isSuccess ? ('✨ ' + (t('reward_label') || 'Recompensa')) : ('⚠️ ' + (t('error_label') || 'Error'));
+    header.appendChild(badge);
+
+    // Body
+    const body = document.createElement('div');
+    body.style.cssText = `padding:26px 28px 30px;`;
+
+    const msgEl = document.createElement('div');
+    msgEl.style.cssText = `
+        font-size: 2.2rem; font-weight: 900;
+        background: linear-gradient(135deg, ${color} 0%, ${colorLight} 50%, #fff8 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        margin-bottom: 10px;
+        animation: textGlow 2s ease-in-out infinite;
+        letter-spacing: 1px;
+    `;
+    msgEl.textContent = message;
+
+    const sub = document.createElement('div');
+    sub.style.cssText = `font-size:0.88rem;color:rgba(255,255,255,0.45);margin-bottom:18px;`;
+    sub.textContent = isSuccess ? (t('reward_added_balance') || '¡Se ha añadido a tu balance!') : (t('something_went_wrong') || 'Algo salió mal');
+
+    const divider = document.createElement('div');
+    divider.style.cssText = `width:50px;height:3px;background:linear-gradient(90deg,transparent,${color},transparent);margin:0 auto;border-radius:2px;`;
+
+    body.appendChild(msgEl);
+    body.appendChild(sub);
+    body.appendChild(divider);
+
+    modal.appendChild(glow);
+    modal.appendChild(header);
+    modal.appendChild(body);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    if (window.Telegram?.WebApp?.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.notificationOccurred(isSuccess ? 'success' : 'error');
+    }
+
+    const close = () => {
+        overlay.style.animation = 'fadeOut 0.35s ease forwards';
+        modal.style.animation   = 'scaleOut 0.35s cubic-bezier(0.16,1,0.3,1) forwards';
+        setTimeout(() => overlay.remove(), 380);
+    };
+    setTimeout(close, 3000);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+}
+
+// ── CSS animations (only inject once) ──
+if (!document.getElementById('reward-modal-css')) {
+    const s = document.createElement('style');
+    s.id = 'reward-modal-css';
+    s.textContent = `
+        @keyframes rotateGlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        @keyframes iconPulse  { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-50%) scale(1.08)} }
+        @keyframes textGlow   { 0%,100%{opacity:1} 50%{opacity:0.85} }
+        @keyframes particle1  { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-8px) scale(1.2)} }
+        @keyframes particle2  { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(6px) scale(0.8)} }
+        @keyframes particle3  { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-5px) scale(1.15)} }
+        @keyframes spin       { from{transform:translate(-50%,-50%) rotate(0deg)} to{transform:translate(-50%,-50%) rotate(360deg)} }
+        @keyframes fadeIn     { from{opacity:0} to{opacity:1} }
+        @keyframes fadeOut    { from{opacity:1} to{opacity:0} }
+        @keyframes scaleIn    { from{opacity:0;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+        @keyframes scaleOut   { from{opacity:1;transform:scale(1)} to{opacity:0;transform:scale(0.7)} }
+    `;
+    document.head.appendChild(s);
+}
+
+// ── Global showToast (small pill for non-reward messages) ──
+function showToast(message, type = 'info') {
+    // For reward success messages → use the premium modal
+    if (type === 'success' && (message.includes('+') || message.includes('✓'))) {
+        showRewardModal(message, 'success');
+        return;
+    }
+    // Small pill toast for info/warning/error
+    const existing = document.querySelector('.pts-toast-pill');
+    if (existing) existing.remove();
+
+    const colors = {
+        success: { bg: 'rgba(34,197,94,0.15)',  border: 'rgba(34,197,94,0.4)',  text: '#22c55e' },
+        error:   { bg: 'rgba(239,68,68,0.15)',   border: 'rgba(239,68,68,0.4)',  text: '#ef4444' },
+        warning: { bg: 'rgba(251,191,36,0.15)',  border: 'rgba(251,191,36,0.4)', text: '#fbbf24' },
+        info:    { bg: 'rgba(99,179,237,0.15)',   border: 'rgba(99,179,237,0.4)', text: '#63b3ed' },
+    };
+    const c = colors[type] || colors.info;
+    const pill = document.createElement('div');
+    pill.className = 'pts-toast-pill';
+    pill.style.cssText = `
+        position:fixed;top:18px;left:50%;transform:translateX(-50%);
+        z-index:99998;
+        background:${c.bg};border:1px solid ${c.border};
+        color:${c.text};
+        padding:9px 18px;border-radius:40px;
+        font-size:0.82rem;font-weight:700;
+        backdrop-filter:blur(16px);
+        white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;
+        box-shadow:0 4px 20px rgba(0,0,0,0.4);
+        animation:fadeIn 0.25s ease;
+    `;
+    pill.textContent = message;
+    document.body.appendChild(pill);
+    setTimeout(() => {
+        pill.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => pill.remove(), 320);
+    }, 2800);
+}
+</script>
 
 {% endblock %}
