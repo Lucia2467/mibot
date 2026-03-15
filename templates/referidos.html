@@ -513,7 +513,7 @@ function copyReferralLink() {
     input.select(); input.setSelectionRange(0,99999);
     try {
         document.execCommand('copy');
-        if (window.showToast) window.showToast(window.t ? window.t('referidos_copy_success') : '¡Link copiado!', 'success');
+        if (window.showToast) window.showToast(window.t ? window.t('referrals_copy_success') : '¡Link copiado!', 'success');
         if (window.vibrateDevice) window.vibrateDevice([10]);
     } catch(e) { if (window.showToast) window.showToast('Error al copiar','error'); }
 }
