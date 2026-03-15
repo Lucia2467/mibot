@@ -7127,11 +7127,9 @@ def _start_bot_thread():
         loop.close()
 
 
-# Arrancar el bot en hilo daemon al importar el módulo
-import threading as _threading
-_bot_thread = _threading.Thread(target=_start_bot_thread, daemon=True, name="TelegramBot")
-_bot_thread.start()
-logger.info("🤖 Hilo del bot de Telegram iniciado")
+# El bot NO arranca automáticamente aquí.
+# Se inicia desde start.py llamando a _start_bot_thread()
+# para garantizar UNA SOLA instancia.
 
 
 # ============== MAIN ==============

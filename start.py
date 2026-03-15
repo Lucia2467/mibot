@@ -46,14 +46,27 @@ def run_migrations_once():
 
 
 # ─────────────────────────────────────────────────────────────
-# FLASK — corre en un hilo daemon
+# BOT DE TELEGRAM — hilo daemon controlado desde aquí
+# ─────────────────────────────────────────────────────────────
+def run_bot_thread():
+    """Arranca el bot de Telegram en un hilo daemon separado."""
+    try:
+        from web import _start_bot_thread
+        bot_thread = threading.Thread(target=_start_bot_thread, daemon=True, name="TelegramBot")
+        bot_thread.start()
+        logger.info("🤖 Hilo del bot de Telegram iniciado")
+    except Exception as e:
+        logger.error(f"❌ Error arrancando bot: {e}")
+
+
+# ─────────────────────────────────────────────────────────────
+# FLASK — hilo principal
 # ─────────────────────────────────────────────────────────────
 def run_flask():
     try:
-        logger.info("🌐 Iniciando servidor Flask...")
+        logger.info("🌐 Iniciando Flask...")
         from web import app
         port = int(os.environ.get("PORT", 5000))
-        # use_reloader=False es obligatorio dentro de un hilo
         app.run(host="0.0.0.0", port=port, use_reloader=False, threaded=True)
     except Exception as e:
         logger.error(f"❌ Error en Flask: {e}")
@@ -62,8 +75,6 @@ def run_flask():
 # ─────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────
-# El bot de Telegram ahora corre como hilo daemon dentro de web.py
-# start.py solo levanta Flask (que a su vez arranca el bot automáticamente)
 if __name__ == "__main__":
     logger.info("=" * 50)
     logger.info("🚀 PixieLand — Iniciando sistema")
@@ -72,5 +83,8 @@ if __name__ == "__main__":
     # 1. Migraciones
     run_migrations_once()
 
-    # 2. Flask (el bot arranca automáticamente desde web.py)
+    # 2. Bot en hilo daemon (UNA sola instancia, controlada aquí)
+    run_bot_thread()
+
+    # 3. Flask en el hilo principal (bloquea hasta que el proceso muere)
     run_flask()
