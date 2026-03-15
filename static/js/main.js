@@ -530,9 +530,9 @@ document.addEventListener('DOMContentLoaded', function() {
 window.showRewardModal = function(message, type) {
     type = type || 'success';
     const isSuccess = type === 'success';
-    const color  = isSuccess ? '#FF6B35' : '#EF4444';
-    const colorD = isSuccess ? '#E65100' : '#DC2626';
-    const colorL = isSuccess ? '#FF8A5B' : '#F87171';
+    const color  = isSuccess ? '#22c55e' : '#EF4444';
+    const colorD = isSuccess ? '#16a34a' : '#DC2626';
+    const colorL = isSuccess ? '#4ade80' : '#F87171';
 
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.75);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;animation:_rmFadeIn 0.35s ease;';
