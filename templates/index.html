@@ -934,8 +934,8 @@ setInterval(() => {
 
 // ── Claim ──
 async function claimReward(e) {
-    if (!_UID) { showToast('Error: Usuario no identificado', 'error'); return; }
-    if (unclaimedLocal <= 0.0001) { showToast('No hay ganancias para reclamar', 'warning'); return; }
+    if (!_UID) { showToast(t('toast_user_not_identified')||'Error: Usuario no identificado', 'error'); return; }
+    if (unclaimedLocal <= 0.0001) { showToast(t('toast_nothing_to_claim')||'No hay ganancias para reclamar', 'warning'); return; }
     _saveTaps();
     window.pendingClaimData = { userId: _UID, amount: unclaimedLocal };
     showAdOverlay();
@@ -1762,11 +1762,11 @@ async function processClaimReward(userId, unclaimedAmount) {
                 window.location.reload();
             }, 3500);
         } else {
-            showToast(data.message || (window.tt ? window.tt('toast_claim_error') : 'Error al reclamar'), 'error');
+            showToast(data.message || t('toast_claim_error')||'Error al reclamar', 'error');
         }
     } catch (error) {
         console.error('Error:', error);
-        showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+        showToast(t('toast_connection_error')||'Error de conexión', 'error');
     }
 }
 
@@ -1818,7 +1818,7 @@ async function submitPromoCode() {
 
     if (!code) {
         if (window.showToast) {
-            window.showToast(window.tt ? window.tt('toast_code_required') : 'Por favor ingresa un código', 'warning');
+            window.showToast(t('toast_code_required')||'Por favor ingresa un código', 'warning');
         }
         input.focus();
         return;
@@ -1855,7 +1855,7 @@ async function submitPromoCode() {
             
             if (window.showToast) {
                 const defaultMsg = window.tt ? window.tt('toast_code_redeemed') : '¡Código canjeado!';
-                window.showToast(`🎉 ${data.message || defaultMsg}`, 'success');
+                window.showToast(data.message || defaultMsg, 'success');
             }
             
             // Vibración de éxito
@@ -1897,7 +1897,7 @@ async function submitPromoCode() {
     } catch (error) {
         console.error('Error:', error);
         if (window.showToast) {
-            window.showToast(window.tt ? window.tt('toast_connection_error') : 'Error de conexión', 'error');
+            window.showToast(t('toast_connection_error')||'Error de conexión', 'error');
         }
     } finally {
         btn.disabled = false;
