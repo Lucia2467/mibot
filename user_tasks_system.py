@@ -313,19 +313,19 @@ def complete_user_task(task_id, user_id):
     
     task = get_user_task(task_id)
     if not task:
-        return False, "Tarea no encontrada", 0
+        return False, "task_not_found", 0
     
     if task['status'] != 'active':
-        return False, "Tarea no activa", 0
+        return False, "task_not_active", 0
     
     if str(task['creator_id']) == str(user_id):
-        return False, "No puedes completar tu propia tarea", 0
+        return False, "cannot_complete_own_task", 0
     
     if is_user_task_completed(task_id, user_id):
-        return False, "Ya completaste esta tarea", 0
+        return False, "task_already_completed", 0
     
     if task['current_completions'] >= task['max_completions']:
-        return False, "Tarea agotada", 0
+        return False, "task_exhausted", 0
     
     reward = float(task.get('reward_per_completion', USER_TASK_COMPLETION_REWARD))
     requires_join = task.get('requires_join', False)
@@ -366,13 +366,13 @@ def complete_user_task(task_id, user_id):
             traceback.print_exc()
 
         print(f"[user_tasks] ✅ {user_id} completó {task_id}, +{reward} PXC")
-        return True, f"¡Tarea completada! +{reward} PXC", reward
+        return True, f"task_completed:{reward}", reward
         
     except Exception as e:
         print(f"[user_tasks] ❌ Error: {e}")
         import traceback
         traceback.print_exc()
-        return False, "Error al completar", 0
+        return False, "task_error", 0
 
 def get_user_task_stats(user_id):
     """Estadísticas del usuario"""

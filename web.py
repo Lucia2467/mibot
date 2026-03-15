@@ -2688,20 +2688,9 @@ def api_task_complete():
         if not is_member:
             print(f"[api_task_complete] ❌ Usuario {user_id} NO es miembro del canal {channel_username}")
             # Get user language for translated error
-            try:
-                from database import get_user as _gu
-                _u = _gu(user_id)
-                _lang = str(_u.get('language_code') or _u.get('language') or 'es').lower()[:2]
-            except Exception:
-                _lang = 'es'
-            _join_msgs = {
-                'es': f'Debes unirte al canal @{channel_username} primero',
-                'en': f'You must join @{channel_username} first',
-                'pt': f'Você deve entrar no canal @{channel_username} primeiro',
-                'ru': f'Вы должны вступить в @{channel_username} сначала',
-                'ar': f'يجب عليك الانضمام إلى @{channel_username} أولاً',
-            }
-            _msg = _join_msgs.get(_lang, _join_msgs['en'])
+            from i18n_messages import get_user_lang, get_msg as _gm
+            _lang = get_user_lang(user_id)
+            _msg = _gm('must_join_channel', _lang, channel=f'@{channel_username}')
             return jsonify({
                 'success': False,
                 'error': _msg,

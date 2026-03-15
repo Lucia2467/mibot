@@ -244,9 +244,12 @@ def api_complete_task():
                 if result.get('ok'):
                     status = result.get('result', {}).get('status', '')
                     if status not in ['member', 'administrator', 'creator']:
+                        from i18n_messages import get_user_lang, get_msg as _gm
+                        _lang = get_user_lang(user_id)
+                        _msg = _gm('must_join_channel', _lang, channel=f'@{channel}')
                         return jsonify({
                             'success': False,
-                            'message': '❌ Debes unirte al canal primero',
+                            'message': _msg,
                             'verification_failed': True
                         }), 400
                 else:
@@ -264,10 +267,21 @@ def api_complete_task():
     
     # Completar
     success, message, reward = complete_user_task(task_id, user_id)
-    
+
+    # Translate message key
+    from i18n_messages import get_user_lang, get_msg as _gm, MESSAGES
+    _lang = get_user_lang(user_id)
+    if message and ':' in message and message.split(':')[0] in MESSAGES:
+        _key, _val = message.split(':', 1)
+        translated = _gm(_key, _lang, reward=_val)
+    elif message in MESSAGES:
+        translated = _gm(message, _lang)
+    else:
+        translated = message
+
     if success:
-        return jsonify({'success': True, 'message': message, 'reward': reward})
-    return jsonify({'success': False, 'message': message}), 400
+        return jsonify({'success': True, 'message': translated, 'reward': reward})
+    return jsonify({'success': False, 'message': translated}), 400
 
 @user_tasks_bp.route('/api/user-tasks/verify', methods=['POST'])
 def api_verify_membership():
