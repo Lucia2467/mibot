@@ -534,19 +534,36 @@ def validate_referral(referrer_id, referred_id):
                 VALUES (%s, %s, 1, NOW(), 1)
                 ON DUPLICATE KEY UPDATE validated=1, validated_at=NOW(), is_fraud=1
             """, (str(referrer_id), str(referred_id)))
-            # Notificar al invitador que no recibirá recompensa
-            try:
-                from notifications import notify_referral_fraud_skip
-                referred_user = get_user(referred_id)
-                referred_name = (referred_user.get('first_name') or referred_user.get('username') or 'Usuario') if referred_user else 'Usuario'
-                referrer_user = get_user(referrer_id)
-                lang = referrer_user.get('language_code') if referrer_user else None
-                notify_referral_fraud_skip(int(referrer_id), referred_name, lang)
-                print(f"[validate_referral] 📨 Notificación de fraude enviada a {referrer_id}")
-            except Exception as _nf:
-                print(f"[validate_referral] ⚠️ Error notificando fraude: {_nf}")
             # Limpiar pending_referrer para que no reintente validar en cada tarea
             update_user(referred_id, pending_referrer=None, referral_validated=True)
+            # Notificar al invitador — leer BOT_TOKEN en tiempo de ejecución
+            try:
+                import os, requests as _req
+                _token = os.environ.get('BOT_TOKEN', '')
+                if not _token:
+                    print(f"[validate_referral] ⚠️ BOT_TOKEN no configurado, no se puede notificar")
+                else:
+                    referred_user = get_user(referred_id)
+                    referred_name = (referred_user.get('first_name') or referred_user.get('username') or 'Usuario') if referred_user else 'Usuario'
+                    referrer_user = get_user(referrer_id)
+                    safe_name = str(referred_name).replace('<','&lt;').replace('>','&gt;')
+                    msg = (
+                        "\u26a0\ufe0f <b>Tu referido se ha unido \u2014 pero no recibiste recompensa</b>\n\n"
+                        "\U0001f464 <b>Referido:</b> " + safe_name + "\n\n"
+                        "Tu referido se registr\u00f3 correctamente bajo tu enlace, sin embargo "
+                        "<b>la recompensa no fue acreditada</b> porque se detect\u00f3 actividad anormal entre las cuentas.\n\n"
+                        "\u2705 <b>Tu cuenta no tiene ninguna restricci\u00f3n por ahora.</b>\n\n"
+                        "\u26d4 Por favor, deja de intentar ganar recompensas con cuentas propias o vinculadas. "
+                        "Si este comportamiento contin\u00faa, tu cuenta podr\u00eda ser restringida permanentemente."
+                    )
+                    _req.post(
+                        f"https://api.telegram.org/bot{_token}/sendMessage",
+                        json={'chat_id': int(referrer_id), 'text': msg, 'parse_mode': 'HTML'},
+                        timeout=10
+                    )
+                    print(f"[validate_referral] 📨 Notificación fraude enviada a {referrer_id}")
+            except Exception as _nf:
+                print(f"[validate_referral] ⚠️ Error notificando fraude: {_nf}")
             return False  # Sin bonus, sin bloqueo de cuenta
 
         # Get bonus amount from config
@@ -669,19 +686,13 @@ def update_referral_count(user_id):
         return 0
 
 def get_referrals(user_id):
-    """Obtiene los referidos de un usuario, con detección de fraude por IP compartida."""
+    """Obtiene los referidos de un usuario.
+    referred_fraud solo se activa cuando is_fraud=1 (al completar primera tarea).
+    No se muestra como falso antes de validar."""
     with get_cursor() as cursor:
         cursor.execute("""
             SELECT r.*, u.username, u.first_name,
-                   CASE
-                     WHEN r.is_fraud = 1 THEN 1
-                     WHEN EXISTS (
-                       SELECT 1 FROM user_ips ui1
-                       JOIN user_ips ui2 ON ui1.ip_address = ui2.ip_address
-                       WHERE ui1.user_id = r.referrer_id AND ui2.user_id = r.referred_id
-                     ) THEN 1
-                     ELSE 0
-                   END AS referred_fraud
+                   r.is_fraud AS referred_fraud
             FROM referrals r
             LEFT JOIN users u ON r.referred_id = u.user_id
             WHERE r.referrer_id = %s
@@ -711,18 +722,11 @@ def get_referrals_paginated(user_id, page=1, per_page=20):
             total_row = cursor.fetchone()
             total = total_row.get('total', 0) if isinstance(total_row, dict) else total_row[0]
             
-            # Obtener referidos paginados con detección de fraude
+            # Obtener referidos paginados
+            # referred_fraud = is_fraud de la DB (se setea al completar primera tarea)
             cursor.execute("""
                 SELECT r.*, u.username, u.first_name,
-                       CASE
-                         WHEN r.is_fraud = 1 THEN 1
-                         WHEN EXISTS (
-                           SELECT 1 FROM user_ips ui1
-                           JOIN user_ips ui2 ON ui1.ip_address = ui2.ip_address
-                           WHERE ui1.user_id = r.referrer_id AND ui2.user_id = r.referred_id
-                         ) THEN 1
-                         ELSE 0
-                       END AS referred_fraud
+                       r.is_fraud AS referred_fraud
                 FROM referrals r
                 LEFT JOIN users u ON r.referred_id = u.user_id
                 WHERE r.referrer_id = %s
