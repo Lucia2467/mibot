@@ -24,14 +24,22 @@ def send_ton(mnemonic, to_addr, ton_amount, memo='', api_key='',
         if not api_key:
             return False, None, 'TONCENTER_API_KEY no configurada'
 
-        # Python 3.10+ doesn't auto-create event loop in threads — always use new loop
-        loop = asyncio.new_event_loop()
         try:
+            loop = asyncio.get_event_loop()
+            if loop.is_closed():
+                raise RuntimeError
             return loop.run_until_complete(
                 _send(words, to_addr, float(ton_amount), memo, api_key)
             )
-        finally:
-            loop.close()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                return loop.run_until_complete(
+                    _send(words, to_addr, float(ton_amount), memo, api_key)
+                )
+            finally:
+                loop.close()
 
     except Exception as e:
         logger.exception(f'send_ton error: {e}')
@@ -72,16 +80,15 @@ def _extract_hash(tx) -> str:
 
 
 async def _send(words, to_addr, ton_amount, memo, api_key):
+    from tonutils.clients import ToncenterClient
     from tonutils.contracts.wallet import WalletV5R1
 
     amount_nano = int(round(ton_amount * TON_TO_NANO))
 
-    # tonutils.clients ToncenterClient requires network as positional URL
-    from tonutils.clients import ToncenterClient as _TC
-    client = _TC(
-        'https://toncenter.com/api/v2/',
-        api_key=api_key
-    )
+    try:
+        client = ToncenterClient(api_key=api_key, is_testnet=False)
+    except TypeError:
+        client = ToncenterClient(api_key=api_key)
 
     async with client:
         result = WalletV5R1.from_mnemonic(client, words)

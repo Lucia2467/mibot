@@ -17,7 +17,7 @@ eth-keys>=0.4.0
 mnemonic>=0.20
 
 # TON Network
-tonutils>=0.1.0
+tonutils>=0.1.0,<0.2.0
 
 # Utilities
 requests>=2.31.0
