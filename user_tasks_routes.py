@@ -52,15 +52,17 @@ def api_get_packages():
 def api_create_task():
     """Crea una nueva tarea promocionada"""
     from user_tasks_system import create_user_task
-    
+    from i18n_messages import get_user_lang, get_msg as _gm, MESSAGES
+
     user_id = request.args.get('user_id')
     if not user_id:
         return jsonify({'success': False, 'message': 'user_id requerido'}), 400
-    
+    _lang = get_user_lang(user_id)
+
     data = request.get_json()
     if not data:
-        return jsonify({'success': False, 'message': 'Datos requeridos'}), 400
-    
+        return jsonify({'success': False, 'message': _gm('params_missing', _lang)}), 400
+
     task_type = data.get('task_type', 'telegram_channel')
     title = data.get('title', '').strip()
     description = data.get('description', '').strip()
@@ -68,21 +70,21 @@ def api_create_task():
     channel_username = data.get('channel_username', '').strip()
     requires_join = data.get('requires_join', False)
     package_id = data.get('package_id')
-    
+
     if len(title) < 3:
-        return jsonify({'success': False, 'message': 'Título muy corto'}), 400
-    
+        return jsonify({'success': False, 'message': _gm('title_too_short', _lang)}), 400
+
     if len(url) < 5:
-        return jsonify({'success': False, 'message': 'URL inválida'}), 400
-    
+        return jsonify({'success': False, 'message': _gm('invalid_url', _lang)}), 400
+
     if not package_id:
-        return jsonify({'success': False, 'message': 'Selecciona un paquete'}), 400
-    
+        return jsonify({'success': False, 'message': _gm('select_package', _lang)}), 400
+
     # Para Telegram con verificación, necesita channel_username
     if task_type in ['telegram_channel', 'telegram_group'] and requires_join and not channel_username:
         return jsonify({
-            'success': False, 
-            'message': 'Para verificar unión, proporciona el @username del canal y agrega @SallyEDogeBot como admin'
+            'success': False,
+            'message': _gm('channel_required', _lang)
         }), 400
     
     success, message, task_id = create_user_task(
@@ -96,6 +98,17 @@ def api_create_task():
         package_id=package_id
     )
     
+    # Translate message key from system
+    if message in MESSAGES:
+        message = _gm(message, _lang)
+    elif message and ':' in message:
+        parts = message.split(':')
+        if parts[0] in MESSAGES:
+            if parts[0] == 'insufficient_balance_detail' and len(parts) == 3:
+                message = _gm('insufficient_balance_detail', _lang, price=parts[1], balance=float(parts[2]))
+            else:
+                message = _gm(parts[0], _lang)
+
     if success:
         # Notificar a todos los usuarios en su idioma (background thread)
         print(f"[user_tasks] 🔔 Iniciando notificación para tarea {task_id}...")

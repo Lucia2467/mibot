@@ -154,17 +154,17 @@ def create_user_task(creator_id, task_type, title, description, url, channel_use
     
     package = get_package(package_id)
     if not package:
-        return False, "Paquete no válido", None
+        return False, "invalid_package", None
     
     user = get_user(creator_id)
     if not user:
-        return False, "Usuario no encontrado", None
+        return False, "user_not_found", None
     
     se_balance = float(user.get('se_balance', 0))
     price = package['price_se']
     
     if se_balance < price:
-        return False, f"Balance insuficiente. Necesitas {price} PXC, tienes {se_balance:.4f} PXC", None
+        return False, f"insufficient_balance_detail:{price}:{se_balance}", None
     
     task_id = f"ut_{uuid.uuid4().hex[:12]}"
     
@@ -180,7 +180,7 @@ def create_user_task(creator_id, task_type, title, description, url, channel_use
         # Descontar DOGE
         success = update_balance(creator_id, 'se', price, 'subtract', f'User task: {task_id}')
         if not success:
-            return False, "Error al procesar el pago", None
+            return False, "payment_error", None
         
         # Crear la tarea
         execute_query("""
@@ -195,7 +195,7 @@ def create_user_task(creator_id, task_type, title, description, url, channel_use
         ))
         
         print(f"[user_tasks] ✅ Tarea {task_id} creada por {creator_id}")
-        return True, f"¡Tarea creada! ID: {task_id}", task_id
+        return True, "task_created", task_id
         
     except Exception as e:
         print(f"[user_tasks] ❌ Error: {e}")

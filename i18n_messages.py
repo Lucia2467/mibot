@@ -72,6 +72,80 @@ MESSAGES = {
 FALLBACK = 'en'
 
 
+MESSAGES.update({
+    'invalid_package': {
+        'es': 'Paquete no válido',
+        'en': 'Invalid package',
+        'pt': 'Pacote inválido',
+        'ru': 'Неверный пакет',
+        'ar': 'الباقة غير صالحة',
+    },
+    'user_not_found': {
+        'es': 'Usuario no encontrado',
+        'en': 'User not found',
+        'pt': 'Usuário não encontrado',
+        'ru': 'Пользователь не найден',
+        'ar': 'المستخدم غير موجود',
+    },
+    'insufficient_balance_detail': {
+        'es': 'Balance insuficiente. Necesitas {price} PXC, tienes {balance:.4f} PXC',
+        'en': 'Insufficient balance. You need {price} PXC, you have {balance:.4f} PXC',
+        'pt': 'Saldo insuficiente. Você precisa de {price} PXC, você tem {balance:.4f} PXC',
+        'ru': 'Недостаточно средств. Нужно {price} PXC, у вас {balance:.4f} PXC',
+        'ar': 'رصيد غير كافٍ. تحتاج {price} PXC، لديك {balance:.4f} PXC',
+    },
+    'payment_error': {
+        'es': 'Error al procesar el pago',
+        'en': 'Payment processing error',
+        'pt': 'Erro ao processar o pagamento',
+        'ru': 'Ошибка обработки платежа',
+        'ar': 'خطأ في معالجة الدفع',
+    },
+    'task_created': {
+        'es': '¡Tarea creada con éxito!',
+        'en': 'Task created successfully!',
+        'pt': 'Tarefa criada com sucesso!',
+        'ru': 'Задание успешно создано!',
+        'ar': 'تم إنشاء المهمة بنجاح!',
+    },
+    'title_too_short': {
+        'es': 'El título es muy corto',
+        'en': 'Title is too short',
+        'pt': 'O título é muito curto',
+        'ru': 'Заголовок слишком короткий',
+        'ar': 'العنوان قصير جداً',
+    },
+    'invalid_url': {
+        'es': 'URL inválida',
+        'en': 'Invalid URL',
+        'pt': 'URL inválida',
+        'ru': 'Неверный URL',
+        'ar': 'رابط غير صالح',
+    },
+    'select_package': {
+        'es': 'Selecciona un paquete',
+        'en': 'Please select a package',
+        'pt': 'Selecione um pacote',
+        'ru': 'Выберите пакет',
+        'ar': 'الرجاء اختيار باقة',
+    },
+    'channel_required': {
+        'es': 'Proporciona el @username del canal y agrega @SallyEDogeBot como admin',
+        'en': 'Provide the channel @username and add @SallyEDogeBot as admin',
+        'pt': 'Forneça o @username do canal e adicione @SallyEDogeBot como admin',
+        'ru': 'Укажите @username канала и добавьте @SallyEDogeBot как администратора',
+        'ar': 'أدخل @username للقناة وأضف @SallyEDogeBot كمشرف',
+    },
+    'params_missing': {
+        'es': 'Parámetros faltantes',
+        'en': 'Missing parameters',
+        'pt': 'Parâmetros ausentes',
+        'ru': 'Отсутствуют параметры',
+        'ar': 'معاملات مفقودة',
+    },
+})
+
+
 def get_user_lang(user_id):
     """Get user language from DB."""
     try:
@@ -92,3 +166,12 @@ def get_msg(key, lang='en', **kwargs):
     for k, v in kwargs.items():
         text = text.replace('{' + k + '}', str(v))
     return text
+
+
+def get_lang_from_request(user_id=None, request=None):
+    """Get language from user_id DB or request args fallback."""
+    if user_id:
+        return get_user_lang(user_id)
+    if request:
+        return str(request.args.get('lang', 'en'))[:2]
+    return FALLBACK
