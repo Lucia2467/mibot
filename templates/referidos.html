@@ -237,18 +237,44 @@
     letter-spacing: -0.01em;
 }
 .inv-copy-btn {
-    padding: 9px 14px;
-    background: linear-gradient(180deg, #0a2060, #061540);
-    border: 1px solid rgba(0,229,255,0.25);
-    border-bottom: 2px solid rgba(0,0,0,0.60);
+    position: relative;
+    padding: 9px 16px;
+    background: linear-gradient(180deg, #1565ff 0%, #0a3de0 45%, #0830c0 100%);
+    border: none;
     border-radius: 10px;
-    color: var(--inv-cyan);
-    cursor: pointer; display: flex; align-items: center; gap: 5px;
-    font-size: 0.75rem; font-weight: 700;
-    transition: transform .12s;
+    color: #fff;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.75rem; font-weight: 800;
+    letter-spacing: 0.03em;
     flex-shrink: 0;
+    /* 3D shadow sutil */
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.20) inset,
+        0 -1px 0 rgba(0,0,0,0.35) inset,
+        0 2px 0 #041a8a,
+        0 3px 8px rgba(0,80,255,0.35);
+    transition: transform .1s, box-shadow .1s;
+    top: 0;
 }
-.inv-copy-btn:active { transform: scale(0.95); }
+.inv-copy-btn:hover {
+    background: linear-gradient(180deg, #2575ff 0%, #1248f0 45%, #0c3ad0 100%);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.22) inset,
+        0 -1px 0 rgba(0,0,0,0.35) inset,
+        0 3px 0 #041a8a,
+        0 4px 10px rgba(0,80,255,0.40);
+    top: -1px;
+}
+.inv-copy-btn:active {
+    transform: translateY(2px);
+    top: 2px;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.12) inset,
+        0 -1px 0 rgba(0,0,0,0.35) inset,
+        0 0px 0 #041a8a,
+        0 1px 5px rgba(0,80,255,0.25);
+}
 
 /* ── Section header ── */
 .inv-section-hdr {
@@ -439,9 +465,8 @@ SALLY-E | Invitar{% endblock %}
         <div class="inv-link-row">
             <input class="inv-link-input" type="text" id="referral-link" readonly
                 value="https://t.me/{{ bot_username.replace('@', '') if bot_username else 'SallyeeBot' }}?start=ref_{{ user_id }}">
-            <button class="inv-copy-btn" onclick="copyReferralLink()">
-                <i data-lucide="copy" style="width:14px;height:14px;"></i>
-                Copiar
+            <button class="inv-copy-btn" onclick="copyReferralLink()" title="Copiar">
+                <i data-lucide="copy" style="width:15px;height:15px;"></i>
             </button>
         </div>
     </div>
