@@ -92,7 +92,7 @@
             if (!userId) {
                 console.error('❌ [PTS] No se pudo obtener user_id');
                 if (typeof showToast === 'function') {
-                    showToast('Error: Usuario no identificado', 'error');
+                    showToast((typeof t==='function'?t('toast_user_not_identified'):null)||'Error: Usuario no identificado', 'error');
                 }
                 return { success: false, error: 'no_user_id' };
             }
@@ -101,7 +101,7 @@
             if (typeof window.showGiga !== 'function') {
                 console.warn('⚠️ [PTS] SDK GigaPub no disponible');
                 if (typeof showToast === 'function') {
-                    showToast('Anuncios no disponibles', 'warning');
+                    showToast((typeof t==='function'?t('toast_ads_unavailable'):null)||'Anuncios no disponibles', 'warning');
                 }
                 return { success: false, error: 'sdk_not_ready' };
             }
@@ -132,9 +132,9 @@
                     // Mostrar mensaje con o sin bonus
                     if (typeof showToast === 'function') {
                         if (data.bonus && data.pts > 5) {
-                            showToast(`🎉 +${data.pts} PTS (¡Bonus!)`, 'success');
+                            showToast(`+${data.pts} PXC 🎉`, 'success');
                         } else {
-                            showToast(`✓ +${data.pts || 5} PTS`, 'success');
+                            showToast(`+${data.pts || 5} PXC`, 'success');
                         }
                     }
                     
@@ -145,7 +145,7 @@
                     return { success: true, pts_earned: data.pts || 5, bonus: data.bonus };
                 } else {
                     if (typeof showToast === 'function') {
-                        showToast(data.error || 'Error', 'error');
+                        showToast(data.error || (typeof t==='function'?t('toast_error'):null)||'Error', 'error');
                     }
                     return { success: false, error: data.error };
                 }
@@ -153,7 +153,7 @@
             } catch (error) {
                 console.warn('❌ [PTS] Error o anuncio cancelado:', error);
                 if (typeof showToast === 'function') {
-                    showToast('Anuncio cancelado', 'warning');
+                    showToast((typeof t==='function'?t('toast_ad_cancelled'):null)||'Anuncio cancelado', 'warning');
                 }
                 return { success: false, error: 'cancelled' };
             }
