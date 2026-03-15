@@ -947,6 +947,7 @@ def complete_task(user_id, task_id, reward=None):
             reward = task.get('reward', 0)
         else:
             reward = 0
+    reward = float(reward) if reward else 0.0
     
     # Mark as completed
     completed.append(str(task_id))
@@ -965,7 +966,7 @@ def complete_task(user_id, task_id, reward=None):
     # Update stats
     increment_stat('total_tasks_completed')
     
-    return True, f"¡Tarea completada! +{reward:.4f} PXC"
+    return True, f"¡Tarea completada! +{float(reward):.4f} PXC"
 
 def is_task_completed(user_id, task_id):
     """Verifica si un usuario completó una tarea"""
