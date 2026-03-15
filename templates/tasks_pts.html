@@ -978,7 +978,7 @@ const PTS = {
 
     async doCheckin() {
         if (!this.userId) {
-            this.toast('Error: Usuario no identificado', 'error');
+            showToast(t('toast_user_not_identified')||'Usuario no identificado', 'error');
             return;
         }
         
@@ -994,8 +994,8 @@ const PTS = {
             const d = await r.json();
             
             if (d.success) {
-                const reward = d.pts_earned || d.pts || 10;
-this.toast(`+${reward} PXC`, 'success');
+                const _reward = d.pts_earned || d.pts || 10;
+showRewardModal(`+${_reward} PXC`, 'success');
                 this.haptic('success');
                 this.loadStatus();
             } else {
@@ -1004,7 +1004,7 @@ this.toast(`+${reward} PXC`, 'success');
                 b.innerHTML = '<div class="pts-icon pts-icon-check" style="width:20px;height:20px;"></div><span>'+t('pts_checkin_do')+'</span>';
             }
         } catch (e) {
-            this.toast(t('toast_connection_error')||'Error de conexión', 'error');
+            showToast(t('toast_connection_error')||'Error de conexión', 'error');
             b.disabled = false;
             b.innerHTML = '<div class="pts-icon pts-icon-check" style="width:20px;height:20px;"></div><span>'+t('pts_checkin_do')+'</span>';
         }
@@ -1016,13 +1016,13 @@ this.toast(`+${reward} PXC`, 'success');
     // ============================================
     async watchAd() {
         if (!this.userId) {
-            this.toast(t('toast_error')||'Error', 'error');
+            showToast(t('toast_error')||'Error', 'error');
             return;
         }
 
         // Verificar SDK de GigaPub
         if (typeof window.showGiga !== 'function') {
-            this.toast(t('toast_ads_unavailable')||'Anuncios no disponibles', 'warning');
+            showToast(t('toast_ads_unavailable')||'Anuncios no disponibles', 'warning');
             return;
         }
 
@@ -1031,7 +1031,7 @@ this.toast(`+${reward} PXC`, 'success');
         const currentRemaining = parseInt(adsRemainingEl?.textContent || '10');
         
         if (currentRemaining <= 0) {
-            this.toast(t('toast_daily_limit')||'Límite diario alcanzado', 'error');
+            showToast(t('toast_daily_limit')||'Límite diario alcanzado', 'error');
             this.haptic('error');
             return;
         }
@@ -1060,15 +1060,15 @@ this.toast(`+${reward} PXC`, 'success');
                 
                 // Mostrar mensaje con o sin bonus
                 if (data.bonus && data.pts > 5) {
-                    this.toast(`+${data.pts} PXC 🎉 (${t('toast_bonus_5_ads')||'Bonus!'})`, 'success');
+                    showRewardModal(`+${data.pts} PXC 🎉`, 'success');
                 } else {
-                    this.toast(`+${data.pts || 5} PXC`, 'success');
+                    showRewardModal(`+${data.pts || 5} PXC`, 'success');
                 }
                 this.loadStatus();
             } else {
                 // Verificar si es error de límite
                 if (data.limit_reached) {
-                    this.toast(t('toast_daily_limit')||'Límite diario alcanzado', 'error');
+                    showToast(t('toast_daily_limit')||'Límite diario alcanzado', 'error');
                     document.getElementById('ads-remaining').textContent = '0';
                 } else {
                     this.toast(data.error || 'Error', 'error');
@@ -1077,7 +1077,7 @@ this.toast(`+${reward} PXC`, 'success');
 
         } catch (e) {
             console.warn('[PTS] Ad error:', e);
-            this.toast(t('toast_ad_cancelled')||'Anuncio cancelado', 'warning');
+            showToast(t('toast_ad_cancelled')||'Anuncio cancelado', 'warning');
         }
     },
 
@@ -1086,13 +1086,13 @@ this.toast(`+${reward} PXC`, 'success');
     // ============================================
     async doubleCheckin() {
         if (!this.userId) {
-            this.toast(t('toast_error')||'Error', 'error');
+            showToast(t('toast_error')||'Error', 'error');
             return;
         }
 
         // Verificar SDK de GigaPub
         if (typeof window.showGiga !== 'function') {
-            this.toast(t('toast_ads_unavailable')||'Anuncios no disponibles', 'error');
+            showToast(t('toast_ads_unavailable')||'Anuncios no disponibles', 'error');
             return;
         }
 
@@ -1102,7 +1102,7 @@ this.toast(`+${reward} PXC`, 'success');
             
             // Anuncio completado - duplicar check-in inmediatamente
             this.haptic('success');
-            this.toast(t('toast_processing')||'Procesando...', 'info');
+            showToast(t('toast_processing')||'Procesando...', 'info');
 
             // Llamar al endpoint de duplicar
             const r = await fetch(`/api/checkin/double?user_id=${this.userId}`, {
@@ -1112,8 +1112,8 @@ this.toast(`+${reward} PXC`, 'success');
             const d = await r.json();
 
             if (d.success) {
-                const dReward = d.pts_earned || d.pts || 10;
-                this.toast(`+${dReward} PXC (${t('toast_reward_doubled')||'×2'})`, 'success');
+                const _dr = d.pts_earned || d.pts || 10;
+showRewardModal(`+${_dr} PXC ×2`, 'success');
                 // Ocultar botón de duplicar
                 const db = document.getElementById('checkin-double-btn');
                 if (db) db.style.display = 'none';
@@ -1124,12 +1124,12 @@ this.toast(`+${reward} PXC`, 'success');
 
         } catch (e) {
             console.warn('[PTS] Double checkin error:', e);
-            this.toast(t('toast_ad_cancelled')||'Anuncio cancelado', 'warning');
+            showToast(t('toast_ad_cancelled')||'Anuncio cancelado', 'warning');
         }
     }
 };
 
-async function completeTask(taskId,taskUrl,taskType){try{const u=new URLSearchParams(window.location.search);const userId=u.get('user_id');if(!userId){showToast('Error','error');return}const b=event.target.closest('button');b.disabled=true;b.textContent=t('pts_verifying');if(taskUrl&&(taskType==='telegram'||taskUrl.includes('t.me'))){if(window.Telegram?.WebApp){window.Telegram.WebApp.openTelegramLink(taskUrl)}else{window.open(taskUrl,'_blank')}await new Promise(r=>setTimeout(r,5000))}else if(taskUrl){window.open(taskUrl,'_blank');await new Promise(r=>setTimeout(r,2000))}const r=await fetch(`/api/task/complete?user_id=${userId}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task_id:taskId})});const d=await r.json();if(d.success){showToast(`✓ +${d.reward} PXC`,'success');if(window.Telegram?.WebApp)window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');setTimeout(()=>location.reload(),1500)}else{showToast(d.message||'Error','error');b.disabled=false;b.textContent=t('pts_complete')}}catch(e){showToast('Error','error');event.target.closest('button').disabled=false;event.target.closest('button').textContent=t('pts_complete')}}
+async function completeTask(taskId,taskUrl,taskType){try{const u=new URLSearchParams(window.location.search);const userId=u.get('user_id');if(!userId){showToast('Error','error');return}const b=event.target.closest('button');b.disabled=true;b.textContent=t('pts_verifying');if(taskUrl&&(taskType==='telegram'||taskUrl.includes('t.me'))){if(window.Telegram?.WebApp){window.Telegram.WebApp.openTelegramLink(taskUrl)}else{window.open(taskUrl,'_blank')}await new Promise(r=>setTimeout(r,5000))}else if(taskUrl){window.open(taskUrl,'_blank');await new Promise(r=>setTimeout(r,2000))}const r=await fetch(`/api/task/complete?user_id=${userId}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task_id:taskId})});const d=await r.json();if(d.success){showRewardModal(`+${d.reward} PXC`, 'success');if(window.Telegram?.WebApp)window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');setTimeout(()=>location.reload(),1500)}else{showToast(d.message||'Error','error');b.disabled=false;b.textContent=t('pts_complete')}}catch(e){showToast('Error','error');event.target.closest('button').disabled=false;event.target.closest('button').textContent=t('pts_complete')}}
 
 async function loadUserTasks(){
     const u=new URLSearchParams(window.location.search);
@@ -1285,7 +1285,7 @@ async function completeUserTask(taskId, taskUrl, requiresJoin, channelUsername) 
         });
         const d = await r.json();
         if (d.success) {
-            showToast(`✓ +${d.reward} PXC`, 'success');
+            showRewardModal(`+${d.reward} PXC`, 'success');
             if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
             setTimeout(() => loadUserTasks(), 1500);
         } else {
@@ -1512,7 +1512,7 @@ async function stSubmit(taskId, requiresScreenshot) {
         });
         const data = await res.json();
         if (data.success) {
-            showToast(t('toast_submitted_review')||'Enviado para revisión', 'success');
+            showRewardModal(t('toast_submitted_review')||'✓ Enviado para revisión', 'success');
             if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
             // Replace card content with pending state
             const card = document.getElementById('stask-' + taskId);
@@ -1940,7 +1940,7 @@ async function stModalSubmit() {
         });
         const data = await res.json();
         if (data.success) {
-            showToast(t('toast_submitted_review')||'Enviado para revisión', 'success');
+            showRewardModal(t('toast_submitted_review')||'✓ Enviado para revisión', 'success');
             if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
             stCloseModal();
             setTimeout(() => location.reload(), 1000);
@@ -2460,191 +2460,108 @@ async function stModalSubmit() {
 </style>
 
 <script>
-// ════════════════════════════════════════════════════
-//  REWARD MODAL  (estilo monetag) + showToast global
-// ════════════════════════════════════════════════════
-
-function showRewardModal(message, type = 'success') {
-    const overlay = document.createElement('div');
-    overlay.style.cssText = `
-        position: fixed; inset: 0; z-index: 99999;
-        background: rgba(0,0,0,0.75);
-        backdrop-filter: blur(12px);
-        display: flex; align-items: center; justify-content: center;
-        animation: fadeIn 0.35s ease;
-    `;
-
+// ════════════════════════════════════════
+//  showRewardModal — estilo monetag
+// ════════════════════════════════════════
+function showRewardModal(message, type) {
+    type = type || 'success';
     const isSuccess = type === 'success';
-    const color     = isSuccess ? '#FF6B35' : '#EF4444';
-    const colorDark = isSuccess ? '#E65100' : '#DC2626';
-    const colorLight= isSuccess ? '#FF8A5B' : '#F87171';
+    const color  = isSuccess ? '#FF6B35' : '#EF4444';
+    const colorD = isSuccess ? '#E65100' : '#DC2626';
+    const colorL = isSuccess ? '#FF8A5B' : '#F87171';
 
-    const modal = document.createElement('div');
-    modal.style.cssText = `
-        position: relative;
-        background: linear-gradient(135deg, rgba(18,18,18,0.98) 0%, rgba(30,30,30,0.98) 100%);
-        border-radius: 32px;
-        overflow: hidden;
-        box-shadow: 0 0 0 1px ${color}44, 0 30px 90px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
-        animation: scaleIn 0.45s cubic-bezier(0.34,1.56,0.64,1);
-        min-width: 300px; max-width: 88vw;
-        text-align: center;
-    `;
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.75);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;animation:_rmFadeIn 0.35s ease;';
 
-    // Glow border
+    const notif = document.createElement('div');
+    notif.style.cssText = `position:relative;background:linear-gradient(135deg,rgba(18,18,18,0.98),rgba(30,30,30,0.98));border-radius:32px;overflow:hidden;box-shadow:0 0 0 1px ${color}44,0 30px 90px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.05);animation:_rmScaleIn 0.45s cubic-bezier(0.34,1.56,0.64,1);min-width:300px;max-width:88vw;text-align:center;`;
+
     const glow = document.createElement('div');
-    glow.style.cssText = `
-        position:absolute; top:-2px; left:-2px; right:-2px; bottom:-2px;
-        background: linear-gradient(135deg, ${color}, ${colorDark}, ${color});
-        border-radius: 32px; opacity: 0.5; filter: blur(18px);
-        animation: rotateGlow 3s linear infinite; z-index: -1;
-    `;
+    glow.style.cssText = `position:absolute;top:-2px;left:-2px;right:-2px;bottom:-2px;background:linear-gradient(135deg,${color},${colorD},${color});border-radius:32px;opacity:0.5;filter:blur(18px);animation:_rmGlow 3s linear infinite;z-index:-1;`;
 
-    // Header
     const header = document.createElement('div');
-    header.style.cssText = `
-        background: linear-gradient(135deg, ${color}26 0%, ${color}0d 100%);
-        padding: 36px 28px 24px;
-        border-bottom: 1px solid ${color}33;
-        position: relative; overflow: hidden;
-    `;
-
-    // Particles
+    header.style.cssText = `background:linear-gradient(135deg,${color}26,${color}0d);padding:36px 28px 24px;border-bottom:1px solid ${color}33;position:relative;overflow:hidden;`;
     header.innerHTML = `
-        <div style="position:absolute;top:10%;left:10%;width:4px;height:4px;background:${color};border-radius:50%;animation:particle1 2s ease-in-out infinite;"></div>
-        <div style="position:absolute;top:30%;right:15%;width:3px;height:3px;background:${colorLight};border-radius:50%;animation:particle2 2.5s ease-in-out infinite;"></div>
-        <div style="position:absolute;bottom:20%;left:20%;width:5px;height:5px;background:${colorDark};border-radius:50%;animation:particle3 3s ease-in-out infinite;"></div>
-    `;
-
-    // Icon ring + icon
-    const iconWrap = document.createElement('div');
-    iconWrap.style.cssText = `position:relative;width:90px;height:90px;margin:0 auto 18px;z-index:1;`;
-    iconWrap.innerHTML = `
-        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-            width:90px;height:90px;border:2px solid transparent;
-            border-top-color:${color};border-right-color:${color};
-            border-radius:50%;animation:spin 2s linear infinite;opacity:0.6;"></div>
-        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-            width:62px;height:62px;background:${color}3d;border-radius:50%;
-            display:flex;align-items:center;justify-content:center;
-            box-shadow:0 0 28px ${color}66;animation:iconPulse 1.5s ease-in-out infinite;">
-            ${isSuccess
-                ? `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`
-                : `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`
-            }
+        <div style="position:absolute;top:10%;left:10%;width:4px;height:4px;background:${color};border-radius:50%;animation:_rmP1 2s ease-in-out infinite;"></div>
+        <div style="position:absolute;top:30%;right:15%;width:3px;height:3px;background:${colorL};border-radius:50%;animation:_rmP2 2.5s ease-in-out infinite;"></div>
+        <div style="position:absolute;bottom:20%;left:20%;width:5px;height:5px;background:${colorD};border-radius:50%;animation:_rmP3 3s ease-in-out infinite;"></div>
+        <div style="position:relative;width:90px;height:90px;margin:0 auto 18px;">
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90px;height:90px;border:2px solid transparent;border-top-color:${color};border-right-color:${color};border-radius:50%;animation:_rmSpin 2s linear infinite;opacity:0.6;"></div>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;background:${color}3d;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 28px ${color}66;animation:_rmPulse 1.5s ease-in-out infinite;">
+                ${isSuccess
+                    ? `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`
+                    : `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`
+                }
+            </div>
+        </div>
+        <div style="font-size:0.7rem;font-weight:700;color:${colorL};text-transform:uppercase;letter-spacing:2px;position:relative;z-index:1;">
+            ${isSuccess ? ('✨ '+(t('reward_label')||'Recompensa')) : ('⚠️ '+(t('error_label')||'Error'))}
         </div>
     `;
-    header.appendChild(iconWrap);
 
-    const badge = document.createElement('div');
-    badge.style.cssText = `font-size:0.7rem;font-weight:700;color:${colorLight};text-transform:uppercase;letter-spacing:2px;position:relative;z-index:1;`;
-    badge.textContent = isSuccess ? ('✨ ' + (t('reward_label') || 'Recompensa')) : ('⚠️ ' + (t('error_label') || 'Error'));
-    header.appendChild(badge);
-
-    // Body
     const body = document.createElement('div');
-    body.style.cssText = `padding:26px 28px 30px;`;
-
-    const msgEl = document.createElement('div');
-    msgEl.style.cssText = `
-        font-size: 2.2rem; font-weight: 900;
-        background: linear-gradient(135deg, ${color} 0%, ${colorLight} 50%, #fff8 100%);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        margin-bottom: 10px;
-        animation: textGlow 2s ease-in-out infinite;
-        letter-spacing: 1px;
+    body.style.cssText = 'padding:26px 28px 30px;';
+    body.innerHTML = `
+        <div style="font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,${color},${colorL},#fff8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;animation:_rmGlowText 2s ease-in-out infinite;letter-spacing:1px;">${message}</div>
+        <div style="font-size:0.88rem;color:rgba(255,255,255,0.45);margin-bottom:18px;">
+            ${isSuccess ? (t('reward_added_balance')||'¡Se ha añadido a tu balance!') : (t('something_went_wrong')||'Algo salió mal')}
+        </div>
+        <div style="width:50px;height:3px;background:linear-gradient(90deg,transparent,${color},transparent);margin:0 auto;border-radius:2px;"></div>
     `;
-    msgEl.textContent = message;
 
-    const sub = document.createElement('div');
-    sub.style.cssText = `font-size:0.88rem;color:rgba(255,255,255,0.45);margin-bottom:18px;`;
-    sub.textContent = isSuccess ? (t('reward_added_balance') || '¡Se ha añadido a tu balance!') : (t('something_went_wrong') || 'Algo salió mal');
-
-    const divider = document.createElement('div');
-    divider.style.cssText = `width:50px;height:3px;background:linear-gradient(90deg,transparent,${color},transparent);margin:0 auto;border-radius:2px;`;
-
-    body.appendChild(msgEl);
-    body.appendChild(sub);
-    body.appendChild(divider);
-
-    modal.appendChild(glow);
-    modal.appendChild(header);
-    modal.appendChild(body);
-    overlay.appendChild(modal);
+    notif.appendChild(glow);
+    notif.appendChild(header);
+    notif.appendChild(body);
+    overlay.appendChild(notif);
     document.body.appendChild(overlay);
 
-    if (window.Telegram?.WebApp?.HapticFeedback) {
+    if (window.Telegram?.WebApp?.HapticFeedback)
         window.Telegram.WebApp.HapticFeedback.notificationOccurred(isSuccess ? 'success' : 'error');
-    }
 
     const close = () => {
-        overlay.style.animation = 'fadeOut 0.35s ease forwards';
-        modal.style.animation   = 'scaleOut 0.35s cubic-bezier(0.16,1,0.3,1) forwards';
+        overlay.style.animation = '_rmFadeOut 0.35s ease forwards';
+        notif.style.animation   = '_rmScaleOut 0.35s cubic-bezier(0.16,1,0.3,1) forwards';
         setTimeout(() => overlay.remove(), 380);
     };
     setTimeout(close, 3000);
     overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 }
 
-// ── CSS animations (only inject once) ──
-if (!document.getElementById('reward-modal-css')) {
-    const s = document.createElement('style');
-    s.id = 'reward-modal-css';
-    s.textContent = `
-        @keyframes rotateGlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-        @keyframes iconPulse  { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-50%) scale(1.08)} }
-        @keyframes textGlow   { 0%,100%{opacity:1} 50%{opacity:0.85} }
-        @keyframes particle1  { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-8px) scale(1.2)} }
-        @keyframes particle2  { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(6px) scale(0.8)} }
-        @keyframes particle3  { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-5px) scale(1.15)} }
-        @keyframes spin       { from{transform:translate(-50%,-50%) rotate(0deg)} to{transform:translate(-50%,-50%) rotate(360deg)} }
-        @keyframes fadeIn     { from{opacity:0} to{opacity:1} }
-        @keyframes fadeOut    { from{opacity:1} to{opacity:0} }
-        @keyframes scaleIn    { from{opacity:0;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
-        @keyframes scaleOut   { from{opacity:1;transform:scale(1)} to{opacity:0;transform:scale(0.7)} }
-    `;
-    document.head.appendChild(s);
-}
-
-// ── Global showToast (small pill for non-reward messages) ──
-function showToast(message, type = 'info') {
-    // All success messages → premium modal
-    if (type === 'success') {
-        showRewardModal(message, 'success');
-        return;
-    }
-    // Small pill toast for info/warning/error
-    const existing = document.querySelector('.pts-toast-pill');
+// ════════════════════════════════════════
+//  showToast — pill pequeño para errores
+// ════════════════════════════════════════
+function showToast(message, type) {
+    type = type || 'info';
+    const existing = document.querySelector('._pts-toast');
     if (existing) existing.remove();
-
     const colors = {
-        success: { bg: 'rgba(34,197,94,0.15)',  border: 'rgba(34,197,94,0.4)',  text: '#22c55e' },
-        error:   { bg: 'rgba(239,68,68,0.15)',   border: 'rgba(239,68,68,0.4)',  text: '#ef4444' },
-        warning: { bg: 'rgba(251,191,36,0.15)',  border: 'rgba(251,191,36,0.4)', text: '#fbbf24' },
-        info:    { bg: 'rgba(99,179,237,0.15)',   border: 'rgba(99,179,237,0.4)', text: '#63b3ed' },
+        success: ['rgba(34,197,94,0.15)',  'rgba(34,197,94,0.4)',  '#22c55e'],
+        error:   ['rgba(239,68,68,0.15)',   'rgba(239,68,68,0.4)',  '#ef4444'],
+        warning: ['rgba(251,191,36,0.15)',  'rgba(251,191,36,0.4)', '#fbbf24'],
+        info:    ['rgba(99,179,237,0.15)',   'rgba(99,179,237,0.4)', '#63b3ed'],
     };
-    const c = colors[type] || colors.info;
+    const [bg, border, text] = colors[type] || colors.info;
     const pill = document.createElement('div');
-    pill.className = 'pts-toast-pill';
-    pill.style.cssText = `
-        position:fixed;top:18px;left:50%;transform:translateX(-50%);
-        z-index:99998;
-        background:${c.bg};border:1px solid ${c.border};
-        color:${c.text};
-        padding:9px 18px;border-radius:40px;
-        font-size:0.82rem;font-weight:700;
-        backdrop-filter:blur(16px);
-        white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;
-        box-shadow:0 4px 20px rgba(0,0,0,0.4);
-        animation:fadeIn 0.25s ease;
-    `;
+    pill.className = '_pts-toast';
+    pill.style.cssText = `position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:99998;background:${bg};border:1px solid ${border};color:${text};padding:9px 18px;border-radius:40px;font-size:0.82rem;font-weight:700;backdrop-filter:blur(16px);white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;box-shadow:0 4px 20px rgba(0,0,0,0.4);animation:_rmFadeIn 0.25s ease;`;
     pill.textContent = message;
     document.body.appendChild(pill);
-    setTimeout(() => {
-        pill.style.animation = 'fadeOut 0.3s ease forwards';
-        setTimeout(() => pill.remove(), 320);
-    }, 2800);
+    setTimeout(() => { pill.style.animation = '_rmFadeOut 0.3s ease forwards'; setTimeout(() => pill.remove(), 320); }, 2800);
 }
 </script>
+
+<style>
+@keyframes _rmFadeIn    { from{opacity:0} to{opacity:1} }
+@keyframes _rmFadeOut   { from{opacity:1} to{opacity:0} }
+@keyframes _rmScaleIn   { from{opacity:0;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+@keyframes _rmScaleOut  { from{opacity:1;transform:scale(1)} to{opacity:0;transform:scale(0.7)} }
+@keyframes _rmGlow      { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes _rmSpin      { from{transform:translate(-50%,-50%) rotate(0deg)} to{transform:translate(-50%,-50%) rotate(360deg)} }
+@keyframes _rmPulse     { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-50%) scale(1.08)} }
+@keyframes _rmGlowText  { 0%,100%{opacity:1} 50%{opacity:0.85} }
+@keyframes _rmP1 { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-8px) scale(1.2)} }
+@keyframes _rmP2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+@keyframes _rmP3 { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-5px) scale(1.15)} }
+</style>
 
 {% endblock %}
