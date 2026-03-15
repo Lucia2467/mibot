@@ -505,7 +505,7 @@ def add_referral(referrer_id, referred_id, username=None, first_name=None):
 def validate_referral(referrer_id, referred_id):
     """
     Valida un referido y paga el bonus al referrer.
-    Esta función se llama cuando el referido completa su primera tarea.
+    Si comparten IP, marca como fraude y NO da el bonus.
     """
     try:
         with get_cursor() as cursor:
@@ -525,13 +525,23 @@ def validate_referral(referrer_id, referred_id):
             if validated:
                 print(f"[validate_referral] ⚠️ Referral ya validado: {referrer_id} -> {referred_id}")
                 return True
-        
+
+        # ── ANTI-FRAUD: verificar IP compartida ──
+        if are_accounts_related(str(referrer_id), str(referred_id)):
+            print(f"[validate_referral] 🚨 FRAUDE detectado — IP compartida: {referrer_id} <- {referred_id}")
+            execute_query("""
+                INSERT INTO referrals (referrer_id, referred_id, validated, validated_at, is_fraud)
+                VALUES (%s, %s, 1, NOW(), 1)
+                ON DUPLICATE KEY UPDATE validated=1, validated_at=NOW(), is_fraud=1
+            """, (str(referrer_id), str(referred_id)))
+            return False  # Sin bonus, sin bloqueo de cuenta
+
         # Get bonus amount from config
         bonus = float(get_config('referral_bonus', 1.0))
         
         # Mark as validated and record bonus
         execute_query("""
-            UPDATE referrals SET validated = 1, validated_at = NOW(), bonus_paid = %s
+            UPDATE referrals SET validated = 1, validated_at = NOW(), bonus_paid = %s, is_fraud = 0
             WHERE referrer_id = %s AND referred_id = %s
         """, (bonus, str(referrer_id), str(referred_id)))
         
@@ -661,10 +671,19 @@ def update_referral_count(user_id):
         return 0
 
 def get_referrals(user_id):
-    """Obtiene los referidos de un usuario (validados y pendientes)"""
+    """Obtiene los referidos de un usuario, con detección de fraude por IP compartida."""
     with get_cursor() as cursor:
         cursor.execute("""
-            SELECT r.*, u.username, u.first_name 
+            SELECT r.*, u.username, u.first_name,
+                   CASE
+                     WHEN r.is_fraud = 1 THEN 1
+                     WHEN EXISTS (
+                       SELECT 1 FROM user_ips ui1
+                       JOIN user_ips ui2 ON ui1.ip_address = ui2.ip_address
+                       WHERE ui1.user_id = r.referrer_id AND ui2.user_id = r.referred_id
+                     ) THEN 1
+                     ELSE 0
+                   END AS referred_fraud
             FROM referrals r
             LEFT JOIN users u ON r.referred_id = u.user_id
             WHERE r.referrer_id = %s
@@ -694,9 +713,18 @@ def get_referrals_paginated(user_id, page=1, per_page=20):
             total_row = cursor.fetchone()
             total = total_row.get('total', 0) if isinstance(total_row, dict) else total_row[0]
             
-            # Obtener referidos paginados
+            # Obtener referidos paginados con detección de fraude
             cursor.execute("""
-                SELECT r.*, u.username, u.first_name 
+                SELECT r.*, u.username, u.first_name,
+                       CASE
+                         WHEN r.is_fraud = 1 THEN 1
+                         WHEN EXISTS (
+                           SELECT 1 FROM user_ips ui1
+                           JOIN user_ips ui2 ON ui1.ip_address = ui2.ip_address
+                           WHERE ui1.user_id = r.referrer_id AND ui2.user_id = r.referred_id
+                         ) THEN 1
+                         ELSE 0
+                       END AS referred_fraud
                 FROM referrals r
                 LEFT JOIN users u ON r.referred_id = u.user_id
                 WHERE r.referrer_id = %s
@@ -1749,3 +1777,178 @@ def cleanup_old_game_sessions(hours=24):
     except Exception as e:
         print(f"[cleanup_old_game_sessions] ❌ Error: {e}")
         return False
+
+
+# ============================================================
+# ANTI-FRAUD SYSTEM
+# ============================================================
+
+def are_accounts_related(user_id_a, user_id_b, min_times_seen=1):
+    """
+    Devuelve True si user_id_a y user_id_b comparten al menos una IP.
+    threshold=1 para capturar incluso visitas únicas.
+    """
+    try:
+        row = execute_query("""
+            SELECT 1
+            FROM user_ips ui1
+            JOIN user_ips ui2 ON ui1.ip_address = ui2.ip_address
+            WHERE ui1.user_id = %s
+              AND ui2.user_id = %s
+              AND ui1.times_seen >= %s
+              AND ui2.times_seen >= %s
+            LIMIT 1
+        """, (str(user_id_a), str(user_id_b), min_times_seen, min_times_seen), fetch_one=True)
+        return row is not None
+    except Exception as e:
+        print(f"[are_accounts_related] Error: {e}")
+        return False
+
+
+def get_shared_ip_accounts(user_id, min_times_seen=2):
+    """
+    Devuelve lista de user_ids que comparten IP con este usuario.
+    min_times_seen=2 para ignorar proxies de visita única.
+    """
+    try:
+        rows = execute_query("""
+            SELECT DISTINCT ui2.user_id
+            FROM user_ips ui1
+            JOIN user_ips ui2 ON ui1.ip_address = ui2.ip_address
+              AND ui2.user_id != ui1.user_id
+            WHERE ui1.user_id = %s
+              AND ui1.times_seen >= %s
+              AND ui2.times_seen >= %s
+        """, (str(user_id), min_times_seen, min_times_seen), fetch_all=True)
+        return [r['user_id'] for r in rows] if rows else []
+    except Exception as e:
+        print(f"[get_shared_ip_accounts] Error: {e}")
+        return []
+
+
+def flag_user_fraud(user_id, reason):
+    """Bloquea retiros del usuario y registra el motivo."""
+    try:
+        execute_query("""
+            UPDATE users
+            SET withdrawal_blocked = 1,
+                fraud_reason       = %s,
+                fraud_flagged_at   = NOW()
+            WHERE user_id = %s
+        """, (reason[:255], str(user_id)))
+    except Exception as e:
+        print(f"[flag_user_fraud] Error: {e}")
+
+
+def unflag_user_fraud(user_id):
+    """Limpia el bloqueo de fraude (acción de admin)."""
+    try:
+        execute_query("""
+            UPDATE users
+            SET withdrawal_blocked = 0,
+                fraud_reason       = NULL,
+                fraud_flagged_at   = NULL
+            WHERE user_id = %s
+        """, (str(user_id),))
+    except Exception as e:
+        print(f"[unflag_user_fraud] Error: {e}")
+
+
+def is_withdrawal_blocked(user_id):
+    """Retorna (bloqueado: bool, motivo: str|None)."""
+    try:
+        row = execute_query(
+            "SELECT withdrawal_blocked, fraud_reason FROM users WHERE user_id = %s",
+            (str(user_id),), fetch_one=True
+        )
+        if not row:
+            return False, None
+        return bool(row.get('withdrawal_blocked')), row.get('fraud_reason')
+    except Exception as e:
+        print(f"[is_withdrawal_blocked] Error: {e}")
+        return False, None
+
+
+# Máximo de cuentas permitidas en la misma IP antes de bloquear retiros
+MAX_ACCOUNTS_PER_IP = 3
+
+
+def check_and_flag_multi_account(user_id, min_times_seen=2):
+    """
+    Si hay más de MAX_ACCOUNTS_PER_IP cuentas en la misma IP,
+    bloquea retiros de todas ellas. Solo afecta retiros, nunca el uso normal.
+    Retorna lista de user_ids recién bloqueados.
+    """
+    try:
+        shared = get_shared_ip_accounts(user_id, min_times_seen=min_times_seen)
+        all_accounts = [str(user_id)] + [str(u) for u in shared]
+        count = len(all_accounts)
+
+        if count <= MAX_ACCOUNTS_PER_IP:
+            return []
+
+        ids_str = ', '.join(all_accounts[:6])
+        reason = f"Multi-cuenta ({count} cuentas en misma IP): {ids_str}"
+        flagged = []
+        for uid in all_accounts:
+            already_blocked, _ = is_withdrawal_blocked(uid)
+            if not already_blocked:
+                flag_user_fraud(uid, reason)
+                flagged.append(uid)
+
+        if flagged:
+            print(f"[ANTI-FRAUD] Bloqueados {len(flagged)} usuarios (>{MAX_ACCOUNTS_PER_IP} en misma IP): {ids_str}")
+        return flagged
+    except Exception as e:
+        print(f"[check_and_flag_multi_account] Error: {e}")
+        return []
+
+
+# ── Migraciones anti-fraude (se ejecutan una sola vez al iniciar) ──────────
+
+def _run_antifaud_migrations():
+    """Añade columnas y tablas necesarias para el sistema anti-fraude."""
+    import logging
+    log = logging.getLogger(__name__)
+
+    def safe_alter(label, sql):
+        try:
+            execute_query(sql)
+            log.info(f"[anti-fraud migration] ✓ {label}")
+        except Exception as e:
+            err = str(e).lower()
+            if 'duplicate column' in err or 'already exists' in err or '1060' in str(e):
+                pass  # Ya existe, OK
+            else:
+                log.warning(f"[anti-fraud migration] {label}: {e}")
+
+    # Columna is_fraud en referrals
+    safe_alter("referrals.is_fraud",
+        "ALTER TABLE referrals ADD COLUMN is_fraud TINYINT(1) NOT NULL DEFAULT 0")
+
+    # Columnas de bloqueo en users
+    safe_alter("users.withdrawal_blocked",
+        "ALTER TABLE users ADD COLUMN withdrawal_blocked TINYINT(1) NOT NULL DEFAULT 0")
+    safe_alter("users.fraud_reason",
+        "ALTER TABLE users ADD COLUMN fraud_reason VARCHAR(255) DEFAULT NULL")
+    safe_alter("users.fraud_flagged_at",
+        "ALTER TABLE users ADD COLUMN fraud_flagged_at DATETIME DEFAULT NULL")
+
+    # Asegurar que user_ips tiene times_seen (por si la tabla fue creada sin esa columna)
+    safe_alter("user_ips.times_seen",
+        "ALTER TABLE user_ips ADD COLUMN times_seen INT NOT NULL DEFAULT 1")
+
+    # Índice en ip_address para búsquedas rápidas
+    try:
+        execute_query("ALTER TABLE user_ips ADD INDEX idx_ip_address (ip_address)")
+    except Exception:
+        pass  # Ya existe
+
+    log.info("[anti-fraud migration] ✅ Completado")
+
+
+try:
+    _run_antifaud_migrations()
+except Exception as _af_err:
+    import logging
+    logging.getLogger(__name__).error(f"[anti-fraud migration] FAILED: {_af_err}")

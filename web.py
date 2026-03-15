@@ -67,6 +67,7 @@ from database import (
     get_config, set_config, get_all_config,
     get_stats, get_stat, increment_stat, set_stat,
     record_user_ip, get_users_by_ip, get_duplicate_ips, is_ip_banned, ban_ip, unban_ip,
+    are_accounts_related, is_withdrawal_blocked, check_and_flag_multi_account, unflag_user_fraud,
     get_top_users_by_balance, get_top_users_by_referrals, get_top_users_by_mined,
     load_database, update_referral_count,
     # Game session functions
@@ -2851,6 +2852,16 @@ def api_withdraw():
     if not user:
         return jsonify({'success': False, 'error': 'User not found'}), 404
 
+    # ── ANTI-FRAUD: verificar bloqueo por multi-cuenta ──
+    try:
+        check_and_flag_multi_account(user_id)
+    except Exception as _fraud_err:
+        logger.warning(f"[ANTI-FRAUD] scan error: {_fraud_err}")
+    blocked, fraud_reason = is_withdrawal_blocked(user_id)
+    if blocked:
+        logger.warning(f"[ANTI-FRAUD] Retiro bloqueado para {user_id}: {fraud_reason}")
+        return jsonify({'success': False, 'error': 'Tu cuenta está bajo revisión. Contacta soporte.'}), 403
+
     data = request.get_json() or {}
     currency = data.get('currency', '').upper()
     amount = float(data.get('amount', 0))
@@ -2978,7 +2989,9 @@ def api_referrals_list():
             'validated': bool(ref.get('validated')),
             'bonus_paid': float(ref.get('bonus_paid') or 0),
             'joined_at': str(ref.get('created_at', '')),
-            'validated_at': str(ref.get('validated_at', '')) if ref.get('validated_at') else None
+            'validated_at': str(ref.get('validated_at', '')) if ref.get('validated_at') else None,
+            'referred_fraud': bool(ref.get('referred_fraud') or ref.get('is_fraud')),
+            'is_fraud': bool(ref.get('is_fraud')),
         })
 
     return jsonify({
@@ -3250,6 +3263,16 @@ def api_wallet_withdraw():
     user_id = get_user_id()
     if not user_id:
         return jsonify({'success': False, 'error': 'User ID required'}), 400
+
+    # ── ANTI-FRAUD: verificar bloqueo por multi-cuenta ──
+    try:
+        check_and_flag_multi_account(user_id)
+    except Exception as _fraud_err:
+        logger.warning(f"[ANTI-FRAUD] scan error: {_fraud_err}")
+    blocked, fraud_reason = is_withdrawal_blocked(user_id)
+    if blocked:
+        logger.warning(f"[ANTI-FRAUD] Retiro bloqueado para {user_id}: {fraud_reason}")
+        return jsonify({'success': False, 'error': 'Tu cuenta está bajo revisión. Contacta soporte.'}), 403
 
     data = request.get_json() or {}
     currency = data.get('currency', '').upper()
