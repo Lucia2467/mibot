@@ -24,22 +24,14 @@ def send_ton(mnemonic, to_addr, ton_amount, memo='', api_key='',
         if not api_key:
             return False, None, 'TONCENTER_API_KEY no configurada'
 
+        # Python 3.10+ doesn't auto-create event loop in threads — always use new loop
+        loop = asyncio.new_event_loop()
         try:
-            loop = asyncio.get_event_loop()
-            if loop.is_closed():
-                raise RuntimeError
             return loop.run_until_complete(
                 _send(words, to_addr, float(ton_amount), memo, api_key)
             )
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            try:
-                return loop.run_until_complete(
-                    _send(words, to_addr, float(ton_amount), memo, api_key)
-                )
-            finally:
-                loop.close()
+        finally:
+            loop.close()
 
     except Exception as e:
         logger.exception(f'send_ton error: {e}')
