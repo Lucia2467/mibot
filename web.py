@@ -2661,14 +2661,6 @@ def api_ads_stats():
         }
     })
 
-def _validate_referral_on_first_task(user_id):
-    """Wrapper — lógica real en referral_utils.py (evita import circular)."""
-    try:
-        from referral_utils import validate_referral_on_first_task
-        validate_referral_on_first_task(user_id)
-    except Exception as e:
-        logger.error(f"[_validate_referral_on_first_task] {e}")
-
 @app.route('/api/task/complete', methods=['POST'])
 def api_task_complete():
     """
@@ -2738,11 +2730,12 @@ def api_task_complete():
     print(f"[api_task_complete] Resultado: success={success}, message={message}")
 
     if success:
-        # Anti-fraude y validación de referido en primera tarea
+        # Validar referido si es la primera tarea
         try:
-            _validate_referral_on_first_task(user_id)
-        except Exception as _vr_err:
-            logger.warning(f"[api_task_complete] referral validation error: {_vr_err}")
+            from referral_utils import validate_referral_on_first_task
+            validate_referral_on_first_task(user_id)
+        except Exception as _ref_err:
+            logger.warning(f"[referral] {_ref_err}")
 
         user = get_user(user_id)
         new_balance = user.get('se_balance', 0) if user else 0
