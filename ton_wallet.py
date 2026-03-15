@@ -1,13 +1,26 @@
 """
-ton_wallet.py — tonutils con ToncenterClient
+ton_wallet.py — tonutils con ToncenterV2Client (tonutils 2.x)
 """
 import asyncio
 import logging
 import re
+import threading
 
 logger = logging.getLogger(__name__)
 
 TON_TO_NANO = 1_000_000_000
+
+# Thread-local storage for event loops
+_local = threading.local()
+
+
+def _get_loop():
+    """Get or create an event loop for the current thread."""
+    loop = getattr(_local, 'loop', None)
+    if loop is None or loop.is_closed():
+        loop = asyncio.new_event_loop()
+        _local.loop = loop
+    return loop
 
 
 def send_ton(mnemonic, to_addr, ton_amount, memo='', api_key='',
@@ -24,22 +37,18 @@ def send_ton(mnemonic, to_addr, ton_amount, memo='', api_key='',
         if not api_key:
             return False, None, 'TONCENTER_API_KEY no configurada'
 
+        loop = _get_loop()
         try:
-            loop = asyncio.get_event_loop()
-            if loop.is_closed():
-                raise RuntimeError
             return loop.run_until_complete(
                 _send(words, to_addr, float(ton_amount), memo, api_key)
             )
-        except RuntimeError:
+        except Exception:
+            # If loop had issues, create a fresh one
             loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            try:
-                return loop.run_until_complete(
-                    _send(words, to_addr, float(ton_amount), memo, api_key)
-                )
-            finally:
-                loop.close()
+            _local.loop = loop
+            return loop.run_until_complete(
+                _send(words, to_addr, float(ton_amount), memo, api_key)
+            )
 
     except Exception as e:
         logger.exception(f'send_ton error: {e}')
@@ -48,7 +57,6 @@ def send_ton(mnemonic, to_addr, ton_amount, memo='', api_key='',
 
 def _extract_hash(tx) -> str:
     """Extrae hash hex limpio de 64 chars del resultado de tonutils."""
-    # Intentar atributos directos primero
     for attr in ('hash', 'cell_hash', 'tx_hash', 'body_hash'):
         val = getattr(tx, attr, None)
         if val is not None:
@@ -58,7 +66,6 @@ def _extract_hash(tx) -> str:
             if re.match(r'^[0-9a-fA-F]{64}$', s):
                 return s
 
-    # Intentar método hash()
     try:
         h = tx.hash()
         if isinstance(h, bytes):
@@ -69,26 +76,51 @@ def _extract_hash(tx) -> str:
     except Exception:
         pass
 
-    # Buscar patrón hex de 64 chars dentro del string del objeto
     s = str(tx)
     matches = re.findall(r'[0-9a-fA-F]{64}', s)
     if matches:
         return matches[0]
 
-    # Último recurso: truncar
     return s[:190]
 
 
-async def _send(words, to_addr, ton_amount, memo, api_key):
+def _make_client(api_key):
+    """Create ToncenterClient compatible with any tonutils version."""
+    # tonutils 2.x: module is tonutils.client (no 's')
+    try:
+        from tonutils.client import ToncenterV2Client
+        return ToncenterV2Client(api_key=api_key, is_testnet=False)
+    except (ImportError, Exception):
+        pass
+
+    try:
+        from tonutils.client import ToncenterClient
+        return ToncenterClient(api_key=api_key, is_testnet=False)
+    except (ImportError, TypeError):
+        pass
+
+    try:
+        from tonutils.client import ToncenterClient
+        return ToncenterClient(api_key=api_key)
+    except (ImportError, Exception):
+        pass
+
+    # tonutils <2.x: module is tonutils.clients (with 's')
+    try:
+        from tonutils.clients import ToncenterClient
+        return ToncenterClient(api_key=api_key, is_testnet=False)
+    except (ImportError, TypeError):
+        pass
+
     from tonutils.clients import ToncenterClient
+    return ToncenterClient(api_key=api_key)
+
+
+async def _send(words, to_addr, ton_amount, memo, api_key):
     from tonutils.contracts.wallet import WalletV5R1
 
     amount_nano = int(round(ton_amount * TON_TO_NANO))
-
-    try:
-        client = ToncenterClient(api_key=api_key, is_testnet=False)
-    except TypeError:
-        client = ToncenterClient(api_key=api_key)
+    client = _make_client(api_key)
 
     async with client:
         result = WalletV5R1.from_mnemonic(client, words)
