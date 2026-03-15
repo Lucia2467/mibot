@@ -523,8 +523,83 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ==================== EXPORTAR FUNCIONES GLOBALES ====================
+
+// ════════════════════════════════════════
+//  showRewardModal — premium modal (monetag style)
+// ════════════════════════════════════════
+window.showRewardModal = function(message, type) {
+    type = type || 'success';
+    const isSuccess = type === 'success';
+    const color  = isSuccess ? '#FF6B35' : '#EF4444';
+    const colorD = isSuccess ? '#E65100' : '#DC2626';
+    const colorL = isSuccess ? '#FF8A5B' : '#F87171';
+
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.75);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;animation:_rmFadeIn 0.35s ease;';
+
+    const notif = document.createElement('div');
+    notif.style.cssText = 'position:relative;background:linear-gradient(135deg,rgba(18,18,18,0.98),rgba(30,30,30,0.98));border-radius:32px;overflow:hidden;box-shadow:0 0 0 1px '+color+'44,0 30px 90px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.05);animation:_rmScaleIn 0.45s cubic-bezier(0.34,1.56,0.64,1);min-width:300px;max-width:88vw;text-align:center;';
+
+    const glow = document.createElement('div');
+    glow.style.cssText = 'position:absolute;top:-2px;left:-2px;right:-2px;bottom:-2px;background:linear-gradient(135deg,'+color+','+colorD+','+color+');border-radius:32px;opacity:0.5;filter:blur(18px);animation:_rmGlow 3s linear infinite;z-index:-1;';
+
+    const header = document.createElement('div');
+    header.style.cssText = 'background:linear-gradient(135deg,'+color+'26,'+color+'0d);padding:36px 28px 24px;border-bottom:1px solid '+color+'33;position:relative;overflow:hidden;';
+    header.innerHTML =
+        '<div style="position:absolute;top:10%;left:10%;width:4px;height:4px;background:'+color+';border-radius:50%;animation:_rmP1 2s ease-in-out infinite;"></div>'+
+        '<div style="position:absolute;top:30%;right:15%;width:3px;height:3px;background:'+colorL+';border-radius:50%;animation:_rmP2 2.5s ease-in-out infinite;"></div>'+
+        '<div style="position:absolute;bottom:20%;left:20%;width:5px;height:5px;background:'+colorD+';border-radius:50%;animation:_rmP3 3s ease-in-out infinite;"></div>'+
+        '<div style="position:relative;width:90px;height:90px;margin:0 auto 18px;">'+
+            '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90px;height:90px;border:2px solid transparent;border-top-color:'+color+';border-right-color:'+color+';border-radius:50%;animation:_rmSpin 2s linear infinite;opacity:0.6;"></div>'+
+            '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;background:'+color+'3d;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 28px '+color+'66;animation:_rmPulse 1.5s ease-in-out infinite;">'+
+                (isSuccess
+                    ? '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="'+color+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+                    : '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="'+color+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>')+
+            '</div>'+
+        '</div>'+
+        '<div style="font-size:0.7rem;font-weight:700;color:'+colorL+';text-transform:uppercase;letter-spacing:2px;position:relative;z-index:1;">'+
+            (isSuccess ? ('✨ '+(typeof t==='function'?t('reward_label'):'Recompensa')) : ('⚠️ '+(typeof t==='function'?t('error_label'):'Error')))+
+        '</div>';
+
+    const body = document.createElement('div');
+    body.style.cssText = 'padding:26px 28px 30px;';
+    body.innerHTML =
+        '<div style="font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,'+color+','+colorL+',#fff8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;letter-spacing:1px;">'+message+'</div>'+
+        '<div style="font-size:0.88rem;color:rgba(255,255,255,0.45);margin-bottom:18px;">'+(isSuccess?(typeof t==='function'?t('reward_added_balance'):'¡Se ha añadido a tu balance!'):(typeof t==='function'?t('something_went_wrong'):'Algo salió mal'))+'</div>'+
+        '<div style="width:50px;height:3px;background:linear-gradient(90deg,transparent,'+color+',transparent);margin:0 auto;border-radius:2px;"></div>';
+
+    notif.appendChild(glow); notif.appendChild(header); notif.appendChild(body);
+    overlay.appendChild(notif); document.body.appendChild(overlay);
+
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback)
+        window.Telegram.WebApp.HapticFeedback.notificationOccurred(isSuccess?'success':'error');
+
+    const close = function() {
+        overlay.style.animation = '_rmFadeOut 0.35s ease forwards';
+        notif.style.animation   = '_rmScaleOut 0.35s cubic-bezier(0.16,1,0.3,1) forwards';
+        setTimeout(function(){ overlay.remove(); }, 380);
+    };
+    setTimeout(close, 3000);
+    overlay.addEventListener('click', function(e){ if(e.target===overlay) close(); });
+};
+
+// Inject reward modal CSS once
+(function(){
+    if(document.getElementById('_rm_css')) return;
+    const s=document.createElement('style'); s.id='_rm_css';
+    s.textContent='@keyframes _rmFadeIn{from{opacity:0}to{opacity:1}}@keyframes _rmFadeOut{from{opacity:1}to{opacity:0}}@keyframes _rmScaleIn{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}@keyframes _rmScaleOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(0.7)}}@keyframes _rmGlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}@keyframes _rmSpin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}@keyframes _rmPulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.08)}}@keyframes _rmP1{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.2)}}@keyframes _rmP2{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}@keyframes _rmP3{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.15)}}';
+    document.head.appendChild(s);
+})();
+
 window.toastSystem = new ToastSystem();
-window.showToast = (message, type, duration) => window.toastSystem.show(message, type, duration);
+window.showToast = function(message, type, duration) {
+    // For success → premium reward modal if available
+    if (type === 'success' && typeof window.showRewardModal === 'function') {
+        window.showRewardModal(message, 'success');
+        return;
+    }
+    window.toastSystem.show(message, type, duration);
+};
 window.showProcessingToast = (initialMsg, successMsg, customIcon, duration) => window.toastSystem.showProcessing(initialMsg, successMsg, customIcon, duration);
 window.animateCounter = animateCounter;
 window.showSkeleton = showSkeleton;
