@@ -1040,13 +1040,13 @@ async function createTask() {
     }
     
     if (!selectedPackage) {
-        showToast('Selecciona un paquete', 'error');
+        showToast(t('select_package')||'Selecciona un paquete', 'error');
         return;
     }
     
     const pkg = packages[selectedPackage];
     if (userDogeBalance < pkg.price_se) {
-        showToast(`Balance insuficiente. Necesitas ${pkg.price_se} PXC`, 'error');
+        showToast((t('toast_insufficient_balance')||'Balance insuficiente. Necesitas') + ` ${pkg.price_se} PXC`, 'error');
         return;
     }
     
@@ -1080,7 +1080,7 @@ async function createTask() {
         const data = await response.json();
         
         if (data.success) {
-            showToast('¡Tarea publicada exitosamente!', 'success');
+            showToast(t('toast_task_published')||'¡Tarea publicada!', 'success');
             
             // Actualizar balance
             const newBalance = userDogeBalance - pkg.price_se;
@@ -1096,14 +1096,14 @@ async function createTask() {
                 window.location.reload();
             }, 1500);
         } else {
-            showToast(data.message || 'Error al crear la tarea', 'error');
+            showToast(data.message || t('toast_create_task_error')||'Error al crear la tarea', 'error');
             btn.disabled = false;
             btn.innerHTML = '<i data-lucide="rocket"></i> Publicar Tarea';
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     } catch (error) {
         console.error('Error:', error);
-        showToast('Error de conexión', 'error');
+        showToast(t('toast_connection_error')||'Error de conexión', 'error');
         btn.disabled = false;
         btn.innerHTML = '<i data-lucide="rocket"></i> Publicar Tarea';
         if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -1122,13 +1122,13 @@ async function pauseTask(taskId) {
         const data = await response.json();
         
         if (data.success) {
-            showToast('Tarea pausada', 'success');
+            showToast(t('toast_task_paused')||'Tarea pausada', 'info');
             setTimeout(() => window.location.reload(), 1000);
         } else {
-            showToast(data.message || 'Error', 'error');
+            showToast(data.message || t('toast_error')||'Error', 'error');
         }
     } catch (error) {
-        showToast('Error de conexión', 'error');
+        showToast(t('toast_connection_error')||'Error de conexión', 'error');
     }
 }
 
@@ -1144,19 +1144,20 @@ async function resumeTask(taskId) {
         const data = await response.json();
         
         if (data.success) {
-            showToast('Tarea reactivada', 'success');
+            showToast(t('toast_task_resumed')||'Tarea reactivada', 'info');
             setTimeout(() => window.location.reload(), 1000);
         } else {
-            showToast(data.message || 'Error', 'error');
+            showToast(data.message || t('toast_error')||'Error', 'error');
         }
     } catch (error) {
-        showToast('Error de conexión', 'error');
+        showToast(t('toast_connection_error')||'Error de conexión', 'error');
     }
 }
 
 // Eliminar tarea
 async function deleteTask(taskId, taskTitle) {
-    if (!confirm(`¿Eliminar la tarea "${taskTitle}"?\nSe calculará un reembolso proporcional a los cupos no completados.`)) return;
+    const confirmMsg = (t('confirm_delete_task')||'¿Eliminar la tarea') + ' "' + taskTitle + '"?\n' + (t('confirm_delete_refund')||'Se calculará un reembolso proporcional.');
+    if (!confirm(confirmMsg)) return;
 
     const userId = new URLSearchParams(window.location.search).get('user_id');
     try {
@@ -1167,13 +1168,13 @@ async function deleteTask(taskId, taskTitle) {
         });
         const data = await response.json();
         if (data.success) {
-            showToast('✓ Tarea eliminada', 'success');
+            showToast(t('toast_task_deleted')||'Tarea eliminada', 'info');
             setTimeout(() => location.reload(), 1200);
         } else {
-            showToast(data.message || 'Error al eliminar', 'error');
+            showToast(data.message || t('toast_error')||'Error', 'error');
         }
     } catch(e) {
-        showToast('Error de conexión', 'error');
+        showToast(t('toast_connection_error')||'Error de conexión', 'error');
     }
 }
 
