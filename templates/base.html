@@ -942,6 +942,8 @@
                 loadUserProfilePhoto(telegramUser.id);
 
                 // Enviar datos al backend para actualizar
+                // start_param viene de ?startapp=ref_USERID (Mini App link)
+                const startParam = tg.initDataUnsafe?.start_param || null;
                 fetch('/api/sync-telegram-data', {
                     method: 'POST',
                     headers: {
@@ -951,7 +953,8 @@
                         user_id: telegramUser.id.toString(),
                         first_name: telegramUser.first_name || null,
                         last_name: telegramUser.last_name || null,
-                        username: telegramUser.username || null
+                        username: telegramUser.username || null,
+                        start_param: startParam
                     })
                 }).then(response => response.json())
                 .then(data => {
