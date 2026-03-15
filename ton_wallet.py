@@ -85,10 +85,14 @@ async def _send(words, to_addr, ton_amount, memo, api_key):
 
     amount_nano = int(round(ton_amount * TON_TO_NANO))
 
+    # tonutils >= 0.1.x requires network as positional arg
     try:
-        client = ToncenterClient(api_key=api_key, is_testnet=False)
+        client = ToncenterClient('mainnet', api_key=api_key)
     except TypeError:
-        client = ToncenterClient(api_key=api_key)
+        try:
+            client = ToncenterClient(api_key=api_key, is_testnet=False)
+        except TypeError:
+            client = ToncenterClient(api_key=api_key)
 
     async with client:
         result = WalletV5R1.from_mnemonic(client, words)
