@@ -150,6 +150,22 @@
             display: block;
         }
 
+        /* Toggle switch */
+        .toggle-switch { position:relative; display:inline-block; width:48px; height:26px; cursor:pointer; }
+        .toggle-switch input { opacity:0; width:0; height:0; }
+        .toggle-slider {
+            position:absolute; top:0; left:0; right:0; bottom:0;
+            background:rgba(255,255,255,0.15); border-radius:26px;
+            transition:.3s;
+        }
+        .toggle-slider:before {
+            content:""; position:absolute; width:20px; height:20px;
+            left:3px; bottom:3px; background:#fff; border-radius:50%;
+            transition:.3s;
+        }
+        .toggle-switch input:checked + .toggle-slider { background:var(--accent-primary); }
+        .toggle-switch input:checked + .toggle-slider:before { transform:translateX(22px); }
+
         /* Search */
         .search-box {
             display: flex;
@@ -530,6 +546,7 @@
             <button class="tab-btn" data-tab="banned">Baneados</button>
             <button class="tab-btn" data-tab="fraud-logs">Registros de Fraude</button>
             <button class="tab-btn" data-tab="search">Buscar Usuario</button>
+            <button class="tab-btn" data-tab="config">⚙️ Configuración</button>
         </div>
 
         <!-- Suspended Tab -->
@@ -655,6 +672,95 @@
                     <p>Ingresa un ID o nombre para buscar</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Config Tab -->
+    <div class="tab-content" id="tab-config">
+        <div style="max-width:640px; margin:0 auto;">
+
+            <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; padding:24px; margin-bottom:20px;">
+                <h3 style="margin-bottom:6px; font-size:1rem;">🛡️ Sistema Anti-Fraude</h3>
+                <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:20px;">
+                    Controla el baneo automático y el límite de cuentas por IP.
+                </p>
+
+                <!-- Antifraud enabled -->
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--border-color);">
+                    <div>
+                        <div style="font-weight:600; font-size:0.95rem;">Anti-fraude activo</div>
+                        <div style="color:var(--text-secondary); font-size:0.82rem;">Habilita todo el sistema de detección de fraude</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="cfg-antifraud-enabled" onchange="saveConfig()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Auto-ban enabled -->
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--border-color);">
+                    <div>
+                        <div style="font-weight:600; font-size:0.95rem;">Baneo automático</div>
+                        <div style="color:var(--text-secondary); font-size:0.82rem;">Banea automáticamente cuentas que superan el límite por IP</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="cfg-auto-ban" onchange="saveConfig()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Ban related accounts -->
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--border-color);">
+                    <div>
+                        <div style="font-weight:600; font-size:0.95rem;">Banear cuentas relacionadas</div>
+                        <div style="color:var(--text-secondary); font-size:0.82rem;">Al banear una cuenta, también banea las cuentas de la misma IP</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="cfg-ban-related" onchange="saveConfig()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Max accounts per IP -->
+                <div style="padding:14px 0; border-bottom:1px solid var(--border-color);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <div>
+                            <div style="font-weight:600; font-size:0.95rem;">Cuentas máximas por IP</div>
+                            <div style="color:var(--text-secondary); font-size:0.82rem;">Número de cuentas permitidas desde la misma dirección IP</div>
+                        </div>
+                        <span id="cfg-ip-label" style="font-size:1.4rem; font-weight:700; color:var(--accent-primary); min-width:32px; text-align:center;">3</span>
+                    </div>
+                    <input type="range" id="cfg-max-ip" min="1" max="10" value="3" step="1"
+                        style="width:100%; accent-color:var(--accent-primary);"
+                        oninput="document.getElementById('cfg-ip-label').textContent=this.value"
+                        onchange="saveConfig()">
+                    <div style="display:flex; justify-content:space-between; color:var(--text-secondary); font-size:0.75rem; margin-top:4px;">
+                        <span>1 (más estricto)</span><span>10 (más permisivo)</span>
+                    </div>
+                </div>
+
+                <!-- Max accounts per device -->
+                <div style="padding:14px 0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <div>
+                            <div style="font-weight:600; font-size:0.95rem;">Cuentas máximas por dispositivo</div>
+                            <div style="color:var(--text-secondary); font-size:0.82rem;">Número de cuentas permitidas desde el mismo dispositivo (fingerprint)</div>
+                        </div>
+                        <span id="cfg-dev-label" style="font-size:1.4rem; font-weight:700; color:var(--accent-primary); min-width:32px; text-align:center;">2</span>
+                    </div>
+                    <input type="range" id="cfg-max-device" min="1" max="10" value="2" step="1"
+                        style="width:100%; accent-color:var(--accent-primary);"
+                        oninput="document.getElementById('cfg-dev-label').textContent=this.value"
+                        onchange="saveConfig()">
+                    <div style="display:flex; justify-content:space-between; color:var(--text-secondary); font-size:0.75rem; margin-top:4px;">
+                        <span>1 (más estricto)</span><span>10 (más permisivo)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status message -->
+            <div id="cfg-status" style="display:none; padding:12px 16px; border-radius:8px; font-size:0.9rem; text-align:center;"></div>
+
         </div>
     </div>
 
@@ -1202,6 +1308,77 @@
         // Close modal on overlay click
         document.getElementById('user-modal').addEventListener('click', (e) => {
             if (e.target.id === 'user-modal') closeModal();
+        });
+
+        // ── Antifraud Config ──────────────────────────────────
+        async function loadConfig() {
+            try {
+                const res = await fetch('/api/admin/antifraud-config');
+                const data = await res.json();
+                if (!data.success) return;
+                const c = data.config;
+
+                document.getElementById('cfg-antifraud-enabled').checked = c.antifraud_enabled === true || c.antifraud_enabled === 'true';
+                document.getElementById('cfg-auto-ban').checked           = c.auto_ban_enabled === true  || c.auto_ban_enabled === 'true';
+                document.getElementById('cfg-ban-related').checked        = c.ban_related_accounts === true || c.ban_related_accounts === 'true';
+
+                const maxIp  = parseInt(c.max_accounts_per_ip)     || 3;
+                const maxDev = parseInt(c.max_accounts_per_device)  || 2;
+
+                document.getElementById('cfg-max-ip').value     = maxIp;
+                document.getElementById('cfg-ip-label').textContent = maxIp;
+                document.getElementById('cfg-max-device').value  = maxDev;
+                document.getElementById('cfg-dev-label').textContent = maxDev;
+            } catch(e) {
+                console.error('loadConfig error:', e);
+            }
+        }
+
+        async function saveConfig() {
+            const payload = {
+                antifraud_enabled:      document.getElementById('cfg-antifraud-enabled').checked,
+                auto_ban_enabled:       document.getElementById('cfg-auto-ban').checked,
+                ban_related_accounts:   document.getElementById('cfg-ban-related').checked,
+                max_accounts_per_ip:    parseInt(document.getElementById('cfg-max-ip').value),
+                max_accounts_per_device: parseInt(document.getElementById('cfg-max-device').value),
+            };
+
+            const status = document.getElementById('cfg-status');
+            try {
+                const res = await fetch('/api/admin/antifraud-config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                status.style.display = 'block';
+                if (data.success) {
+                    status.style.background = 'rgba(16,185,129,0.15)';
+                    status.style.color      = '#10b981';
+                    status.style.border     = '1px solid rgba(16,185,129,0.3)';
+                    status.textContent      = '✅ Configuración guardada correctamente';
+                } else {
+                    status.style.background = 'rgba(239,68,68,0.15)';
+                    status.style.color      = '#ef4444';
+                    status.style.border     = '1px solid rgba(239,68,68,0.3)';
+                    status.textContent      = '❌ Error: ' + (data.error || 'desconocido');
+                }
+                setTimeout(() => { status.style.display = 'none'; }, 3000);
+            } catch(e) {
+                status.style.display    = 'block';
+                status.style.background = 'rgba(239,68,68,0.15)';
+                status.style.color      = '#ef4444';
+                status.style.border     = '1px solid rgba(239,68,68,0.3)';
+                status.textContent      = '❌ Error de conexión';
+                setTimeout(() => { status.style.display = 'none'; }, 3000);
+            }
+        }
+
+        // Cargar config cuando se abre la tab
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            if (btn.dataset.tab === 'config') {
+                btn.addEventListener('click', loadConfig);
+            }
         });
     </script>
 </body>
