@@ -94,6 +94,7 @@ const LANG = {
         min_withdrawal: "Minimum withdrawal",
         recent_transactions: "Recent Transactions",
         secure_withdrawals: "Secure Withdrawals",
+        secure_transaction: "Secure and encrypted transaction",
         withdrawals_info: "Withdrawals are processed within 24-48 hours. Make sure your wallet address is correct.",
         
         // Swap Modal
@@ -1373,6 +1374,7 @@ const LANG = {
         min_withdrawal: "Retiro mínimo",
         recent_transactions: "Transacciones Recientes",
         secure_withdrawals: "Retiros Seguros",
+        secure_transaction: "Transacción segura y cifrada",
         withdrawals_info: "Los retiros se procesan en 24-48 horas. Asegúrate de que tu dirección de wallet sea correcta.",
         
         // Modal Swap
@@ -2652,6 +2654,7 @@ const LANG = {
         min_withdrawal: "Saque mínimo",
         recent_transactions: "Transações Recentes",
         secure_withdrawals: "Saques Seguros",
+        secure_transaction: "Transação segura e criptografada",
         withdrawals_info: "Os saques são processados em 24-48 horas. Certifique-se de que o endereço da carteira está correto.",
         
         // Modal Swap
@@ -3893,6 +3896,7 @@ const LANG = {
         min_withdrawal: "Минимальный вывод",
         recent_transactions: "Последние Транзакции",
         secure_withdrawals: "Безопасные Выводы",
+        secure_transaction: "Безопасная и зашифрованная транзакция",
         withdrawals_info: "Выводы обрабатываются в течение 24-48 часов. Убедитесь, что адрес кошелька правильный.",
         
         // Модальное окно Обмена
@@ -5105,6 +5109,7 @@ const LANG = {
         min_withdrawal: "الحد الأدنى للسحب",
         recent_transactions: "المعاملات الأخيرة",
         secure_withdrawals: "سحوبات آمنة",
+        secure_transaction: "معاملة آمنة ومشفرة",
         withdrawals_info: "تتم معالجة السحوبات خلال 24-48 ساعة. تأكد من صحة عنوان محفظتك.",
         
         // نافذة التبديل
