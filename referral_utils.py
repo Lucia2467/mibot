@@ -99,10 +99,13 @@ def validate_referral_on_first_task(user_id):
         # Referido legítimo
         print(f"[REFERRAL] Buscando fila en tabla referrals...", flush=True)
         try:
-            ref_row = execute_query(
-                "SELECT id, validated FROM referrals WHERE referrer_id=%s AND referred_id=%s LIMIT 1",
-                (referrer_id, str(user_id)), fetch_one=True
-            )
+            from db import get_cursor
+            with get_cursor() as _cur:
+                _cur.execute(
+                    "SELECT id, validated FROM referrals WHERE referrer_id=%s AND referred_id=%s LIMIT 1",
+                    (referrer_id, str(user_id))
+                )
+                ref_row = _cur.fetchone()
         except Exception as _qe:
             print(f"[REFERRAL] SELECT referrals ERROR: {_qe}", flush=True)
             return
@@ -204,11 +207,14 @@ def diagnose_referral(user_id):
         diag.append(f'ERROR: referrer_id={referrer_id} no existe en users. Referido huérfano.')
 
     try:
-        ref_row = execute_query(
-            "SELECT id, validated, bonus_paid, is_fraud, validated_at "
-            "FROM referrals WHERE referrer_id=%s AND referred_id=%s LIMIT 1",
-            (referrer_id, str(user_id)), fetch_one=True
-        )
+        from db import get_cursor
+        with get_cursor() as _cur:
+            _cur.execute(
+                "SELECT id, validated, bonus_paid, is_fraud, validated_at "
+                "FROM referrals WHERE referrer_id=%s AND referred_id=%s LIMIT 1",
+                (referrer_id, str(user_id))
+            )
+            ref_row = _cur.fetchone()
         result['referral_row'] = dict(ref_row) if ref_row else None
     except Exception as e:
         diag.append(f'Error consultando tabla referrals: {e}')

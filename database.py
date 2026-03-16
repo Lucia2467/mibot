@@ -1733,16 +1733,18 @@ def are_accounts_related(user_id_a, user_id_b, min_times_seen=1):
     threshold=1 para capturar incluso visitas únicas.
     """
     try:
-        row = execute_query("""
-            SELECT 1
-            FROM user_ips ui1
-            JOIN user_ips ui2 ON ui1.ip_address = ui2.ip_address
-            WHERE ui1.user_id = %s
-              AND ui2.user_id = %s
-              AND ui1.times_seen >= %s
-              AND ui2.times_seen >= %s
-            LIMIT 1
-        """, (str(user_id_a), str(user_id_b), min_times_seen, min_times_seen), fetch_one=True)
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT 1
+                FROM user_ips ui1
+                JOIN user_ips ui2 ON ui1.ip_address = ui2.ip_address
+                WHERE ui1.user_id = %s
+                  AND ui2.user_id = %s
+                  AND ui1.times_seen >= %s
+                  AND ui2.times_seen >= %s
+                LIMIT 1
+            """, (str(user_id_a), str(user_id_b), min_times_seen, min_times_seen))
+            row = cursor.fetchone()
         return row is not None
     except Exception as e:
         print(f"[are_accounts_related] Error: {e}")
@@ -1755,15 +1757,17 @@ def get_shared_ip_accounts(user_id, min_times_seen=2):
     min_times_seen=2 para ignorar proxies de visita única.
     """
     try:
-        rows = execute_query("""
-            SELECT DISTINCT ui2.user_id
-            FROM user_ips ui1
-            JOIN user_ips ui2 ON ui1.ip_address = ui2.ip_address
-              AND ui2.user_id != ui1.user_id
-            WHERE ui1.user_id = %s
-              AND ui1.times_seen >= %s
-              AND ui2.times_seen >= %s
-        """, (str(user_id), min_times_seen, min_times_seen), fetch_all=True)
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT DISTINCT ui2.user_id
+                FROM user_ips ui1
+                JOIN user_ips ui2 ON ui1.ip_address = ui2.ip_address
+                  AND ui2.user_id != ui1.user_id
+                WHERE ui1.user_id = %s
+                  AND ui1.times_seen >= %s
+                  AND ui2.times_seen >= %s
+            """, (str(user_id), min_times_seen, min_times_seen))
+            rows = cursor.fetchall()
         return [r['user_id'] for r in rows] if rows else []
     except Exception as e:
         print(f"[get_shared_ip_accounts] Error: {e}")
@@ -1801,10 +1805,12 @@ def unflag_user_fraud(user_id):
 def is_withdrawal_blocked(user_id):
     """Retorna (bloqueado: bool, motivo: str|None)."""
     try:
-        row = execute_query(
-            "SELECT withdrawal_blocked, fraud_reason FROM users WHERE user_id = %s",
-            (str(user_id),), fetch_one=True
-        )
+        with get_cursor() as cursor:
+            cursor.execute(
+                "SELECT withdrawal_blocked, fraud_reason FROM users WHERE user_id = %s",
+                (str(user_id),)
+            )
+            row = cursor.fetchone()
         if not row:
             return False, None
         return bool(row.get('withdrawal_blocked')), row.get('fraud_reason')
