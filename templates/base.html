@@ -38,8 +38,21 @@
                 info: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>',
             };
             var tt=function(k){try{return typeof window.t==='function'?window.t(k):null;}catch(e){return null;}};
-            var labels={success:tt('reward_label')||'Recompensa',error:tt('error_label')||'Error',warning:tt('warning_label')||'Aviso',info:tt('info_label')||'Info'};
-            var subs={success:tt('reward_added_balance')||'¡Añadido a tu balance!',error:tt('something_went_wrong')||'',warning:tt('warning_sub')||'',info:tt('info_sub')||''};
+            // Mini-diccionario inline para cuando window.t no está disponible aún
+            var _rl=localStorage.getItem('sally_lang')||'es';
+            var _fb={
+                reward_label:       {es:'Recompensa',en:'Reward',     pt:'Recompensa', ru:'Награда',       ar:'مكافأة'},
+                error_label:        {es:'Error',     en:'Error',      pt:'Erro',       ru:'Ошибка',        ar:'خطأ'},
+                warning_label:      {es:'Aviso',     en:'Warning',    pt:'Aviso',      ru:'Предупреждение',ar:'تحذير'},
+                info_label:         {es:'Info',      en:'Info',       pt:'Info',       ru:'Инфо',          ar:'معلومة'},
+                reward_added_balance:{es:'¡Añadido a tu balance!', en:'Added to your balance!', pt:'Adicionado ao seu saldo!', ru:'Добавлено на баланс!', ar:'أضيف إلى رصيدك!'},
+                something_went_wrong:{es:'Algo salió mal',          en:'Something went wrong',   pt:'Algo deu errado',          ru:'Что-то пошло не так', ar:'حدث خطأ ما'},
+                warning_sub:        {es:'Ten esto en cuenta',       en:'Keep this in mind',      pt:'Tenha isso em mente',      ru:'Имейте это в виду',   ar:'ضع هذا في اعتبارك'},
+                info_sub:           {es:'',en:'',pt:'',ru:'',ar:''},
+            };
+            var _t=function(k){return tt(k)||(_fb[k]?(_fb[k][_rl]||_fb[k]['en']||''):k);};
+            var labels={success:_t('reward_label'),error:_t('error_label'),warning:_t('warning_label'),info:_t('info_label')};
+            var subs={success:_t('reward_added_balance'),error:_t('something_went_wrong'),warning:_t('warning_sub'),info:_t('info_sub')};
             var cleanMsg=String(message).replace(/^\W+/,'').trim()||message;
             var fontSize=cleanMsg.length>25?'1.3rem':'2rem';
             var overlay=document.createElement('div');
