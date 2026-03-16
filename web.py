@@ -4366,6 +4366,225 @@ def admin_security():
     return render_template('admin_security.html')
 
 
+# ── APIs del Centro de Seguridad (/api/admin/security/*) ──────────────────
+
+@app.route('/api/admin/security/stats')
+@admin_required
+def api_security_stats():
+    try:
+        from ban_system import get_ban_statistics
+        stats = get_ban_statistics()
+        # El template espera: suspended, banned, fraud_logs, last_24h
+        with __import__('db').get_cursor() as cur:
+            cur.execute("SELECT COUNT(*) as c FROM users WHERE withdrawal_blocked=1 AND banned=0")
+            r = cur.fetchone()
+            suspended = int(r.get('c', 0)) if r else 0
+        try:
+            with __import__('db').get_cursor() as cur:
+                cur.execute("""SELECT COUNT(*) as c FROM ban_logs
+                               WHERE created_at >= NOW() - INTERVAL 24 HOUR""")
+                r = cur.fetchone()
+                last_24h = int(r.get('c', 0)) if r else 0
+                cur.execute("SELECT COUNT(*) as c FROM ban_logs")
+                r2 = cur.fetchone()
+                fraud_logs = int(r2.get('c', 0)) if r2 else 0
+        except Exception:
+            last_24h = 0
+            fraud_logs = 0
+        return jsonify({
+            'success': True,
+            'suspended': suspended,
+            'banned': stats.get('total_banned', 0),
+            'fraud_logs': fraud_logs,
+            'last_24h': last_24h,
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/security/suspended')
+@admin_required
+def api_security_suspended():
+    try:
+        with __import__('db').get_cursor() as cur:
+            cur.execute("""SELECT user_id, username, first_name, fraud_reason, fraud_flagged_at
+                           FROM users WHERE withdrawal_blocked=1 AND banned=0
+                           ORDER BY fraud_flagged_at DESC LIMIT 100""")
+            rows = cur.fetchall() or []
+        users = []
+        for r in rows:
+            users.append({
+                'user_id':    r.get('user_id'),
+                'username':   r.get('username') or '',
+                'first_name': r.get('first_name') or '',
+                'reason':     r.get('fraud_reason') or 'Suspendido manualmente',
+                'date':       str(r.get('fraud_flagged_at') or ''),
+            })
+        return jsonify({'success': True, 'users': users})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/security/banned')
+@admin_required
+def api_security_banned():
+    try:
+        from ban_system import get_banned_users_list
+        rows = get_banned_users_list(limit=100)
+        users = []
+        for r in rows:
+            if isinstance(r, dict):
+                users.append({
+                    'user_id':    r.get('user_id'),
+                    'username':   r.get('username') or '',
+                    'first_name': r.get('first_name') or '',
+                    'reason':     r.get('ban_reason') or '',
+                    'ban_type':   r.get('ban_type') or 'manual',
+                    'date':       str(r.get('ban_date') or ''),
+                })
+        return jsonify({'success': True, 'users': users})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/security/fraud-logs')
+@admin_required
+def api_security_fraud_logs():
+    try:
+        from ban_system import get_ban_logs
+        rows = get_ban_logs(limit=100)
+        logs = []
+        for r in rows:
+            if isinstance(r, dict):
+                logs.append({
+                    'user_id':    r.get('user_id'),
+                    'event_type': r.get('event_type') or '',
+                    'reason':     r.get('reason') or '',
+                    'admin_id':   r.get('admin_id') or '',
+                    'date':       str(r.get('created_at') or ''),
+                })
+        return jsonify({'success': True, 'logs': logs})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/security/search')
+@admin_required
+def api_security_search():
+    q = request.args.get('q', '').strip()
+    if not q:
+        return jsonify({'success': True, 'users': []})
+    try:
+        from ban_system import get_user_ban_status
+        with __import__('db').get_cursor() as cur:
+            cur.execute("""SELECT user_id, username, first_name, banned,
+                                  ban_reason, se_balance, created_at
+                           FROM users
+                           WHERE user_id=%s OR username LIKE %s OR first_name LIKE %s
+                           LIMIT 20""", (q, f'%{q}%', f'%{q}%'))
+            rows = cur.fetchall() or []
+        users = []
+        for r in rows:
+            if isinstance(r, dict):
+                users.append({
+                    'user_id':    r.get('user_id'),
+                    'username':   r.get('username') or '',
+                    'first_name': r.get('first_name') or '',
+                    'banned':     bool(r.get('banned')),
+                    'ban_reason': r.get('ban_reason') or '',
+                    'balance':    float(r.get('se_balance') or 0),
+                    'created_at': str(r.get('created_at') or ''),
+                })
+        return jsonify({'success': True, 'users': users})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/security/user/<user_id>')
+@admin_required
+def api_security_user(user_id):
+    try:
+        from ban_system import get_user_ban_status, get_ban_logs
+        status = get_user_ban_status(user_id)
+        if not status:
+            return jsonify({'success': False, 'error': 'Usuario no encontrado'}), 404
+        logs = get_ban_logs(user_id=user_id, limit=10)
+        clean_logs = []
+        for l in (logs or []):
+            if isinstance(l, dict):
+                clean_logs.append({
+                    'event_type': l.get('event_type'),
+                    'reason':     l.get('reason'),
+                    'date':       str(l.get('created_at') or ''),
+                })
+        return jsonify({'success': True, 'user': status, 'logs': clean_logs})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/security/suspend', methods=['POST'])
+@admin_required
+def api_security_suspend():
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    reason  = data.get('reason', 'Suspendido por admin')
+    if not user_id:
+        return jsonify({'success': False, 'error': 'user_id requerido'}), 400
+    try:
+        from database import flag_user_fraud
+        flag_user_fraud(user_id, reason)
+        return jsonify({'success': True, 'message': f'Usuario {user_id} suspendido'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/security/unsuspend', methods=['POST'])
+@admin_required
+def api_security_unsuspend():
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    if not user_id:
+        return jsonify({'success': False, 'error': 'user_id requerido'}), 400
+    try:
+        from database import unflag_user_fraud
+        unflag_user_fraud(user_id)
+        return jsonify({'success': True, 'message': f'Usuario {user_id} reactivado'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/security/ban', methods=['POST'])
+@admin_required
+def api_security_ban():
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    reason  = data.get('reason', 'Baneado por admin')
+    if not user_id:
+        return jsonify({'success': False, 'error': 'user_id requerido'}), 400
+    try:
+        from ban_system import ban_user_manual
+        ban_user_manual(user_id, reason, admin_id='admin')
+        return jsonify({'success': True, 'message': f'Usuario {user_id} baneado'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/security/unban', methods=['POST'])
+@admin_required
+def api_security_unban():
+    data = request.get_json() or {}
+    user_id = data.get('user_id')
+    reason  = data.get('reason', 'Desbaneado por admin')
+    if not user_id:
+        return jsonify({'success': False, 'error': 'user_id requerido'}), 400
+    try:
+        from ban_system import unban_user_manual
+        unban_user_manual(user_id, reason, admin_id='admin')
+        return jsonify({'success': True, 'message': f'Usuario {user_id} desbaneado'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @app.route('/admin/users')
 @admin_required
 def admin_users():
