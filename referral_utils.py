@@ -1,7 +1,10 @@
 """
 referral_utils.py
 Lógica de validación de referidos y anti-fraude.
-Importado tanto por web.py como por user_tasks_routes.py sin crear ciclos.
+
+VERSIÓN CON DIAGNÓSTICO COMPLETO — todos los pasos usan print() forzado
+para ser visibles en cualquier entorno (Railway, Heroku, VPS) independientemente
+de la configuración del logger de Python.
 """
 import os
 import logging
@@ -9,7 +12,6 @@ import requests as _req
 
 logger = logging.getLogger(__name__)
 
-# ── Imports de database (nunca importar web aquí) ────────────
 from database import (
     get_user, add_referral, validate_referral,
     update_user, get_config, are_accounts_related
@@ -18,7 +20,6 @@ from db import execute_query
 
 
 def get_client_ip_safe():
-    """Obtiene la IP del cliente de forma segura desde Flask request."""
     try:
         from flask import request
         forwarded = request.headers.get('X-Forwarded-For')
@@ -32,124 +33,221 @@ def get_client_ip_safe():
 def validate_referral_on_first_task(user_id):
     """
     Valida el referido cuando el usuario completa su primera tarea.
-    - Si las IPs coinciden: marca is_fraud=1 y notifica al invitador
-    - Si es legítimo: valida y notifica al invitador
     Llamar DESPUÉS de que la tarea fue completada exitosamente.
     """
+    print(f"[REFERRAL] >>> START validate_referral_on_first_task user={user_id}", flush=True)
     try:
         user = get_user(user_id)
         if not user:
+            print(f"[REFERRAL] STOP: user={user_id} no encontrado en DB", flush=True)
             return
 
-        # Ya fue procesado antes
-        if user.get('referral_validated'):
+        referral_validated = user.get('referral_validated')
+        print(f"[REFERRAL] referral_validated={referral_validated}", flush=True)
+        if referral_validated:
+            print(f"[REFERRAL] STOP: ya procesado anteriormente", flush=True)
             return
 
-        # Obtener referrer
-        referrer_id = (user.get('pending_referrer') or
-                       user.get('referred_by'))
+        pending_referrer = user.get('pending_referrer')
+        referred_by      = user.get('referred_by')
+        referrer_id      = pending_referrer or referred_by
+        print(f"[REFERRAL] pending_referrer={pending_referrer} referred_by={referred_by} -> referrer_id={referrer_id}", flush=True)
+
         if not referrer_id:
+            print(f"[REFERRAL] STOP: sin referrer_id para user={user_id}", flush=True)
             return
 
-        referrer_id = str(referrer_id)
-        referred_name = (user.get('first_name') or
-                         user.get('username') or 'Usuario')
+        referrer_id   = str(referrer_id)
+        referred_name = user.get('first_name') or user.get('username') or 'Usuario'
+        print(f"[REFERRAL] referred_name={referred_name}", flush=True)
 
-        logger.info(f"[referral] Primera tarea: user={user_id} referrer={referrer_id}")
+        # Anti-fraude
+        try:
+            related = are_accounts_related(referrer_id, str(user_id))
+        except Exception as _ae:
+            print(f"[REFERRAL] are_accounts_related ERROR: {_ae} -> asumiendo False", flush=True)
+            related = False
 
-        # ── Anti-fraude: IP compartida ────────────────────────
-        if are_accounts_related(referrer_id, str(user_id)):
-            logger.warning(
-                f"[ANTI-FRAUD] IP compartida: referrer={referrer_id} referred={user_id}"
-            )
-            # INSERT/UPDATE base sin is_fraud para no fallar si la columna no existe aún.
-            execute_query("""
-                INSERT INTO referrals
-                    (referrer_id, referred_id, referred_username,
-                     referred_first_name, validated, validated_at)
-                VALUES (%s, %s, %s, %s, 1, NOW())
-                ON DUPLICATE KEY UPDATE
-                    validated=1, validated_at=NOW()
-            """, (referrer_id, str(user_id),
-                  user.get('username', ''), referred_name))
-            # is_fraud en sentencia separada; falla silenciosamente si columna no existe.
+        print(f"[REFERRAL] IP relacionada: {related}", flush=True)
+
+        if related:
+            print(f"[REFERRAL] FRAUDE: referrer={referrer_id} referred={user_id}", flush=True)
             try:
                 execute_query("""
-                    UPDATE referrals SET is_fraud = 1
-                    WHERE referrer_id = %s AND referred_id = %s
-                """, (referrer_id, str(user_id)))
-            except Exception as _isf2:
-                logger.warning(f"[ANTI-FRAUD] is_fraud update skipped: {_isf2}")
+                    INSERT INTO referrals
+                        (referrer_id, referred_id, referred_username,
+                         referred_first_name, validated, validated_at)
+                    VALUES (%s, %s, %s, %s, 1, NOW())
+                    ON DUPLICATE KEY UPDATE validated=1, validated_at=NOW()
+                """, (referrer_id, str(user_id), user.get('username', ''), referred_name))
+                print(f"[REFERRAL] INSERT fraude OK", flush=True)
+            except Exception as _ins:
+                print(f"[REFERRAL] INSERT fraude ERROR: {_ins}", flush=True)
+            try:
+                execute_query(
+                    "UPDATE referrals SET is_fraud=1 WHERE referrer_id=%s AND referred_id=%s",
+                    (referrer_id, str(user_id))
+                )
+            except Exception as _isf:
+                print(f"[REFERRAL] is_fraud SET ERROR (col ausente?): {_isf}", flush=True)
 
-            # Limpiar para no reintentar
             update_user(user_id, pending_referrer=None, referral_validated=True)
-
-            # Notificar al invitador
             _notify_fraud(referrer_id, referred_name)
+            print(f"[REFERRAL] <<< END (fraude)", flush=True)
             return
 
-        # ── Referido legítimo ─────────────────────────────────
-        ref_row = execute_query(
-            "SELECT id, validated FROM referrals "
-            "WHERE referrer_id=%s AND referred_id=%s LIMIT 1",
-            (referrer_id, str(user_id)), fetch_one=True
-        )
+        # Referido legítimo
+        print(f"[REFERRAL] Buscando fila en tabla referrals...", flush=True)
+        try:
+            ref_row = execute_query(
+                "SELECT id, validated FROM referrals WHERE referrer_id=%s AND referred_id=%s LIMIT 1",
+                (referrer_id, str(user_id)), fetch_one=True
+            )
+        except Exception as _qe:
+            print(f"[REFERRAL] SELECT referrals ERROR: {_qe}", flush=True)
+            return
+
+        print(f"[REFERRAL] ref_row={ref_row}", flush=True)
 
         did_validate = False
+
         if not ref_row:
-            # El registro en referrals no existe — puede ocurrir si create_user
-            # falló en add_referral (ej: DB no disponible en el momento del registro).
-            # Recreamos y validamos directamente.
-            logger.warning(
-                f"[referral] Registro no encontrado en referrals para "
-                f"referrer={referrer_id} referred={user_id}. Recreando."
-            )
-            ok = add_referral(referrer_id, str(user_id),
-                              user.get('username'), referred_name)
+            print(f"[REFERRAL] Fila NO existe -> add_referral...", flush=True)
+            ok = add_referral(referrer_id, str(user_id), user.get('username'), referred_name)
+            print(f"[REFERRAL] add_referral -> {ok}", flush=True)
             if not ok:
-                logger.error(
-                    f"[referral] add_referral falló para referrer={referrer_id} "
-                    f"referred={user_id}. Referido NO validado."
-                )
+                print(f"[REFERRAL] STOP: add_referral falló", flush=True)
                 return
+            print(f"[REFERRAL] -> validate_referral...", flush=True)
             validated_ok = validate_referral(referrer_id, str(user_id))
+            print(f"[REFERRAL] validate_referral -> {validated_ok}", flush=True)
             if not validated_ok:
-                logger.error(
-                    f"[referral] validate_referral falló tras add_referral. "
-                    f"referrer={referrer_id} referred={user_id}"
-                )
+                print(f"[REFERRAL] STOP: validate_referral falló", flush=True)
                 return
             did_validate = True
+
         elif not ref_row.get('validated'):
+            print(f"[REFERRAL] Fila existe validated=0 -> validate_referral...", flush=True)
             validated_ok = validate_referral(referrer_id, str(user_id))
+            print(f"[REFERRAL] validate_referral -> {validated_ok}", flush=True)
             if not validated_ok:
-                logger.error(
-                    f"[referral] validate_referral falló (registro existente). "
-                    f"referrer={referrer_id} referred={user_id}"
-                )
+                print(f"[REFERRAL] STOP: validate_referral falló", flush=True)
                 return
             did_validate = True
+
         else:
-            logger.info(
-                f"[referral] Ya validado previamente: referrer={referrer_id} referred={user_id}"
-            )
+            print(f"[REFERRAL] Fila existe validated=1 — ya estaba validado antes", flush=True)
 
         if did_validate:
+            print(f"[REFERRAL] Enviando notificacion a referrer={referrer_id}", flush=True)
             _notify_validated(referrer_id, referred_name)
 
+        print(f"[REFERRAL] <<< END did_validate={did_validate}", flush=True)
+
     except Exception as e:
-        logger.error(f"[validate_referral_on_first_task] ERROR: {e}")
-        import traceback; traceback.print_exc()
+        import traceback
+        print(f"[REFERRAL] EXCEPCION INESPERADA: {e}", flush=True)
+        traceback.print_exc()
+
+
+def diagnose_referral(user_id):
+    """
+    Diagnóstico completo del estado de referido para un usuario.
+    Retorna un dict con toda la información relevante.
+    """
+    result = {
+        'user_id': str(user_id),
+        'user_found': False,
+        'pending_referrer': None,
+        'referred_by': None,
+        'referral_validated': None,
+        'completed_tasks_count': 0,
+        'referral_row': None,
+        'referrer_exists': False,
+        'is_fraud_check': None,
+        'diagnosis': [],
+        'action_needed': None,
+    }
+    diag = result['diagnosis']
+
+    user = get_user(user_id)
+    if not user:
+        diag.append('ERROR: usuario no encontrado en DB')
+        return result
+
+    result['user_found'] = True
+    result['pending_referrer']    = user.get('pending_referrer')
+    result['referred_by']         = user.get('referred_by')
+    result['referral_validated']  = bool(user.get('referral_validated'))
+    result['completed_tasks_count'] = len(user.get('completed_tasks', []))
+
+    referrer_id = user.get('pending_referrer') or user.get('referred_by')
+
+    if not referrer_id:
+        diag.append('Sin referrer: el usuario no tiene pending_referrer ni referred_by. '
+                    'Nunca entró con link de referido, o el campo se perdió.')
+        result['action_needed'] = ('Verificar que el usuario entró con el link correcto. '
+                                   'Si es error, usar /api/emergency/add-referral para asignarlo manualmente.')
+        return result
+
+    referrer_id = str(referrer_id)
+
+    if result['referral_validated']:
+        diag.append('referral_validated=True: ya fue procesado. '
+                    'Revisar tabla referrals y transacciones del referrer para confirmar bonus.')
+        result['action_needed'] = ('Revisar referrals con validated=1 y bonus_paid. '
+                                   'Si bonus_paid=0, usar validate-referral de emergencia.')
+
+    referrer = get_user(referrer_id)
+    result['referrer_exists'] = referrer is not None
+    if not referrer:
+        diag.append(f'ERROR: referrer_id={referrer_id} no existe en users. Referido huérfano.')
+
+    try:
+        ref_row = execute_query(
+            "SELECT id, validated, bonus_paid, is_fraud, validated_at "
+            "FROM referrals WHERE referrer_id=%s AND referred_id=%s LIMIT 1",
+            (referrer_id, str(user_id)), fetch_one=True
+        )
+        result['referral_row'] = dict(ref_row) if ref_row else None
+    except Exception as e:
+        diag.append(f'Error consultando tabla referrals: {e}')
+
+    if not result['referral_row']:
+        diag.append('PROBLEMA: No hay fila en tabla referrals. '
+                    'create_user falló en add_referral al momento del registro.')
+        result['action_needed'] = 'Usar /api/emergency/add-referral y luego validate-referral.'
+    else:
+        row = result['referral_row']
+        if row.get('is_fraud'):
+            diag.append('Marcado como FRAUDE (is_fraud=1). No se pagará bonus.')
+        elif not row.get('validated'):
+            diag.append('PROBLEMA: validated=0 — la validación nunca se completó.')
+            result['action_needed'] = 'Usar /api/emergency/validate-referral para forzar validación.'
+        elif not row.get('bonus_paid') or float(row.get('bonus_paid') or 0) == 0:
+            diag.append('PROBLEMA: validated=1 pero bonus_paid=0. '
+                        'La fila se marcó pero update_balance nunca se ejecutó.')
+            result['action_needed'] = 'Usar /api/emergency/validate-referral — detectará bonus_paid=0 y lo pagará.'
+        else:
+            diag.append(f'OK: validated=1 bonus_paid={row.get("bonus_paid")} — todo correcto.')
+
+    try:
+        result['is_fraud_check'] = are_accounts_related(referrer_id, str(user_id))
+        if result['is_fraud_check']:
+            diag.append('ALERTA: IPs compartidas actualmente entre referrer y referred.')
+    except Exception as e:
+        diag.append(f'No se pudo verificar IPs: {e}')
+
+    return result
 
 
 def _notify_fraud(referrer_id, referred_name):
-    """Envía notificación de fraude al invitador vía Bot API directo."""
     try:
         token = os.environ.get('BOT_TOKEN', '')
         if not token:
-            logger.warning("[notify_fraud] BOT_TOKEN no configurado")
+            print(f"[REFERRAL] _notify_fraud: BOT_TOKEN no configurado", flush=True)
             return
-        safe = str(referred_name).replace('<','&lt;').replace('>','&gt;')
+        safe = str(referred_name).replace('<', '&lt;').replace('>', '&gt;')
         msg = (
             "\u26a0\ufe0f <b>Tu referido se ha unido \u2014 "
             "pero no recibiste recompensa</b>\n\n"
@@ -166,21 +264,19 @@ def _notify_fraud(referrer_id, referred_name):
         )
         _req.post(
             f"https://api.telegram.org/bot{token}/sendMessage",
-            json={'chat_id': int(referrer_id), 'text': msg,
-                  'parse_mode': 'HTML'},
+            json={'chat_id': int(referrer_id), 'text': msg, 'parse_mode': 'HTML'},
             timeout=10
         )
-        logger.info(f"[notify_fraud] Enviado a {referrer_id}")
+        print(f"[REFERRAL] _notify_fraud enviado a {referrer_id}", flush=True)
     except Exception as e:
-        logger.warning(f"[notify_fraud] Error: {e}")
+        print(f"[REFERRAL] _notify_fraud ERROR: {e}", flush=True)
 
 
 def _notify_validated(referrer_id, referred_name):
-    """Notifica al invitador que su referido fue validado."""
     try:
         from notifications import notify_referral_validated
         referrer_obj = get_user(referrer_id)
-        lang = referrer_obj.get('language_code') if referrer_obj else None
+        lang  = referrer_obj.get('language_code') if referrer_obj else None
         bonus = float(get_config('referral_bonus', 1.0))
         total = referrer_obj.get('referral_count', 0) if referrer_obj else 0
         notify_referral_validated(
@@ -190,6 +286,6 @@ def _notify_validated(referrer_id, referred_name):
             total_refs=total,
             language_code=lang
         )
-        logger.info(f"[notify_validated] Enviado a {referrer_id}")
+        print(f"[REFERRAL] _notify_validated enviado a {referrer_id}", flush=True)
     except Exception as e:
-        logger.warning(f"[notify_validated] Error: {e}")
+        print(f"[REFERRAL] _notify_validated ERROR: {e}", flush=True)

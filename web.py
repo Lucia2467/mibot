@@ -6258,6 +6258,50 @@ def api_emergency_recalc_referrals():
 
     return redirect(url_for('admin_emergency'))
 
+
+@app.route('/api/admin/referral-diagnose/<user_id>', methods=['GET'])
+@admin_required
+def api_referral_diagnose(user_id):
+    """
+    Diagnóstico completo del estado de referido de un usuario.
+    Acceder como admin: GET /api/admin/referral-diagnose/<user_id>
+    Devuelve JSON con todo el estado y qué acción tomar.
+    """
+    try:
+        from referral_utils import diagnose_referral
+        result = diagnose_referral(user_id)
+        return jsonify(result)
+    except Exception as e:
+        import traceback
+        return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
+
+
+@app.route('/api/admin/referral-force/<user_id>', methods=['POST'])
+@admin_required
+def api_referral_force(user_id):
+    """
+    Fuerza la ejecución de validate_referral_on_first_task para un usuario.
+    Útil para procesar referidos de usuarios que ya completaron tareas antes del fix.
+    POST /api/admin/referral-force/<user_id>
+    """
+    try:
+        # Limpiar referral_validated para permitir reintento
+        force = request.get_json(silent=True) or {}
+        if force.get('reset_validated'):
+            update_user(user_id, referral_validated=False)
+            print(f"[REFERRAL-FORCE] Reset referral_validated para user={user_id}", flush=True)
+
+        from referral_utils import validate_referral_on_first_task
+        validate_referral_on_first_task(user_id)
+
+        # Diagnóstico post-ejecución
+        from referral_utils import diagnose_referral
+        result = diagnose_referral(user_id)
+        return jsonify({'success': True, 'post_state': result})
+    except Exception as e:
+        import traceback
+        return jsonify({'success': False, 'error': str(e), 'traceback': traceback.format_exc()}), 500
+
 @app.route('/api/emergency/reset-mining', methods=['POST'])
 @admin_required
 def api_emergency_reset_mining():
