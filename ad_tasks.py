@@ -116,13 +116,17 @@ def update_ad_task_progress(user_id, task_id, reward_per_ad):
             """, (task_id,))
             increment_stat('total_tasks_completed')
             
-            # Procesar referido si es primera tarea
-            user = get_user(user_id)
-            completed = user.get('completed_tasks', [])
-            if len(completed) == 0:
-                process_first_task_completion(user_id)
+            # Procesar referido si es primera tarea (ANTES de actualizar completed_tasks
+            # para que process_first_task_completion vea completed=[]).
+            try:
+                from referral_utils import validate_referral_on_first_task
+                validate_referral_on_first_task(user_id)
+            except Exception as _ref_err:
+                print(f"[ad_tasks] referral validation error: {_ref_err}")
             
             # Marcar en completed_tasks del usuario
+            user = get_user(user_id)
+            completed = user.get('completed_tasks', [])
             if str(task_id) not in completed:
                 completed.append(str(task_id))
                 update_user(user_id, completed_tasks=completed)

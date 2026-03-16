@@ -408,6 +408,15 @@ def approve_submission(submission_id, admin_note=None):
             print(f"[social_tasks] ⚠️ Error notificación aprobación: {_ne}")
             traceback.print_exc()
 
+        # Validar referido si es la primera tarea completada del usuario.
+        # Necesario porque approve_submission es otro punto de entrada de recompensa
+        # distinto a complete_task (web.py) y complete_user_task (user_tasks_system.py).
+        try:
+            from referral_utils import validate_referral_on_first_task
+            validate_referral_on_first_task(sub['user_id'])
+        except Exception as _ref_err:
+            print(f"[social_tasks] referral validation error: {_ref_err}")
+
         return True, 'Aprobado y recompensa enviada'
 
     except Exception as e:

@@ -62,15 +62,24 @@ def validate_referral_on_first_task(user_id):
             logger.warning(
                 f"[ANTI-FRAUD] IP compartida: referrer={referrer_id} referred={user_id}"
             )
+            # INSERT/UPDATE base sin is_fraud para no fallar si la columna no existe aún.
             execute_query("""
                 INSERT INTO referrals
                     (referrer_id, referred_id, referred_username,
-                     referred_first_name, validated, validated_at, is_fraud)
-                VALUES (%s, %s, %s, %s, 1, NOW(), 1)
+                     referred_first_name, validated, validated_at)
+                VALUES (%s, %s, %s, %s, 1, NOW())
                 ON DUPLICATE KEY UPDATE
-                    validated=1, validated_at=NOW(), is_fraud=1
+                    validated=1, validated_at=NOW()
             """, (referrer_id, str(user_id),
                   user.get('username', ''), referred_name))
+            # is_fraud en sentencia separada; falla silenciosamente si columna no existe.
+            try:
+                execute_query("""
+                    UPDATE referrals SET is_fraud = 1
+                    WHERE referrer_id = %s AND referred_id = %s
+                """, (referrer_id, str(user_id)))
+            except Exception as _isf2:
+                logger.warning(f"[ANTI-FRAUD] is_fraud update skipped: {_isf2}")
 
             # Limpiar para no reintentar
             update_user(user_id, pending_referrer=None, referral_validated=True)
@@ -88,13 +97,42 @@ def validate_referral_on_first_task(user_id):
 
         did_validate = False
         if not ref_row:
-            add_referral(referrer_id, str(user_id),
-                         user.get('username'), referred_name)
-            validate_referral(referrer_id, str(user_id))
+            # El registro en referrals no existe — puede ocurrir si create_user
+            # falló en add_referral (ej: DB no disponible en el momento del registro).
+            # Recreamos y validamos directamente.
+            logger.warning(
+                f"[referral] Registro no encontrado en referrals para "
+                f"referrer={referrer_id} referred={user_id}. Recreando."
+            )
+            ok = add_referral(referrer_id, str(user_id),
+                              user.get('username'), referred_name)
+            if not ok:
+                logger.error(
+                    f"[referral] add_referral falló para referrer={referrer_id} "
+                    f"referred={user_id}. Referido NO validado."
+                )
+                return
+            validated_ok = validate_referral(referrer_id, str(user_id))
+            if not validated_ok:
+                logger.error(
+                    f"[referral] validate_referral falló tras add_referral. "
+                    f"referrer={referrer_id} referred={user_id}"
+                )
+                return
             did_validate = True
         elif not ref_row.get('validated'):
-            validate_referral(referrer_id, str(user_id))
+            validated_ok = validate_referral(referrer_id, str(user_id))
+            if not validated_ok:
+                logger.error(
+                    f"[referral] validate_referral falló (registro existente). "
+                    f"referrer={referrer_id} referred={user_id}"
+                )
+                return
             did_validate = True
+        else:
+            logger.info(
+                f"[referral] Ya validado previamente: referrer={referrer_id} referred={user_id}"
+            )
 
         if did_validate:
             _notify_validated(referrer_id, referred_name)

@@ -527,10 +527,21 @@ def validate_referral(referrer_id, referred_id):
 
         bonus = float(get_config('referral_bonus', 1.0))
 
+        # UPDATE principal: nunca incluye is_fraud para evitar fallo si la columna
+        # no fue creada aún (migración pendiente en entornos nuevos).
         execute_query("""
-            UPDATE referrals SET validated = 1, validated_at = NOW(), bonus_paid = %s, is_fraud = 0
+            UPDATE referrals SET validated = 1, validated_at = NOW(), bonus_paid = %s
             WHERE referrer_id = %s AND referred_id = %s
         """, (bonus, str(referrer_id), str(referred_id)))
+
+        # is_fraud en UPDATE separado: si la columna no existe, no rompe el flujo principal.
+        try:
+            execute_query("""
+                UPDATE referrals SET is_fraud = 0
+                WHERE referrer_id = %s AND referred_id = %s
+            """, (str(referrer_id), str(referred_id)))
+        except Exception as _isf_err:
+            print(f"[validate_referral] is_fraud update skipped (columna pendiente de migración): {_isf_err}")
 
         if not bonus_paid or float(bonus_paid) == 0:
             update_balance(referrer_id, 'se', bonus, 'add',
@@ -573,6 +584,10 @@ def process_first_task_completion(user_id):
         pending = user.get('pending_referrer') or user.get('referred_by')
         if not pending:
             return None
+        # El umbral correcto es > 1 cuando la función se llama DESPUÉS de complete_task
+        # (que ya escribió 1 elemento en completed_tasks).
+        # Con el fix de user_tasks_system, las user-tasks también escriben en completed_tasks
+        # con prefijo "ut_", por lo que el conteo es consistente entre ambos sistemas.
         completed = user.get('completed_tasks', [])
         if len(completed) > 1:
             return None

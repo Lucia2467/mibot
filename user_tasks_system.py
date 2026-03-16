@@ -355,6 +355,21 @@ def complete_user_task(task_id, user_id):
         # Pagar recompensa
         update_balance(user_id, 'se', reward, 'add', f'Task: {task_id}')
 
+        # Sincronizar completed_tasks en users para que el sistema de referidos
+        # (y cualquier otra lógica que dependa de is_first_task) sea consistente.
+        # Las user-tasks usan su propia tabla pero users.completed_tasks debe reflejarlo.
+        try:
+            from database import get_user, update_user
+            _u = get_user(user_id)
+            if _u is not None:
+                _ct = _u.get('completed_tasks', [])
+                _utask_key = f"ut_{task_id}"  # prefijo para distinguir de tareas del sistema
+                if _utask_key not in _ct:
+                    _ct.append(_utask_key)
+                    update_user(user_id, completed_tasks=_ct)
+        except Exception as _sync_err:
+            print(f"[user_tasks] ⚠️ sync completed_tasks error (no crítico): {_sync_err}")
+
         # Notificar al usuario vía bot
         print(f"[user_tasks] 🔔 Enviando notificación de completado a {user_id}...")
         try:
