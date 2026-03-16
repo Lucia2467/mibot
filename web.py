@@ -4359,6 +4359,13 @@ def admin_competition():
     return render_template('admin_competition.html')
 
 
+@app.route('/admin/security')
+@admin_required
+def admin_security():
+    """Admin security center — anti-fraud config, banned users, fraud logs"""
+    return render_template('admin_security.html')
+
+
 @app.route('/admin/users')
 @admin_required
 def admin_users():
