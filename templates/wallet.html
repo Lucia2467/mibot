@@ -521,24 +521,24 @@ SALLY-E | Wallet{% endblock %}
                 </div>
                 <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
                     {% if user.wallet_address %}
-                    <span style="font-size:13px;">✅</span>
+                    <i data-lucide="check-circle-2" style="width:15px;height:15px;color:#22c55e;flex-shrink:0;"></i>
                     <span style="font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.42);width:46px;flex-shrink:0;">BEP20</span>
                     <span style="font-family:monospace;font-size:0.76rem;color:#e2e8f0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);padding:3px 10px;border-radius:8px;">{{ user.wallet_address[:6] }}…{{ user.wallet_address[-4:] }}</span>
                     <span style="margin-left:auto;font-size:0.58rem;font-weight:800;color:#22c55e;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);padding:2px 8px;border-radius:20px;">ACTIVA</span>
                     {% else %}
-                    <span style="font-size:13px;">❌</span>
+                    <i data-lucide="x-circle" style="width:15px;height:15px;color:#ef4444;flex-shrink:0;"></i>
                     <span style="font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.42);width:46px;flex-shrink:0;">BEP20</span>
                     <span style="font-size:0.76rem;color:rgba(255,255,255,0.35);" data-i18n="not_linked">No vinculada</span>
                     {% endif %}
                 </div>
                 <div style="display:flex;align-items:center;gap:10px;padding:7px 0;">
                     {% if user.ton_wallet_address %}
-                    <span style="font-size:13px;">✅</span>
+                    <i data-lucide="check-circle-2" style="width:15px;height:15px;color:#22c55e;flex-shrink:0;"></i>
                     <span style="font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.42);width:46px;flex-shrink:0;">TON</span>
                     <span style="font-family:monospace;font-size:0.76rem;color:#e2e8f0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);padding:3px 10px;border-radius:8px;">{{ user.ton_wallet_address[:6] }}…{{ user.ton_wallet_address[-4:] }}</span>
                     <span style="margin-left:auto;font-size:0.58rem;font-weight:800;color:#22c55e;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);padding:2px 8px;border-radius:20px;">ACTIVA</span>
                     {% else %}
-                    <span style="font-size:13px;">❌</span>
+                    <i data-lucide="x-circle" style="width:15px;height:15px;color:#ef4444;flex-shrink:0;"></i>
                     <span style="font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.42);width:46px;flex-shrink:0;">TON</span>
                     <span style="font-size:0.76rem;color:rgba(255,255,255,0.35);" data-i18n="not_linked">No vinculada</span>
                     {% endif %}
