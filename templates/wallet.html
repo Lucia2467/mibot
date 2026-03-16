@@ -150,17 +150,26 @@ SALLY-E | Wallet{% endblock %}
         <!-- Crypto balances — fila horizontal -->
         <div style="display:flex;justify-content:space-around;align-items:center;margin-bottom:0;">
             <div style="text-align:center;">
-                <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.38);margin-bottom:3px;">USDT</div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:3px;">
+                    <svg viewBox="0 0 2000 2000" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><circle cx="1000" cy="1000" r="1000" fill="#26A17B"/><path fill="#fff" d="M1123.42 1093.38v-.02c-6.8.49-41.84 2.61-120.11 2.61-62.3 0-106.26-1.89-121.73-2.61v.03c-239.8-10.57-418.84-52.27-418.84-102.49 0-50.2 179.04-91.92 418.84-102.6v163.45c15.7.98 60.7 3.78 122.77 3.78 74.51 0 111.83-3.22 119.07-3.77v-163.43c239.31 10.67 418.03 52.33 418.03 102.54 0 50.19-178.72 91.83-418.03 102.51zm0-221.85v-146.08h334.28V519H542.29v206.45h334.27v146c-271.86 12.44-476.12 66.19-476.12 130.43 0 64.26 204.26 118 476.12 130.44v467.51h246.86v-467.7c271.38-12.41 475.25-66.12 475.25-130.31 0-64.18-203.87-117.91-475.25-130.29z"/></svg>
+                    <span style="font-size:0.7rem;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.38);">USDT</span>
+                </div>
                 <div style="font-size:1.05rem;font-weight:700;{% if user.usdt_balance < 0 %}color:#ef4444;{% else %}color:#26A17B;{% endif %}" id="usdt-balance">{{ "%.4f"|format(user.usdt_balance|default(0)) }}</div>
             </div>
             <div style="width:1px;height:32px;background:rgba(255,255,255,0.07);"></div>
             <div style="text-align:center;">
-                <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.38);margin-bottom:3px;">DOGE</div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:3px;">
+                    <img src="{{ url_for('static', filename='images/logo_doge.png') }}" width="14" height="14" style="border-radius:50%;object-fit:cover;">
+                    <span style="font-size:0.7rem;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.38);">DOGE</span>
+                </div>
                 <div style="font-size:1.05rem;font-weight:700;{% if user.doge_balance < 0 %}color:#ef4444;{% else %}color:#C9A635;{% endif %}" id="doge-balance">{{ "%.4f"|format(user.doge_balance|default(0)) }}</div>
             </div>
             <div style="width:1px;height:32px;background:rgba(255,255,255,0.07);"></div>
             <div style="text-align:center;">
-                <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.38);margin-bottom:3px;">TON</div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:3px;">
+                    <img src="{{ url_for('static', filename='images/logo_ton.jpg') }}" width="14" height="14" style="border-radius:50%;object-fit:cover;">
+                    <span style="font-size:0.7rem;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.38);">TON</span>
+                </div>
                 <div style="font-size:1.05rem;font-weight:700;{% if user.ton_balance < 0 %}color:#ef4444;{% else %}color:#0098EA;{% endif %}" id="ton-balance">{{ "%.4f"|format(user.ton_balance|default(0)) }}</div>
             </div>
         </div>
@@ -171,7 +180,7 @@ SALLY-E | Wallet{% endblock %}
 
         <!-- Depositar -->
         <button onclick="openDepositModal()" style="display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:none;cursor:pointer;min-width:56px;">
-            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#22c55e,#15803d);border-top:1px solid rgba(255,255,255,0.25);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:50%;box-shadow:0 2px 0 rgba(255,255,255,0.18) inset,0 -2px 0 rgba(0,0,0,0.45) inset,0 4px 12px rgba(0,100,50,0.30);">
+            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#22c55e,#15803d);border-radius:50%;box-shadow:0 4px 12px rgba(0,100,50,0.30);">
                 <i data-lucide="arrow-down-to-line" style="width:20px;height:20px;color:#fff;"></i>
             </div>
             <span style="font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.70);text-align:center;line-height:1.2;" data-i18n="deposit">Depositar</span>
@@ -179,7 +188,7 @@ SALLY-E | Wallet{% endblock %}
 
         <!-- Retirar -->
         <button onclick="openWithdrawModal()" style="display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:none;cursor:pointer;min-width:56px;">
-            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#1a6fff,#003fbf);border-top:1px solid rgba(255,255,255,0.25);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:50%;box-shadow:0 2px 0 rgba(255,255,255,0.18) inset,0 -2px 0 rgba(0,0,0,0.45) inset,0 4px 12px rgba(0,50,200,0.30);">
+            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#1a6fff,#003fbf);border-radius:50%;box-shadow:0 4px 12px rgba(0,50,200,0.30);">
                 <i data-lucide="arrow-up-from-line" style="width:20px;height:20px;color:#fff;"></i>
             </div>
             <span style="font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.70);text-align:center;line-height:1.2;" data-i18n="withdraw">Retirar</span>
@@ -187,7 +196,7 @@ SALLY-E | Wallet{% endblock %}
 
         <!-- Cambiar -->
         <button onclick="openSwapModal()" style="display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:none;cursor:pointer;min-width:56px;">
-            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#131328,#0a0a1e);border-top:1px solid rgba(255,255,255,0.16);border-bottom:2px solid rgba(0,0,0,0.70);border-radius:50%;box-shadow:0 2px 0 rgba(255,255,255,0.08) inset,0 -2px 0 rgba(0,0,0,0.65) inset,0 4px 12px rgba(0,0,0,0.40);">
+            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#131328,#0a0a1e);border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,0.40);">
                 <i data-lucide="repeat-2" style="width:20px;height:20px;color:rgba(255,255,255,0.80);"></i>
             </div>
             <span style="font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.70);text-align:center;line-height:1.2;" data-i18n="swap">Cambiar</span>
@@ -195,7 +204,7 @@ SALLY-E | Wallet{% endblock %}
 
         <!-- Vincular -->
         <button onclick="openLinkWalletModal()" style="display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:none;cursor:pointer;min-width:56px;">
-            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#131328,#0a0a1e);border-top:1px solid rgba(255,255,255,0.16);border-bottom:2px solid rgba(0,0,0,0.70);border-radius:50%;box-shadow:0 2px 0 rgba(255,255,255,0.08) inset,0 -2px 0 rgba(0,0,0,0.65) inset,0 4px 12px rgba(0,0,0,0.40);">
+            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#131328,#0a0a1e);border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,0.40);">
                 <i data-lucide="link-2" style="width:20px;height:20px;color:rgba(255,255,255,0.80);"></i>
             </div>
             <span style="font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.70);text-align:center;line-height:1.2;" data-i18n="link">Vincular</span>
@@ -203,7 +212,7 @@ SALLY-E | Wallet{% endblock %}
 
         <!-- Historial -->
         <a href="/historial?user_id={{ user_id }}" style="display:flex;flex-direction:column;align-items:center;gap:7px;text-decoration:none;min-width:56px;">
-            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#131328,#0a0a1e);border-top:1px solid rgba(255,255,255,0.16);border-bottom:2px solid rgba(0,0,0,0.70);border-radius:50%;box-shadow:0 2px 0 rgba(255,255,255,0.08) inset,0 -2px 0 rgba(0,0,0,0.65) inset,0 4px 12px rgba(0,0,0,0.40);">
+            <div style="width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#131328,#0a0a1e);border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,0.40);">
                 <i data-lucide="clock" style="width:20px;height:20px;color:rgba(255,255,255,0.80);"></i>
             </div>
             <span style="font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.70);text-align:center;line-height:1.2;" data-i18n="history">Historial</span>
@@ -448,7 +457,7 @@ SALLY-E | Wallet{% endblock %}
                         <span style="font-size:0.70rem;color:rgba(255,255,255,0.32);"><span data-i18n="balance">Balance</span>: <span id="se-balance-swap" style="color:#a78bfa;font-weight:700;">{{ "%.3f"|format(user.se_balance) }}</span> PXC</span>
                     </div>
                     <div style="display:flex;align-items:stretch;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.10);border-radius:16px;overflow:hidden;transition:border-color .2s,box-shadow .2s;" id="sw-amount-wrap">
-                        <input type="number" id="swap-amount" placeholder="0.00" step="1" min="100" required
+                        <input type="number" id="swap-amount" placeholder="0.00" step="1" min="1" required
                                style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:1.65rem;font-weight:800;padding:14px 16px;letter-spacing:-.02em;min-width:0;"
                                oninput="updateSwapPreview()"
                                onfocus="document.getElementById('sw-amount-wrap').style.borderColor='rgba(99,102,241,0.55)';document.getElementById('sw-amount-wrap').style.boxShadow='0 0 0 3px rgba(99,102,241,0.10)'"
