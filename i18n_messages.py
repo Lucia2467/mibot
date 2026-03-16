@@ -69,7 +69,7 @@ MESSAGES = {
     },
 }
 
-FALLBACK = 'en'
+FALLBACK = 'es'
 
 
 MESSAGES.update({

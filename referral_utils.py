@@ -248,32 +248,17 @@ def diagnose_referral(user_id):
 
 
 def _notify_fraud(referrer_id, referred_name):
+    """Envía notificación de fraude al invitador en su idioma."""
     try:
-        token = os.environ.get('BOT_TOKEN', '')
-        if not token:
-            print(f"[REFERRAL] _notify_fraud: BOT_TOKEN no configurado", flush=True)
-            return
-        safe = str(referred_name).replace('<', '&lt;').replace('>', '&gt;')
-        msg = (
-            "\u26a0\ufe0f <b>Tu referido se ha unido \u2014 "
-            "pero no recibiste recompensa</b>\n\n"
-            "\U0001f464 <b>Referido:</b> " + safe + "\n\n"
-            "Tu referido se registr\u00f3 correctamente bajo tu enlace, "
-            "sin embargo <b>la recompensa no fue acreditada</b> porque se "
-            "detect\u00f3 actividad anormal entre las cuentas.\n\n"
-            "\u2705 <b>Tu cuenta no tiene ninguna restricci\u00f3n "
-            "por ahora.</b>\n\n"
-            "\u26d4 Por favor, deja de intentar ganar recompensas con "
-            "cuentas propias o vinculadas. Si este comportamiento "
-            "contin\u00faa, tu cuenta podr\u00eda ser restringida "
-            "permanentemente."
+        from notifications import notify_referral_fraud_skip
+        referrer_obj = get_user(referrer_id)
+        lang = referrer_obj.get('language_code') if referrer_obj else None
+        notify_referral_fraud_skip(
+            referrer_id=int(referrer_id),
+            referred_name=referred_name,
+            language_code=lang
         )
-        _req.post(
-            f"https://api.telegram.org/bot{token}/sendMessage",
-            json={'chat_id': int(referrer_id), 'text': msg, 'parse_mode': 'HTML'},
-            timeout=10
-        )
-        print(f"[REFERRAL] _notify_fraud enviado a {referrer_id}", flush=True)
+        print(f"[REFERRAL] _notify_fraud enviado a {referrer_id} lang={lang}", flush=True)
     except Exception as e:
         print(f"[REFERRAL] _notify_fraud ERROR: {e}", flush=True)
 
