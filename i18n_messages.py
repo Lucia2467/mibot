@@ -143,6 +143,13 @@ MESSAGES.update({
         'ru': 'Отсутствуют параметры',
         'ar': 'معاملات مفقودة',
     },
+    'account_under_review': {
+        'es': 'Tu cuenta está bajo revisión. Contacta soporte.',
+        'en': 'Your account is under review. Contact support.',
+        'pt': 'Sua conta está em revisão. Entre em contato com o suporte.',
+        'ru': 'Ваш аккаунт проверяется. Свяжитесь с поддержкой.',
+        'ar': 'حسابك قيد المراجعة. تواصل مع الدعم.',
+    },
 })
 
 

@@ -2873,7 +2873,9 @@ def api_withdraw():
     blocked, fraud_reason = is_withdrawal_blocked(user_id)
     if blocked:
         logger.warning(f"[ANTI-FRAUD] Retiro bloqueado para {user_id}: {fraud_reason}")
-        return jsonify({'success': False, 'error': 'Tu cuenta está bajo revisión. Contacta soporte.'}), 403
+        from i18n_messages import get_user_lang, get_msg as _gm
+        _lang = get_user_lang(user_id)
+        return jsonify({'success': False, 'error': _gm('account_under_review', _lang)}), 403
 
     data = request.get_json() or {}
     currency = data.get('currency', '').upper()
@@ -3324,7 +3326,9 @@ def api_wallet_withdraw():
     blocked, fraud_reason = is_withdrawal_blocked(user_id)
     if blocked:
         logger.warning(f"[ANTI-FRAUD] Retiro bloqueado para {user_id}: {fraud_reason}")
-        return jsonify({'success': False, 'error': 'Tu cuenta está bajo revisión. Contacta soporte.'}), 403
+        from i18n_messages import get_user_lang, get_msg as _gm
+        _lang = get_user_lang(user_id)
+        return jsonify({'success': False, 'error': _gm('account_under_review', _lang)}), 403
 
     data = request.get_json() or {}
     currency = data.get('currency', '').upper()
