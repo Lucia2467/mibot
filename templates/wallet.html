@@ -43,25 +43,31 @@
         0 0 20px rgba(0,80,255,0.08) !important;
 }
 .btn-primary {
-    background: linear-gradient(180deg, #1a6fff 0%, #0055ee 60%, #003fbf 100%) !important;
-    border-top: 1px solid rgba(255,255,255,0.28) !important;
-    border-bottom: 3px solid rgba(0,0,0,0.55) !important;
-    border-left: none !important;
-    border-right: none !important;
+    background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%) !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(0,0,0,0.30) !important;
     box-shadow:
-        0 2px 0 rgba(255,255,255,0.20) inset,
-        0 -3px 0 rgba(0,0,0,0.50) inset,
-        0 4px 14px rgba(0,60,200,0.30) !important;
+        0 1px 0 rgba(255,255,255,0.15) inset,
+        0 4px 12px rgba(29,78,216,0.40),
+        0 1px 3px rgba(0,0,0,0.20) !important;
     border-radius: 14px !important;
     transform: translateZ(0) !important;
-    transition: transform .15s cubic-bezier(.34,1.4,.64,1), box-shadow .15s !important;
+    transition: transform .15s cubic-bezier(.34,1.2,.64,1), box-shadow .15s, filter .15s !important;
+}
+.btn-primary:hover {
+    filter: brightness(1.08) !important;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.18) inset,
+        0 6px 18px rgba(29,78,216,0.50),
+        0 2px 4px rgba(0,0,0,0.20) !important;
+    transform: translateY(-1px) !important;
 }
 .btn-primary:active {
-    transform: translateY(3px) scale(0.98) !important;
+    transform: translateY(1px) scale(0.99) !important;
+    filter: brightness(0.95) !important;
     box-shadow:
-        0 1px 0 rgba(255,255,255,0.12) inset,
-        0 -1px 0 rgba(0,0,0,0.40) inset,
-        0 2px 6px rgba(0,60,200,0.20) !important;
+        0 1px 0 rgba(255,255,255,0.10) inset,
+        0 2px 6px rgba(29,78,216,0.30) !important;
     transition: transform .07s ease !important;
 }
 .btn-secondary {
