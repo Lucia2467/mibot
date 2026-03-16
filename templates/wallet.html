@@ -482,81 +482,186 @@ SALLY-E | Wallet{% endblock %}
 
 <!-- Withdraw Modal -->
 <div id="withdraw-modal" class="modal-overlay" style="display: none;">
-    <div class="modal">
-        <div class="modal-header">
-            <h3 class="modal-title" data-i18n="request_withdrawal">Request Withdrawal</h3>
-            <button class="modal-close" onclick="closeWithdrawModal()">
-                <i data-lucide="x"></i>
-            </button>
-        </div>
-        <div class="modal-body">
-            <!-- Verificar direcciones vinculadas -->
-            <div id="withdraw-address-info" style="background: rgba(6, 182, 212, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                <div style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 10px;">
-                    <strong><i data-lucide="map-pin" style="width:14px;height:14px;vertical-align:middle;margin-right:5px;color:var(--color-info);"></i><span data-i18n="linked_addresses">Linked Addresses</span>:</strong>
+    <div class="modal" style="
+        background: linear-gradient(160deg,#0c0c22 0%,#080818 55%,#050514 100%);
+        border-top: 2px solid rgba(60,130,255,0.40);
+        border-left: 1px solid rgba(40,100,255,0.18);
+        border-right: 1px solid rgba(0,0,0,0.85);
+        border-bottom: 4px solid rgba(0,0,0,0.95);
+        border-radius: 28px;
+        padding: 0;
+        overflow: hidden;
+        max-width: 420px;
+        width: 100%;
+        box-shadow: 0 40px 100px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.04);
+    ">
+        <!-- Header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 22px 18px;border-bottom:1px solid rgba(255,255,255,0.06);position:relative;">
+            <div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(26,111,255,0.35),transparent);"></div>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(145deg,#2277ff,#0044cc);border-top:1px solid rgba(255,255,255,0.28);border-bottom:2px solid rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(26,111,255,0.40),inset 0 1px 0 rgba(255,255,255,0.20);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
                 </div>
-                <div id="bep20-address-status" style="font-size: 0.75rem; margin-bottom: 5px;">
-                    <span style="color: {% if user.wallet_address %}#22c55e{% else %}#ef4444{% endif %};">
-                        {% if user.wallet_address %}<i data-lucide="check-circle-2" style="width:13px;height:13px;color:#22c55e;vertical-align:middle;"></i>{% else %}<i data-lucide="x-circle" style="width:13px;height:13px;color:#ef4444;vertical-align:middle;"></i>{% endif %}
-                    </span>
-                    BEP20:
+                <div>
+                    <div style="font-size:1.05rem;font-weight:800;color:#fff;letter-spacing:-.01em;" data-i18n="request_withdrawal">Solicitar Retiro</div>
+                    <div style="font-size:0.68rem;color:rgba(255,255,255,0.32);margin-top:2px;" data-i18n="processing_time">Procesamiento 24 – 48 horas</div>
+                </div>
+            </div>
+            <button onclick="closeWithdrawModal()" style="width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,0.45);font-size:14px;transition:all .18s;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.color='rgba(255,255,255,0.45)'">✕</button>
+        </div>
+
+        <div class="modal-body" style="padding:20px 22px 24px;">
+
+            <!-- Wallets vinculadas -->
+            <div style="background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.18);border-radius:16px;padding:14px 16px;margin-bottom:22px;position:relative;overflow:hidden;">
+                <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(6,182,212,0.35),transparent);"></div>
+                <div style="font-size:0.63rem;font-weight:800;color:rgba(6,182,212,0.78);text-transform:uppercase;letter-spacing:.10em;margin-bottom:12px;display:flex;align-items:center;gap:7px;">
+                    <span style="width:6px;height:6px;border-radius:50%;background:#06b6d4;box-shadow:0 0 7px rgba(6,182,212,0.9);display:inline-block;animation:wdot 2.2s infinite;"></span>
+                    <span data-i18n="linked_addresses">Wallets Vinculadas</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
                     {% if user.wallet_address %}
-                    <span style="font-family: monospace;">{{ user.wallet_address[:6] }}...{{ user.wallet_address[-4:] }}</span>
+                    <span style="font-size:13px;">✅</span>
+                    <span style="font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.42);width:46px;flex-shrink:0;">BEP20</span>
+                    <span style="font-family:monospace;font-size:0.76rem;color:#e2e8f0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);padding:3px 10px;border-radius:8px;">{{ user.wallet_address[:6] }}…{{ user.wallet_address[-4:] }}</span>
+                    <span style="margin-left:auto;font-size:0.58rem;font-weight:800;color:#22c55e;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);padding:2px 8px;border-radius:20px;">ACTIVA</span>
                     {% else %}
-                    <span style="color: #ef4444;" data-i18n="not_linked">Not linked</span>
+                    <span style="font-size:13px;">❌</span>
+                    <span style="font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.42);width:46px;flex-shrink:0;">BEP20</span>
+                    <span style="font-size:0.76rem;color:rgba(255,255,255,0.35);" data-i18n="not_linked">No vinculada</span>
                     {% endif %}
                 </div>
-                <div id="ton-address-status" style="font-size: 0.75rem;">
-                    <span style="color: {% if user.ton_wallet_address %}#22c55e{% else %}#ef4444{% endif %};">
-                        {% if user.ton_wallet_address %}<i data-lucide="check-circle-2" style="width:13px;height:13px;color:#22c55e;vertical-align:middle;"></i>{% else %}<i data-lucide="x-circle" style="width:13px;height:13px;color:#ef4444;vertical-align:middle;"></i>{% endif %}
-                    </span>
-                    TON:
+                <div style="display:flex;align-items:center;gap:10px;padding:7px 0;">
                     {% if user.ton_wallet_address %}
-                    <span style="font-family: monospace;">{{ user.ton_wallet_address[:6] }}...{{ user.ton_wallet_address[-4:] }}</span>
+                    <span style="font-size:13px;">✅</span>
+                    <span style="font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.42);width:46px;flex-shrink:0;">TON</span>
+                    <span style="font-family:monospace;font-size:0.76rem;color:#e2e8f0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);padding:3px 10px;border-radius:8px;">{{ user.ton_wallet_address[:6] }}…{{ user.ton_wallet_address[-4:] }}</span>
+                    <span style="margin-left:auto;font-size:0.58rem;font-weight:800;color:#22c55e;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);padding:2px 8px;border-radius:20px;">ACTIVA</span>
                     {% else %}
-                    <span style="color: #ef4444;" data-i18n="not_linked">Not linked</span>
+                    <span style="font-size:13px;">❌</span>
+                    <span style="font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.42);width:46px;flex-shrink:0;">TON</span>
+                    <span style="font-size:0.76rem;color:rgba(255,255,255,0.35);" data-i18n="not_linked">No vinculada</span>
                     {% endif %}
                 </div>
             </div>
 
             <form id="withdraw-form" onsubmit="submitWithdraw(event)">
-                <div class="input-group">
-                    <label class="input-label" data-i18n="currency">Currency</label>
-                    <select class="input" id="withdraw-method" required onchange="updateWithdrawInfo()">
-                        <option value="" data-i18n="select_currency">Select currency</option>
-                        <option value="USDT">USDT (BEP20) - Min: 0.5 USDT</option>
-                        <option value="DOGE">Dogecoin (BEP20) - Min: 1 DOGE</option>
-                        <option value="TON">TON (TON Network) - Min: 0.1 TON</option>
+
+                <!-- Selector de moneda -->
+                <div style="margin-bottom:22px;">
+                    <label style="display:block;font-size:0.63rem;font-weight:800;color:rgba(255,255,255,0.30);text-transform:uppercase;letter-spacing:.10em;margin-bottom:10px;" data-i18n="currency">Selecciona Moneda</label>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;" id="currency-cards">
+
+                        <!-- USDT -->
+                        <div class="wd-card" data-value="USDT" data-ac="wd-usdt" onclick="selectCurrency('USDT')" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:14px;padding:14px 8px 12px;text-align:center;cursor:pointer;transition:all .22s cubic-bezier(.34,1.3,.64,1);position:relative;overflow:hidden;user-select:none;">
+                            <span class="wd-check" style="position:absolute;top:5px;right:7px;font-size:0.58rem;font-weight:900;display:none;color:rgba(38,161,123,.95);">✓</span>
+                            <div style="width:42px;height:42px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;">
+                                <svg viewBox="0 0 2000 2000" width="42" height="42" xmlns="http://www.w3.org/2000/svg"><circle cx="1000" cy="1000" r="1000" fill="#26A17B"/><path fill="#fff" d="M1123.42 1093.38v-.02c-6.8.49-41.84 2.61-120.11 2.61-62.3 0-106.26-1.89-121.73-2.61v.03c-239.8-10.57-418.84-52.27-418.84-102.49 0-50.2 179.04-91.92 418.84-102.6v163.45c15.7.98 60.7 3.78 122.77 3.78 74.51 0 111.83-3.22 119.07-3.77v-163.43c239.31 10.67 418.03 52.33 418.03 102.54 0 50.19-178.72 91.83-418.03 102.51zm0-221.85v-146.08h334.28V519H542.29v206.45h334.27v146c-271.86 12.44-476.12 66.19-476.12 130.43 0 64.26 204.26 118 476.12 130.44v467.51h246.86v-467.7c271.38-12.41 475.25-66.12 475.25-130.31 0-64.18-203.87-117.91-475.25-130.29z"/></svg>
+                            </div>
+                            <div style="font-size:0.78rem;font-weight:800;color:#fff;letter-spacing:.02em;">USDT</div>
+                            <div style="font-size:0.60rem;color:rgba(255,255,255,0.30);margin-top:3px;">Mín 0.5</div>
+                        </div>
+
+                        <!-- DOGE -->
+                        <div class="wd-card" data-value="DOGE" data-ac="wd-doge" onclick="selectCurrency('DOGE')" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:14px;padding:14px 8px 12px;text-align:center;cursor:pointer;transition:all .22s cubic-bezier(.34,1.3,.64,1);position:relative;overflow:hidden;user-select:none;">
+                            <span class="wd-check" style="position:absolute;top:5px;right:7px;font-size:0.58rem;font-weight:900;display:none;color:rgba(194,145,42,.95);">✓</span>
+                            <div style="width:42px;height:42px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;">
+                                <img src="{{ url_for('static', filename='images/logo_doge.png') }}" width="42" height="42" style="border-radius:50%;object-fit:cover;">
+                            </div>
+                            <div style="font-size:0.78rem;font-weight:800;color:#fff;letter-spacing:.02em;">DOGE</div>
+                            <div style="font-size:0.60rem;color:rgba(255,255,255,0.30);margin-top:3px;">Mín 1</div>
+                        </div>
+
+                        <!-- TON -->
+                        <div class="wd-card" data-value="TON" data-ac="wd-ton" onclick="selectCurrency('TON')" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:14px;padding:14px 8px 12px;text-align:center;cursor:pointer;transition:all .22s cubic-bezier(.34,1.3,.64,1);position:relative;overflow:hidden;user-select:none;">
+                            <span class="wd-check" style="position:absolute;top:5px;right:7px;font-size:0.58rem;font-weight:900;display:none;color:rgba(0,152,234,.95);">✓</span>
+                            <div style="width:42px;height:42px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;">
+                                <img src="{{ url_for('static', filename='images/logo_ton.jpg') }}" width="42" height="42" style="border-radius:50%;object-fit:cover;">
+                            </div>
+                            <div style="font-size:0.78rem;font-weight:800;color:#fff;letter-spacing:.02em;">TON</div>
+                            <div style="font-size:0.60rem;color:rgba(255,255,255,0.30);margin-top:3px;">Mín 0.1</div>
+                        </div>
+
+                    </div>
+                    <select id="withdraw-method" required onchange="updateWithdrawInfo()" style="display:none;">
+                        <option value=""></option>
+                        <option value="USDT">USDT</option>
+                        <option value="DOGE">DOGE</option>
+                        <option value="TON">TON</option>
                     </select>
                 </div>
 
-                <div class="input-group">
-                    <label class="input-label" data-i18n="amount">Amount</label>
-                    <input type="number" class="input" id="withdraw-amount" placeholder="0.00" step="0.0001" min="0.0001" required>
-                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
-                        <small style="color: var(--color-text-tertiary);" data-i18n="available_balance">Available</small>
-                        <small style="color: var(--color-text-tertiary);" id="withdraw-available-balance">0.00</small>
+                <!-- Cantidad -->
+                <div style="margin-bottom:18px;">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;">
+                        <label style="font-size:0.63rem;font-weight:800;color:rgba(255,255,255,0.30);text-transform:uppercase;letter-spacing:.10em;" data-i18n="amount">Cantidad</label>
+                        <span style="font-size:0.70rem;color:rgba(255,255,255,0.32);" data-i18n="available_balance">Disponible: <span id="withdraw-available-balance" style="font-weight:700;color:#60a5fa;">0.00</span></span>
                     </div>
-                    <button type="button" class="btn btn-secondary" onclick="setMaxAmount()" style="margin-top: 10px; padding: 8px 16px; font-size: 0.8rem;">
-                        MAX
-                    </button>
+                    <div style="display:flex;align-items:stretch;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.10);border-radius:16px;overflow:hidden;transition:border-color .2s,box-shadow .2s;" id="wd-amount-wrap">
+                        <input type="number" id="withdraw-amount" placeholder="0.00" step="0.0001" min="0.0001" required
+                               style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:1.65rem;font-weight:800;padding:14px 16px;letter-spacing:-.02em;min-width:0;"
+                               onfocus="document.getElementById('wd-amount-wrap').style.borderColor='rgba(26,111,255,0.50)';document.getElementById('wd-amount-wrap').style.boxShadow='0 0 0 3px rgba(26,111,255,0.08)'"
+                               onblur="document.getElementById('wd-amount-wrap').style.borderColor='rgba(255,255,255,0.10)';document.getElementById('wd-amount-wrap').style.boxShadow='none'">
+                        <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:center;padding:10px 14px;gap:7px;flex-shrink:0;border-left:1px solid rgba(255,255,255,0.06);">
+                            <span id="wd-cur-tag" style="font-size:0.72rem;font-weight:800;letter-spacing:.05em;padding:3px 10px;border-radius:20px;color:rgba(255,255,255,0.40);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);">—</span>
+                            <button type="button" onclick="setMaxAmount()" style="font-size:0.62rem;font-weight:900;letter-spacing:.06em;color:rgba(255,255,255,0.50);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:8px;padding:4px 10px;cursor:pointer;transition:all .15s;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.color='rgba(255,255,255,0.50)'">MAX</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="withdraw-warning" style="background: rgba(234, 179, 8, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px; display: none;">
-                    <small style="color: #eab308;" id="withdraw-warning-text"></small>
+                <!-- Warning -->
+                <div id="withdraw-warning" style="background:rgba(234,179,8,0.10);border:1px solid rgba(234,179,8,0.25);border-radius:10px;padding:10px 14px;margin-bottom:16px;display:none;">
+                    <small style="color:#eab308;font-size:0.8rem;" id="withdraw-warning-text"></small>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block" id="withdraw-submit-btn" data-i18n="confirm_withdrawal">
-                    Confirm Withdrawal
-                </button>
+                <!-- Confirmar -->
+                <button type="submit" id="withdraw-submit-btn" class="btn btn-primary btn-block"
+                        style="height:54px;font-size:0.92rem;font-weight:900;letter-spacing:.06em;border-radius:16px;margin-bottom:14px;position:relative;overflow:hidden;"
+                        data-i18n="confirm_withdrawal">CONFIRMAR RETIRO</button>
 
-                <p style="font-size: 0.75rem; color: var(--color-text-tertiary); text-align: center; margin-top: var(--space-4);" data-i18n="processing_time">
-                    Processing in 24-48 hours
-                </p>
+                <div style="display:flex;align-items:center;justify-content:center;gap:7px;">
+                    <span style="font-size:12px;opacity:.4;">🔒</span>
+                    <span style="font-size:0.68rem;color:rgba(255,255,255,0.22);" data-i18n="processing_time">Transacción segura y cifrada</span>
+                </div>
+
             </form>
         </div>
     </div>
 </div>
+
+<style>
+@keyframes wdot{0%,100%{opacity:1}50%{opacity:.35}}
+.wd-card:hover{border-color:rgba(255,255,255,0.22)!important;background:rgba(255,255,255,0.07)!important;transform:translateY(-1px);}
+.wd-usdt{border-color:rgba(38,161,123,0.80)!important;background:linear-gradient(160deg,rgba(38,161,123,0.16),rgba(38,161,123,0.06))!important;transform:translateY(-2px) scale(1.04)!important;box-shadow:0 8px 24px rgba(38,161,123,0.25),inset 0 1px 0 rgba(255,255,255,0.06)!important;}
+.wd-doge{border-color:rgba(194,145,42,0.80)!important;background:linear-gradient(160deg,rgba(194,145,42,0.16),rgba(194,145,42,0.06))!important;transform:translateY(-2px) scale(1.04)!important;box-shadow:0 8px 24px rgba(194,145,42,0.25),inset 0 1px 0 rgba(255,255,255,0.06)!important;}
+.wd-ton{border-color:rgba(0,152,234,0.80)!important;background:linear-gradient(160deg,rgba(0,152,234,0.16),rgba(0,152,234,0.06))!important;transform:translateY(-2px) scale(1.04)!important;box-shadow:0 8px 24px rgba(0,152,234,0.25),inset 0 1px 0 rgba(255,255,255,0.06)!important;}
+.wd-usdt .wd-check,.wd-doge .wd-check,.wd-ton .wd-check{display:block!important;}
+</style>
+
+<script>
+const _WD_TAGS = {
+  USDT:{cl:'wd-usdt',color:'#26A17B',bg:'rgba(38,161,123,0.12)',border:'rgba(38,161,123,0.28)'},
+  DOGE:{cl:'wd-doge',color:'#C2912A',bg:'rgba(194,145,42,0.12)',border:'rgba(194,145,42,0.28)'},
+  TON: {cl:'wd-ton', color:'#0098EA',bg:'rgba(0,152,234,0.12)',border:'rgba(0,152,234,0.28)'},
+};
+function selectCurrency(val) {
+    document.querySelectorAll('.wd-card').forEach(c => {
+        c.classList.remove('wd-usdt','wd-doge','wd-ton');
+    });
+    const card = document.querySelector(`.wd-card[data-value="${val}"]`);
+    if (card) card.classList.add(_WD_TAGS[val].cl);
+    const tag = document.getElementById('wd-cur-tag');
+    if (tag) {
+        const t = _WD_TAGS[val];
+        tag.textContent = val;
+        tag.style.color  = t.color;
+        tag.style.background = t.bg;
+        tag.style.border = '1px solid '+t.border;
+    }
+    const sel = document.getElementById('withdraw-method');
+    if (sel) { sel.value = val; sel.dispatchEvent(new Event('change')); }
+}
+</script>
 
 <!-- TON Deposit Modal -->
 <div id="deposit-modal" class="modal-overlay" style="display:none;">
