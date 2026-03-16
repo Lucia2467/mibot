@@ -4505,20 +4505,92 @@ def api_security_search():
 def api_security_user(user_id):
     try:
         from ban_system import get_user_ban_status, get_ban_logs
+        from database import get_user
+        from db import get_cursor
+
         status = get_user_ban_status(user_id)
         if not status:
             return jsonify({'success': False, 'error': 'Usuario no encontrado'}), 404
-        logs = get_ban_logs(user_id=user_id, limit=10)
-        clean_logs = []
-        for l in (logs or []):
-            if isinstance(l, dict):
-                clean_logs.append({
-                    'event_type': l.get('event_type'),
-                    'reason':     l.get('reason'),
-                    'date':       str(l.get('created_at') or ''),
-                })
-        return jsonify({'success': True, 'user': status, 'logs': clean_logs})
+
+        # Enriquecer con datos completos del usuario
+        full_user = get_user(user_id) or {}
+        status['se_balance']       = float(full_user.get('se_balance') or 0)
+        status['created_at']       = str(full_user.get('created_at') or '')
+        status['last_interaction'] = str(full_user.get('last_interaction') or '')
+        status['referral_count']   = int(full_user.get('referral_count') or 0)
+
+        # IP history
+        ip_history = []
+        try:
+            with get_cursor() as cur:
+                cur.execute("""SELECT ip_address, times_seen, last_seen as created_at
+                               FROM user_ips WHERE user_id=%s
+                               ORDER BY last_seen DESC LIMIT 10""", (str(user_id),))
+                rows = cur.fetchall() or []
+                for r in rows:
+                    if isinstance(r, dict):
+                        ip_history.append({
+                            'ip_address': r.get('ip_address'),
+                            'country':    None,
+                            'is_vpn':     False,
+                            'created_at': str(r.get('created_at') or ''),
+                        })
+        except Exception:
+            pass
+
+        # Ban logs → fraud_logs (el template los muestra como fraud_logs)
+        raw_logs = get_ban_logs(user_id=user_id, limit=20) or []
+        ban_logs   = []
+        fraud_logs = []
+        for l in raw_logs:
+            if not isinstance(l, dict):
+                continue
+            entry = {
+                'event_type': l.get('event_type'),
+                'reason':     l.get('reason'),
+                'date':       str(l.get('created_at') or ''),
+            }
+            ban_logs.append(entry)
+            fraud_logs.append({
+                'fraud_type':   l.get('event_type') or 'ban_event',
+                'severity':     'HIGH' if l.get('event_type') == 'ban' else 'MEDIUM',
+                'action_taken': l.get('reason') or '-',
+                'created_at':   str(l.get('created_at') or ''),
+            })
+
+        # Wallet addresses
+        wallet_addresses = []
+        try:
+            with get_cursor() as cur:
+                cur.execute("""SELECT wallet_address, currency, created_at
+                               FROM withdrawals WHERE user_id=%s
+                               GROUP BY wallet_address, currency
+                               ORDER BY MAX(created_at) DESC LIMIT 10""", (str(user_id),))
+                rows = cur.fetchall() or []
+                for r in rows:
+                    if isinstance(r, dict):
+                        wallet_addresses.append({
+                            'wallet_address': r.get('wallet_address'),
+                            'currency':       r.get('currency') or 'USDT',
+                            'created_at':     str(r.get('created_at') or ''),
+                        })
+        except Exception:
+            pass
+
+        return jsonify({
+            'success': True,
+            'details': {
+                'user':               status,
+                'ban_logs':           ban_logs,
+                'fraud_logs':         fraud_logs,
+                'ip_history':         ip_history,
+                'device_fingerprints': [],
+                'wallet_addresses':   wallet_addresses,
+            }
+        })
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
