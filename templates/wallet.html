@@ -256,8 +256,8 @@ SALLY-E | Wallet{% endblock %}
 
             <!-- USDT -->
             <div onclick="selectMethod('USDT')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:linear-gradient(160deg,#0c0c22,#090918,#060616);border-top:2px solid rgba(38,161,123,0.45);border-left:1px solid rgba(38,161,123,0.22);border-right:1px solid rgba(0,0,0,0.80);border-bottom:3px solid rgba(0,0,0,0.95);border-radius:14px;cursor:pointer;box-shadow:0 2px 0 rgba(38,161,123,0.10) inset,0 -3px 0 rgba(0,0,0,0.92) inset,0 6px 18px rgba(0,0,0,0.65);">
-                <div style="width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#26A17B,#1a7a5a);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:12px;box-shadow:0 2px 0 rgba(255,255,255,0.14) inset,0 -2px 0 rgba(0,0,0,0.45) inset;">
-                    <i data-lucide="circle-dollar-sign" style="width:22px;height:22px;color:#fff;"></i>
+                <div style="width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:12px;overflow:hidden;">
+                    <svg viewBox="0 0 2000 2000" width="46" height="46" xmlns="http://www.w3.org/2000/svg"><circle cx="1000" cy="1000" r="1000" fill="#26A17B"/><path fill="#fff" d="M1123.42 1093.38v-.02c-6.8.49-41.84 2.61-120.11 2.61-62.3 0-106.26-1.89-121.73-2.61v.03c-239.8-10.57-418.84-52.27-418.84-102.49 0-50.2 179.04-91.92 418.84-102.6v163.45c15.7.98 60.7 3.78 122.77 3.78 74.51 0 111.83-3.22 119.07-3.77v-163.43c239.31 10.67 418.03 52.33 418.03 102.54 0 50.19-178.72 91.83-418.03 102.51zm0-221.85v-146.08h334.28V519H542.29v206.45h334.27v146c-271.86 12.44-476.12 66.19-476.12 130.43 0 64.26 204.26 118 476.12 130.44v467.51h246.86v-467.7c271.38-12.41 475.25-66.12 475.25-130.31 0-64.18-203.87-117.91-475.25-130.29z"/></svg>
                 </div>
                 <div style="flex:1;">
                     <div style="font-weight:700;font-size:0.95rem;color:#fff;margin-bottom:2px;">USDT (BEP20)</div>
@@ -268,8 +268,8 @@ SALLY-E | Wallet{% endblock %}
 
             <!-- DOGE -->
             <div onclick="selectMethod('DOGE')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:linear-gradient(160deg,#0c0c22,#090918,#060616);border-top:2px solid rgba(201,166,53,0.45);border-left:1px solid rgba(201,166,53,0.22);border-right:1px solid rgba(0,0,0,0.80);border-bottom:3px solid rgba(0,0,0,0.95);border-radius:14px;cursor:pointer;box-shadow:0 2px 0 rgba(201,166,53,0.10) inset,0 -3px 0 rgba(0,0,0,0.92) inset,0 6px 18px rgba(0,0,0,0.65);">
-                <div style="width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#C9A635,#9a7e28);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:12px;box-shadow:0 2px 0 rgba(255,255,255,0.14) inset,0 -2px 0 rgba(0,0,0,0.45) inset;">
-                    <i data-lucide="coins" style="width:22px;height:22px;color:#fff;"></i>
+                <div style="width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:12px;overflow:hidden;">
+                    <img src="{{ url_for('static', filename='images/logo_doge.png') }}" width="46" height="46" style="object-fit:cover;border-radius:12px;">
                 </div>
                 <div style="flex:1;">
                     <div style="font-weight:700;font-size:0.95rem;color:#fff;margin-bottom:2px;">Dogecoin (BEP20)</div>
@@ -280,8 +280,8 @@ SALLY-E | Wallet{% endblock %}
 
             <!-- TON -->
             <div onclick="selectMethod('TON')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:linear-gradient(160deg,#0c0c22,#090918,#060616);border-top:2px solid rgba(0,152,234,0.45);border-left:1px solid rgba(0,152,234,0.22);border-right:1px solid rgba(0,0,0,0.80);border-bottom:3px solid rgba(0,0,0,0.95);border-radius:14px;cursor:pointer;box-shadow:0 2px 0 rgba(0,152,234,0.10) inset,0 -3px 0 rgba(0,0,0,0.92) inset,0 6px 18px rgba(0,0,0,0.65);">
-                <div style="width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#0098EA,#0060b0);border-top:1px solid rgba(255,255,255,0.22);border-bottom:2px solid rgba(0,0,0,0.50);border-radius:12px;box-shadow:0 2px 0 rgba(255,255,255,0.14) inset,0 -2px 0 rgba(0,0,0,0.45) inset;">
-                    <i data-lucide="diamond" style="width:22px;height:22px;color:#fff;"></i>
+                <div style="width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:12px;overflow:hidden;">
+                    <img src="{{ url_for('static', filename='images/logo_ton.jpg') }}" width="46" height="46" style="object-fit:cover;border-radius:12px;">
                 </div>
                 <div style="flex:1;">
                     <div style="font-weight:700;font-size:0.95rem;color:#fff;margin-bottom:2px;">TON (TON Network)</div>
