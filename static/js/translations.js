@@ -95,6 +95,7 @@ const LANG = {
         recent_transactions: "Recent Transactions",
         secure_withdrawals: "Secure Withdrawals",
         secure_transaction: "Secure and encrypted transaction",
+        swap_min_amount: "Invalid amount. Must be greater than or equal to {amount}.",
         withdrawals_info: "Withdrawals are processed within 24-48 hours. Make sure your wallet address is correct.",
         
         // Swap Modal
@@ -102,6 +103,7 @@ const LANG = {
         exchange_rates: "Exchange Rates:",
         convert_to: "Convert to:",
         select_currency: "Select currency",
+        select_currency_first: "Please select a currency first",
         se_amount: "PXC Amount:",
         balance: "Balance",
         you_will_receive: "You will receive:",
@@ -1375,6 +1377,7 @@ const LANG = {
         recent_transactions: "Transacciones Recientes",
         secure_withdrawals: "Retiros Seguros",
         secure_transaction: "Transacción segura y cifrada",
+        swap_min_amount: "Monto incorrecto. Debe ser mayor o igual a {amount}.",
         withdrawals_info: "Los retiros se procesan en 24-48 horas. Asegúrate de que tu dirección de wallet sea correcta.",
         
         // Modal Swap
@@ -1382,6 +1385,7 @@ const LANG = {
         exchange_rates: "Tasas de Cambio:",
         convert_to: "Convertir a:",
         select_currency: "Seleccionar moneda",
+        select_currency_first: "Por favor selecciona una moneda primero",
         se_amount: "Cantidad PXC:",
         balance: "Balance",
         you_will_receive: "Recibirás:",
@@ -2655,6 +2659,7 @@ const LANG = {
         recent_transactions: "Transações Recentes",
         secure_withdrawals: "Saques Seguros",
         secure_transaction: "Transação segura e criptografada",
+        swap_min_amount: "Valor incorreto. Deve ser maior ou igual a {amount}.",
         withdrawals_info: "Os saques são processados em 24-48 horas. Certifique-se de que o endereço da carteira está correto.",
         
         // Modal Swap
@@ -2662,6 +2667,7 @@ const LANG = {
         exchange_rates: "Taxas de Câmbio:",
         convert_to: "Converter para:",
         select_currency: "Selecionar moeda",
+        select_currency_first: "Por favor selecione uma moeda primeiro",
         se_amount: "Quantidade PXC:",
         balance: "Saldo",
         you_will_receive: "Você receberá:",
@@ -3897,6 +3903,7 @@ const LANG = {
         recent_transactions: "Последние Транзакции",
         secure_withdrawals: "Безопасные Выводы",
         secure_transaction: "Безопасная и зашифрованная транзакция",
+        swap_min_amount: "Неверная сумма. Должна быть больше или равна {amount}.",
         withdrawals_info: "Выводы обрабатываются в течение 24-48 часов. Убедитесь, что адрес кошелька правильный.",
         
         // Модальное окно Обмена
@@ -3904,6 +3911,7 @@ const LANG = {
         exchange_rates: "Курсы Обмена:",
         convert_to: "Конвертировать в:",
         select_currency: "Выберите валюту",
+        select_currency_first: "Пожалуйста, сначала выберите валюту",
         se_amount: "Сумма PXC:",
         balance: "Баланс",
         you_will_receive: "Вы получите:",
@@ -5110,6 +5118,7 @@ const LANG = {
         recent_transactions: "المعاملات الأخيرة",
         secure_withdrawals: "سحوبات آمنة",
         secure_transaction: "معاملة آمنة ومشفرة",
+        swap_min_amount: "مبلغ غير صحيح. يجب أن يكون أكبر من أو يساوي {amount}.",
         withdrawals_info: "تتم معالجة السحوبات خلال 24-48 ساعة. تأكد من صحة عنوان محفظتك.",
         
         // نافذة التبديل
@@ -5117,6 +5126,7 @@ const LANG = {
         exchange_rates: "أسعار الصرف:",
         convert_to: "تحويل إلى:",
         select_currency: "اختر العملة",
+        select_currency_first: "يرجى اختيار عملة أولاً",
         se_amount: "مبلغ PXC:",
         balance: "الرصيد",
         you_will_receive: "ستحصل على:",
