@@ -521,21 +521,24 @@ SALLY-E | Wallet{% endblock %}
                 </div>
 
                 <!-- Confirmar -->
-                <button class="btn-pushable" onclick="document.getElementById('swap-form').requestSubmit()">
-                    <span class="btn-edge"></span>
-                    <span class="btn-face">
-                        <span class="glass-reflection"></span>
-                        <span class="glass-prism"></span>
-                        <span class="glass-iglow"></span>
-                        <span class="glass-scan"></span>
-                        <span class="glass-et"></span>
-                        <span class="gc tl"></span><span class="gc tr"></span>
-                        <span class="gc bl"></span><span class="gc br"></span>
-                        <span class="glass-cnt">
-                            <i data-lucide="arrow-left-right" style="width:17px;height:17px;flex-shrink:0;"></i>
-                            <span data-i18n="confirm_swap">CONFIRMAR CAMBIO</span>
-                        </span>
-                    </span>
+                <button type="button" onclick="document.getElementById('swap-form').requestSubmit()" style="
+                    width:100%;padding:15px;
+                    background:linear-gradient(135deg,#0066FF 0%,#0052CC 25%,#00A3FF 50%,#0040FF 75%,#0066FF 100%);
+                    border:none;
+                    border-bottom:1px solid rgba(0,0,0,0.25);
+                    border-radius:14px;
+                    font-size:0.95rem;font-weight:800;letter-spacing:0.06em;color:#fff;
+                    box-shadow:0 1px 0 rgba(255,255,255,0.18) inset,0 4px 18px rgba(0,102,255,0.45),0 1px 3px rgba(0,0,0,0.20);
+                    display:flex;align-items:center;justify-content:center;gap:9px;
+                    cursor:pointer;margin-bottom:14px;
+                    transition:transform 0.15s cubic-bezier(0.34,1.2,0.64,1),box-shadow 0.15s,filter 0.15s;
+                "
+                onmouseover="this.style.filter='brightness(1.10)';this.style.transform='translateY(-1px)';this.style.boxShadow='0 1px 0 rgba(255,255,255,0.22) inset,0 6px 22px rgba(0,102,255,0.55)'"
+                onmouseout="this.style.filter='';this.style.transform='';this.style.boxShadow='0 1px 0 rgba(255,255,255,0.18) inset,0 4px 18px rgba(0,102,255,0.45),0 1px 3px rgba(0,0,0,0.20)'"
+                ontouchstart="this.style.transform='translateY(1px) scale(0.99)';this.style.filter='brightness(0.95)';this.style.boxShadow='0 1px 0 rgba(255,255,255,0.10) inset,0 2px 8px rgba(0,102,255,0.30)'"
+                ontouchend="this.style.transform='';this.style.filter='';this.style.boxShadow=''">
+                    <i data-lucide="arrow-left-right" style="width:19px;height:19px;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.40));"></i>
+                    <span data-i18n="confirm_swap">CONFIRMAR CAMBIO</span>
                 </button>
                 <button type="submit" style="display:none;" data-i18n="confirm_swap">CONFIRMAR CAMBIO</button>
 
@@ -797,21 +800,24 @@ function selectSwapCurrency(val) {
                 </div>
 
                 <!-- Confirmar -->
-                <button class="btn-pushable" id="withdraw-pushable" onclick="document.getElementById('withdraw-form').requestSubmit()">
-                    <span class="btn-edge"></span>
-                    <span class="btn-face">
-                        <span class="glass-reflection"></span>
-                        <span class="glass-prism"></span>
-                        <span class="glass-iglow"></span>
-                        <span class="glass-scan"></span>
-                        <span class="glass-et"></span>
-                        <span class="gc tl"></span><span class="gc tr"></span>
-                        <span class="gc bl"></span><span class="gc br"></span>
-                        <span class="glass-cnt">
-                            <i data-lucide="arrow-up-from-line" style="width:17px;height:17px;flex-shrink:0;"></i>
-                            <span data-i18n="confirm_withdrawal">CONFIRMAR RETIRO</span>
-                        </span>
-                    </span>
+                <button type="button" id="withdraw-pushable" onclick="document.getElementById('withdraw-form').requestSubmit()" style="
+                    width:100%;padding:15px;
+                    background:linear-gradient(135deg,#0066FF 0%,#0052CC 25%,#00A3FF 50%,#0040FF 75%,#0066FF 100%);
+                    border:none;
+                    border-bottom:1px solid rgba(0,0,0,0.25);
+                    border-radius:14px;
+                    font-size:0.95rem;font-weight:800;letter-spacing:0.06em;color:#fff;
+                    box-shadow:0 1px 0 rgba(255,255,255,0.18) inset,0 4px 18px rgba(0,102,255,0.45),0 1px 3px rgba(0,0,0,0.20);
+                    display:flex;align-items:center;justify-content:center;gap:9px;
+                    cursor:pointer;margin-bottom:14px;
+                    transition:transform 0.15s cubic-bezier(0.34,1.2,0.64,1),box-shadow 0.15s,filter 0.15s;
+                "
+                onmouseover="this.style.filter='brightness(1.10)';this.style.transform='translateY(-1px)';this.style.boxShadow='0 1px 0 rgba(255,255,255,0.22) inset,0 6px 22px rgba(0,102,255,0.55)'"
+                onmouseout="this.style.filter='';this.style.transform='';this.style.boxShadow='0 1px 0 rgba(255,255,255,0.18) inset,0 4px 18px rgba(0,102,255,0.45),0 1px 3px rgba(0,0,0,0.20)'"
+                ontouchstart="this.style.transform='translateY(1px) scale(0.99)';this.style.filter='brightness(0.95)';this.style.boxShadow='0 1px 0 rgba(255,255,255,0.10) inset,0 2px 8px rgba(0,102,255,0.30)'"
+                ontouchend="this.style.transform='';this.style.filter='';this.style.boxShadow=''">
+                    <i data-lucide="arrow-up-from-line" style="width:19px;height:19px;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.40));"></i>
+                    <span data-i18n="confirm_withdrawal">CONFIRMAR RETIRO</span>
                 </button>
                 <button type="submit" id="withdraw-submit-btn" style="display:none;" data-i18n="confirm_withdrawal">CONFIRMAR RETIRO</button>
 
