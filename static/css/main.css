@@ -815,7 +815,7 @@ body::after {
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 60px var(--space-4) var(--space-4);
+    padding: 90px var(--space-4) var(--space-4);
     overflow-y: auto;
 }
 
