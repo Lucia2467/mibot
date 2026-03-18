@@ -3687,6 +3687,11 @@ def api_transactions():
                     elif action == 'subtract':
                         tx_type_detected = 'withdrawal'
 
+                    # Retiros se obtienen de la tabla withdrawals con su status real
+                    # No incluir desde balance_history para evitar duplicados con status incorrecto
+                    if tx_type_detected == 'withdrawal':
+                        continue
+
                     transactions.append({
                         'id': row.get('id'),
                         'type': tx_type_detected,
