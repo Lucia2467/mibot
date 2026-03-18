@@ -115,7 +115,7 @@
 </div>
 
 <!-- MODAL -->
-<div id="tx-modal" class="modal-overlay" style="display:none!important">
+<div id="tx-modal" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-header">
       <h3 data-i18n="transaction_details">Transaction Details</h3>
@@ -215,8 +215,8 @@
 .tx-status.failed{color:#FF4466;}
 
 /* MODAL */
-#tx-modal{display:none!important;}
-#tx-modal.show{display:flex!important;}
+div#tx-modal.modal-overlay{display:none!important;}
+div#tx-modal.modal-overlay.show{display:flex!important;}
 .modal-box{background:#161616;border:1px solid rgba(255,255,255,0.08);border-radius:20px;max-width:400px;width:100%;box-shadow:0 40px 100px rgba(0,0,0,0.85);overflow:hidden;}
 .modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.06);}
 .modal-header h3{font-size:0.95rem;font-weight:700;color:#fff;margin:0;}
