@@ -1781,7 +1781,8 @@ function loadDepositHistory() {
                 };
                 var sc = statusColors[dep.status] || "background:rgba(255,255,255,0.06);color:#94a3b8;";
                 var dt = dep.created_at ? new Date(dep.created_at).toLocaleDateString("es-ES",{day:"2-digit",month:"short"}) : "";
-                var statusLabel = dep.status === "credited" ? "Acreditado" : dep.status === "pending" ? "Pendiente" : dep.status === "failed" ? "Fallido" : dep.status;
+                var _tt = window.tt || function(k,fb){return fb||k;};
+                var statusLabel = dep.status === "credited" ? _tt('ton_dep_status_credited','Acreditado') : dep.status === "pending" ? _tt('ton_dep_status_pending','Pendiente') : dep.status === "failed" ? _tt('ton_dep_status_failed','Fallido') : dep.status;
                 return "<div style='display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(0,152,234,0.05);border:1px solid rgba(0,152,234,0.1);border-radius:12px;margin-bottom:8px;'>"
                     + "<div><div style='font-weight:700;color:#38bdf8;'>💎 " + amt + " TON</div>"
                     + "<div style='font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:3px;'>⚡ Auto · " + dt + "</div>"
