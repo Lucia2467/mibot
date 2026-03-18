@@ -426,18 +426,49 @@ async function loadTx() {
             });
 
             // Deduplicar: por id si existe, sino por timestamp+tipo+amount
+            // Para retiros: si hay dos entradas mismo amount+currency+minuto,
+            // quedarse solo con la de estado pending o failed (la más informativa)
+            // y descartar la "completed" duplicada que es el débito interno de PXC
+            const withdrawalMap = {};
+            rawTx.forEach(tx => {
+                if (tx.type !== 'withdrawal') return;
+                const ts = tx.timestamp || tx.date || '';
+                // Clave por minuto (sin segundos) + amount + currency
+                const minute = ts ? ts.slice(0, 16) : '';
+                const wkey = `${minute}_${tx.amount}_${tx.currency || 'SE'}`;
+                if (!withdrawalMap[wkey]) {
+                    withdrawalMap[wkey] = tx;
+                } else {
+                    // Preferir pending/failed sobre completed
+                    const existing = withdrawalMap[wkey];
+                    const isPendOrFail = s => s === 'pending' || s === 'pendiente' || s === 'processing' || s === 'failed' || s === 'rejected';
+                    if (isPendOrFail(tx.status) && !isPendOrFail(existing.status)) {
+                        withdrawalMap[wkey] = tx;
+                    }
+                }
+            });
+
+            // Deduplicar por ID para no-retiros, y usar withdrawalMap para retiros
             const seen = new Set();
+            const usedWkeys = new Set();
             allTx = rawTx.filter(tx => {
-                const key = tx.id
-                    ? String(tx.id)
-                    : `${tx.type}_${tx.amount}_${tx.timestamp || tx.date}_${tx.currency || 'SE'}`;
+                if (tx.type === 'withdrawal') {
+                    const ts = tx.timestamp || tx.date || '';
+                    const minute = ts ? ts.slice(0, 16) : '';
+                    const wkey = `${minute}_${tx.amount}_${tx.currency || 'SE'}`;
+                    if (usedWkeys.has(wkey)) return false;
+                    usedWkeys.add(wkey);
+                    // Solo incluir si es el elegido en withdrawalMap
+                    return withdrawalMap[wkey] === tx;
+                }
+                const key = tx.id ? String(tx.id) : `${tx.type}_${tx.amount}_${tx.timestamp || tx.date}_${tx.currency || 'SE'}`;
                 if (seen.has(key)) return false;
                 seen.add(key);
                 return true;
             });
 
             const types = [...new Set(allTx.map(t => t.type))];
-            console.log('Transaction types found:', types, '| Deduped:', rawTx.length, '->', allTx.length);
+            console.log('Types:', types, '| Raw:', rawTx.length, '-> Deduped:', allTx.length);
             
             applyFilters();
             updateStats();
