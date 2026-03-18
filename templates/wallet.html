@@ -29,18 +29,9 @@
 }
 .stat-card {
     background: linear-gradient(160deg, #0d0d24 0%, #090920 55%, #060618 100%) !important;
-    border-top:  2px solid rgba(60,140,255,0.55) !important;
-    border-left: 1px solid rgba(40,120,255,0.30) !important;
-    border-right:  1px solid rgba(0,0,0,0.85) !important;
-    border-bottom: 4px solid rgba(0,0,0,0.98) !important;
-    border-radius: 18px !important;
-    box-shadow:
-        0 3px 0 rgba(80,150,255,0.14) inset,
-        0 -4px 0 rgba(0,0,0,0.98) inset,
-        0 8px 28px rgba(0,0,0,0.75),
-        0 2px 8px rgba(0,0,0,0.60),
-        0 0 0 1px rgba(50,110,255,0.25),
-        0 0 20px rgba(0,80,255,0.08) !important;
+    border: 1px solid rgba(60,130,255,0.20) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.50) !important;
 }
 .btn-primary {
     background: linear-gradient(180deg, #1a6fff 0%, #0055ee 60%, #003fbf 100%) !important;
@@ -276,13 +267,25 @@ SALLY-E | Wallet{% endblock %}
 
     <!-- ── STATS ── -->
     <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-value">{{ total_withdrawn | default(0) }}</div>
-            <div class="stat-label" data-i18n="withdrawn">Retirado</div>
+        <div class="stat-card" style="padding:14px 16px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <div style="width:28px;height:28px;border-radius:8px;background:rgba(26,111,255,0.15);border:1px solid rgba(26,111,255,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i data-lucide="arrow-up-from-line" style="width:14px;height:14px;color:#4d90ff;"></i>
+                </div>
+                <div style="font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.38);text-transform:uppercase;letter-spacing:.08em;" data-i18n="withdrawn">Retirado</div>
+            </div>
+            <div style="font-size:1.35rem;font-weight:800;color:#fff;letter-spacing:-.01em;line-height:1;">{{ total_withdrawn | default(0) }}</div>
+            <div style="font-size:0.62rem;color:rgba(255,255,255,0.28);margin-top:3px;">PXC</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-value">{{ total_earned | default(0) }}</div>
-            <div class="stat-label" data-i18n="earned">Ganado</div>
+        <div class="stat-card" style="padding:14px 16px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <div style="width:28px;height:28px;border-radius:8px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i data-lucide="trending-up" style="width:14px;height:14px;color:#22c55e;"></i>
+                </div>
+                <div style="font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.38);text-transform:uppercase;letter-spacing:.08em;" data-i18n="earned">Ganado</div>
+            </div>
+            <div style="font-size:1.35rem;font-weight:800;color:#fff;letter-spacing:-.01em;line-height:1;">{{ total_earned | default(0) }}</div>
+            <div style="font-size:0.62rem;color:rgba(255,255,255,0.28);margin-top:3px;">PXC</div>
         </div>
     </div>
 
