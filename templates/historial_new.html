@@ -4,140 +4,146 @@
 
 {% block content %}
 <div class="history-app" id="historial-page">
-    <!-- Header -->
-    <header class="history-header">
-        <div class="header-content">
-            <div class="header-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+    <!-- ── HERO HEADER ── -->
+    <div class="h-hero">
+        <div class="h-hero-left">
+            <div class="h-hero-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/>
                 </svg>
             </div>
-            <div class="header-text">
-                <h1 data-i18n="history_title">Transaction History</h1>
-                <p data-i18n="history_subtitle">All your financial activities</p>
+            <div>
+                <div class="h-hero-title" data-i18n="history_title">Transaction History</div>
+                <div class="h-hero-sub" data-i18n="history_subtitle">All your financial activities</div>
             </div>
         </div>
-        <button class="refresh-btn" onclick="refreshTransactions()" title="Refresh">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>
+        <button class="h-refresh" onclick="refreshTransactions()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+                <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>
             </svg>
         </button>
-    </header>
+    </div>
 
-    <!-- Stats -->
-    <section class="stats-row">
-        <div class="stat-card income">
-            <div class="stat-icon income">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 15 6-6 6 6"/></svg>
+    <!-- ── STATS CARD ── -->
+    <div class="h-stats-card">
+        <div class="h-stat-item">
+            <div class="h-stat-icon h-green">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
             </div>
-            <div class="stat-data">
-                <span class="stat-label" data-i18n="total_received">Total Received</span>
-                <span class="stat-value income" id="total-received">+0.0000</span>
+            <div class="h-stat-body">
+                <div class="h-stat-label" data-i18n="total_received">Total Received</div>
+                <div class="h-stat-val h-green" id="total-received">+0.0000</div>
             </div>
         </div>
-        <div class="stat-card expense">
-            <div class="stat-icon expense">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        <div class="h-stat-divider"></div>
+        <div class="h-stat-item">
+            <div class="h-stat-icon h-red">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
             </div>
-            <div class="stat-data">
-                <span class="stat-label" data-i18n="total_sent">Total Sent</span>
-                <span class="stat-value expense" id="total-sent">-0.0000</span>
+            <div class="h-stat-body">
+                <div class="h-stat-label" data-i18n="total_sent">Total Sent</div>
+                <div class="h-stat-val h-red" id="total-sent">-0.0000</div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Currency Filter -->
-    <section class="filter-section">
-        <div class="section-label">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M6 12h12"/></svg>
+    <!-- ── CURRENCY TABS ── -->
+    <div class="h-section">
+        <div class="h-section-head">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M6 12h12"/></svg>
             <span data-i18n="select_currency">Currency</span>
         </div>
-        <div class="currency-tabs">
-            <button class="curr-tab active" data-currency="all" onclick="filterByCurrency('all')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>
+        <div class="h-curr-row">
+            <button class="h-curr active" data-currency="all" onclick="filterByCurrency('all')">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>
                 <span data-i18n="all_currencies">All</span>
             </button>
-            <button class="curr-tab" data-currency="SE" onclick="filterByCurrency('SE')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                <span>S-E</span>
+            <button class="h-curr" data-currency="SE" onclick="filterByCurrency('SE')">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <span>PXC</span>
             </button>
-            <button class="curr-tab" data-currency="DOGE" onclick="filterByCurrency('DOGE')">
-                <span class="curr-letter">D</span>
+            <button class="h-curr" data-currency="DOGE" onclick="filterByCurrency('DOGE')">
+                <img src="{{ url_for('static', filename='images/logo_doge.png') }}" width="14" height="14" style="border-radius:50%;object-fit:cover;flex-shrink:0;">
                 <span>DOGE</span>
             </button>
-            <button class="curr-tab" data-currency="TON" onclick="filterByCurrency('TON')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.7 10.3a2.41 2.41 0 0 0 0 3.41l7.59 7.59a2.41 2.41 0 0 0 3.41 0l7.59-7.59a2.41 2.41 0 0 0 0-3.41l-7.59-7.59a2.41 2.41 0 0 0-3.41 0Z"/></svg>
+            <button class="h-curr" data-currency="TON" onclick="filterByCurrency('TON')">
+                <img src="{{ url_for('static', filename='images/logo_ton.jpg') }}" width="14" height="14" style="border-radius:50%;object-fit:cover;flex-shrink:0;">
                 <span>TON</span>
             </button>
-            <button class="curr-tab" data-currency="USDT" onclick="filterByCurrency('USDT')">
-                <span class="curr-letter">$</span>
+            <button class="h-curr" data-currency="USDT" onclick="filterByCurrency('USDT')">
+                <svg viewBox="0 0 2000 2000" width="14" height="14"><circle cx="1000" cy="1000" r="1000" fill="#26A17B"/><path fill="#fff" d="M1123.42 1093.38v-.02c-6.8.49-41.84 2.61-120.11 2.61-62.3 0-106.26-1.89-121.73-2.61v.03c-239.8-10.57-418.84-52.27-418.84-102.49 0-50.2 179.04-91.92 418.84-102.6v163.45c15.7.98 60.7 3.78 122.77 3.78 74.51 0 111.83-3.22 119.07-3.77v-163.43c239.31 10.67 418.03 52.33 418.03 102.54 0 50.19-178.72 91.83-418.03 102.51zm0-221.85v-146.08h334.28V519H542.29v206.45h334.27v146c-271.86 12.44-476.12 66.19-476.12 130.43 0 64.26 204.26 118 476.12 130.44v467.51h246.86v-467.7c271.38-12.41 475.25-66.12 475.25-130.31 0-64.18-203.87-117.91-475.25-130.29z"/></svg>
                 <span>USDT</span>
             </button>
         </div>
-    </section>
+    </div>
 
-    <!-- Type Filter -->
-    <section class="filter-section">
-        <div class="section-label">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-            <span data-i18n="filter_type">Filter</span>
+    <!-- ── TYPE FILTER ── -->
+    <div class="h-section">
+        <div class="h-section-head">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            <span data-i18n="filter_type">Type</span>
         </div>
-        <div class="type-chips" style="flex-wrap: wrap;">
-            <button class="type-chip active" data-filter="all" onclick="filterByType('all')" data-i18n="all">All</button>
-            <button class="type-chip" data-filter="mining" onclick="filterByType('mining')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="m3 22 6-6"/><path d="m15 8-6.5 6.5"/><path d="M8.5 2.5 3 8l2 2 5.5-5.5-2-2z"/><path d="m18 12 3.5-3.5-2-2L16 10"/></svg> <span data-i18n="filter_mining">Mining</span></button>
-            <button class="type-chip" data-filter="deposit" onclick="filterByType('deposit')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M8 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4"/></svg> <span data-i18n="filter_deposit">Deposit</span></button>
-            <button class="type-chip" data-filter="withdrawal" onclick="filterByType('withdrawal')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 21V9"/><path d="m8 13 4-4 4 4"/><path d="M8 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4"/></svg> <span data-i18n="filter_withdrawal">Withdrawal</span></button>
-            <button class="type-chip" data-filter="swap" onclick="filterByType('swap')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg> <span data-i18n="filter_swap">Swap</span></button>
-            <button class="type-chip" data-filter="task" onclick="filterByType('task')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> <span data-i18n="filter_task">Task</span></button>
-            <button class="type-chip" data-filter="game" onclick="filterByType('game')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg> <span data-i18n="filter_game">Game</span></button>
-            <button class="type-chip" data-filter="commission" onclick="filterByType('commission')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> <span data-i18n="filter_commission">Commission</span></button>
-            <button class="type-chip" data-filter="ad_reward" onclick="filterByType('ad_reward')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg> <span data-i18n="filter_ads">Ads</span></button>
+        <div class="h-chips">
+            <button class="h-chip active" data-filter="all" onclick="filterByType('all')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg><span data-i18n="all">All</span></button>
+            <button class="h-chip" data-filter="mining" onclick="filterByType('mining')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="m3 22 6-6"/><path d="m15 8-6.5 6.5"/><path d="M8.5 2.5 3 8l2 2 5.5-5.5-2-2z"/><path d="m18 12 3.5-3.5-2-2L16 10"/></svg> <span data-i18n="filter_mining">Mining</span></button>
+            <button class="h-chip" data-filter="deposit" onclick="filterByType('deposit')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M8 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4"/></svg> <span data-i18n="filter_deposit">Deposit</span></button>
+            <button class="h-chip" data-filter="withdrawal" onclick="filterByType('withdrawal')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 21V9"/><path d="m8 13 4-4 4 4"/><path d="M8 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4"/></svg> <span data-i18n="filter_withdrawal">Withdrawal</span></button>
+            <button class="h-chip" data-filter="swap" onclick="filterByType('swap')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg> <span data-i18n="filter_swap">Swap</span></button>
+            <button class="h-chip" data-filter="task" onclick="filterByType('task')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> <span data-i18n="filter_task">Task</span></button>
+            <button class="h-chip" data-filter="game" onclick="filterByType('game')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg> <span data-i18n="filter_game">Game</span></button>
+            <button class="h-chip" data-filter="commission" onclick="filterByType('commission')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> <span data-i18n="filter_commission">Commission</span></button>
+            <button class="h-chip" data-filter="ad_reward" onclick="filterByType('ad_reward')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg> <span data-i18n="filter_ads">Ads</span></button>
         </div>
-    </section>
+    </div>
 
-    <!-- Transactions -->
-    <section class="tx-section">
-        <div class="section-label">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
-            <span data-i18n="recent_transactions">Transactions</span>
-            <span class="tx-count" id="tx-count"></span>
+    <!-- ── TRANSACTIONS ── -->
+    <div class="h-tx-section">
+        <div class="h-tx-header">
+            <div class="h-section-head">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                <span data-i18n="recent_transactions">Transactions</span>
+            </div>
+            <span class="h-tx-count" id="tx-count"></span>
         </div>
 
-        <div id="loading-state" class="state-box">
-            <div class="spinner"></div>
+        <div id="loading-state" class="h-state">
+            <div class="h-spinner"></div>
             <p data-i18n="loading_transactions">Loading...</p>
         </div>
 
-        <div id="empty-state" class="state-box" style="display:none;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
-            <p class="empty-title" data-i18n="no_transactions">No transactions</p>
-            <p class="empty-sub" data-i18n="transactions_appear_here">Your transactions will appear here</p>
+        <div id="empty-state" class="h-state" style="display:none;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            <p class="h-empty-title" data-i18n="no_transactions">No transactions</p>
+            <p class="h-empty-sub" data-i18n="transactions_appear_here">Your transactions will appear here</p>
         </div>
 
         <div id="transactions-list" class="tx-list"></div>
 
-        <div id="load-more-box" style="display:none;">
-            <button class="load-more-btn" onclick="loadMore()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        <div id="load-more-box" style="display:none;text-align:center;margin-top:12px;">
+            <button class="h-load-more" onclick="loadMore()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
                 <span data-i18n="load_more">Load More</span>
             </button>
         </div>
-    </section>
+    </div>
 
-    <!-- Export -->
-    <section class="export-card">
-        <div class="export-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    <!-- ── EXPORT ── -->
+    <div class="h-export">
+        <div class="h-export-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </div>
-        <div class="export-text">
-            <h3 data-i18n="export_history">Export History</h3>
-            <p data-i18n="download_csv">Download as CSV</p>
+        <div class="h-export-text">
+            <div class="h-export-title" data-i18n="export_history">Export History</div>
+            <div class="h-export-sub" data-i18n="download_csv">Download as CSV</div>
         </div>
-        <button class="export-btn" onclick="exportCSV()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+        <button class="h-export-btn" onclick="exportCSV()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
             <span data-i18n="export">Export</span>
         </button>
-    </section>
+    </div>
+
 </div>
 
 <!-- Modal -->
@@ -155,368 +161,130 @@
 
 <style>
 /* ═══════════════════════════════════════
-   HISTORY APP — PREMIUM DARK UI
-   Nivel: Binance / Coinbase / Trust Wallet
+   HISTORY APP — PREMIUM DARK UI v2
 ═══════════════════════════════════════ */
-* { box-sizing: border-box; }
+*{box-sizing:border-box;}
+.history-app{max-width:500px;margin:0 auto;padding:16px 16px 100px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;}
 
-.history-app {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 16px 16px 100px;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-}
+/* HERO */
+.h-hero{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.h-hero-left{display:flex;align-items:center;gap:12px;}
+.h-hero-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(145deg,#0066FF,#0044cc);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 6px 16px rgba(0,102,255,0.35),inset 0 1px 0 rgba(255,255,255,0.18);flex-shrink:0;}
+.h-hero-title{font-size:1.10rem;font-weight:800;color:#fff;letter-spacing:-.02em;}
+.h-hero-sub{font-size:0.68rem;color:rgba(255,255,255,0.35);margin-top:2px;}
+.h-refresh{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.45);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}
+.h-refresh:hover{background:rgba(0,102,255,0.12);border-color:rgba(0,102,255,0.22);color:#4d90ff;}
 
-/* ── HEADER ── */
-.history-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
+/* STATS CARD */
+.h-stats-card{display:flex;align-items:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:16px 20px;margin-bottom:20px;position:relative;overflow:hidden;}
+.h-stats-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,102,255,0.30),transparent);}
+.h-stat-item{display:flex;align-items:center;gap:12px;flex:1;}
+.h-stat-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.h-stat-icon.h-green{background:rgba(0,232,122,0.10);color:#00e87a;}
+.h-stat-icon.h-red{background:rgba(255,68,102,0.10);color:#FF4466;}
+.h-stat-body{display:flex;flex-direction:column;}
+.h-stat-label{font-size:0.60rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.32);margin-bottom:3px;}
+.h-stat-val{font-size:1.05rem;font-weight:800;letter-spacing:-.01em;}
+.h-stat-val.h-green{color:#00e87a;}
+.h-stat-val.h-red{color:#FF4466;}
+.h-stat-divider{width:1px;height:36px;background:rgba(255,255,255,0.07);margin:0 20px;}
 
-.header-content { display: flex; align-items: center; gap: 12px; }
+/* SECTION HEADERS */
+.h-section{margin-bottom:16px;}
+.h-section-head{display:flex;align-items:center;gap:6px;font-size:0.60rem;font-weight:800;text-transform:uppercase;letter-spacing:.10em;color:rgba(255,255,255,0.28);margin-bottom:10px;}
+.h-section-head svg{opacity:.50;}
 
-.header-icon {
-    width: 42px; height: 42px;
-    border-radius: 12px;
-    background: linear-gradient(145deg, #0066FF, #0044cc);
-    display: flex; align-items: center; justify-content: center;
-    color: white;
-    box-shadow: 0 6px 16px rgba(0,102,255,0.35), inset 0 1px 0 rgba(255,255,255,0.20);
-}
+/* CURRENCY ROW */
+.h-curr-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.h-curr-row::-webkit-scrollbar{display:none;}
+.h-curr{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:22px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.52);font-size:0.74rem;font-weight:700;white-space:nowrap;cursor:pointer;transition:all .2s;}
+.h-curr:hover{background:rgba(255,255,255,0.08);color:#fff;}
+.h-curr.active{background:linear-gradient(135deg,#0066FF,#0044cc);border-color:transparent;color:#fff;box-shadow:0 3px 10px rgba(0,102,255,0.35);}
+.h-curr[data-currency="SE"].active{background:linear-gradient(135deg,#00cfff,#0066cc);box-shadow:0 3px 10px rgba(0,200,255,0.28);}
+.h-curr[data-currency="DOGE"].active{background:linear-gradient(135deg,#c9a635,#e6be44);box-shadow:0 3px 10px rgba(201,166,53,0.28);}
+.h-curr[data-currency="TON"].active{background:linear-gradient(135deg,#0098EA,#006bb0);box-shadow:0 3px 10px rgba(0,152,234,0.28);}
+.h-curr[data-currency="USDT"].active{background:linear-gradient(135deg,#26A17B,#1a7a5c);box-shadow:0 3px 10px rgba(38,161,123,0.28);}
 
-.header-text h1 {
-    font-size: 1.15rem; font-weight: 800;
-    color: #fff; margin: 0; letter-spacing: -.02em;
-}
-.header-text p {
-    font-size: 0.70rem; color: rgba(255,255,255,0.38); margin: 2px 0 0;
-}
+/* TYPE CHIPS */
+.h-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.h-chip{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:18px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.48);font-size:0.71rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.h-chip svg{opacity:.60;}
+.h-chip:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.80);}
+.h-chip:hover svg{opacity:1;}
+.h-chip.active{background:rgba(0,102,255,0.13);border-color:rgba(0,102,255,0.28);color:#5599ff;font-weight:700;}
+.h-chip.active svg{opacity:1;}
 
-.refresh-btn {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.50);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.2s;
-}
-.refresh-btn:hover {
-    background: rgba(0,102,255,0.12);
-    border-color: rgba(0,102,255,0.25);
-    color: #4d90ff;
-}
+/* TRANSACTIONS */
+.h-tx-section{margin-bottom:16px;}
+.h-tx-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.h-tx-count{font-size:0.62rem;font-weight:700;padding:2px 8px;background:rgba(0,102,255,0.10);border:1px solid rgba(0,102,255,0.18);border-radius:20px;color:#4d90ff;}
+.h-state{text-align:center;padding:36px 20px;color:rgba(255,255,255,0.32);}
+.h-spinner{width:30px;height:30px;border:2.5px solid rgba(255,255,255,0.07);border-top-color:#0066FF;border-radius:50%;margin:0 auto 14px;animation:h-spin 0.8s linear infinite;}
+@keyframes h-spin{to{transform:rotate(360deg);}}
+.h-empty-title{font-size:0.88rem;color:rgba(255,255,255,0.55);margin:10px 0 4px;}
+.h-empty-sub{font-size:0.72rem;}
+.h-load-more{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:22px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.55);font-size:0.73rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.h-load-more:hover{background:rgba(0,102,255,0.10);border-color:rgba(0,102,255,0.18);color:#4d90ff;}
 
-/* ── STATS ── */
-.stats-row {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; margin-bottom: 20px;
-}
+/* EXPORT */
+.h-export{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(0,102,255,0.05);border:1px solid rgba(0,102,255,0.10);margin-top:16px;}
+.h-export-icon{width:36px;height:36px;border-radius:10px;background:rgba(0,102,255,0.10);display:flex;align-items:center;justify-content:center;color:#4d90ff;flex-shrink:0;}
+.h-export-text{flex:1;}
+.h-export-title{font-size:0.82rem;font-weight:700;color:#fff;}
+.h-export-sub{font-size:0.68rem;color:rgba(255,255,255,0.35);margin-top:2px;}
+.h-export-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:10px;background:rgba(0,102,255,0.16);border:1px solid rgba(0,102,255,0.28);color:#5599ff;font-size:0.72rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.h-export-btn:hover{background:rgba(0,102,255,0.26);}
 
-.stat-card {
-    position: relative;
-    border-radius: 16px;
-    padding: 14px 16px;
-    display: flex; align-items: center; gap: 12px;
-    overflow: hidden;
-    transition: transform .18s;
-}
-.stat-card:active { transform: scale(0.98); }
+/* TX LIST */
+.tx-list{display:flex;flex-direction:column;gap:6px;}
+.tx-item{display:flex;align-items:center;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.055);cursor:pointer;transition:all .18s;position:relative;overflow:hidden;}
+.tx-item::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:2.5px;border-radius:2px;opacity:0;transition:opacity .2s;}
+.tx-item:hover{background:rgba(255,255,255,0.055);border-color:rgba(0,102,255,0.14);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,0.22);}
+.tx-item:hover::before{opacity:1;background:#0066FF;}
+.tx-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-right:12px;flex-shrink:0;}
+.tx-icon.mining{background:rgba(0,255,136,0.10);color:#00FF88;}
+.tx-icon.referral{background:rgba(0,82,204,0.12);color:#5599ff;}
+.tx-icon.commission{background:rgba(16,185,129,0.12);color:#10B981;}
+.tx-icon.invitation{background:rgba(59,130,246,0.12);color:#60a5fa;}
+.tx-icon.task{background:rgba(255,184,0,0.10);color:#FFB800;}
+.tx-icon.withdrawal{background:rgba(255,51,102,0.10);color:#FF4466;}
+.tx-icon.deposit{background:rgba(0,152,234,0.10);color:#0098EA;}
+.tx-icon.upgrade{background:rgba(0,220,255,0.10);color:#00D4FF;}
+.tx-icon.swap{background:rgba(6,182,212,0.10);color:#06B6D4;}
+.tx-icon.promo{background:rgba(168,85,247,0.10);color:#a855f7;}
+.tx-icon.game{background:rgba(255,184,0,0.10);color:#FFB800;}
+.tx-icon.bonus{background:rgba(0,82,204,0.10);color:#5599ff;}
+.tx-icon.ad_reward{background:rgba(245,158,11,0.10);color:#F59E0B;}
+.tx-icon.penalty{background:rgba(239,68,68,0.10);color:#EF4444;}
+.tx-icon.refund{background:rgba(34,197,94,0.10);color:#22C55E;}
+.tx-icon.mining_machine{background:rgba(168,85,247,0.10);color:#A855F7;}
+.tx-icon.other{background:rgba(156,163,175,0.10);color:#9CA3AF;}
+.tx-info{flex:1;min-width:0;}
+.tx-type{font-size:0.84rem;font-weight:700;color:#fff;margin-bottom:3px;display:flex;align-items:center;gap:6px;}
+.tx-curr{font-size:0.57rem;padding:1px 5px;border-radius:5px;font-weight:800;letter-spacing:.03em;}
+.tx-curr.SE{background:rgba(0,220,255,0.12);color:#00cfff;}
+.tx-curr.DOGE{background:rgba(201,166,53,0.12);color:#C9A635;}
+.tx-curr.TON{background:rgba(0,152,234,0.12);color:#0098EA;}
+.tx-curr.USDT{background:rgba(38,161,123,0.12);color:#26A17B;}
+.tx-date{font-size:0.67rem;color:rgba(255,255,255,0.33);}
+.tx-amount{text-align:right;flex-shrink:0;}
+.tx-value{font-size:0.88rem;font-weight:800;letter-spacing:-.01em;}
+.tx-value.pos{color:#00e87a;}
+.tx-value.neg{color:#FF4466;}
+.tx-status{font-size:0.58rem;margin-top:3px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+.tx-status.pending{color:#FFB800;}
+.tx-status.completed{color:rgba(0,232,122,0.65);}
+.tx-status.failed{color:#FF4466;}
 
-.stat-card.income {
-    background: linear-gradient(135deg, rgba(0,255,136,0.08) 0%, rgba(0,200,100,0.04) 100%);
-    border: 1px solid rgba(0,255,136,0.14);
-}
-.stat-card.expense {
-    background: linear-gradient(135deg, rgba(255,51,102,0.08) 0%, rgba(200,0,60,0.04) 100%);
-    border: 1px solid rgba(255,51,102,0.14);
-}
-
-.stat-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 1px;
-}
-.stat-card.income::before { background: linear-gradient(90deg, transparent, rgba(0,255,136,0.35), transparent); }
-.stat-card.expense::before { background: linear-gradient(90deg, transparent, rgba(255,51,102,0.35), transparent); }
-
-.stat-icon {
-    width: 34px; height: 34px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-}
-.stat-icon.income { background: rgba(0,255,136,0.14); color: #00FF88; }
-.stat-icon.expense { background: rgba(255,51,102,0.14); color: #FF3366; }
-
-.stat-data { display: flex; flex-direction: column; min-width: 0; }
-
-.stat-label {
-    font-size: 0.62rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: .08em;
-    color: rgba(255,255,255,0.38); margin-bottom: 3px;
-}
-.stat-value { font-size: 1.05rem; font-weight: 800; letter-spacing: -.01em; }
-.stat-value.income { color: #00FF88; }
-.stat-value.expense { color: #FF4466; }
-
-/* ── SECTIONS ── */
-.filter-section, .tx-section { margin-bottom: 18px; }
-
-.section-label {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 0.65rem; font-weight: 800;
-    text-transform: uppercase; letter-spacing: .10em;
-    color: rgba(255,255,255,0.30);
-    margin-bottom: 10px;
-}
-.section-label svg { opacity: 0.45; }
-
-.tx-count {
-    margin-left: auto;
-    font-size: 0.65rem; font-weight: 700;
-    padding: 2px 8px;
-    background: rgba(0,102,255,0.12);
-    border: 1px solid rgba(0,102,255,0.20);
-    border-radius: 20px; color: #4d90ff;
-}
-
-/* ── CURRENCY TABS ── */
-.currency-tabs {
-    display: flex; gap: 6px;
-    overflow-x: auto; padding-bottom: 2px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-}
-.currency-tabs::-webkit-scrollbar { display: none; }
-
-.curr-tab {
-    display: flex; align-items: center; gap: 5px;
-    padding: 7px 14px;
-    border-radius: 22px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
-    color: rgba(255,255,255,0.55);
-    font-size: 0.75rem; font-weight: 700;
-    white-space: nowrap; cursor: pointer;
-    transition: all 0.2s;
-}
-.curr-tab:hover { background: rgba(255,255,255,0.08); color: #fff; }
-
-.curr-tab.active {
-    background: linear-gradient(135deg, #0066FF, #0044cc);
-    border-color: transparent; color: white;
-    box-shadow: 0 3px 10px rgba(0,102,255,0.35);
-}
-.curr-tab[data-currency="SE"].active  { background: linear-gradient(135deg,#00cfff,#0066cc); box-shadow: 0 3px 10px rgba(0,200,255,0.30); }
-.curr-tab[data-currency="DOGE"].active { background: linear-gradient(135deg,#c9a635,#e6be44); box-shadow: 0 3px 10px rgba(201,166,53,0.30); }
-.curr-tab[data-currency="TON"].active  { background: linear-gradient(135deg,#0098EA,#006bb0); box-shadow: 0 3px 10px rgba(0,152,234,0.30); }
-.curr-tab[data-currency="USDT"].active { background: linear-gradient(135deg,#26A17B,#1a7a5c); box-shadow: 0 3px 10px rgba(38,161,123,0.30); }
-
-.curr-letter {
-    width: 16px; height: 16px; border-radius: 4px;
-    background: rgba(255,255,255,0.12);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.65rem; font-weight: 800;
-}
-
-/* ── TYPE CHIPS ── */
-.type-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-
-.type-chip {
-    display: flex; align-items: center; gap: 5px;
-    padding: 6px 12px; border-radius: 18px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
-    color: rgba(255,255,255,0.50);
-    font-size: 0.72rem; font-weight: 600;
-    cursor: pointer; transition: all 0.2s;
-}
-.type-chip svg { opacity: 0.70; }
-.type-chip:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.80); }
-.type-chip:hover svg { opacity: 1; }
-.type-chip.active {
-    background: rgba(0,102,255,0.14);
-    border-color: rgba(0,102,255,0.30);
-    color: #5599ff; font-weight: 700;
-}
-.type-chip.active svg { opacity: 1; }
-
-/* ── LOADING / EMPTY ── */
-.state-box { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.35); }
-.spinner {
-    width: 32px; height: 32px;
-    border: 2.5px solid rgba(255,255,255,0.08);
-    border-top-color: #0066FF;
-    border-radius: 50%; margin: 0 auto 14px;
-    animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.empty-title { font-size: 0.90rem; color: rgba(255,255,255,0.60); margin: 10px 0 4px; }
-.empty-sub { font-size: 0.75rem; }
-
-/* ── TRANSACTION LIST ── */
-.tx-list { display: flex; flex-direction: column; gap: 6px; }
-
-.tx-item {
-    display: flex; align-items: center;
-    padding: 12px 14px;
-    border-radius: 14px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.055);
-    cursor: pointer;
-    transition: all 0.18s;
-    position: relative; overflow: hidden;
-}
-.tx-item::before {
-    content: ''; position: absolute;
-    left: 0; top: 20%; bottom: 20%;
-    width: 2px; border-radius: 2px;
-    opacity: 0; transition: opacity .2s;
-}
-.tx-item:hover {
-    background: rgba(255,255,255,0.055);
-    border-color: rgba(0,102,255,0.15);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-}
-.tx-item:hover::before { opacity: 1; background: #0066FF; }
-
-.tx-icon {
-    width: 38px; height: 38px; border-radius: 11px;
-    display: flex; align-items: center; justify-content: center;
-    margin-right: 12px; flex-shrink: 0;
-    font-size: 1rem;
-}
-
-.tx-icon.mining         { background: rgba(0,255,136,0.10); color: #00FF88; }
-.tx-icon.referral       { background: rgba(0,82,204,0.12);  color: #5599ff; }
-.tx-icon.commission     { background: rgba(16,185,129,0.12); color: #10B981; }
-.tx-icon.invitation     { background: rgba(59,130,246,0.12); color: #60a5fa; }
-.tx-icon.task           { background: rgba(255,184,0,0.10);  color: #FFB800; }
-.tx-icon.withdrawal     { background: rgba(255,51,102,0.10); color: #FF4466; }
-.tx-icon.deposit        { background: rgba(0,152,234,0.10);  color: #0098EA; }
-.tx-icon.upgrade        { background: rgba(0,220,255,0.10);  color: #00D4FF; }
-.tx-icon.swap           { background: rgba(6,182,212,0.10);  color: #06B6D4; }
-.tx-icon.promo          { background: rgba(168,85,247,0.10); color: #a855f7; }
-.tx-icon.game           { background: rgba(255,184,0,0.10);  color: #FFB800; }
-.tx-icon.bonus          { background: rgba(0,82,204,0.10);   color: #5599ff; }
-.tx-icon.ad_reward      { background: rgba(245,158,11,0.10); color: #F59E0B; }
-.tx-icon.penalty        { background: rgba(239,68,68,0.10);  color: #EF4444; }
-.tx-icon.refund         { background: rgba(34,197,94,0.10);  color: #22C55E; }
-.tx-icon.mining_machine { background: rgba(168,85,247,0.10); color: #A855F7; }
-.tx-icon.other          { background: rgba(156,163,175,0.10);color: #9CA3AF; }
-
-.tx-info { flex: 1; min-width: 0; }
-
-.tx-type {
-    font-size: 0.84rem; font-weight: 700; color: #fff;
-    margin-bottom: 3px;
-    display: flex; align-items: center; gap: 6px;
-}
-
-.tx-curr {
-    font-size: 0.58rem; padding: 1px 5px;
-    border-radius: 5px; font-weight: 800;
-    letter-spacing: .03em;
-}
-.tx-curr.SE   { background: rgba(0,220,255,0.12); color: #00cfff; }
-.tx-curr.DOGE { background: rgba(201,166,53,0.12); color: #C9A635; }
-.tx-curr.TON  { background: rgba(0,152,234,0.12); color: #0098EA; }
-.tx-curr.USDT { background: rgba(38,161,123,0.12); color: #26A17B; }
-
-.tx-date { font-size: 0.68rem; color: rgba(255,255,255,0.35); }
-
-.tx-amount { text-align: right; flex-shrink: 0; }
-
-.tx-value { font-size: 0.88rem; font-weight: 800; letter-spacing: -.01em; }
-.tx-value.pos { color: #00e87a; }
-.tx-value.neg { color: #FF4466; }
-
-.tx-status { font-size: 0.60rem; margin-top: 3px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
-.tx-status.pending   { color: #FFB800; }
-.tx-status.completed { color: rgba(0,232,122,0.70); }
-.tx-status.failed    { color: #FF4466; }
-
-/* ── LOAD MORE ── */
-#load-more-box { text-align: center; margin-top: 12px; }
-.load-more-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 9px 20px; border-radius: 22px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.60);
-    font-size: 0.75rem; font-weight: 700;
-    cursor: pointer; transition: all 0.2s;
-}
-.load-more-btn:hover {
-    background: rgba(0,102,255,0.10);
-    border-color: rgba(0,102,255,0.20);
-    color: #4d90ff;
-}
-
-/* ── EXPORT CARD ── */
-.export-card {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px 16px; border-radius: 16px;
-    background: rgba(0,102,255,0.06);
-    border: 1px solid rgba(0,102,255,0.12);
-    margin-top: 16px;
-}
-.export-icon {
-    width: 40px; height: 40px; border-radius: 11px;
-    background: rgba(0,102,255,0.12);
-    display: flex; align-items: center; justify-content: center;
-    color: #4d90ff; flex-shrink: 0;
-}
-.export-text { flex: 1; }
-.export-text h3 { font-size: 0.85rem; font-weight: 700; color: #fff; margin: 0 0 2px; }
-.export-text p  { font-size: 0.70rem; color: rgba(255,255,255,0.38); margin: 0; }
-
-.export-btn {
-    display: flex; align-items: center; gap: 6px;
-    padding: 8px 14px; border-radius: 10px;
-    background: rgba(0,102,255,0.18);
-    border: 1px solid rgba(0,102,255,0.30);
-    color: #5599ff; font-size: 0.75rem; font-weight: 700;
-    cursor: pointer; transition: all 0.2s;
-}
-.export-btn:hover { background: rgba(0,102,255,0.28); }
-
-/* ── MODAL ── */
-#tx-modal {
-    display: none !important;
-}
-#tx-modal.show {
-    display: flex !important;
-}
-
-.modal-box {
-    background: linear-gradient(160deg,#0c0c22 0%,#080818 55%,#050514 100%);
-    border-top: 2px solid rgba(60,130,255,0.40);
-    border-left: 1px solid rgba(40,100,255,0.18);
-    border-right: 1px solid rgba(0,0,0,0.85);
-    border-bottom: 4px solid rgba(0,0,0,0.95);
-    border-radius: 22px;
-    max-width: 400px; width: 100%;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.75);
-    overflow: hidden;
-}
-.modal-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 20px 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.modal-header h3 { font-size: 0.95rem; font-weight: 800; color: #fff; margin: 0; }
-.modal-close {
-    width: 30px; height: 30px; border-radius: 8px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.45); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all .18s;
-}
-.modal-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
-.modal-body { padding: 18px 20px 20px; }
+/* MODAL */
+#tx-modal{display:none!important;}
+#tx-modal.show{display:flex!important;}
+.modal-box{background:linear-gradient(160deg,#0c0c22 0%,#080818 55%,#050514 100%);border-top:2px solid rgba(60,130,255,0.40);border-left:1px solid rgba(40,100,255,0.18);border-right:1px solid rgba(0,0,0,0.85);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:22px;max-width:400px;width:100%;box-shadow:0 40px 100px rgba(0,0,0,0.75);overflow:hidden;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.modal-header h3{font-size:0.95rem;font-weight:800;color:#fff;margin:0;}
+.modal-close{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.45);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;}
+.modal-close:hover{background:rgba(255,255,255,0.12);color:#fff;}
+.modal-body{padding:18px 20px 20px;}
 </style>
 
 <script>
