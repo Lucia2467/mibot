@@ -543,7 +543,7 @@ function txHTML(tx, i) {
     <div class="tx-item" onclick="showDetails('${txId}')" style="animation-delay:${i * 0.025}s">
         <div class="tx-icon ${tx.type}">${type.icon}</div>
         <div class="tx-info">
-            <div class="tx-type">${label}<span class="tx-curr ${curr}">${curr}</span></div>
+            <div class="tx-type">${label}<span class="tx-curr ${curr}">${curr === "SE" ? "PXC" : curr}</span></div>
             <div class="tx-date">${date}</div>
         </div>
         <div class="tx-amount">
@@ -590,7 +590,7 @@ function showDetails(key) {
         </div>
         <div style="font-size:0.70rem;font-weight:700;text-transform:uppercase;letter-spacing:.10em;color:rgba(255,255,255,0.35);margin-bottom:6px;">${typeLabel}</div>
         <div style="font-size:2.0rem;font-weight:800;color:${amtColor};letter-spacing:-.03em;line-height:1;">${amtSign}${fmtNum(tx.amount, curr)}</div>
-        <div style="font-size:0.78rem;color:rgba(255,255,255,0.35);margin-top:4px;">${curr}${info.network ? ' · ' + info.network : ''}</div>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.35);margin-top:4px;">${curr === 'SE' ? 'PXC' : curr}${info.network ? ' · ' + info.network : ''}</div>
         <div style="display:inline-flex;align-items:center;gap:5px;margin-top:12px;padding:5px 12px;border-radius:20px;background:${statusBg};border:1px solid ${statusBorder};color:${statusColor};font-size:0.72rem;font-weight:700;">
             ${statusIcon} ${status}
         </div>
