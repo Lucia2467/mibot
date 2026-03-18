@@ -525,10 +525,11 @@ function txHTML(tx, i) {
         label = tx.description.length > 25 ? tx.description.substring(0, 25) + '...' : tx.description;
     }
     
-    const txData = encodeURIComponent(JSON.stringify(tx));
+    const txId = 'tx_' + i;
+    window['_txd_' + txId] = tx;
 
     return `
-    <div class="tx-item" onclick="showDetails('${txData}')" style="animation-delay:${i * 0.025}s">
+    <div class="tx-item" onclick="showDetails('${txId}')" style="animation-delay:${i * 0.025}s">
         <div class="tx-icon ${tx.type}">${type.icon}</div>
         <div class="tx-info">
             <div class="tx-type">${label}<span class="tx-curr ${curr}">${curr}</span></div>
@@ -538,12 +539,16 @@ function txHTML(tx, i) {
             <div class="tx-value ${isNeg ? 'neg' : 'pos'}">${isNeg ? '-' : '+'}${fmtNum(amt, curr)}</div>
             ${statusTxt ? `<div class="tx-status ${statusCls}">${statusTxt}</div>` : ''}
         </div>
+        <button onclick="event.stopPropagation();showDetails('${txId}')" style="margin-left:10px;flex-shrink:0;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
     </div>`;
 }
 
 // Modal — comprobante premium
-function showDetails(enc) {
-    const tx = JSON.parse(decodeURIComponent(enc));
+function showDetails(key) {
+    const tx = window['_txd_' + key];
+    if (!tx) return;
     const type = TX_TYPES[tx.type] || TX_TYPES.other;
     const curr = tx.currency || 'SE';
     const info = CURRENCIES[curr] || CURRENCIES.SE;
