@@ -321,29 +321,170 @@
 
 <div class="container" style="padding-bottom: 120px;">
 
-    <!-- JUEGOS -->
-    <div style="padding: var(--space-4) 0 var(--space-3);">
-        <h1 style="margin:0;font-size:1.4rem;font-weight:800;color:var(--color-text-primary);">🎮 Juegos</h1>
-        <p style="margin:4px 0 0;font-size:0.8rem;color:rgba(255,255,255,0.40);">Juega y gana recompensas · Hasta 2h/día</p>
+    <!-- Header Juegos -->
+    <div class="arcade-header" style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-top:8px;">
+        <div>
+            <h1 style="font-size:1.4rem;font-weight:700;color:white;margin-bottom:2px;">🕹️ Arcade</h1>
+            <p style="font-size:0.8rem;color:rgba(255,255,255,0.45);">Juega y gana recompensas · Hasta 2h/día</p>
+        </div>
     </div>
 
-    <!-- Tarjeta Anti-Virus -->
-    <a href="/arcade?user_id={{ user_id }}" style="text-decoration:none;">
-        <div class="rank-row" style="border-top-color:rgba(0,212,255,0.40); padding:18px 16px; cursor:pointer; margin-bottom:12px;">
-            <div style="width:60px;height:60px;border-radius:14px;overflow:hidden;border:1px solid rgba(0,212,255,0.35);margin-right:16px;flex-shrink:0;">
-                <img src="https://theme.cloudarcade.net/thumbs/anti-virus-game_1.webp" alt="Anti-Virus" style="width:100%;height:100%;object-fit:cover;">
+    <!-- Barra de progreso diario -->
+    {% if minutes_today >= 120 %}
+    <div style="background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.25);border-radius:12px;padding:14px 16px;text-align:center;font-size:0.8125rem;color:rgba(255,255,255,0.7);margin-bottom:16px;">
+        <strong style="color:#FF5050;">Límite diario alcanzado.</strong>
+    </div>
+    {% endif %}
+
+    <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(0,255,136,0.2);border-radius:16px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:14px;">
+        <div style="width:40px;height:40px;background:rgba(0,255,136,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i data-lucide="timer" style="width:20px;height:20px;color:#00FF88;"></i>
+        </div>
+        <div style="flex:1;">
+            <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:4px;">Tiempo jugado hoy</div>
+            <div style="height:6px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;margin-bottom:4px;">
+                <div id="dailyBar" style="height:100%;background:linear-gradient(90deg,#00FF88,#00CC66);border-radius:99px;transition:width 1s linear;width:{{ [(minutes_today / 120 * 100), 100] | min }}%;"></div>
             </div>
-            <div class="rank-info">
-                <div class="rank-name" style="font-size:1rem;">Anti-Virus</div>
-                <div class="rank-stats">Arcade · Gana PXC por tiempo jugado</div>
-            </div>
-            <div style="padding:5px 12px;background:rgba(0,212,255,0.10);border:1px solid rgba(0,212,255,0.25);border-radius:20px;flex-shrink:0;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <div style="display:flex;justify-content:space-between;font-size:0.6875rem;color:rgba(255,255,255,0.4);">
+                <span id="dailyMinLabel">{{ minutes_today }} min / 2h</span>
+                <span id="sessionEarned">+0.00 ganado hoy</span>
             </div>
         </div>
-    </a>
+        <div id="liveEarned" style="font-size:0.875rem;font-weight:700;color:#00FF88;white-space:nowrap;">+0.00</div>
+    </div>
+
+    <!-- Grid de juegos -->
+    <div style="font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Elige un juego</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:16px;cursor:pointer;overflow:hidden;transition:all 0.2s;" onclick="loadGame('antivirus','Anti-Virus','https://theme.cloudarcade.net/full/anti-virus-game/',event)">
+            <div style="width:100%;aspect-ratio:1/1;overflow:hidden;background:rgba(0,0,0,0.2);">
+                <img src="https://theme.cloudarcade.net/thumbs/anti-virus-game_1.webp" alt="Anti-Virus" style="width:100%;height:100%;object-fit:cover;display:block;">
+            </div>
+            <div style="padding:10px 12px 12px;">
+                <div style="font-size:0.8rem;font-weight:600;color:white;margin-bottom:5px;">Anti-Virus</div>
+                <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:.06em;text-transform:uppercase;">
+                    <span style="width:7px;height:7px;border-radius:50%;background:#00C853;display:inline-block;flex-shrink:0;"></span>
+                    Arcade
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay fullscreen del juego -->
+    <div id="gameOverlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:99999;">
+        <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:flex-start;padding:6px 12px;background:linear-gradient(to bottom,rgba(0,0,0,0.7),transparent);z-index:10;pointer-events:none;height:44px;">
+            <div id="gamePanelTitle" style="font-size:0.75rem;font-weight:700;color:white;text-shadow:0 1px 4px rgba(0,0,0,0.9);">—</div>
+            <div style="margin-left:10px;">
+                <span style="font-size:0.7rem;color:#00FF88;font-weight:700;">⏱ <span id="sessionTimer">0:00</span></span>
+            </div>
+        </div>
+        <button onclick="closeGame()" style="position:absolute;bottom:24px;right:16px;z-index:20;background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.35);border-radius:50px;color:white;font-size:0.75rem;font-weight:700;padding:8px 18px;cursor:pointer;backdrop-filter:blur(6px);">✕ Salir</button>
+        <div style="position:absolute;top:44px;left:0;right:0;bottom:0;">
+            <iframe id="gameFrame" src="" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock" allow="fullscreen; pointer-lock" style="width:100%;height:100%;border:none;display:block;"></iframe>
+        </div>
+    </div>
 
 </div>
+
+<!-- Toast de recompensa -->
+<div id="rewardToast" style="position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:linear-gradient(135deg,#00FF88,#00CC66);color:#0B0B0F;font-weight:700;font-size:0.875rem;padding:10px 20px;border-radius:99px;z-index:9999;transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);pointer-events:none;white-space:nowrap;">🎮 ¡Recompensa ganada!</div>
+
+<script>
+(function() {
+    const USER_ID = "{{ user_id }}";
+    const MAX_MINS_DAY = 120;
+
+    var minutesToday = {{ minutes_today | int }};
+    var sessionSeconds = 0;
+    var sessionEarnedSE = 0;
+    var activeGame = null;
+    var timerInterval = null;
+    var isClaiming = false;
+    var pendingClaims = 0;
+
+    window.loadGame = function(id, name, url, evt) {
+        if (minutesToday >= MAX_MINS_DAY) {
+            alert('¡Límite diario alcanzado! Vuelve mañana.');
+            return;
+        }
+        activeGame = { id: id, name: name };
+        document.getElementById('gamePanelTitle').textContent = name;
+        var overlay = document.getElementById('gameOverlay');
+        overlay.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        document.getElementById('gameFrame').src = url;
+        if (window.Telegram && window.Telegram.WebApp) window.Telegram.WebApp.expand();
+        sessionSeconds = 0; sessionEarnedSE = 0; pendingClaims = 0; isClaiming = false;
+        updateTimerDisplay();
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(tick, 1000);
+    };
+
+    window.closeGame = function() {
+        document.getElementById('gameOverlay').style.display = 'none';
+        document.getElementById('gameFrame').src = '';
+        document.body.style.overflow = '';
+        if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+        activeGame = null;
+    };
+
+    function tick() {
+        if (!activeGame) return;
+        if (minutesToday >= MAX_MINS_DAY) { clearInterval(timerInterval); timerInterval = null; return; }
+        sessionSeconds++;
+        updateTimerDisplay();
+        if (sessionSeconds % 60 === 0) { pendingClaims++; processClaims(); }
+    }
+
+    function updateTimerDisplay() {
+        var m = Math.floor(sessionSeconds / 60);
+        var s = sessionSeconds % 60;
+        document.getElementById('sessionTimer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function processClaims() {
+        if (isClaiming || pendingClaims <= 0 || !activeGame) return;
+        isClaiming = true;
+        fetch('/api/arcade/claim-minute', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: USER_ID, game_id: activeGame ? activeGame.id : 'unknown' })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            isClaiming = false;
+            if (data.success) {
+                pendingClaims = Math.max(0, pendingClaims - 1);
+                minutesToday = data.minutes_today;
+                sessionEarnedSE += 1.0;
+                var pct = Math.min(minutesToday / MAX_MINS_DAY * 100, 100);
+                document.getElementById('dailyBar').style.width = pct + '%';
+                document.getElementById('dailyMinLabel').textContent = minutesToday + ' min / 2h';
+                document.getElementById('sessionEarned').textContent = '+' + sessionEarnedSE.toFixed(2) + ' ganado hoy';
+                document.getElementById('liveEarned').textContent = '+' + sessionEarnedSE.toFixed(2);
+                showToast('🎮 ¡Recompensa ganada!');
+                if (minutesToday >= MAX_MINS_DAY) {
+                    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+                    showToast('¡Límite diario alcanzado! 🏆');
+                }
+                if (pendingClaims > 0) setTimeout(processClaims, 500);
+            } else if (data.minutes_today >= MAX_MINS_DAY) {
+                pendingClaims = 0; minutesToday = MAX_MINS_DAY;
+            } else {
+                setTimeout(function() { isClaiming = false; processClaims(); }, 5000);
+            }
+        })
+        .catch(function() { isClaiming = false; setTimeout(processClaims, 8000); });
+    }
+
+    function showToast(msg) {
+        var el = document.getElementById('rewardToast');
+        el.textContent = msg;
+        el.style.transform = 'translateX(-50%) translateY(0)';
+        setTimeout(function() { el.style.transform = 'translateX(-50%) translateY(-80px)'; }, 2500);
+    }
+})();
+</script>
 
 <style>
 /* Floating Terms Button */
