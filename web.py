@@ -1270,11 +1270,25 @@ def ranking():
         user_rank = position
 
     # Use the new competition template
+    try:
+        from db import get_cursor
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT COALESCE(SUM(minutes_played), 0) AS mins
+                FROM arcade_sessions
+                WHERE user_id = %s AND DATE(created_at) = CURDATE()
+            """, (user_id,))
+            row = cursor.fetchone()
+            minutes_today = int(row['mins'] if row and row['mins'] is not None else 0)
+    except Exception:
+        minutes_today = 0
+
     return render_template('ranking_competition.html',
                          user=user,
                          top_users=top_users,
                          user_rank=user_rank,
                          user_id=user_id,
+                         minutes_today=minutes_today,
                          show_support_button=True)
 
 @app.route('/wallet')
