@@ -2,341 +2,253 @@
 
 {% block title %}SALLY-E | Centro de ADS{% endblock %}
 
-{% block content %}
-<div class="container">
-    <!-- Header con botón de regreso -->
-    <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4);">
-        <a href="/explore?user_id={{ user_id }}" style="text-decoration: none;">
-            <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: all 0.3s ease;">
-                <i data-lucide="arrow-left" style="width: 22px; height: 22px; color: rgba(255, 255, 255, 0.7);"></i>
-            </div>
-        </a>
-    </div>
-    <!-- Hero Section -->
-    <div class="card" style="background: linear-gradient(135deg, rgba(255, 184, 0, 0.08) 0%, rgba(255, 107, 53, 0.08) 50%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(255, 184, 0, 0.2); position: relative; overflow: hidden;">
-        <!-- Elementos de fondo -->
-        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255, 184, 0, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite;"></div>
-        <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255, 107, 53, 0.12) 0%, transparent 70%); border-radius: 50%; animation: float 10s ease-in-out infinite reverse;"></div>
-
-        <div style="position: relative; z-index: 1; text-align: center; padding: var(--space-4);">
-            <!-- Icono principal -->
-            <div class="floating" style="width: 80px; height: 80px; margin: 0 auto var(--space-4); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(255, 184, 0, 0.2) 0%, rgba(255, 107, 53, 0.2) 100%); border-radius: 20px; box-shadow: 0 8px 32px rgba(255, 184, 0, 0.3);">
-                <i data-lucide="megaphone" style="width: 40px; height: 40px; color: #FFB800;"></i>
-            </div>
-
-            <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: var(--space-2); background: linear-gradient(135deg, #FFB800 0%, #FF6B35 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;" data-i18n="ads_center_title">
-                Centro de ADS
-            </h1>
-            <p style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.6); line-height: 1.6;" data-i18n="earn_watching_ads">
-                Gana monedas viendo anuncios voluntarios
-            </p>
-        </div>
-    </div>
-
-    <!-- Info Card -->
-    <div class="card" style="background: linear-gradient(135deg, rgba(255, 184, 0, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(255, 184, 0, 0.15); margin-top: var(--space-4);">
-        <div style="display: flex; flex-direction: column; gap: var(--space-3);">
-            <div style="display: flex; align-items: center; gap: var(--space-3);">
-                <div style="flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255, 184, 0, 0.1); border-radius: 10px;">
-                    <i data-lucide="info" style="width: 20px; height: 20px; color: #FFB800;"></i>
-                </div>
-                <div>
-                    <div style="font-weight: 600; font-size: 0.875rem; color: white;" data-i18n="daily_limit_applied">
-                        Límite diario aplicado
-                    </div>
-                    <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="wait_15_seconds">
-                        Debes esperar 15 segundos para recibir la recompensa
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Secciones de Anuncios -->
-    <div style="display: grid; gap: var(--space-4); margin-top: var(--space-4);">
-
-        <!-- Adsgram Section (Interstitial via Misión Diaria) -->
-        <a href="/explore/watch-ads?user_id={{ user_id }}&source=adsgram" style="text-decoration: none;">
-            <div class="card explore-card" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(0, 212, 255, 0.25); position: relative; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
-                <div class="card-glow-cyan"></div>
-                <div style="display: flex; align-items: center; gap: var(--space-4); position: relative; z-index: 1;">
-                    <div style="flex-shrink: 0; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(0, 212, 255, 0.25) 0%, rgba(0, 150, 200, 0.15) 100%); border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);">
-                        <i data-lucide="sparkles" style="width: 32px; height: 32px; color: #00D4FF;"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--space-1); color: white;">
-                            Adsgram
-                        </div>
-                        <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5;" data-i18n="ad_reward_adsgram">
-                            Gana 0.002 DOGE + 5 PTS
-                        </div>
-                    </div>
-                    <div style="flex-shrink: 0;">
-                        <i data-lucide="chevron-right" style="width: 24px; height: 24px; color: rgba(255, 255, 255, 0.4);"></i>
-                    </div>
-                </div>
-                <!-- Badge Ads -->
-                <div style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #00D4FF 0%, #0096C8 100%); border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; color: #000;">
-                    Ads
-                </div>
-            </div>
-        </a>
-
-        <!-- Adexium Section -->
-        <a href="/adexium?user_id={{ user_id }}" style="text-decoration: none;">
-            <div class="card explore-card" style="background: linear-gradient(135deg, rgba(46, 204, 113, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(46, 204, 113, 0.25); position: relative; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
-                <div class="card-glow-green-adx"></div>
-                <div style="display: flex; align-items: center; gap: var(--space-4); position: relative; z-index: 1;">
-                    <div style="flex-shrink: 0; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(46, 204, 113, 0.25) 0%, rgba(39, 174, 96, 0.15) 100%); border-radius: 16px; box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3);">
-                        <i data-lucide="megaphone" style="width: 32px; height: 32px; color: #2ECC71;"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--space-1); color: white;">
-                            Adexium
-                        </div>
-                        <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5;" data-i18n="ad_reward_adexium">
-                            Gana 0.002 DOGE + 5 PTS
-                        </div>
-                    </div>
-                    <div style="flex-shrink: 0;">
-                        <i data-lucide="chevron-right" style="width: 24px; height: 24px; color: rgba(255, 255, 255, 0.4);"></i>
-                    </div>
-                </div>
-                <!-- Badge Ads -->
-                <div style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%); border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; color: #fff;">
-                    Ads
-                </div>
-            </div>
-        </a>
-
-        <!-- Telega.io Section (Rewarded via Reward Video) -->
-        <a href="/explore/reward-video?user_id={{ user_id }}&source=telega" style="text-decoration: none;">
-            <div class="card explore-card" style="background: linear-gradient(135deg, rgba(255, 71, 87, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(255, 71, 87, 0.25); position: relative; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
-                <div class="card-glow-red"></div>
-                <div style="display: flex; align-items: center; gap: var(--space-4); position: relative; z-index: 1;">
-                    <div style="flex-shrink: 0; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(255, 71, 87, 0.25) 0%, rgba(200, 50, 60, 0.15) 100%); border-radius: 16px; box-shadow: 0 4px 20px rgba(255, 71, 87, 0.3);">
-                        <i data-lucide="send" style="width: 32px; height: 32px; color: #FF4757;"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--space-1); color: white;">
-                         Telega.io
-                        </div>
-                        <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5;" data-i18n="ad_reward_telega">
-                            Gana 0.003 DOGE + 7 PTS
-                        </div>
-                    </div>
-                    <div style="flex-shrink: 0;">
-                        <i data-lucide="chevron-right" style="width: 24px; height: 24px; color: rgba(255, 255, 255, 0.4);"></i>
-                    </div>
-                </div>
-                <!-- Badge Ads -->
-                <div style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #FF4757 0%, #C8323C 100%); border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; color: #fff;">
-                    Ads
-                </div>
-            </div>
-        </a>
-
-        <!-- Monetag Section -->
-        <a href="/monetag?user_id={{ user_id }}" style="text-decoration: none;">
-            <div class="card explore-card" style="background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(255, 107, 53, 0.25); position: relative; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
-                <div class="card-glow-orange"></div>
-                <div style="display: flex; align-items: center; gap: var(--space-4); position: relative; z-index: 1;">
-                    <div style="flex-shrink: 0; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(255, 107, 53, 0.25) 0%, rgba(230, 81, 0, 0.15) 100%); border-radius: 16px; box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);">
-                        <i data-lucide="flame" style="width: 32px; height: 32px; color: #FF6B35;"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--space-1); color: white;">
-                            Monetag
-                        </div>
-                        <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5;" data-i18n="ad_reward_monetag">
-                            Gana 0.002 DOGE + 5 PTS
-                        </div>
-                    </div>
-                    <div style="flex-shrink: 0;">
-                        <i data-lucide="chevron-right" style="width: 24px; height: 24px; color: rgba(255, 255, 255, 0.4);"></i>
-                    </div>
-                </div>
-                <!-- Badge Ads -->
-                <div style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #FF6B35 0%, #E65100 100%); border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; color: white;">
-                    Ads
-                </div>
-            </div>
-        </a>
-
-        <!-- GigaPub Section -->
-        <a href="/gigapub?user_id={{ user_id }}" style="text-decoration: none;">
-            <div class="card explore-card" style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(156, 39, 176, 0.25); position: relative; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
-                <div class="card-glow-purple-giga"></div>
-                <div style="display: flex; align-items: center; gap: var(--space-4); position: relative; z-index: 1;">
-                    <div style="flex-shrink: 0; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(156, 39, 176, 0.25) 0%, rgba(123, 31, 162, 0.15) 100%); border-radius: 16px; box-shadow: 0 4px 20px rgba(156, 39, 176, 0.3);">
-                        <i data-lucide="zap" style="width: 32px; height: 32px; color: #9C27B0;"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--space-1); color: white;">
-                            GigaPub
-                        </div>
-                        <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5;" data-i18n="ad_reward_gigapub">
-                            Gana 0.002 DOGE + 5 PTS
-                        </div>
-                    </div>
-                    <div style="flex-shrink: 0;">
-                        <i data-lucide="chevron-right" style="width: 24px; height: 24px; color: rgba(255, 255, 255, 0.4);"></i>
-                    </div>
-                </div>
-                <!-- Badge Ads -->
-                <div style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%); border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; color: white;">
-                    Ads
-                </div>
-            </div>
-        </a>
-
-    </div>
-
-    <!-- Back to Explore Button -->
-    <a href="/explore?user_id={{ user_id }}" style="text-decoration: none;">
-        <div class="card" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.04) 0%, rgba(18, 18, 18, 0.9) 100%); border: 1px solid rgba(0, 245, 255, 0.15); margin-top: var(--space-4); cursor: pointer; transition: all 0.3s ease;">
-            <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-3);">
-                <i data-lucide="arrow-left" style="width: 20px; height: 20px; color: #00D4FF;"></i>
-                <span style="font-weight: 600; font-size: 0.9375rem; color: #00D4FF;" data-i18n="back_to_explore">
-                    Volver a Explorar
-                </span>
-            </div>
-        </div>
-    </a>
-</div>
-
+{% block extra_head %}
 <style>
-/* Animación flotante */
-@keyframes float {
-    0%, 100% {
-        transform: translate(0, 0);
-    }
-    50% {
-        transform: translate(10px, 10px);
-    }
+/* ══════════════════════════════════════════════
+   ADS CENTER — 3D PREMIUM DESIGN
+══════════════════════════════════════════════ */
+@keyframes adcIn {
+    from { opacity:0; transform:translateY(20px) scale(0.96); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
 }
+@keyframes adcShine { 0%{left:-100%} 100%{left:200%} }
+@keyframes adcPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.15);opacity:0.7} }
+@keyframes floatIcon { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
 
-.floating {
-    animation: floating 3s ease-in-out infinite;
+.adc-hero {
+    background: linear-gradient(155deg, #0d0a00 0%, #080600 55%, #040300 100%);
+    border-top:    2px solid rgba(255,184,0,0.55);
+    border-left:   1px solid rgba(255,184,0,0.28);
+    border-right:  1px solid rgba(0,0,0,0.60);
+    border-bottom: 4px solid rgba(0,0,0,0.95);
+    border-radius: 24px; padding: 28px 24px 24px;
+    text-align: center; position: relative; overflow: hidden; margin-bottom: 16px;
+    box-shadow: 0 4px 0 rgba(255,184,0,0.10) inset, 0 -5px 0 rgba(0,0,0,0.90) inset, 0 30px 80px rgba(0,0,0,0.80), 0 0 120px rgba(255,140,0,0.08);
+    animation: adcIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.04s both;
 }
+.adc-hero::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background: linear-gradient(90deg, #FF8C00, #FFB800, #FFD700, #FFB800, #FF8C00);
+}
+.adc-hero::after {
+    content:''; position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%); width:200%; height:200%;
+    background:radial-gradient(circle, rgba(255,184,0,0.07) 0%, transparent 55%);
+    pointer-events:none;
+}
+.adc-hero-icon {
+    width:80px; height:80px; margin:0 auto 16px;
+    background:linear-gradient(145deg,rgba(255,184,0,0.28) 0%,rgba(255,120,0,0.16) 100%);
+    border-top:2px solid rgba(255,184,0,0.60); border-left:1px solid rgba(255,184,0,0.36);
+    border-right:1px solid rgba(0,0,0,0.45); border-bottom:3px solid rgba(0,0,0,0.80);
+    border-radius:22px; display:flex; align-items:center; justify-content:center;
+    position:relative; z-index:1;
+    box-shadow: 0 3px 0 rgba(255,184,0,0.18) inset, 0 -3px 0 rgba(0,0,0,0.65) inset, 0 12px 34px rgba(255,140,0,0.30);
+    animation: floatIcon 3s ease-in-out infinite;
+}
+.adc-info {
+    background:linear-gradient(145deg,#0c0a00 0%,#080700 60%,#050400 100%);
+    border-top:2px solid rgba(255,184,0,0.32); border-left:1px solid rgba(255,184,0,0.18);
+    border-right:1px solid rgba(0,0,0,0.55); border-bottom:3px solid rgba(0,0,0,0.88);
+    border-radius:18px; padding:16px 18px; display:flex; align-items:center; gap:14px;
+    margin-bottom:20px;
+    box-shadow: 0 3px 0 rgba(255,184,0,0.08) inset, 0 -3px 0 rgba(0,0,0,0.80) inset, 0 12px 36px rgba(0,0,0,0.65);
+    animation: adcIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.10s both;
+}
+.adc-info-icon {
+    width:42px; height:42px; flex-shrink:0;
+    background:linear-gradient(145deg,rgba(255,184,0,0.22) 0%,rgba(200,120,0,0.12) 100%);
+    border-top:1px solid rgba(255,184,0,0.45); border-bottom:2px solid rgba(0,0,0,0.70);
+    border-radius:12px; display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 2px 0 rgba(255,184,0,0.12) inset, 0 -2px 0 rgba(0,0,0,0.55) inset, 0 6px 18px rgba(255,140,0,0.20);
+}
+.adc-card {
+    position:relative; overflow:hidden; border-radius:20px;
+    padding:18px; display:flex; align-items:center; gap:16px;
+    cursor:pointer; transform:translateZ(0);
+    transition:transform 0.22s cubic-bezier(0.34,1.5,0.64,1), box-shadow 0.22s;
+    text-decoration:none; margin-bottom:12px;
+}
+.adc-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.20),transparent);
+    pointer-events:none;
+}
+.adc-card::after {
+    content:''; position:absolute; top:0; left:0; right:0; bottom:0;
+    background:linear-gradient(145deg,rgba(255,255,255,0.04) 0%,transparent 50%);
+    pointer-events:none;
+}
+.adc-card:hover  { transform:translateY(-5px) scale(1.02); }
+.adc-card:active { transform:translateY(2px) scale(0.98); transition:transform .07s ease; }
+.adc-shine {
+    position:absolute; top:0; left:-100%; width:55%; height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.07),transparent);
+    animation:adcShine 4s ease-in-out infinite; pointer-events:none;
+}
+.adc-icon {
+    width:62px; height:62px; flex-shrink:0; border-radius:16px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; z-index:1;
+    transition:transform 0.22s cubic-bezier(0.34,1.5,0.64,1);
+}
+.adc-card:hover .adc-icon { transform:translateY(-3px) scale(1.08); }
+.adc-name  { font-size:1.05rem; font-weight:800; color:#fff; margin-bottom:4px; position:relative; z-index:1; }
+.adc-reward{ font-size:0.82rem; color:rgba(255,255,255,0.55); position:relative; z-index:1; }
+.adc-badge { position:absolute; top:12px; right:12px; border-radius:20px; padding:4px 12px; font-size:0.70rem; font-weight:800; letter-spacing:.04em; z-index:2; }
+.adc-chevron { margin-left:auto; flex-shrink:0; position:relative; z-index:1; }
 
-@keyframes floating {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-8px);
-    }
-}
+/* CYAN */
+.adc-card-cyan { background:linear-gradient(145deg,#000d14,#000a10,#00060c); border-top:2px solid rgba(0,212,255,0.48); border-left:1px solid rgba(0,180,220,0.24); border-right:1px solid rgba(0,0,0,0.60); border-bottom:4px solid rgba(0,0,0,0.95); box-shadow:0 4px 0 rgba(0,212,255,0.10) inset,0 -5px 0 rgba(0,0,0,0.90) inset,0 20px 55px rgba(0,0,0,0.75); }
+.adc-card-cyan:hover { box-shadow:0 4px 0 rgba(0,212,255,0.12) inset,0 -5px 0 rgba(0,0,0,0.90) inset,0 30px 70px rgba(0,0,0,0.80),0 0 80px rgba(0,180,255,0.14); }
+.adc-icon-cyan { background:linear-gradient(145deg,rgba(0,212,255,0.26),rgba(0,150,200,0.14)); border-top:1px solid rgba(0,212,255,0.50); border-bottom:2px solid rgba(0,0,0,0.65); box-shadow:0 2px 0 rgba(0,212,255,0.18) inset,0 -2px 0 rgba(0,0,0,0.55) inset,0 10px 28px rgba(0,180,255,0.28); }
+.adc-badge-cyan { background:linear-gradient(135deg,#00D4FF,#0096C8); color:#000; }
 
-/* Efecto hover en cards */
-.explore-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-}
+/* GREEN */
+.adc-card-green { background:linear-gradient(145deg,#001208,#000d06,#000904); border-top:2px solid rgba(46,204,113,0.48); border-left:1px solid rgba(40,180,90,0.24); border-right:1px solid rgba(0,0,0,0.60); border-bottom:4px solid rgba(0,0,0,0.95); box-shadow:0 4px 0 rgba(46,204,113,0.10) inset,0 -5px 0 rgba(0,0,0,0.90) inset,0 20px 55px rgba(0,0,0,0.75); }
+.adc-card-green:hover { box-shadow:0 4px 0 rgba(46,204,113,0.12) inset,0 -5px 0 rgba(0,0,0,0.90) inset,0 30px 70px rgba(0,0,0,0.80),0 0 80px rgba(46,204,113,0.14); }
+.adc-icon-green { background:linear-gradient(145deg,rgba(46,204,113,0.26),rgba(39,174,96,0.14)); border-top:1px solid rgba(46,204,113,0.50); border-bottom:2px solid rgba(0,0,0,0.65); box-shadow:0 2px 0 rgba(46,204,113,0.18) inset,0 -2px 0 rgba(0,0,0,0.55) inset,0 10px 28px rgba(0,200,90,0.28); }
+.adc-badge-green { background:linear-gradient(135deg,#2ECC71,#27AE60); color:#fff; }
 
-.explore-card:active {
-    transform: translateY(-2px);
-}
+/* RED */
+.adc-card-red { background:linear-gradient(145deg,#140004,#0e0003,#090002); border-top:2px solid rgba(255,71,87,0.48); border-left:1px solid rgba(220,50,65,0.24); border-right:1px solid rgba(0,0,0,0.60); border-bottom:4px solid rgba(0,0,0,0.95); box-shadow:0 4px 0 rgba(255,71,87,0.10) inset,0 -5px 0 rgba(0,0,0,0.90) inset,0 20px 55px rgba(0,0,0,0.75); }
+.adc-card-red:hover { box-shadow:0 4px 0 rgba(255,71,87,0.12) inset,0 -5px 0 rgba(0,0,0,0.90) inset,0 30px 70px rgba(0,0,0,0.80),0 0 80px rgba(255,71,87,0.14); }
+.adc-icon-red { background:linear-gradient(145deg,rgba(255,71,87,0.26),rgba(200,50,60,0.14)); border-top:1px solid rgba(255,71,87,0.50); border-bottom:2px solid rgba(0,0,0,0.65); box-shadow:0 2px 0 rgba(255,71,87,0.18) inset,0 -2px 0 rgba(0,0,0,0.55) inset,0 10px 28px rgba(255,50,65,0.28); }
+.adc-badge-red { background:linear-gradient(135deg,#FF4757,#C8323C); color:#fff; }
 
-/* Efectos de brillo */
-.card-glow-yellow {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 184, 0, 0.15) 50%, transparent 100%);
-    animation: slideGlow 4s ease infinite;
-}
+/* ORANGE */
+.adc-card-orange { background:linear-gradient(145deg,#0e0500,#090300,#060200); border-top:2px solid rgba(255,107,53,0.48); border-left:1px solid rgba(220,80,30,0.24); border-right:1px solid rgba(0,0,0,0.60); border-bottom:4px solid rgba(0,0,0,0.95); box-shadow:0 4px 0 rgba(255,107,53,0.10) inset,0 -5px 0 rgba(0,0,0,0.90) inset,0 20px 55px rgba(0,0,0,0.75); }
+.adc-card-orange:hover { box-shadow:0 4px 0 rgba(255,107,53,0.12) inset,0 -5px 0 rgba(0,0,0,0.90) inset,0 30px 70px rgba(0,0,0,0.80),0 0 80px rgba(255,107,53,0.14); }
+.adc-icon-orange { background:linear-gradient(145deg,rgba(255,107,53,0.26),rgba(230,81,0,0.14)); border-top:1px solid rgba(255,107,53,0.50); border-bottom:2px solid rgba(0,0,0,0.65); box-shadow:0 2px 0 rgba(255,107,53,0.18) inset,0 -2px 0 rgba(0,0,0,0.55) inset,0 10px 28px rgba(255,100,30,0.28); }
+.adc-badge-orange { background:linear-gradient(135deg,#FF6B35,#E65100); color:#fff; }
 
-.card-glow-purple {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(138, 43, 226, 0.15) 50%, transparent 100%);
-    animation: slideGlow 4s ease infinite;
-    animation-delay: 0.5s;
-}
+/* PURPLE */
+.adc-card-purple { background:linear-gradient(145deg,#0a0014,#07000e,#040009); border-top:2px solid rgba(156,39,176,0.48); border-left:1px solid rgba(130,30,150,0.24); border-right:1px solid rgba(0,0,0,0.60); border-bottom:4px solid rgba(0,0,0,0.95); box-shadow:0 4px 0 rgba(156,39,176,0.10) inset,0 -5px 0 rgba(0,0,0,0.90) inset,0 20px 55px rgba(0,0,0,0.75); }
+.adc-card-purple:hover { box-shadow:0 4px 0 rgba(156,39,176,0.12) inset,0 -5px 0 rgba(0,0,0,0.90) inset,0 30px 70px rgba(0,0,0,0.80),0 0 80px rgba(156,39,176,0.14); }
+.adc-icon-purple { background:linear-gradient(145deg,rgba(156,39,176,0.26),rgba(123,31,162,0.14)); border-top:1px solid rgba(156,39,176,0.50); border-bottom:2px solid rgba(0,0,0,0.65); box-shadow:0 2px 0 rgba(156,39,176,0.18) inset,0 -2px 0 rgba(0,0,0,0.55) inset,0 10px 28px rgba(156,0,200,0.28); }
+.adc-badge-purple { background:linear-gradient(135deg,#9C27B0,#7B1FA2); color:#fff; }
 
-.card-glow-cyan {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(0, 212, 255, 0.15) 50%, transparent 100%);
-    animation: slideGlow 4s ease infinite;
-    animation-delay: 1s;
-}
-
-.card-glow-red {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 71, 87, 0.15) 50%, transparent 100%);
-    animation: slideGlow 4s ease infinite;
-    animation-delay: 1.5s;
-}
-
-.card-glow-green-adx {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(46, 204, 113, 0.15) 50%, transparent 100%);
-    animation: slideGlow 4s ease infinite;
-    animation-delay: 2s;
-}
-
-.card-glow-orange {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 107, 53, 0.15) 50%, transparent 100%);
-    animation: slideGlow 4s ease infinite;
-    animation-delay: 2.5s;
-}
-
-.card-glow-purple-giga {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(156, 39, 176, 0.15) 50%, transparent 100%);
-    animation: slideGlow 4s ease infinite;
-    animation-delay: 3s;
-}
-
-@keyframes slideGlow {
-    0% {
-        left: -100%;
-    }
-    100% {
-        left: 200%;
-    }
-}
+.adc-card:nth-child(1){animation:adcIn .38s cubic-bezier(.34,1.2,.64,1) .14s both}
+.adc-card:nth-child(2){animation:adcIn .38s cubic-bezier(.34,1.2,.64,1) .20s both}
+.adc-card:nth-child(3){animation:adcIn .38s cubic-bezier(.34,1.2,.64,1) .26s both}
+.adc-card:nth-child(4){animation:adcIn .38s cubic-bezier(.34,1.2,.64,1) .32s both}
+.adc-card:nth-child(5){animation:adcIn .38s cubic-bezier(.34,1.2,.64,1) .38s both}
 </style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-bottom:120px;">
+
+    <!-- Back -->
+    <div style="padding-top:8px;margin-bottom:16px;">
+        <a href="/explore?user_id={{ user_id }}" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:linear-gradient(145deg,#0c0c22,#07071a);border-top:1px solid rgba(255,255,255,0.10);border-bottom:2px solid rgba(0,0,0,0.65);border-radius:12px;box-shadow:0 2px 0 rgba(255,255,255,0.04) inset,0 -2px 0 rgba(0,0,0,0.55) inset;">
+            <i data-lucide="arrow-left" style="width:18px;height:18px;color:rgba(255,255,255,0.60);"></i>
+            <span style="font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.50);">Volver</span>
+        </a>
+    </div>
+
+    <!-- HERO -->
+    <div class="adc-hero">
+        <div class="adc-hero-icon">
+            <i data-lucide="megaphone" style="width:40px;height:40px;color:#FFB800;filter:drop-shadow(0 0 12px rgba(255,184,0,0.8));"></i>
+        </div>
+        <div style="font-size:1.75rem;font-weight:900;background:linear-gradient(135deg,#FFD700 0%,#FFB800 50%,#FF8C00 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;position:relative;z-index:1;" data-i18n="ads_center_title">Centro de ADS</div>
+        <div style="font-size:0.875rem;color:rgba(255,255,255,0.50);line-height:1.5;position:relative;z-index:1;" data-i18n="earn_watching_ads">Gana monedas viendo anuncios voluntarios</div>
+    </div>
+
+    <!-- INFO -->
+    <div class="adc-info">
+        <div class="adc-info-icon">
+            <i data-lucide="info" style="width:20px;height:20px;color:#FFB800;filter:drop-shadow(0 0 6px rgba(255,184,0,0.7));animation:adcPulse 2s ease-in-out infinite;"></i>
+        </div>
+        <div>
+            <div style="font-weight:700;font-size:0.875rem;color:#fff;margin-bottom:3px;" data-i18n="daily_limit_applied">Límite diario aplicado</div>
+            <div style="font-size:0.78rem;color:rgba(255,255,255,0.45);" data-i18n="wait_15_seconds">Debes esperar 15 segundos para recibir la recompensa</div>
+        </div>
+    </div>
+
+    <!-- CARDS -->
+    <div style="display:flex;flex-direction:column;">
+
+        <!-- Adsgram -->
+        <a href="/explore/watch-ads?user_id={{ user_id }}&source=adsgram" class="adc-card adc-card-cyan">
+            <div class="adc-shine"></div>
+            <div class="adc-icon adc-icon-cyan">
+                <i data-lucide="sparkles" style="width:30px;height:30px;color:#00D4FF;filter:drop-shadow(0 0 8px rgba(0,212,255,0.8));"></i>
+            </div>
+            <div style="flex:1;">
+                <div class="adc-name">Adsgram</div>
+                <div class="adc-reward" data-i18n="ad_reward_adsgram">Gana 0.005 DOGE + 5 PTS</div>
+            </div>
+            <div class="adc-chevron"><i data-lucide="chevron-right" style="width:22px;height:22px;color:rgba(0,212,255,0.50);"></i></div>
+            <div class="adc-badge adc-badge-cyan">Ads</div>
+        </a>
+
+        <!-- Adexium -->
+        <a href="/adexium?user_id={{ user_id }}" class="adc-card adc-card-green">
+            <div class="adc-shine" style="animation-delay:.8s;"></div>
+            <div class="adc-icon adc-icon-green">
+                <i data-lucide="megaphone" style="width:30px;height:30px;color:#2ECC71;filter:drop-shadow(0 0 8px rgba(46,204,113,0.8));"></i>
+            </div>
+            <div style="flex:1;">
+                <div class="adc-name">Adexium</div>
+                <div class="adc-reward" data-i18n="ad_reward_adexium">Gana 0.002 DOGE + 5 PTS</div>
+            </div>
+            <div class="adc-chevron"><i data-lucide="chevron-right" style="width:22px;height:22px;color:rgba(46,204,113,0.50);"></i></div>
+            <div class="adc-badge adc-badge-green">Ads</div>
+        </a>
+
+        <!-- Telega.io -->
+        <a href="/explore/reward-video?user_id={{ user_id }}&source=telega" class="adc-card adc-card-red">
+            <div class="adc-shine" style="animation-delay:1.6s;"></div>
+            <div class="adc-icon adc-icon-red">
+                <i data-lucide="send" style="width:30px;height:30px;color:#FF4757;filter:drop-shadow(0 0 8px rgba(255,71,87,0.8));"></i>
+            </div>
+            <div style="flex:1;">
+                <div class="adc-name">Telega.io</div>
+                <div class="adc-reward" data-i18n="ad_reward_telega">Gana 0.003 DOGE</div>
+            </div>
+            <div class="adc-chevron"><i data-lucide="chevron-right" style="width:22px;height:22px;color:rgba(255,71,87,0.50);"></i></div>
+            <div class="adc-badge adc-badge-red">Ads</div>
+        </a>
+
+        <!-- Monetag -->
+        <a href="/monetag?user_id={{ user_id }}" class="adc-card adc-card-orange">
+            <div class="adc-shine" style="animation-delay:2.4s;"></div>
+            <div class="adc-icon adc-icon-orange">
+                <i data-lucide="flame" style="width:30px;height:30px;color:#FF6B35;filter:drop-shadow(0 0 8px rgba(255,107,53,0.8));"></i>
+            </div>
+            <div style="flex:1;">
+                <div class="adc-name">Monetag</div>
+                <div class="adc-reward" data-i18n="ad_reward_monetag">Gana 0.005 DOGE + 10 PTS</div>
+            </div>
+            <div class="adc-chevron"><i data-lucide="chevron-right" style="width:22px;height:22px;color:rgba(255,107,53,0.50);"></i></div>
+            <div class="adc-badge adc-badge-orange">Ads</div>
+        </a>
+
+        <!-- GigaPub -->
+        <a href="/gigapub?user_id={{ user_id }}" class="adc-card adc-card-purple">
+            <div class="adc-shine" style="animation-delay:3.2s;"></div>
+            <div class="adc-icon adc-icon-purple">
+                <i data-lucide="zap" style="width:30px;height:30px;color:#9C27B0;filter:drop-shadow(0 0 8px rgba(156,39,176,0.8));"></i>
+            </div>
+            <div style="flex:1;">
+                <div class="adc-name">GigaPub</div>
+                <div class="adc-reward" data-i18n="ad_reward_gigapub">Gana 0.002 DOGE + 5 PTS</div>
+            </div>
+            <div class="adc-chevron"><i data-lucide="chevron-right" style="width:22px;height:22px;color:rgba(156,39,176,0.50);"></i></div>
+            <div class="adc-badge adc-badge-purple">Ads</div>
+        </a>
+
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-
-    // Haptic feedback en cards
-    const exploreCards = document.querySelectorAll('.explore-card');
-    exploreCards.forEach(card => {
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    document.querySelectorAll('.adc-card').forEach(card => {
         card.addEventListener('click', () => {
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
