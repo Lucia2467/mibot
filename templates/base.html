@@ -862,12 +862,12 @@
                     <span class="nav-label" data-i18n="nav_tasks">Tareas</span>
                 </div>
 
-                <!-- Explorar -->
+                <!-- ADS -->
                 <div class="nav-item {% if request.endpoint in ['explore', 'explore_mines', 'explore_mining', 'explore_upgrades', 'explore_watch_ads'] %}active{% endif %}" data-nav="explorar" data-href="/explore?user_id={{ user_id }}">
                     <span class="nav-icon">
-                        <i data-lucide="compass"></i>
+                        <i data-lucide="megaphone"></i>
                     </span>
-                    <span class="nav-label" data-i18n="nav_explore">Explorar</span>
+                    <span class="nav-label" data-i18n="nav_explore">ADS</span>
                 </div>
 
                 <!-- Referidos -->
@@ -878,12 +878,12 @@
                     <span class="nav-label" data-i18n="nav_invite">Invitar</span>
                 </div>
 
-                <!-- Ranking -->
+                <!-- Juegos -->
                 <div class="nav-item {% if request.endpoint in ['ranking', 'explore_games'] %}active{% endif %}" data-nav="top" data-href="/ranking?user_id={{ user_id }}">
                     <span class="nav-icon">
-                        <i data-lucide="trophy"></i>
+                        <i data-lucide="gamepad-2"></i>
                     </span>
-                    <span class="nav-label" data-i18n="nav_top">Top</span>
+                    <span class="nav-label" data-i18n="nav_top">Juegos</span>
                 </div>
 
                 <!-- Wallet -->
