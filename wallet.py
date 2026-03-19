@@ -162,7 +162,7 @@ def create_withdrawal_request(user_id, currency, amount, wallet_address=None, la
     if se_balance < 0 or doge_balance < 0 or usdt_balance < 0 or ton_balance < 0:
         debt_info = []
         if se_balance < 0:
-            debt_info.append(f"S-E: {se_balance:.4f}")
+            debt_info.append(f"PXC: {se_balance:.4f}")
         if doge_balance < 0:
             debt_info.append(f"DOGE: {doge_balance:.4f}")
         if usdt_balance < 0:
