@@ -1283,7 +1283,7 @@ def ranking():
     except Exception:
         minutes_today = 0
 
-    return render_template('ranking_competition.html',
+    return render_template('arcade.html',
                          user=user,
                          top_users=top_users,
                          user_rank=user_rank,
