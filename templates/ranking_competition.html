@@ -323,27 +323,27 @@
 
     <!-- TABS -->
     <div class="rank-tabs">
-        <button id="tab-referrals" class="rank-tab active" onclick="switchTab('referrals')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span data-i18n="ranking_referrals">Referidos</span>
+        <button id="tab-jugos" class="rank-tab active" onclick="switchTab('jugos')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2h8l1 7H7L8 2z"/><path d="M7 9c0 5 2 9 5 9s5-4 5-9"/><path d="M9 2v3"/><path d="M15 2v3"/></svg>
+            Jugos
         </button>
-        <button id="tab-pts" class="rank-tab" onclick="switchTab('pts')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span data-i18n="ranking_pts_weekly">PTS Semanal</span>
+        <button id="tab-juegos" class="rank-tab" onclick="switchTab('juegos')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="11" width="4" height="2"/><rect x="8" y="9" width="2" height="4"/><circle cx="17" cy="12" r="1"/><circle cx="15" cy="14" r="1"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
+            Juegos
         </button>
     </div>
 
-    <!-- RANKING DE REFERIDOS -->
-    <div id="panel-referrals" class="ranking-panel">
+    <!-- JUGOS TOP -->
+    <div id="panel-jugos" class="ranking-panel">
         
         <!-- Mi Posición -->
         <div class="my-position-card">
             <div class="my-position-left">
-                <span class="my-position-label" data-i18n="ranking_your_referrals">Tus Referidos</span>
+                <span class="my-position-label">Top Jugos</span>
                 <span class="my-position-value">{{ user.referral_count }}</span>
             </div>
             <div class="my-position-right">
-                <span class="my-position-rank-label" data-i18n="ranking_your_position">Tu posición</span>
+                <span class="my-position-rank-label">Tu posición</span>
                 <span class="my-position-rank">#{{ user_rank }}</span>
             </div>
         </div>
@@ -358,7 +358,7 @@
                 <div class="rank-avatar">{{ (item.username or item.first_name or 'U')[0]|upper }}</div>
                 <div class="rank-info">
                     <div class="rank-name">{{ item.username or item.first_name }}</div>
-                    <div class="rank-stats">{{ item.referral_count }} <span data-i18n="ranking_referrals">referidos</span></div>
+                    <div class="rank-stats">{{ item.referral_count }} referidos</div>
                 </div>
                 {% if item.user_id == user.user_id %}<span class="rank-you-badge">Tú</span>{% endif %}
             </div>
@@ -368,345 +368,69 @@
         {% endif %}
     </div>
 
-    <!-- RANKING DE PTS - COMPETENCIA SEMANAL -->
-    <div id="panel-pts" class="ranking-panel" style="display: none;">
+    <!-- PANEL JUEGOS -->
+    <div id="panel-juegos" class="ranking-panel" style="display: none;">
 
-        <!-- Floating Terms Button -->
-        <button class="terms-floating-btn" onclick="openPtsTermsModal()" aria-label="Terms and Conditions">
-            <svg class="terms-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <polyline points="10 9 9 9 8 9"/>
-            </svg>
-            <span class="terms-btn-text" data-i18n="pts_terms_btn">Reglas</span>
-        </button>
-
-        <!-- Terms Modal -->
-        <div class="pts-terms-modal-overlay" id="ptsTermsModal" onclick="closePtsTermsModalOutside(event)">
-            <div class="pts-terms-modal">
-                <div class="pts-terms-modal-header">
-                    <div class="pts-terms-modal-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="16" y1="13" x2="8" y2="13"/>
-                            <line x1="16" y1="17" x2="8" y2="17"/>
-                        </svg>
-                    </div>
-                    <div class="pts-terms-modal-title-wrapper">
-                        <h2 data-i18n="pts_terms_title">Términos y Condiciones</h2>
-                        <p data-i18n="pts_terms_subtitle">Top Semanal de Recompensas</p>
-                    </div>
-                    <button class="pts-terms-modal-close" onclick="closePtsTermsModal()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="pts-terms-modal-content">
-                    <!-- Section 1 -->
-                    <div class="pts-terms-section">
-                        <div class="pts-terms-section-header">
-                            <span class="pts-terms-section-num">1</span>
-                            <h3 data-i18n="pts_terms_1_title">Objeto</h3>
-                        </div>
-                        <p data-i18n="pts_terms_1_desc">El TOP Semanal de Recompensas es un sistema promocional mediante el cual la plataforma premia a los usuarios que obtengan la mayor puntuación acumulada durante un período semanal, conforme a las reglas establecidas en el presente documento.</p>
-                    </div>
-
-                    <!-- Section 2 -->
-                    <div class="pts-terms-section">
-                        <div class="pts-terms-section-header">
-                            <span class="pts-terms-section-num">2</span>
-                            <h3 data-i18n="pts_terms_2_title">Período de Vigencia</h3>
-                        </div>
-                        <p data-i18n="pts_terms_2_desc">El TOP semanal tiene una duración de siete (7) días, iniciando cada lunes a las 00:00 horas (UTC) y finalizando el siguiente lunes a las 00:00 horas (UTC).</p>
-                        <div class="pts-terms-highlight info">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            <span data-i18n="pts_terms_2_utc">Todos los horarios se rigen exclusivamente por UTC, independientemente de la ubicación del usuario.</span>
-                        </div>
-                    </div>
-
-                    <!-- Section 3 -->
-                    <div class="pts-terms-section">
-                        <div class="pts-terms-section-header">
-                            <span class="pts-terms-section-num">3</span>
-                            <h3 data-i18n="pts_terms_3_title">Cierre, Distribución y Preparación</h3>
-                        </div>
-                        <p data-i18n="pts_terms_3_desc">Una vez alcanzadas las 00:00 horas (UTC) del lunes, el TOP semanal se cierra automáticamente y se ejecutan los siguientes procesos:</p>
-                        <ul class="pts-terms-list">
-                            <li><strong data-i18n="pts_terms_3_dist">Distribución:</strong> <span data-i18n="pts_terms_3_dist_desc">Puede tardar hasta 30 minutos en completarse.</span></li>
-                            <li><strong data-i18n="pts_terms_3_prep">Preparación:</strong> <span data-i18n="pts_terms_3_prep_desc">El sistema puede tardar hasta 1 hora adicional para mostrar el nuevo ranking.</span></li>
-                        </ul>
-                    </div>
-
-                    <!-- Section 4 -->
-                    <div class="pts-terms-section">
-                        <div class="pts-terms-section-header">
-                            <span class="pts-terms-section-num">4</span>
-                            <h3 data-i18n="pts_terms_4_title">Obtención de Puntos</h3>
-                        </div>
-                        <p data-i18n="pts_terms_4_desc">Solo se contabilizarán los puntos obtenidos durante la semana activa, a través de los métodos habilitados oficialmente por la plataforma.</p>
-                        <div class="pts-terms-highlight warning">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                            <span data-i18n="pts_terms_4_fraud">Cualquier intento de generar puntos mediante métodos no autorizados será considerado fraude.</span>
-                        </div>
-                    </div>
-
-                    <!-- Section 5 -->
-                    <div class="pts-terms-section">
-                        <div class="pts-terms-section-header">
-                            <span class="pts-terms-section-num">5</span>
-                            <h3 data-i18n="pts_terms_5_title">Ranking</h3>
-                        </div>
-                        <p data-i18n="pts_terms_5_desc">El ranking semanal se ordena de forma descendente según la cantidad de puntos obtenidos. En caso de empate, la posición será asignada al usuario que haya alcanzado primero el puntaje correspondiente.</p>
-                    </div>
-
-                    <!-- Section 6 -->
-                    <div class="pts-terms-section">
-                        <div class="pts-terms-section-header">
-                            <span class="pts-terms-section-num">6</span>
-                            <h3 data-i18n="pts_terms_6_title">Recompensas Variables</h3>
-                        </div>
-                        <p data-i18n="pts_terms_6_desc">Las recompensas del TOP semanal no son fijas y pueden variar cada semana, tanto en tipo como en cantidad (criptomonedas como DOGE, S-E u otras). La plataforma no garantiza la repetición de recompensas en semanas consecutivas.</p>
-                    </div>
-
-                    <!-- Section 7 -->
-                    <div class="pts-terms-section">
-                        <div class="pts-terms-section-header">
-                            <span class="pts-terms-section-num">7</span>
-                            <h3 data-i18n="pts_terms_7_title">Confirmación de Recompensas</h3>
-                        </div>
-                        <p data-i18n="pts_terms_7_desc">Las recompensas se determinan y confirman únicamente al cierre del período semanal. Una vez cerrada la semana y asignadas las recompensas, estas quedarán definitivamente registradas y no podrán ser modificadas, sustituidas ni reclamadas.</p>
-                    </div>
-
-                    <!-- Section 8 -->
-                    <div class="pts-terms-section">
-                        <div class="pts-terms-section-header">
-                            <span class="pts-terms-section-num">8</span>
-                            <h3 data-i18n="pts_terms_8_title">Entrega de Recompensas</h3>
-                        </div>
-                        <p data-i18n="pts_terms_8_desc">Cada usuario podrá recibir una (1) sola recompensa por semana. Las recompensas se entregan una única vez. Cualquier intento de obtener pagos duplicados será considerado una infracción grave.</p>
-                    </div>
-
-                    <!-- Section 9 - Fraud -->
-                    <div class="pts-terms-section fraud-section">
-                        <div class="pts-terms-section-header">
-                            <span class="pts-terms-section-num danger">9</span>
-                            <h3 data-i18n="pts_terms_9_title">Fraude, Trampas y Sanciones</h3>
-                        </div>
-                        <div class="pts-terms-highlight danger">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-                            <span data-i18n="pts_terms_9_zero">La plataforma aplica tolerancia cero frente a cualquier forma de fraude o abuso.</span>
-                        </div>
-                        <p style="margin-top: 12px;"><strong data-i18n="pts_terms_9_fraud_types">Se considera fraude:</strong></p>
-                        <ul class="pts-terms-list danger-list">
-                            <li data-i18n="pts_terms_9_vpn">Uso de VPN, proxies o sistemas de ocultación</li>
-                            <li data-i18n="pts_terms_9_bots">Uso de bots, scripts o automatización</li>
-                            <li data-i18n="pts_terms_9_multi">Creación o uso de múltiples cuentas</li>
-                            <li data-i18n="pts_terms_9_manip">Manipulación de anuncios, tareas, rankings o recompensas</li>
-                            <li data-i18n="pts_terms_9_exploit">Explotación de errores o fallos del sistema</li>
-                        </ul>
-                        <p style="margin-top: 12px;"><strong data-i18n="pts_terms_9_sanctions">Sanciones aplicables sin previo aviso:</strong></p>
-                        <ul class="pts-terms-list sanction-list">
-                            <li data-i18n="pts_terms_9_s1">Descalificación inmediata del TOP semanal</li>
-                            <li data-i18n="pts_terms_9_s2">Pérdida total e irreversible de la recompensa</li>
-                            <li data-i18n="pts_terms_9_s3">Eliminación de puntos obtenidos fraudulentamente</li>
-                            <li data-i18n="pts_terms_9_s4">Suspensión temporal o bloqueo permanente</li>
-                            <li data-i18n="pts_terms_9_s5">Anulación de recompensas actuales y anteriores</li>
-                        </ul>
-                    </div>
-
-                    <!-- Section 10 -->
-                    <div class="pts-terms-section">
-                        <div class="pts-terms-section-header">
-                            <span class="pts-terms-section-num">10</span>
-                            <h3 data-i18n="pts_terms_10_title">Modificaciones y Suspensión</h3>
-                        </div>
-                        <p data-i18n="pts_terms_10_desc">La plataforma se reserva el derecho de modificar las recompensas, reglas o funcionamiento del TOP semanal, así como de suspenderlo o cancelarlo en cualquier momento.</p>
-                    </div>
-
-                    <!-- Section 11 -->
-                    <div class="pts-terms-section">
-                        <div class="pts-terms-section-header">
-                            <span class="pts-terms-section-num">11</span>
-                            <h3 data-i18n="pts_terms_11_title">Responsabilidad</h3>
-                        </div>
-                        <p data-i18n="pts_terms_11_desc">La plataforma no se responsabiliza por retrasos, fallos técnicos, interrupciones del servicio, errores de visualización o cualquier circunstancia externa que pueda afectar el funcionamiento del TOP o la entrega de recompensas.</p>
-                    </div>
-
-                    <!-- Section 12 -->
-                    <div class="pts-terms-section">
-                        <div class="pts-terms-section-header">
-                            <span class="pts-terms-section-num">12</span>
-                            <h3 data-i18n="pts_terms_12_title">Aceptación</h3>
-                        </div>
-                        <p data-i18n="pts_terms_12_desc">La participación en el TOP semanal implica la aceptación total, expresa y sin reservas de los presentes Términos y Condiciones.</p>
-                    </div>
-                </div>
-
-                <div class="pts-terms-modal-footer">
-                    <button class="pts-terms-accept-btn" onclick="closePtsTermsModal()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span data-i18n="pts_terms_understood">Entendido</span>
-                    </button>
-                </div>
+        <!-- Header Juegos -->
+        <div class="my-position-card" style="background: linear-gradient(155deg, #0a0818 0%, #060514 60%, #030310 100%); border-top-color: rgba(140,0,255,0.40); text-align:center; position:relative;">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6600FF,#A040FF,#CC66FF,#A040FF,#6600FF);border-radius:inherit;"></div>
+            <div style="width:100%;">
+                <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.12em;color:rgba(200,150,255,0.70);text-transform:uppercase;margin-bottom:6px;">🎮 Juegos</div>
+                <div style="font-size:1rem;font-weight:700;color:rgba(255,255,255,0.80);">Apuesta y multiplica tus PXC</div>
             </div>
         </div>
 
-        <!-- BANNER DE ESTADO DE COMPETENCIA -->
-        <div id="competition-state-banner" class="competition-state-banner">
-            <div class="state-indicator">
-                <div class="state-dot"></div>
-                <span class="state-label">Cargando...</span>
-            </div>
-            <p class="state-message"></p>
-            <div class="state-timer" style="display: none;"></div>
-        </div>
+        <!-- Tarjetas de Juegos -->
+        <div class="rank-container" style="gap:12px;">
 
-        <!-- Header con info del usuario -->
-        <div class="pts-hero-card">
-            <div class="pts-hero-content">
-                <div class="pts-hero-header">
-                    <div>
-                        <h3 class="pts-hero-title" data-i18n="ranking_weekly">Competencia Semanal</h3>
-                        <p class="pts-hero-subtitle" id="competition-number">Cargando...</p>
+            <!-- Minas -->
+            <a href="/explore/mines?user_id={{ user_id }}" style="text-decoration:none;">
+                <div class="rank-row" style="border-top-color:rgba(255,184,0,0.40); padding:18px 16px; cursor:pointer;">
+                    <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(255,184,0,0.22),rgba(200,120,0,0.12));border:1px solid rgba(255,184,0,0.35);display:flex;align-items:center;justify-content:center;margin-right:16px;flex-shrink:0;">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFB800" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
                     </div>
-                    <div class="pts-countdown-box">
-                        <span class="pts-countdown-label" id="countdown-label" data-i18n="ranking_ends_in">Termina en</span>
-                        <div id="pts-countdown" class="pts-countdown-value">--</div>
+                    <div class="rank-info">
+                        <div class="rank-name">💣 Minas</div>
+                        <div class="rank-stats">Evita las bombas · Multiplica hasta 200x</div>
+                    </div>
+                    <div style="padding:5px 12px;background:rgba(255,184,0,0.10);border:1px solid rgba(255,184,0,0.25);border-radius:20px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFB800" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
                     </div>
                 </div>
+            </a>
 
-                <div class="pts-user-stats">
-                    <div class="pts-user-stat">
-                        <span class="pts-user-stat-label" data-i18n="ranking_your_pts_week">Tus PTS esta semana</span>
-                        <div class="pts-user-stat-value"><span id="user-pts-week">0</span> PTS</div>
+            <!-- Ruleta -->
+            <a href="/explore/roulette?user_id={{ user_id }}" style="text-decoration:none;">
+                <div class="rank-row" style="border-top-color:rgba(0,212,255,0.40); padding:18px 16px; cursor:pointer;">
+                    <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(0,212,255,0.22),rgba(0,100,200,0.12));border:1px solid rgba(0,212,255,0.35);display:flex;align-items:center;justify-content:center;margin-right:16px;flex-shrink:0;">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="3"/></svg>
                     </div>
-                    <div class="pts-user-stat-divider"></div>
-                    <div class="pts-user-stat">
-                        <span class="pts-user-stat-label" data-i18n="ranking_your_position">Tu posicion</span>
-                        <div class="pts-user-stat-position">#<span id="user-pts-position">--</span></div>
-                        <div id="user-prize-status" class="pts-user-prize-status"></div>
+                    <div class="rank-info">
+                        <div class="rank-name">🎰 Ruleta</div>
+                        <div class="rank-stats">Gira la rueda · Apuesta PXC</div>
+                    </div>
+                    <div style="padding:5px 12px;background:rgba(0,212,255,0.10);border:1px solid rgba(0,212,255,0.25);border-radius:20px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
                     </div>
                 </div>
-            </div>
-        </div>
+            </a>
 
-        <!-- PREMIOS -->
-        <div class="pts-rules-card">
-            <div class="pts-rules-header">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                <h3 data-i18n="ranking_weekly_prizes">Premios Semanales</h3>
-            </div>
+            <!-- Arcade -->
+            <a href="/arcade?user_id={{ user_id }}" style="text-decoration:none;">
+                <div class="rank-row" style="border-top-color:rgba(0,255,136,0.40); padding:18px 16px; cursor:pointer;">
+                    <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(0,255,136,0.22),rgba(0,160,80,0.12));border:1px solid rgba(0,255,136,0.35);display:flex;align-items:center;justify-content:center;margin-right:16px;flex-shrink:0;">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00FF88" stroke-width="2"><rect x="6" y="11" width="4" height="2"/><rect x="8" y="9" width="2" height="4"/><circle cx="17" cy="12" r="1"/><circle cx="15" cy="14" r="1"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
+                    </div>
+                    <div class="rank-info">
+                        <div class="rank-name">🕹️ Arcade</div>
+                        <div class="rank-stats">Mini juegos · Gana PXC gratis</div>
+                    </div>
+                    <div style="padding:5px 12px;background:rgba(0,255,136,0.10);border:1px solid rgba(0,255,136,0.25);border-radius:20px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00FF88" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                </div>
+            </a>
 
-            <div class="pts-min-rule">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                <span data-i18n="ranking_min_pts_rule">Minimo 4,000 PTS para clasificar a premio</span>
-            </div>
-
-            <div class="pts-prizes-table">
-                <div class="pts-prize-row gold">
-                    <div class="pts-prize-medal">1</div>
-                    <div class="pts-prize-info">
-                        <span class="pts-prize-pos">Top 1</span>
-                        <span class="pts-prize-desc" data-i18n="ranking_most_pts">Mayor puntuacion</span>
-                    </div>
-                    <div class="pts-prize-reward">10 DOGE</div>
-                </div>
-                <div class="pts-prize-row silver">
-                    <div class="pts-prize-medal">2</div>
-                    <div class="pts-prize-info">
-                        <span class="pts-prize-pos">Top 2</span>
-                        <span class="pts-prize-desc" data-i18n="ranking_second_place">Segundo lugar</span>
-                    </div>
-                    <div class="pts-prize-reward">5 DOGE</div>
-                </div>
-                <div class="pts-prize-row bronze">
-                    <div class="pts-prize-medal">3</div>
-                    <div class="pts-prize-info">
-                        <span class="pts-prize-pos">Top 3</span>
-                        <span class="pts-prize-desc" data-i18n="ranking_third_place">Tercer lugar</span>
-                    </div>
-                    <div class="pts-prize-reward">2 DOGE</div>
-                </div>
-                <div class="pts-prize-row">
-                    <div class="pts-prize-medal">4</div>
-                    <div class="pts-prize-info">
-                        <span class="pts-prize-pos">Top 4</span>
-                        <span class="pts-prize-desc" data-i18n="ranking_fourth_place">Cuarto lugar</span>
-                    </div>
-                    <div class="pts-prize-reward">1 DOGE</div>
-                </div>
-                <div class="pts-prize-row">
-                    <div class="pts-prize-medal">5</div>
-                    <div class="pts-prize-info">
-                        <span class="pts-prize-pos">Top 5</span>
-                        <span class="pts-prize-desc" data-i18n="ranking_fifth_place">Quinto lugar</span>
-                    </div>
-                    <div class="pts-prize-reward">0.5 DOGE</div>
-                </div>
-            </div>
-
-            <div class="pts-rules-footer">
-                <span data-i18n="ranking_only_top5">Solo Top 5 con 4,000+ PTS reciben premio</span>
-            </div>
-        </div>
-
-        <!-- TOP 10 RANKING -->
-        <div class="card">
-            <h3 class="pts-ranking-title">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
-                <span data-i18n="ranking_top_10">Top 10 de la Semana</span>
-            </h3>
-            <div id="pts-ranking-list" class="pts-ranking-list">
-                <div class="pts-loading">
-                    <div class="pts-loading-spinner"></div>
-                    <span data-i18n="ranking_loading">Cargando...</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- COMO GANAR PTS -->
-        <div class="pts-howto-card" id="howto-earn-pts">
-            <h3 class="pts-howto-title">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0052CC" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                <span data-i18n="ranking_how_earn_pts">Como ganar PTS</span>
-            </h3>
-            <div class="pts-howto-list">
-                <div class="pts-howto-item cyan">
-                    <div class="pts-howto-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
-                    <div class="pts-howto-info">
-                        <span class="pts-howto-reward">+5 PTS</span>
-                        <span class="pts-howto-desc" data-i18n="ranking_per_ad">por cada anuncio visto</span>
-                    </div>
-                </div>
-                <div class="pts-howto-item pink">
-                    <div class="pts-howto-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-                    <div class="pts-howto-info">
-                        <span class="pts-howto-reward">+10 PTS</span>
-                        <span class="pts-howto-desc" data-i18n="ranking_daily_checkin">check-in diario</span>
-                    </div>
-                </div>
-                <div class="pts-howto-item yellow">
-                    <div class="pts-howto-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
-                    <div class="pts-howto-info">
-                        <span class="pts-howto-reward">+20 PTS</span>
-                        <span class="pts-howto-desc" data-i18n="ranking_bonus_5_ads">bonus por 5 anuncios</span>
-                    </div>
-                </div>
-                <div class="pts-howto-item green">
-                    <div class="pts-howto-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-                    <div class="pts-howto-info">
-                        <span class="pts-howto-reward">+15 PTS</span>
-                        <span class="pts-howto-desc" data-i18n="ranking_activate_boost">activar boost de mineria</span>
-                    </div>
-                </div>
-            </div>
-            <p class="pts-howto-note" data-i18n="ranking_pts_only_ranking">Los PTS son solo para ranking. No se pueden retirar ni convertir.</p>
         </div>
     </div>
 </div>
@@ -1261,10 +985,6 @@ function switchTab(tab) {
     document.querySelectorAll('.ranking-panel').forEach(p => p.style.display = 'none');
     document.getElementById(`tab-${tab}`).classList.add('active');
     document.getElementById(`panel-${tab}`).style.display = 'block';
-
-    if (tab === 'pts') {
-        loadCompetitionData();
-    }
 }
 
 async function loadCompetitionData() {
@@ -1529,9 +1249,7 @@ function startAutoRefresh() {
 
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof lucide !== 'undefined') lucide.createIcons();
-    if (new URLSearchParams(window.location.search).get('tab') === 'pts') switchTab('pts');
-
-    startAutoRefresh();
+    if (new URLSearchParams(window.location.search).get('tab') === 'juegos') switchTab('juegos');
 
     if (typeof applyTranslations === 'function') {
         setTimeout(applyTranslations, 100);

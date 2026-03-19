@@ -863,7 +863,7 @@
                 </div>
 
                 <!-- Explorar -->
-                <div class="nav-item {% if request.endpoint in ['explore', 'explore_games', 'explore_mines', 'explore_mining', 'explore_upgrades', 'explore_watch_ads'] %}active{% endif %}" data-nav="explorar" data-href="/explore?user_id={{ user_id }}">
+                <div class="nav-item {% if request.endpoint in ['explore', 'explore_mines', 'explore_mining', 'explore_upgrades', 'explore_watch_ads'] %}active{% endif %}" data-nav="explorar" data-href="/explore?user_id={{ user_id }}">
                     <span class="nav-icon">
                         <i data-lucide="compass"></i>
                     </span>
@@ -879,7 +879,7 @@
                 </div>
 
                 <!-- Ranking -->
-                <div class="nav-item {% if request.endpoint == 'ranking' %}active{% endif %}" data-nav="top" data-href="/ranking?user_id={{ user_id }}">
+                <div class="nav-item {% if request.endpoint in ['ranking', 'explore_games'] %}active{% endif %}" data-nav="top" data-href="/ranking?user_id={{ user_id }}">
                     <span class="nav-icon">
                         <i data-lucide="trophy"></i>
                     </span>
