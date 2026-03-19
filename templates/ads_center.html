@@ -4,255 +4,214 @@
 
 {% block extra_head %}
 <style>
+@keyframes floatIcon { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
 @keyframes adcIn {
-    from { opacity:0; transform:translateY(20px) scale(0.96); }
+    from { opacity:0; transform:translateY(18px) scale(0.96); }
     to   { opacity:1; transform:translateY(0) scale(1); }
 }
-@keyframes adcShine { 0%{left:-100%} 100%{left:200%} }
-@keyframes adcPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
-@keyframes floatIcon { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
-
-/* HERO */
-.adc-hero {
-    background: linear-gradient(155deg, #0d0a00 0%, #080600 55%, #040300 100%);
-    border-top:    2px solid rgba(255,184,0,0.55);
-    border-left:   1px solid rgba(255,184,0,0.28);
-    border-right:  1px solid rgba(0,0,0,0.60);
-    border-bottom: 4px solid rgba(0,0,0,0.95);
-    border-radius: 24px; padding: 28px 24px 24px;
-    text-align: center; position: relative; overflow: hidden; margin-bottom: 16px;
-    box-shadow: 0 4px 0 rgba(255,184,0,0.10) inset, 0 -5px 0 rgba(0,0,0,0.90) inset,
-                0 30px 80px rgba(0,0,0,0.80);
-    animation: adcIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.04s both;
-}
-.adc-hero::before {
-    content:''; position:absolute; top:0; left:0; right:0; height:3px;
-    background: linear-gradient(90deg, #FF8C00, #FFB800, #FFD700, #FFB800, #FF8C00);
-}
-.adc-hero-icon {
-    width:80px; height:80px; margin:0 auto 16px;
-    background: linear-gradient(145deg,rgba(255,184,0,0.28),rgba(255,120,0,0.16));
-    border-top:2px solid rgba(255,184,0,0.60); border-left:1px solid rgba(255,184,0,0.36);
-    border-right:1px solid rgba(0,0,0,0.45); border-bottom:3px solid rgba(0,0,0,0.80);
-    border-radius:22px; display:flex; align-items:center; justify-content:center;
-    position:relative; z-index:1;
-    box-shadow: 0 3px 0 rgba(255,184,0,0.18) inset, 0 -3px 0 rgba(0,0,0,0.65) inset, 0 12px 34px rgba(255,140,0,0.30);
-    animation: floatIcon 3s ease-in-out infinite;
-}
-
-/* INFO */
-.adc-info {
-    background: linear-gradient(160deg, #0c0c22 0%, #080818 50%, #050514 100%);
-    border-top:    2px solid rgba(60,130,255,0.45);
-    border-left:   1px solid rgba(40,100,255,0.25);
-    border-right:  1px solid rgba(0,0,0,0.80);
-    border-bottom: 4px solid rgba(0,0,0,0.95);
-    border-radius: 18px; padding: 16px 18px;
-    display:flex; align-items:center; gap:14px; margin-bottom:20px;
-    box-shadow: 0 3px 0 rgba(80,140,255,0.12) inset, 0 -4px 0 rgba(0,0,0,0.95) inset,
-                0 8px 32px rgba(0,0,0,0.80), 0 0 0 1px rgba(50,100,255,0.15);
-    animation: adcIn 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.10s both;
-}
-.adc-info-icon {
-    width:42px; height:42px; flex-shrink:0;
-    background: linear-gradient(145deg,rgba(60,130,255,0.22),rgba(30,80,200,0.12));
-    border-top:1px solid rgba(60,130,255,0.45); border-bottom:2px solid rgba(0,0,0,0.70);
-    border-radius:12px; display:flex; align-items:center; justify-content:center;
-    box-shadow: 0 2px 0 rgba(80,140,255,0.12) inset, 0 -2px 0 rgba(0,0,0,0.55) inset;
-}
-
-/* AD CARD — mismo color base que .card */
-.adc-card {
-    position:relative; overflow:hidden;
-    background: linear-gradient(160deg, #0c0c22 0%, #080818 50%, #050514 100%);
-    border-top:    2px solid rgba(60,130,255,0.45);
-    border-left:   1px solid rgba(40,100,255,0.25);
-    border-right:  1px solid rgba(0,0,0,0.80);
-    border-bottom: 4px solid rgba(0,0,0,0.95);
-    border-radius: 20px; padding: 18px;
-    display:flex; align-items:center; gap:16px;
-    cursor:pointer; transform:translateZ(0);
-    transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1), box-shadow 0.22s;
-    text-decoration:none; margin-bottom:12px;
-    box-shadow:
-        0 3px 0 rgba(80,140,255,0.12) inset,
-        0 -4px 0 rgba(0,0,0,0.95) inset,
-        0 8px 32px rgba(0,0,0,0.80),
-        0 0 0 1px rgba(50,100,255,0.15);
-}
-.adc-card::before {
-    content:''; position:absolute; top:0; left:0; right:0; height:2px;
-    background: linear-gradient(90deg, transparent, rgba(80,160,255,0.70), transparent);
-    pointer-events:none; z-index:2;
-}
-.adc-card::after {
-    content:''; position:absolute; inset:0;
-    background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, transparent 45%);
-    pointer-events:none; z-index:1;
-}
-.adc-card:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow:
-        0 3px 0 rgba(80,140,255,0.14) inset,
-        0 -4px 0 rgba(0,0,0,0.95) inset,
-        0 20px 55px rgba(0,0,0,0.85),
-        0 0 60px rgba(60,120,255,0.15),
-        0 0 0 1px rgba(80,140,255,0.25);
-}
-.adc-card:active { transform:translateY(2px) scale(0.98); transition:transform .07s ease; }
-
-.adc-shine {
-    position:absolute; top:0; left:-100%; width:55%; height:100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
-    animation: adcShine 4s ease-in-out infinite;
-    pointer-events:none;
-}
-
-/* ICON BOX */
-.adc-icon {
-    width:58px; height:58px; flex-shrink:0; border-radius:15px;
-    display:flex; align-items:center; justify-content:center;
-    position:relative; z-index:2;
-    transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1);
-    background: linear-gradient(145deg, rgba(60,130,255,0.22), rgba(30,80,200,0.12));
-    border-top:    1px solid rgba(60,130,255,0.45);
-    border-left:   1px solid rgba(40,100,255,0.25);
-    border-right:  1px solid rgba(0,0,0,0.55);
-    border-bottom: 2px solid rgba(0,0,0,0.80);
-    box-shadow: 0 2px 0 rgba(80,140,255,0.12) inset, 0 -2px 0 rgba(0,0,0,0.60) inset, 0 8px 24px rgba(0,0,0,0.50);
-}
-.adc-card:hover .adc-icon { transform: translateY(-3px) scale(1.08); }
-
-.adc-name   { font-size:1.05rem; font-weight:800; color:#fff; margin-bottom:4px; position:relative; z-index:2; }
-.adc-reward { font-size:0.82rem; color:rgba(255,255,255,0.50); position:relative; z-index:2; }
-.adc-chevron { margin-left:auto; flex-shrink:0; position:relative; z-index:2; }
-
-/* BADGE — único elemento con color propio */
-.adc-badge {
-    position:absolute; top:12px; right:12px;
-    border-radius:20px; padding:4px 12px;
-    font-size:0.70rem; font-weight:800; letter-spacing:.04em; z-index:3;
-}
-.adc-badge-cyan   { background:linear-gradient(135deg,#00D4FF,#0096C8); color:#000; }
-.adc-badge-green  { background:linear-gradient(135deg,#2ECC71,#27AE60); color:#fff; }
-.adc-badge-red    { background:linear-gradient(135deg,#FF4757,#C8323C); color:#fff; }
-.adc-badge-orange { background:linear-gradient(135deg,#FF6B35,#E65100); color:#fff; }
-.adc-badge-purple { background:linear-gradient(135deg,#9C27B0,#7B1FA2); color:#fff; }
-
-/* stagger */
-.adc-card:nth-child(1){animation:adcIn .38s cubic-bezier(.34,1.2,.64,1) .14s both}
-.adc-card:nth-child(2){animation:adcIn .38s cubic-bezier(.34,1.2,.64,1) .20s both}
-.adc-card:nth-child(3){animation:adcIn .38s cubic-bezier(.34,1.2,.64,1) .26s both}
-.adc-card:nth-child(4){animation:adcIn .38s cubic-bezier(.34,1.2,.64,1) .32s both}
-.adc-card:nth-child(5){animation:adcIn .38s cubic-bezier(.34,1.2,.64,1) .38s both}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container" style="padding-bottom:120px;">
+<div style="padding: 0 var(--space-4) 120px;">
 
-    <!-- Back -->
-    <div style="padding-top:8px;margin-bottom:16px;">
-        <a href="/explore?user_id={{ user_id }}" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:linear-gradient(160deg,#0c0c22,#080818);border-top:2px solid rgba(60,130,255,0.45);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:12px;box-shadow:0 3px 0 rgba(80,140,255,0.12) inset,0 -4px 0 rgba(0,0,0,0.95) inset;">
-            <i data-lucide="arrow-left" style="width:18px;height:18px;color:rgba(255,255,255,0.60);"></i>
-            <span style="font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.50);">Volver</span>
-        </a>
+    <!-- HEADER -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) 0 var(--space-3);">
+        <h1 style="margin:0;font-size:1.4rem;font-weight:800;color:var(--color-text-primary);" data-i18n="ads_center_title">
+            Centro de ADS
+        </h1>
     </div>
 
-    <!-- HERO -->
-    <div class="adc-hero">
-        <div class="adc-hero-icon">
-            <i data-lucide="megaphone" style="width:40px;height:40px;color:#FFB800;filter:drop-shadow(0 0 12px rgba(255,184,0,0.8));"></i>
-        </div>
-        <div style="font-size:1.75rem;font-weight:900;background:linear-gradient(135deg,#FFD700,#FFB800,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;position:relative;z-index:1;" data-i18n="ads_center_title">Centro de ADS</div>
-        <div style="font-size:0.875rem;color:rgba(255,255,255,0.50);line-height:1.5;position:relative;z-index:1;" data-i18n="earn_watching_ads">Gana monedas viendo anuncios voluntarios</div>
-    </div>
-
-    <!-- INFO -->
-    <div class="adc-info">
-        <div class="adc-info-icon">
-            <i data-lucide="info" style="width:20px;height:20px;color:#4da6ff;filter:drop-shadow(0 0 6px rgba(60,130,255,0.7));animation:adcPulse 2s ease-in-out infinite;"></i>
-        </div>
-        <div>
-            <div style="font-weight:700;font-size:0.875rem;color:#fff;margin-bottom:3px;" data-i18n="daily_limit_applied">Límite diario aplicado</div>
-            <div style="font-size:0.78rem;color:rgba(255,255,255,0.45);" data-i18n="wait_15_seconds">Debes esperar 15 segundos para recibir la recompensa</div>
+    <!-- CHECK-IN BANNER (info) -->
+    <div style="position:relative;overflow:hidden;background:linear-gradient(135deg,#4a2a00 0%,#7a4500 50%,#a85e00 100%);border:1px solid rgba(255,184,0,0.3);border-radius:18px;padding:16px 18px;margin-bottom:var(--space-4);">
+        <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(255,255,255,0.04);border-radius:50%;"></div>
+        <div style="position:absolute;bottom:-30px;right:60px;width:70px;height:70px;background:rgba(255,255,255,0.03);border-radius:50%;"></div>
+        <div style="position:relative;display:flex;align-items:center;gap:14px;">
+            <div style="width:48px;height:48px;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:floatIcon 3s ease-in-out infinite;">
+                <i data-lucide="megaphone" style="width:24px;height:24px;color:#fff;"></i>
+            </div>
+            <div>
+                <div style="font-weight:800;font-size:1rem;color:#fff;letter-spacing:-0.01em;" data-i18n="ads_center_title">Centro de ADS</div>
+                <div style="font-size:0.78rem;color:rgba(255,255,255,0.65);margin-top:3px;" data-i18n="earn_watching_ads">Gana monedas viendo anuncios voluntarios</div>
+                <div style="display:flex;align-items:center;gap:6px;margin-top:5px;">
+                    <i data-lucide="info" style="width:12px;height:12px;color:#FFB800;"></i>
+                    <span style="font-size:0.73rem;color:rgba(255,255,255,0.55);" data-i18n="wait_15_seconds">Espera 15 segundos para recibir la recompensa</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- CARDS -->
-    <div style="display:flex;flex-direction:column;">
+    <!-- AD ROWS — misma clase .task-row que tasks_pts.html -->
+    <style>
+    /* Forzar estilo task-row exacto de tasks_pts */
+    .adc-row,
+    div.adc-row,
+    a.adc-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 15px 16px;
+        background: linear-gradient(145deg, #1a1a2e 0%, #0f0f1a 40%, #080810 100%) !important;
+        border-top:    1px solid rgba(255,255,255,0.12) !important;
+        border-left:   1px solid rgba(255,255,255,0.08) !important;
+        border-right:  1px solid rgba(255,255,255,0.03) !important;
+        border-bottom: 1px solid rgba(0,0,0,0.5) !important;
+        border-radius: 18px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        transform: translateZ(0) translateY(0) scale(1);
+        transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s ease;
+        box-shadow:
+            0 2px 0 rgba(255,255,255,0.05) inset,
+            0 -1px 0 rgba(0,0,0,0.4) inset,
+            0 4px 16px rgba(0,0,0,0.3),
+            0 1px 3px rgba(0,0,0,0.4) !important;
+        animation: adcIn 0.35s cubic-bezier(0.34,1.2,0.64,1) both;
+    }
+    .adc-row::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(115deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 30%, transparent 60%);
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: 1;
+    }
+    .adc-row:hover  { transform: translateZ(0) translateY(-3px) scale(1.008) !important; }
+    .adc-row:active { transform: translateZ(0) translateY(2px) scale(0.984) !important; transition: transform 0.08s ease !important; }
 
-        <!-- Adsgram -->
-        <a href="/explore/watch-ads?user_id={{ user_id }}&source=adsgram" class="adc-card">
-            <div class="adc-shine"></div>
-            <div class="adc-icon">
-                <i data-lucide="sparkles" style="width:28px;height:28px;color:#00D4FF;filter:drop-shadow(0 0 8px rgba(0,212,255,0.8));"></i>
-            </div>
-            <div style="flex:1;">
-                <div class="adc-name">Adsgram</div>
-                <div class="adc-reward" data-i18n="ad_reward_adsgram">Gana 0.005 DOGE + 5 PTS</div>
-            </div>
-            <div class="adc-chevron"><i data-lucide="chevron-right" style="width:22px;height:22px;color:rgba(255,255,255,0.30);"></i></div>
-            <div class="adc-badge adc-badge-cyan">Ads</div>
-        </a>
+    .adc-row-icon {
+        width: 48px; height: 48px;
+        border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; position: relative; z-index: 2;
+        box-shadow:
+            0 2px 0 rgba(255,255,255,0.15) inset,
+            0 -2px 0 rgba(0,0,0,0.4) inset,
+            0 6px 20px rgba(0,0,0,0.4);
+        transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .adc-row:active .adc-row-icon { transform: scale(0.92); }
 
-        <!-- Adexium -->
-        <a href="/adexium?user_id={{ user_id }}" class="adc-card">
-            <div class="adc-shine" style="animation-delay:.8s;"></div>
-            <div class="adc-icon">
-                <i data-lucide="megaphone" style="width:28px;height:28px;color:#2ECC71;filter:drop-shadow(0 0 8px rgba(46,204,113,0.8));"></i>
-            </div>
-            <div style="flex:1;">
-                <div class="adc-name">Adexium</div>
-                <div class="adc-reward" data-i18n="ad_reward_adexium">Gana 0.002 DOGE + 5 PTS</div>
-            </div>
-            <div class="adc-chevron"><i data-lucide="chevron-right" style="width:22px;height:22px;color:rgba(255,255,255,0.30);"></i></div>
-            <div class="adc-badge adc-badge-green">Ads</div>
-        </a>
+    .adc-row-body { flex: 1; min-width: 0; position: relative; z-index: 2; }
+    .adc-row-title {
+        font-weight: 700; font-size: 0.92rem; color: #fff;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        margin-bottom: 5px; letter-spacing: -0.01em;
+    }
+    .adc-row-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
-        <!-- Telega.io -->
-        <a href="/explore/reward-video?user_id={{ user_id }}&source=telega" class="adc-card">
-            <div class="adc-shine" style="animation-delay:1.6s;"></div>
-            <div class="adc-icon">
-                <i data-lucide="send" style="width:28px;height:28px;color:#FF4757;filter:drop-shadow(0 0 8px rgba(255,71,87,0.8));"></i>
-            </div>
-            <div style="flex:1;">
-                <div class="adc-name">Telega.io</div>
-                <div class="adc-reward" data-i18n="ad_reward_telega">Gana 0.003 DOGE</div>
-            </div>
-            <div class="adc-chevron"><i data-lucide="chevron-right" style="width:22px;height:22px;color:rgba(255,255,255,0.30);"></i></div>
-            <div class="adc-badge adc-badge-red">Ads</div>
-        </a>
+    .adc-chip {
+        font-size: 0.68rem; font-weight: 700;
+        padding: 3px 9px; border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.10);
+        color: rgba(255,255,255,0.45);
+        background: rgba(255,255,255,0.05);
+        box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 -1px 0 rgba(0,0,0,0.3) inset;
+    }
+    .adc-chip-reward {
+        color: #6BB8FF;
+        border-color: rgba(77,148,255,0.28);
+        background: rgba(77,148,255,0.10);
+    }
+    .adc-badge {
+        position: absolute; top: 12px; right: 12px;
+        border-radius: 20px; padding: 4px 12px;
+        font-size: 0.70rem; font-weight: 800;
+        letter-spacing: .04em; z-index: 3;
+    }
+    .adc-arrow { color: rgba(255,255,255,0.2); flex-shrink: 0; position: relative; z-index: 2; }
 
-        <!-- Monetag -->
-        <a href="/monetag?user_id={{ user_id }}" class="adc-card">
-            <div class="adc-shine" style="animation-delay:2.4s;"></div>
-            <div class="adc-icon">
-                <i data-lucide="flame" style="width:28px;height:28px;color:#FF6B35;filter:drop-shadow(0 0 8px rgba(255,107,53,0.8));"></i>
-            </div>
-            <div style="flex:1;">
-                <div class="adc-name">Monetag</div>
-                <div class="adc-reward" data-i18n="ad_reward_monetag">Gana 0.005 DOGE + 10 PTS</div>
-            </div>
-            <div class="adc-chevron"><i data-lucide="chevron-right" style="width:22px;height:22px;color:rgba(255,255,255,0.30);"></i></div>
-            <div class="adc-badge adc-badge-orange">Ads</div>
-        </a>
+    .adc-row:nth-child(1) { animation-delay: 0.00s; }
+    .adc-row:nth-child(2) { animation-delay: 0.06s; }
+    .adc-row:nth-child(3) { animation-delay: 0.12s; }
+    .adc-row:nth-child(4) { animation-delay: 0.18s; }
+    .adc-row:nth-child(5) { animation-delay: 0.24s; }
+    </style>
 
-        <!-- GigaPub -->
-        <a href="/gigapub?user_id={{ user_id }}" class="adc-card">
-            <div class="adc-shine" style="animation-delay:3.2s;"></div>
-            <div class="adc-icon">
-                <i data-lucide="zap" style="width:28px;height:28px;color:#9C27B0;filter:drop-shadow(0 0 8px rgba(156,39,176,0.8));"></i>
+    <!-- Adsgram -->
+    <a href="/explore/watch-ads?user_id={{ user_id }}&source=adsgram" class="adc-row">
+        <div class="adc-row-icon" style="background:rgba(0,212,255,0.15);">
+            <i data-lucide="sparkles" style="width:22px;height:22px;color:#00D4FF;"></i>
+        </div>
+        <div class="adc-row-body">
+            <div class="adc-row-title">Adsgram</div>
+            <div class="adc-row-meta">
+                <span class="adc-chip adc-chip-reward" data-i18n="ad_reward_adsgram">Gana 0.005 DOGE + 5 PTS</span>
+                <span class="adc-chip" style="color:#00D4FF;">ADS</span>
             </div>
-            <div style="flex:1;">
-                <div class="adc-name">GigaPub</div>
-                <div class="adc-reward" data-i18n="ad_reward_gigapub">Gana 0.002 DOGE + 5 PTS</div>
-            </div>
-            <div class="adc-chevron"><i data-lucide="chevron-right" style="width:22px;height:22px;color:rgba(255,255,255,0.30);"></i></div>
-            <div class="adc-badge adc-badge-purple">Ads</div>
-        </a>
+        </div>
+        <div class="adc-arrow"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>
+        <div class="adc-badge" style="background:linear-gradient(135deg,#00D4FF,#0096C8);color:#000;">Ads</div>
+    </a>
 
-    </div>
+    <!-- Adexium -->
+    <a href="/adexium?user_id={{ user_id }}" class="adc-row">
+        <div class="adc-row-icon" style="background:rgba(46,204,113,0.15);">
+            <i data-lucide="megaphone" style="width:22px;height:22px;color:#2ECC71;"></i>
+        </div>
+        <div class="adc-row-body">
+            <div class="adc-row-title">Adexium</div>
+            <div class="adc-row-meta">
+                <span class="adc-chip adc-chip-reward" data-i18n="ad_reward_adexium">Gana 0.002 DOGE + 5 PTS</span>
+                <span class="adc-chip" style="color:#2ECC71;">ADS</span>
+            </div>
+        </div>
+        <div class="adc-arrow"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>
+        <div class="adc-badge" style="background:linear-gradient(135deg,#2ECC71,#27AE60);color:#fff;">Ads</div>
+    </a>
+
+    <!-- Telega.io -->
+    <a href="/explore/reward-video?user_id={{ user_id }}&source=telega" class="adc-row">
+        <div class="adc-row-icon" style="background:rgba(255,71,87,0.15);">
+            <i data-lucide="send" style="width:22px;height:22px;color:#FF4757;"></i>
+        </div>
+        <div class="adc-row-body">
+            <div class="adc-row-title">Telega.io</div>
+            <div class="adc-row-meta">
+                <span class="adc-chip adc-chip-reward" data-i18n="ad_reward_telega">Gana 0.003 DOGE</span>
+                <span class="adc-chip" style="color:#FF4757;">ADS</span>
+            </div>
+        </div>
+        <div class="adc-arrow"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>
+        <div class="adc-badge" style="background:linear-gradient(135deg,#FF4757,#C8323C);color:#fff;">Ads</div>
+    </a>
+
+    <!-- Monetag -->
+    <a href="/monetag?user_id={{ user_id }}" class="adc-row">
+        <div class="adc-row-icon" style="background:rgba(255,107,53,0.15);">
+            <i data-lucide="flame" style="width:22px;height:22px;color:#FF6B35;"></i>
+        </div>
+        <div class="adc-row-body">
+            <div class="adc-row-title">Monetag</div>
+            <div class="adc-row-meta">
+                <span class="adc-chip adc-chip-reward" data-i18n="ad_reward_monetag">Gana 0.005 DOGE + 10 PTS</span>
+                <span class="adc-chip" style="color:#FF6B35;">ADS</span>
+            </div>
+        </div>
+        <div class="adc-arrow"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>
+        <div class="adc-badge" style="background:linear-gradient(135deg,#FF6B35,#E65100);color:#fff;">Ads</div>
+    </a>
+
+    <!-- GigaPub -->
+    <a href="/gigapub?user_id={{ user_id }}" class="adc-row">
+        <div class="adc-row-icon" style="background:rgba(156,39,176,0.15);">
+            <i data-lucide="zap" style="width:22px;height:22px;color:#9C27B0;"></i>
+        </div>
+        <div class="adc-row-body">
+            <div class="adc-row-title">GigaPub</div>
+            <div class="adc-row-meta">
+                <span class="adc-chip adc-chip-reward" data-i18n="ad_reward_gigapub">Gana 0.002 DOGE + 5 PTS</span>
+                <span class="adc-chip" style="color:#9C27B0;">ADS</span>
+            </div>
+        </div>
+        <div class="adc-arrow"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>
+        <div class="adc-badge" style="background:linear-gradient(135deg,#9C27B0,#7B1FA2);color:#fff;">Ads</div>
+    </a>
+
 </div>
 {% endblock %}
 
@@ -260,8 +219,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof lucide !== 'undefined') lucide.createIcons();
-    document.querySelectorAll('.adc-card').forEach(card => {
-        card.addEventListener('click', () => {
+    document.querySelectorAll('.adc-row').forEach(row => {
+        row.addEventListener('click', () => {
             if (window.Telegram && window.Telegram.WebApp)
                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         });
