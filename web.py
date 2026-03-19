@@ -3346,7 +3346,9 @@ def api_wallet_withdraw():
 
     if WALLET_AVAILABLE:
         # Usar la dirección vinculada automáticamente (no pasamos wallet_address)
-        success, result = create_withdrawal_request(user_id, currency, amount)
+        from i18n_messages import get_user_lang as _gul
+        _wlang = _gul(user_id)
+        success, result = create_withdrawal_request(user_id, currency, amount, lang=_wlang)
         if success:
             withdrawal_id = result
 

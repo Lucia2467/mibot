@@ -6,6 +6,13 @@ Soporta: USDT (BEP20), DOGE (BEP20), TON (TON Network)
 
 import re
 from datetime import datetime
+try:
+    from i18n_messages import get_user_lang, get_msg as _gm
+    I18N_AVAILABLE = True
+except Exception:
+    I18N_AVAILABLE = False
+    def _gm(key, lang='es', **kw): return key
+    def get_user_lang(uid): return 'es'
 from database import (
     get_user, update_user, update_balance,
     create_withdrawal, get_withdrawal, get_user_withdrawals,
@@ -76,7 +83,7 @@ def get_network_fee(currency):
     config_key = f'network_fee_{currency.lower()}'
     return float(get_config(config_key, NETWORK_FEES.get(currency, 0)))
 
-def create_withdrawal_request(user_id, currency, amount, wallet_address=None):
+def create_withdrawal_request(user_id, currency, amount, wallet_address=None, lang=None):
     """
     Crea una solicitud de retiro
     
@@ -87,6 +94,9 @@ def create_withdrawal_request(user_id, currency, amount, wallet_address=None):
     """
     # Validate currency
     currency = currency.upper()
+    if not lang:
+        try: lang = get_user_lang(user_id)
+        except: lang = 'es'
     if currency not in ['USDT', 'DOGE', 'TON']:
         return False, "Moneda no soportada. Use USDT, DOGE o TON."
     
@@ -110,34 +120,34 @@ def create_withdrawal_request(user_id, currency, amount, wallet_address=None):
             wallet_address = user.get('ton_wallet_address')
         
         if not wallet_address:
-            return False, "Debe vincular una dirección TON primero"
+            return False, _gm("no_wallet_ton", lang)
         
         if not validate_ton_address(wallet_address):
-            return False, "Formato de dirección TON inválido"
+            return False, _gm("invalid_ton_address", lang)
     else:
         # USDT/DOGE use BEP20 wallet_address
         if not wallet_address:
             wallet_address = user.get('wallet_address')
         
         if not wallet_address:
-            return False, "Debe vincular una dirección de wallet BEP20 primero"
+            return False, _gm("no_wallet_bep20", lang)
         
         if not validate_bep20_address(wallet_address):
-            return False, "Formato de dirección BEP20 inválido (debe ser 0x...)"
+            return False, _gm("invalid_bep20_address", lang)
     
     # Validate amount
     try:
         amount = float(amount)
     except (ValueError, TypeError):
-        return False, "Cantidad inválida"
+        return False, _gm("invalid_amount", lang)
     
     if amount <= 0:
-        return False, "La cantidad debe ser mayor a 0"
+        return False, _gm("amount_must_be_positive", lang)
     
     # Check minimum
     min_amount = get_min_withdrawal(currency)
     if amount < min_amount:
-        return False, f"Mínimo de retiro: {min_amount} {currency}"
+        return False, _gm("withdrawal_min_amount", lang, min=min_amount, currency=currency)
     
     # Check balance
     balance_key = f'{currency.lower()}_balance'
@@ -159,10 +169,10 @@ def create_withdrawal_request(user_id, currency, amount, wallet_address=None):
             debt_info.append(f"USDT: {usdt_balance:.4f}")
         if ton_balance < 0:
             debt_info.append(f"TON: {ton_balance:.4f}")
-        return False, f"⚠️ Tienes deuda pendiente que debes pagar antes de retirar. Saldo negativo: {', '.join(debt_info)}"
+        return False, _gm("debt_pending_withdrawal", lang, debt=", ".join(debt_info))
     
     if amount > user_balance:
-        return False, f"Balance insuficiente. Tienes: {user_balance:.4f} {currency}"
+        return False, _gm("insufficient_balance", lang, balance=f"{user_balance:.4f}", currency=currency)
     
     # Calculate fee
     fee = get_network_fee(currency)
