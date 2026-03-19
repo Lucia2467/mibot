@@ -9,9 +9,9 @@ const LANG = {
         // Navigation
         nav_home: "Home",
         nav_tasks: "Tasks",
-        nav_explore: "Explore",
+        nav_explore: "ADS",
         nav_invite: "Invite",
-        nav_top: "Top",
+        nav_top: "Games",
         nav_wallet: "Wallet",
         
         // Common
@@ -1294,9 +1294,9 @@ const LANG = {
         // Navegación
         nav_home: "Inicio",
         nav_tasks: "Tareas",
-        nav_explore: "Explorar",
+        nav_explore: "ADS",
         nav_invite: "Invitar",
-        nav_top: "Top",
+        nav_top: "Jogos",
         nav_wallet: "Billetera",
         
         // Común
@@ -2579,9 +2579,9 @@ const LANG = {
         // Navegação
         nav_home: "Início",
         nav_tasks: "Tarefas",
-        nav_explore: "Explorar",
+        nav_explore: "ADS",
         nav_invite: "Convidar",
-        nav_top: "Top",
+        nav_top: "Juegos",
         nav_wallet: "Carteira",
         
         // Comum
@@ -3826,9 +3826,9 @@ const LANG = {
         // Навигация
         nav_home: "Главная",
         nav_tasks: "Задания",
-        nav_explore: "Обзор",
+        nav_explore: "ADS",
         nav_invite: "Пригласить",
-        nav_top: "Топ",
+        nav_top: "Игры",
         nav_wallet: "Кошелёк",
         
         // Общее
@@ -5044,9 +5044,9 @@ const LANG = {
         // التنقل
         nav_home: "الرئيسية",
         nav_tasks: "المهام",
-        nav_explore: "استكشاف",
+        nav_explore: "ADS",
         nav_invite: "دعوة",
-        nav_top: "الترتيب",
+        nav_top: "ألعاب",
         nav_wallet: "المحفظة",
         
         // عام
