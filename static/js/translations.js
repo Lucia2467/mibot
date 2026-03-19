@@ -1296,7 +1296,7 @@ const LANG = {
         nav_tasks: "Tareas",
         nav_explore: "ADS",
         nav_invite: "Invitar",
-        nav_top: "Jogos",
+        nav_top: "Juegos",
         nav_wallet: "Billetera",
         
         // Común
@@ -2581,7 +2581,7 @@ const LANG = {
         nav_tasks: "Tarefas",
         nav_explore: "ADS",
         nav_invite: "Convidar",
-        nav_top: "Juegos",
+        nav_top: "Jogos",
         nav_wallet: "Carteira",
         
         // Comum
