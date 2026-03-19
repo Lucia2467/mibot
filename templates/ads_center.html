@@ -9,7 +9,8 @@
     from { opacity:0; transform:translateY(18px) scale(0.96); }
     to   { opacity:1; transform:translateY(0) scale(1); }
 }
-@keyframes adcBannerShine { 0%{left:-100%} 100%{left:200%} }
+@keyframes adcBannerShine { 0%{transform:translateX(-100%)} 100%{transform:translateX(300%)} }
+@keyframes adcBannerPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.08)} }
 @keyframes adcPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.7} }
 </style>
 {% endblock %}
@@ -25,58 +26,70 @@
     </div>
 
     <!-- BANNER PREMIUM -->
-    <div style="position:relative;overflow:hidden;background:linear-gradient(135deg,#0a0a1f 0%,#0d0d2e 40%,#060618 100%);border-top:2px solid rgba(100,160,255,0.55);border-left:1px solid rgba(80,130,255,0.28);border-right:1px solid rgba(0,0,0,0.60);border-bottom:4px solid rgba(0,0,0,0.95);border-radius:22px;padding:0;margin-bottom:var(--space-4);box-shadow:0 4px 0 rgba(80,140,255,0.12) inset,0 -5px 0 rgba(0,0,0,0.90) inset,0 20px 60px rgba(0,0,0,0.80),0 0 80px rgba(60,100,255,0.08);">
+    <div style="position:relative;overflow:hidden;background:linear-gradient(135deg,#001a66 0%,#003399 50%,#005ab5 100%);border:1px solid rgba(77,148,255,0.35);border-radius:20px;padding:20px 18px;margin-bottom:var(--space-4);box-shadow:0 2px 0 rgba(255,255,255,0.08) inset,0 -2px 0 rgba(0,0,0,0.50) inset,0 12px 40px rgba(0,30,140,0.45);">
 
-        <!-- Top accent line -->
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(100,180,255,0.90),rgba(180,220,255,1),rgba(100,180,255,0.90),transparent);pointer-events:none;"></div>
+        <!-- SVG pattern background -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.07;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="adcGrid" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+                    <circle cx="1" cy="1" r="1" fill="#fff"/>
+                </pattern>
+                <pattern id="adcDiag" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M0 40 L40 0" stroke="#fff" stroke-width="0.5" fill="none"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#adcGrid)"/>
+            <rect width="100%" height="100%" fill="url(#adcDiag)"/>
+        </svg>
 
-        <!-- Ambient orbs -->
-        <div style="position:absolute;top:-40px;right:-30px;width:180px;height:180px;background:radial-gradient(circle,rgba(80,140,255,0.18) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
-        <div style="position:absolute;bottom:-50px;left:-20px;width:150px;height:150px;background:radial-gradient(circle,rgba(0,200,255,0.10) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
-        <div style="position:absolute;top:50%;right:60px;transform:translateY(-50%);width:80px;height:80px;background:radial-gradient(circle,rgba(255,215,0,0.08) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
-
-        <!-- Shimmer sweep -->
-        <div style="position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.04),transparent);animation:adcBannerShine 4s ease-in-out infinite;pointer-events:none;"></div>
+        <!-- Glow orbs -->
+        <div style="position:absolute;top:-30px;right:-20px;width:140px;height:140px;background:radial-gradient(circle,rgba(0,180,255,0.25) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
+        <div style="position:absolute;bottom:-40px;left:20px;width:120px;height:120px;background:radial-gradient(circle,rgba(77,148,255,0.20) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
 
         <!-- Content -->
-        <div style="position:relative;z-index:1;padding:20px 18px 18px;">
+        <div style="position:relative;z-index:1;">
 
-            <!-- Top row: badge + title -->
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-                <!-- Icon -->
-                <div style="width:52px;height:52px;flex-shrink:0;background:linear-gradient(145deg,rgba(80,140,255,0.30),rgba(40,80,200,0.18));border-top:1px solid rgba(100,180,255,0.55);border-left:1px solid rgba(80,140,255,0.30);border-right:1px solid rgba(0,0,0,0.40);border-bottom:2px solid rgba(0,0,0,0.75);border-radius:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(100,180,255,0.18) inset,0 -2px 0 rgba(0,0,0,0.55) inset,0 8px 24px rgba(60,120,255,0.25);animation:floatIcon 3s ease-in-out infinite;">
-                    <i data-lucide="megaphone" style="width:26px;height:26px;color:#7EB8FF;filter:drop-shadow(0 0 8px rgba(100,180,255,0.8));"></i>
+            <!-- Top: icon + title + live badge -->
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+                <div style="width:52px;height:52px;flex-shrink:0;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.20);border-radius:15px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);box-shadow:0 2px 0 rgba(255,255,255,0.15) inset,0 -2px 0 rgba(0,0,0,0.30) inset,0 8px 20px rgba(0,0,0,0.25);animation:floatIcon 3.5s ease-in-out infinite;">
+                    <i data-lucide="trending-up" style="width:26px;height:26px;color:#fff;filter:drop-shadow(0 0 8px rgba(120,200,255,0.80));"></i>
                 </div>
                 <div style="flex:1;min-width:0;">
-                    <!-- Live badge -->
-                    <div style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(0,200,100,0.12);border:1px solid rgba(0,200,100,0.30);border-radius:20px;margin-bottom:5px;">
-                        <div style="width:6px;height:6px;border-radius:50%;background:#00FF88;box-shadow:0 0 6px rgba(0,255,136,0.9);animation:adcPulse 1.5s ease-in-out infinite;"></div>
-                        <span style="font-size:0.60rem;font-weight:800;color:#00FF88;letter-spacing:0.10em;text-transform:uppercase;">En vivo</span>
+                    <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;">
+                        <div style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.35);border-radius:20px;">
+                            <div style="width:5px;height:5px;border-radius:50%;background:#00FF88;box-shadow:0 0 5px rgba(0,255,136,1);animation:adcPulse 1.5s ease-in-out infinite;"></div>
+                            <span style="font-size:0.58rem;font-weight:900;color:#00FF88;letter-spacing:0.10em;text-transform:uppercase;">Activo</span>
+                        </div>
+                        <span style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.04em;text-transform:uppercase;">Centro de ADS</span>
                     </div>
-                    <div style="font-size:1.15rem;font-weight:900;color:#fff;letter-spacing:-0.02em;line-height:1.1;">💰 Gana mientras <span style="background:linear-gradient(135deg,#7EB8FF,#00D4FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">ves anuncios</span></div>
+                    <div style="font-size:1.18rem;font-weight:900;color:#fff;letter-spacing:-0.02em;line-height:1.15;">
+                        Gana mientras <span style="color:#7EB8FF;text-shadow:0 0 20px rgba(120,190,255,0.60);">ves anuncios</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Subtitle -->
-            <div style="font-size:0.82rem;color:rgba(255,255,255,0.55);line-height:1.5;margin-bottom:14px;">
-                Cada anuncio te acerca más a tu retiro. <strong style="color:rgba(255,255,255,0.80);">Maximiza tus ganancias cada día.</strong>
-            </div>
+            <!-- Divider -->
+            <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);margin-bottom:14px;"></div>
 
-            <!-- Stats row -->
-            <div style="display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden;">
-                <div style="text-align:center;padding:10px 6px;">
-                    <div style="font-size:1.1rem;font-weight:900;color:#FFD700;">5+</div>
-                    <div style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">Redes</div>
+            <!-- Bottom: stats + subtitle -->
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                <div style="font-size:0.78rem;color:rgba(255,255,255,0.60);line-height:1.5;flex:1;">
+                    Maximiza tus ganancias cada día.<br>
+                    <span style="color:rgba(255,255,255,0.35);font-size:0.70rem;">
+                        <i data-lucide="clock" style="width:11px;height:11px;display:inline;vertical-align:middle;"></i>
+                        Espera 15s por recompensa
+                    </span>
                 </div>
-                <div style="background:rgba(255,255,255,0.07);margin:8px 0;"></div>
-                <div style="text-align:center;padding:10px 6px;">
-                    <div style="font-size:1.1rem;font-weight:900;color:#00D4FF;">15s</div>
-                    <div style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">Por ad</div>
-                </div>
-                <div style="background:rgba(255,255,255,0.07);margin:8px 0;"></div>
-                <div style="text-align:center;padding:10px 6px;">
-                    <div style="font-size:1.1rem;font-weight:900;color:#00FF88;">DOGE</div>
-                    <div style="font-size:0.60rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">Premio</div>
+                <!-- Mini stats -->
+                <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;">
+                    <div style="display:flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.15);border-radius:20px;">
+                        <i data-lucide="layout-grid" style="width:12px;height:12px;color:#FFD700;"></i>
+                        <span style="font-size:0.72rem;font-weight:800;color:#fff;">5 redes</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.15);border-radius:20px;">
+                        <i data-lucide="coins" style="width:12px;height:12px;color:#00FF88;"></i>
+                        <span style="font-size:0.72rem;font-weight:800;color:#fff;">Gana DOGE</span>
+                    </div>
                 </div>
             </div>
         </div>
