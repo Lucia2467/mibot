@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SALLY-E Admin Panel Fix Installation Script
+ARCADE PXC Admin Panel Fix Installation Script
 ============================================
 This script applies all fixes for the admin user management module.
 
@@ -27,7 +27,7 @@ def backup_file(filepath):
 def install_fixes():
     """Apply all fixes"""
     print("\n" + "="*60)
-    print("🔧 SALLY-E Admin Panel Fix Installation")
+    print("🔧 ARCADE PXC Admin Panel Fix Installation")
     print("="*60 + "\n")
     
     # 1. Replace database.py

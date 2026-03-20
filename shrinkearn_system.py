@@ -1,5 +1,5 @@
 """
-shrinkearn_system.py - Sistema de Monetización ShrinkEarn para SALLY-E
+shrinkearn_system.py - Sistema de Monetización ShrinkEarn para ARCADE PXC
 =====================================================================
 Implementación REAL usando la API de ShrinkEarn para acortamiento de enlaces.
 
@@ -35,7 +35,7 @@ SHRINKEARN_CONFIG = {
     'api_key': os.environ.get('SHRINKEARN_API_KEY', 'db2565e558c626a33c8bd18c1587029a01b590f8'),
 
     # URL base de tu webapp (CAMBIAR a tu dominio real)
-    'webapp_url': os.environ.get('WEBAPP_URL', 'https://isaax23.pythonanywhere.com'),
+    'webapp_url': os.environ.get('WEBAPP_URL', 'https://arcadepxc.pythonanywhere.com'),
 
     # Endpoint de la API ShrinkEarn
     'api_endpoint': 'https://shrinkearn.com/api',

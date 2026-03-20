@@ -1,5 +1,5 @@
 """
-deposit_system.py - Sistema de depósitos DOGE BEP20 para SALLY-E Bot / DOGE PIXEL
+deposit_system.py - Sistema de depósitos DOGE BEP20 para ARCADE PXC / ARCADE PXC
 Genera direcciones únicas por usuario y monitorea depósitos entrantes
 """
 

@@ -332,7 +332,7 @@ def record_ad_watched(user_id, task_type='single_ad'):
                 bonus_earned = PTS_CONFIG['watch_5_ads_bonus']
         total_pts = pts_earned + bonus_earned
         from database import update_balance
-        success = update_balance(user_id, 'se', total_pts, 'add', 'Anuncio visto')
+        success = update_balance(user_id, 'pxc', total_pts, 'add', 'Anuncio visto')
         if success:
             return True, "Anuncio completado", total_pts
         return False, "Error al acreditar PXC", 0
@@ -407,7 +407,7 @@ def do_checkin(user_id):
         with get_cursor() as cursor:
             cursor.execute("INSERT INTO daily_checkin (user_id, checkin_date, base_reward, total_reward, streak) VALUES (%s, %s, %s, %s, %s)", (str(user_id), today, reward, reward, streak))
         from database import update_balance
-        success = update_balance(user_id, 'se', reward, 'add', f'Check-in racha {streak}')
+        success = update_balance(user_id, 'pxc', reward, 'add', f'Check-in racha {streak}')
         if success:
             return True, f"¡Check-in! Racha: {streak}", reward
         return False, "Error al acreditar PXC", 0
@@ -435,7 +435,7 @@ def double_checkin_reward(user_id):
                 ON DUPLICATE KEY UPDATE ads_watched = ads_watched + 1, last_ad_at = %s
             """, (str(user_id), today, now, now))
         from database import update_balance
-        success = update_balance(user_id, 'se', bonus, 'add', 'Check-in duplicado')
+        success = update_balance(user_id, 'pxc', bonus, 'add', 'Check-in duplicado')
         if success:
             return True, "¡Recompensa duplicada!", bonus
         return False, "Error al acreditar PXC", 0
@@ -677,19 +677,19 @@ def api_pts_status():
     boost = get_boost_status(user_id)
     ads_today = get_daily_ads_count(user_id)
 
-    # Get se_balance (PXC) from users table
+    # Get pxc_balance (PXC) from users table
     try:
         from database import get_user
         user_data = get_user(user_id)
-        se_balance = float(user_data.get('se_balance', 0) or 0) if user_data else 0
+        pxc_balance = float(user_data.get('pxc_balance', 0) or 0) if user_data else 0
     except Exception:
-        se_balance = 0
+        pxc_balance = 0
 
     return jsonify({
         'success': True,
         'pts': pts,
-        'pts_balance': se_balance,
-        'se_balance': se_balance,
+        'pts_balance': pxc_balance,
+        'pxc_balance': pxc_balance,
         'checkin': checkin,
         # Campos de check-in en el nivel superior para compatibilidad con frontend
         'checkin_done': checkin.get('done_today', False),

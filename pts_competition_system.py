@@ -504,7 +504,7 @@ Tu premio ha sido acreditado automáticamente a tu balance de DOGE.
 
 ¡Gracias por participar! 🚀
 
-<i>— SALLY-E Bot 🤖</i>"""
+<i>— ARCADE PXC 🤖</i>"""
 
         url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
         response = requests.post(url, json={

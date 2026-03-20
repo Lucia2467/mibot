@@ -1,5 +1,5 @@
 """
-ton_deposit_system.py - Sistema de depósitos TON para SALLY-E Bot
+ton_deposit_system.py - Sistema de depósitos TON para ARCADE PXC
 Verifica transacciones en la blockchain TON antes de acreditar saldo.
 """
 

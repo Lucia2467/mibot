@@ -273,7 +273,7 @@ def notify_task_completed(user_id, title, reward):
             if not user:
                 return
             lang    = _get_lang(user)
-            balance = float(user.get('se_balance', 0) or 0)
+            balance = float(user.get('pxc_balance', 0) or 0)
             text    = COMPLETION_MESSAGES.get(lang, COMPLETION_MESSAGES[FALLBACK_LANG]).format(
                 title=title, reward=reward, balance=balance
             )

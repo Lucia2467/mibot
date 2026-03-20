@@ -89,7 +89,7 @@ def update_ad_task_progress(user_id, task_id, reward_per_ad):
                 """, (str(user_id), str(task_id), new_ads_watched, new_total_earned, is_completed))
         
         # Dar recompensa al usuario
-        update_balance(user_id, 'se', reward_per_ad, 'add', f'Ad watched in task {task_id}')
+        update_balance(user_id, 'pxc', reward_per_ad, 'add', f'Ad watched in task {task_id}')
         
         # Si completó la tarea
         if is_completed:

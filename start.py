@@ -77,7 +77,7 @@ def run_flask():
 # ─────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     logger.info("=" * 50)
-    logger.info("🚀 PixieLand — Iniciando sistema")
+    logger.info("🚀 ARCADE PXC — Iniciando sistema")
     logger.info("=" * 50)
 
     # 1. Migraciones

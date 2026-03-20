@@ -27,7 +27,7 @@ def init_tables():
             user_id VARCHAR(50) NOT NULL UNIQUE,
             username VARCHAR(100) DEFAULT NULL,
             first_name VARCHAR(100) DEFAULT 'Usuario',
-            se_balance DECIMAL(20, 8) DEFAULT 0.00000000,
+            pxc_balance DECIMAL(20, 8) DEFAULT 0.00000000,
             usdt_balance DECIMAL(20, 8) DEFAULT 0.00000000,
             doge_balance DECIMAL(20, 8) DEFAULT 0.00000000,
             mining_power DECIMAL(10, 4) DEFAULT 1.0000,
@@ -118,7 +118,7 @@ def init_tables():
             id INT AUTO_INCREMENT PRIMARY KEY,
             code VARCHAR(50) NOT NULL UNIQUE,
             reward DECIMAL(10, 4) NOT NULL DEFAULT 0.0000,
-            currency VARCHAR(10) DEFAULT 'SE',
+            currency VARCHAR(10) DEFAULT 'PXC',
             max_uses INT DEFAULT 100,
             current_uses INT DEFAULT 0,
             active TINYINT(1) DEFAULT 1,
@@ -136,7 +136,7 @@ def init_tables():
             user_id VARCHAR(50) NOT NULL,
             code VARCHAR(50) NOT NULL,
             reward DECIMAL(10, 4) NOT NULL,
-            currency VARCHAR(10) DEFAULT 'SE',
+            currency VARCHAR(10) DEFAULT 'PXC',
             redeemed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             UNIQUE KEY unique_redemption (user_id, code),
             INDEX idx_user_id (user_id)
@@ -196,7 +196,7 @@ def init_tables():
             id INT AUTO_INCREMENT PRIMARY KEY,
             user_id VARCHAR(50) NOT NULL,
             action VARCHAR(100) NOT NULL,
-            currency VARCHAR(10) DEFAULT 'SE',
+            currency VARCHAR(10) DEFAULT 'PXC',
             amount DECIMAL(20, 8) NOT NULL,
             balance_before DECIMAL(20, 8) DEFAULT 0.00000000,
             balance_after DECIMAL(20, 8) DEFAULT 0.00000000,
@@ -239,8 +239,8 @@ def init_tables():
         ('min_withdrawal_doge', '0.3'),
         ('min_withdrawal_se', '100'),
         ('withdrawal_mode', 'manual'),
-        ('se_to_usdt_rate', '0.01'),
-        ('se_to_doge_rate', '0.06'),
+        ('pxc_to_usdt_rate', '0.01'),
+        ('pxc_to_doge_rate', '0.06'),
         ('auto_ban_duplicate_ip', 'false'),
         ('show_promo_fab', 'true'),
         ('admin_password', ''),  # OBLIGATORIO: Configura la contraseña desde el panel de administración antes de usar el sistema.
@@ -306,7 +306,7 @@ def verify_tables():
 
 if __name__ == "__main__":
     print("=" * 50)
-    print("SALLY-E Database Initialization")
+    print("ARCADE PXC Database Initialization")
     print("=" * 50)
     
     # Verificar tablas existentes

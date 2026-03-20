@@ -1,5 +1,5 @@
 """
-ad_tasks.py - Sistema de Tareas de Anuncios para SALLY-E Bot
+ad_tasks.py - Sistema de Tareas de Anuncios para ARCADE PXC
 Este archivo contiene las funciones de base de datos y rutas para el sistema de tareas basadas en anuncios.
 
 INSTRUCCIONES DE INSTALACIÓN:
@@ -106,7 +106,7 @@ def update_ad_task_progress(user_id, task_id, reward_per_ad):
                 """, (str(user_id), str(task_id), new_ads_watched, new_total_earned, is_completed))
         
         # Dar recompensa al usuario
-        update_balance(user_id, 'se', reward_per_ad, 'add', f'Ad watched in task {task_id}')
+        update_balance(user_id, 'pxc', reward_per_ad, 'add', f'Ad watched in task {task_id}')
         
         # Si completó la tarea, actualizar contador de completaciones
         if is_completed:
@@ -347,7 +347,7 @@ def api_ad_task_watch():
 
     # Obtener balance actualizado
     updated_user = get_user(user_id)
-    new_balance = float(updated_user.get('se_balance', 0)) if updated_user else 0
+    new_balance = float(updated_user.get('pxc_balance', 0)) if updated_user else 0
 
     logger.info(f"[AdTask] User {user_id} watched ad in {task_id}: {ads_watched}/{ads_required}")
 
@@ -359,7 +359,7 @@ def api_ad_task_watch():
         'total_earned': total_earned,
         'task_completed': task_completed,
         'new_balance': new_balance,
-        'message': f'+{reward_per_ad} S-E'
+        'message': f'+{reward_per_ad} PXC'
     })
 
 

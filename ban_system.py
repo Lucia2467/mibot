@@ -1,5 +1,5 @@
 """
-ban_system.py - Complete Ban Management System for SALLY-E
+ban_system.py - Complete Ban Management System for ARCADE PXC
 Handles automatic and manual banning with full audit logging
 Compatible with PythonAnywhere db.py (uses get_cursor)
 """

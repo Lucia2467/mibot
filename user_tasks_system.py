@@ -160,11 +160,11 @@ def create_user_task(creator_id, task_type, title, description, url, channel_use
     if not user:
         return False, "user_not_found", None
     
-    se_balance = float(user.get('se_balance', 0))
+    pxc_balance = float(user.get('pxc_balance', 0))
     price = package['price_se']
     
-    if se_balance < price:
-        return False, f"insufficient_balance_detail:{price}:{se_balance}", None
+    if pxc_balance < price:
+        return False, f"insufficient_balance_detail:{price}:{pxc_balance}", None
     
     task_id = f"ut_{uuid.uuid4().hex[:12]}"
     
@@ -178,7 +178,7 @@ def create_user_task(creator_id, task_type, title, description, url, channel_use
     
     try:
         # Descontar DOGE
-        success = update_balance(creator_id, 'se', price, 'subtract', f'User task: {task_id}')
+        success = update_balance(creator_id, 'pxc', price, 'subtract', f'User task: {task_id}')
         if not success:
             return False, "payment_error", None
         
@@ -200,7 +200,7 @@ def create_user_task(creator_id, task_type, title, description, url, channel_use
     except Exception as e:
         print(f"[user_tasks] ❌ Error: {e}")
         try:
-            update_balance(creator_id, 'se', price, 'add', f'Refund: {task_id}')
+            update_balance(creator_id, 'pxc', price, 'add', f'Refund: {task_id}')
         except:
             pass
         return False, str(e), None
@@ -353,7 +353,7 @@ def complete_user_task(task_id, user_id):
             """, (task_id,))
         
         # Pagar recompensa
-        update_balance(user_id, 'se', reward, 'add', f'Task: {task_id}')
+        update_balance(user_id, 'pxc', reward, 'add', f'Task: {task_id}')
 
         # Sincronizar completed_tasks en users para que el sistema de referidos
         # (y cualquier otra lógica que dependa de is_first_task) sea consistente.
@@ -462,7 +462,7 @@ def delete_user_task(task_id, user_id):
     if price_paid > 0 and max_comp > 0 and completed < max_comp:
         remaining_ratio = (max_comp - completed) / max_comp
         refund = round(price_paid * remaining_ratio, 4)
-        update_balance(user_id, 'se', refund, 'add', f'Refund delete: {task_id}')
+        update_balance(user_id, 'pxc', refund, 'add', f'Refund delete: {task_id}')
     execute_query("DELETE FROM user_tasks WHERE task_id = %s", (task_id,))
     return True, "Tarea eliminada"
 
@@ -558,7 +558,7 @@ def check_and_penalize_leavers():
                     """, (penalty_amount, task_id, user_id))
                     
                     # Descontar 100 PXC (sanción fija, permite saldo negativo)
-                    update_balance(user_id, 'se', penalty_amount, 'subtract', f'Penalty (100 PXC): left @{channel}', allow_negative=True)
+                    update_balance(user_id, 'pxc', penalty_amount, 'subtract', f'Penalty (100 PXC): left @{channel}', allow_negative=True)
                     
                     # Registrar penalización
                     execute_query("""
@@ -633,7 +633,7 @@ def send_penalty_notification(user_id, channel, amount):
 
 ¡No intentes hacer trampa! El sistema verifica automáticamente tu membresía.
 
-<i>— SALLY-E Bot 🤖</i>"""
+<i>— ARCADE PXC 🤖</i>"""
 
         url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
         response = requests.post(url, json={
@@ -746,7 +746,7 @@ def check_user_channel_memberships(user_id):
                     """, (penalty_amount, task_id, user_id))
                     
                     # Descontar 100 PXC (sanción fija, permite saldo negativo)
-                    update_balance(user_id, 'se', penalty_amount, 'subtract', f'Penalty (100 PXC): left @{channel}', allow_negative=True)
+                    update_balance(user_id, 'pxc', penalty_amount, 'subtract', f'Penalty (100 PXC): left @{channel}', allow_negative=True)
                     print(f"[user_tasks] 💸 Descontados 100 PXC a usuario {user_id} (sanción fija)")
                     
                     # Registrar penalización como ya notificada (se notifica por el modal)

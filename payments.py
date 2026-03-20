@@ -1,5 +1,5 @@
 """
-payments.py - Integración blockchain para SALLY-E Bot
+payments.py - Integración blockchain para ARCADE PXC
 Maneja transacciones de tokens BEP20 en BSC (Binance Smart Chain)
 """
 
@@ -298,7 +298,7 @@ def get_bscscan_link(tx_hash):
 if __name__ == '__main__':
     import sys
     
-    print("SALLY-E Payment System")
+    print("ARCADE PXC Payment System")
     print("=" * 40)
     
     if len(sys.argv) > 1:

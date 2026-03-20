@@ -187,7 +187,7 @@ def migrate_users():
         'total_mined':        "ALTER TABLE users ADD COLUMN total_mined DECIMAL(20,8) DEFAULT 0.00000000",
         'last_claim':         "ALTER TABLE users ADD COLUMN last_claim DATETIME DEFAULT NULL",
         'referral_count':     "ALTER TABLE users ADD COLUMN referral_count INT DEFAULT 0",
-        'se_balance':         "ALTER TABLE users ADD COLUMN se_balance DECIMAL(20,8) DEFAULT 0.00000000",
+        'pxc_balance':         "ALTER TABLE users ADD COLUMN pxc_balance DECIMAL(20,8) DEFAULT 0.00000000",
         'usdt_balance':       "ALTER TABLE users ADD COLUMN usdt_balance DECIMAL(20,8) DEFAULT 0.00000000",
         'doge_balance':       "ALTER TABLE users ADD COLUMN doge_balance DECIMAL(20,8) DEFAULT 0.00000000",
         'banned':                  "ALTER TABLE users ADD COLUMN banned TINYINT(1) DEFAULT 0",
@@ -231,7 +231,7 @@ def migrate_promo_codes():
     logger.info("\n[6] promo_codes")
     ensure_columns('promo_codes', {
         'reward':       "ALTER TABLE promo_codes ADD COLUMN reward DECIMAL(10,4) NOT NULL DEFAULT 0.0000",
-        'currency':     "ALTER TABLE promo_codes ADD COLUMN currency VARCHAR(10) DEFAULT 'SE'",
+        'currency':     "ALTER TABLE promo_codes ADD COLUMN currency VARCHAR(10) DEFAULT 'PXC'",
         'max_uses':     "ALTER TABLE promo_codes ADD COLUMN max_uses INT DEFAULT 100",
         'current_uses': "ALTER TABLE promo_codes ADD COLUMN current_uses INT DEFAULT 0",
         'active':       "ALTER TABLE promo_codes ADD COLUMN `active` TINYINT(1) DEFAULT 1",

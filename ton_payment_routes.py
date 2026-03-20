@@ -1,5 +1,5 @@
 """
-ton_payment_routes.py — Rutas Flask para pagos TON — SALLY-E Bot
+ton_payment_routes.py — Rutas Flask para pagos TON — ARCADE PXC
 Panel admin y API endpoints. Usa tabla estándar 'withdrawals'.
 """
 

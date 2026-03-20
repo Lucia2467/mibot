@@ -1,6 +1,6 @@
 """
 social_tasks_system.py - Sistema de Tareas Sociales (admin-created, screenshot-verified)
-Las tareas son creadas por el admin con recompensas en SE, DOGE o TON.
+Las tareas son creadas por el admin con recompensas en PXC, DOGE o TON.
 Los usuarios las completan enviando una captura de pantalla o simplemente haciendo clic.
 El admin aprueba o rechaza los envíos manualmente.
 """
@@ -51,7 +51,7 @@ def init_social_tasks_tables():
             target_url     VARCHAR(500)   DEFAULT NULL,
             instructions   TEXT           DEFAULT NULL,
             reward_amount  DECIMAL(18,6)  NOT NULL DEFAULT 1.0,
-            reward_currency VARCHAR(10)   NOT NULL DEFAULT 'se',
+            reward_currency VARCHAR(10)   NOT NULL DEFAULT 'pxc',
             max_completions INT           NOT NULL DEFAULT 100,
             current_completions INT       NOT NULL DEFAULT 0,
             requires_screenshot TINYINT(1) NOT NULL DEFAULT 1,
@@ -174,7 +174,7 @@ def create_social_task(data):
             data.get('target_url', '').strip() or None,
             data.get('instructions', '').strip() or None,
             float(data.get('reward_amount', 1.0)),
-            data.get('reward_currency', 'se').lower(),
+            data.get('reward_currency', 'pxc').lower(),
             int(data.get('max_completions', 100)),
             1 if data.get('requires_screenshot') else 0,
             translations_json,
@@ -219,7 +219,7 @@ def update_social_task(task_id, data):
             data.get('target_url', '').strip() or None,
             data.get('instructions', '').strip() or None,
             float(data.get('reward_amount', 1.0)),
-            data.get('reward_currency', 'se').lower(),
+            data.get('reward_currency', 'pxc').lower(),
             int(data.get('max_completions', 100)),
             1 if data.get('requires_screenshot') else 0,
             translations_json,

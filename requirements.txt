@@ -1,4 +1,4 @@
-# SALLY-E Bot Dependencies
+# ARCADE PXC Bot Dependencies
 
 # Flask web framework
 Flask>=2.3.3

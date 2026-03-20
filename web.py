@@ -1,5 +1,5 @@
 """
-app.py - Aplicación Flask para SALLY-E Bot
+app.py - Aplicación Flask para ARCADE PXC
 Incluye rutas de usuario, admin y API
 FIXED VERSION - Mandatory channel verification + Fixed referral system + Complete integration
 """
@@ -227,14 +227,14 @@ ADMIN_IDS = os.environ.get('ADMIN_IDS', '5515244003').split(',')
 
 # Bot configuration
 BOT_TOKEN    = os.environ.get('BOT_TOKEN', '')
-BOT_USERNAME = os.environ.get('BOT_USERNAME', 'PixiieLandbot')
+BOT_USERNAME = os.environ.get('BOT_USERNAME', 'ArcadePXCBot')
 WEBAPP_URL   = os.environ.get('WEBAPP_URL', '')
-SUPPORT_GROUP = os.environ.get('SUPPORT_GROUP', 'https://t.me/Soporte_Sally')
+SUPPORT_GROUP = os.environ.get('SUPPORT_GROUP', 'https://t.me/Soporte_ArcadePXC')
 
 # Official channels - comma separated list
-OFFICIAL_CHANNELS_STR = os.environ.get('OFFICIAL_CHANNELS', '@SallyE_Comunity')
-if not OFFICIAL_CHANNELS_STR or OFFICIAL_CHANNELS_STR == '@SallyE_Comunity':
-    single_channel = os.environ.get('OFFICIAL_CHANNEL', '@SallyE_Comunity')
+OFFICIAL_CHANNELS_STR = os.environ.get('OFFICIAL_CHANNELS', '@ArcadePXC_Community')
+if not OFFICIAL_CHANNELS_STR or OFFICIAL_CHANNELS_STR == '@ArcadePXC_Community':
+    single_channel = os.environ.get('OFFICIAL_CHANNEL', '@ArcadePXC_Community')
     OFFICIAL_CHANNELS_STR = single_channel
 
 # Parse channels into list
@@ -425,7 +425,7 @@ def check_channel_or_redirect(user_id):
     if not is_member:
         return render_template('channel_required.html',
                              user_id=user_id,
-                             channel=missing_channels[0].replace('@', '') if missing_channels else 'SallyE_Comunity',
+                             channel=missing_channels[0].replace('@', '') if missing_channels else 'ArcadePXC_Community',
                              missing_channels=missing_channels,
                              support_group=SUPPORT_GROUP)
 
@@ -716,7 +716,7 @@ def safe_user_dict(user):
             'user_id': '',
             'username': '',
             'first_name': 'Usuario',
-            'se_balance': 0,
+            'pxc_balance': 0,
             'usdt_balance': 0,
             'doge_balance': 0,
             'ton_balance': 0,
@@ -735,7 +735,7 @@ def safe_user_dict(user):
     defaults = {
         'username': '',
         'first_name': 'Usuario',
-        'se_balance': 0,
+        'pxc_balance': 0,
         'usdt_balance': 0,
         'doge_balance': 0,
         'ton_balance': 0,
@@ -974,7 +974,7 @@ def explore_arcade():
 
 @app.route('/api/arcade/claim-minute', methods=['POST'])
 def api_arcade_claim_minute():
-    """Otorga 1 S-E por minuto jugado en arcade. Máximo 30 min/día."""
+    """Otorga 1 PXC por minuto jugado en arcade. Máximo 30 min/día."""
     data = request.get_json() or {}
     user_id = data.get('user_id') or get_user_id()
 
@@ -1027,12 +1027,12 @@ def api_arcade_claim_minute():
             VALUES (%s, %s, 1, NOW())
         """, (user_id, game_id))
 
-        current_balance = float(user.get('se_balance', 0))
+        current_balance = float(user.get('pxc_balance', 0))
         new_balance = round(current_balance + REWARD_PER_MIN, 4)
-        update_user(user_id, se_balance=new_balance)
+        update_user(user_id, pxc_balance=new_balance)
 
         minutes_today += 1
-        logger.info(f"[Arcade] user={user_id} game={game_id} +{REWARD_PER_MIN} S-E | hoy={minutes_today}min")
+        logger.info(f"[Arcade] user={user_id} game={game_id} +{REWARD_PER_MIN} PXC | hoy={minutes_today}min")
 
         return jsonify({
             'success': True,
@@ -1223,10 +1223,10 @@ def referidos():
     refs = get_referrals(user_id)
     referral_link = f"https://t.me/{BOT_USERNAME}?start=ref_{user_id}"
 
-    # Calculate S-E earned from VALIDATED referrals only
+    # Calculate PXC earned from VALIDATED referrals only
     validated_refs = [r for r in refs if r.get('validated')]
     referral_bonus = float(get_config('referral_bonus', 1.0))
-    total_se_earned = len(validated_refs) * referral_bonus
+    total_pxc_earned = len(validated_refs) * referral_bonus
 
     config = get_config_dict()
 
@@ -1236,7 +1236,7 @@ def referidos():
                          referral_link=referral_link,
                          user_id=user_id,
                          bot_username=BOT_USERNAME,
-                         total_se_earned=total_se_earned,
+                         total_pxc_earned=total_pxc_earned,
                          validated_count=len(validated_refs),
                          pending_count=len(refs) - len(validated_refs),
                          config=config,
@@ -1312,8 +1312,8 @@ def wallet():
     if channel_check:
         return channel_check
 
-    se_to_usdt = float(get_config('se_to_usdt_rate', 0.01))
-    se_to_doge = float(get_config('se_to_doge_rate', 0.06))
+    pxc_to_usdt = float(get_config('pxc_to_usdt_rate', 0.01))
+    pxc_to_doge = float(get_config('pxc_to_doge_rate', 0.06))
 
     min_usdt = float(get_config('min_withdrawal_usdt', 0.5))
     min_doge = float(get_config('min_withdrawal_doge', 0.3))
@@ -1345,8 +1345,8 @@ def wallet():
 
     return render_template('wallet.html',
                          user=user,
-                         se_to_usdt=se_to_usdt,
-                         se_to_doge=se_to_doge,
+                         pxc_to_usdt=pxc_to_usdt,
+                         pxc_to_doge=pxc_to_doge,
                          min_usdt=min_usdt,
                          min_doge=min_doge,
                          user_id=user_id,
@@ -1507,18 +1507,18 @@ def api_claim():
         return jsonify({'success': False, 'error': 'Nothing to claim'}), 400
 
     # Get balance before update for logging
-    balance_before = float(user.get('se_balance', 0))
+    balance_before = float(user.get('pxc_balance', 0))
     new_balance = balance_before + unclaimed
     total_mined = float(user.get('total_mined', 0) or 0) + unclaimed
 
     update_user(user_id,
-                se_balance=new_balance,
+                pxc_balance=new_balance,
                 total_mined=total_mined,
                 last_claim=datetime.now())
 
     # Log the mining transaction
     from database import log_balance_change
-    log_balance_change(user_id, 'SE', unclaimed, 'add', 'Mining claim', balance_before, new_balance)
+    log_balance_change(user_id, 'PXC', unclaimed, 'add', 'Mining claim', balance_before, new_balance)
 
     return jsonify({
         'success': True,
@@ -1569,13 +1569,13 @@ def api_tap():
     if gained > MAX_BATCH:
         gained = MAX_BATCH
 
-    balance_before = float(user.get('se_balance', 0))
+    balance_before = float(user.get('pxc_balance', 0))
     new_balance    = balance_before + gained
     total_mined    = float(user.get('total_mined', 0) or 0) + gained
 
     # Guardar balance — crítico
     update_user(user_id,
-                se_balance=new_balance,
+                pxc_balance=new_balance,
                 total_mined=total_mined)
 
     # Guardar energía solo si la columna existe
@@ -1587,7 +1587,7 @@ def api_tap():
         pass
 
     from database import log_balance_change
-    log_balance_change(user_id, 'SE', gained, 'add', f'Tap x{taps}', balance_before, new_balance)
+    log_balance_change(user_id, 'PXC', gained, 'add', f'Tap x{taps}', balance_before, new_balance)
 
     return jsonify({'success': True, 'new_balance': new_balance})
 
@@ -1653,10 +1653,10 @@ def api_ads_task_center_complete():
         }), 400
 
     # Grant reward
-    new_balance = float(user.get('se_balance', 0)) + ad_reward
+    new_balance = float(user.get('pxc_balance', 0)) + ad_reward
 
     # Update user balance using existing update_balance function
-    update_balance(user_id, 'se', ad_reward, 'add', 'Task center ad reward')
+    update_balance(user_id, 'pxc', ad_reward, 'add', 'Task center ad reward')
 
     # Try to update ad stats if table exists
     try:
@@ -1692,18 +1692,18 @@ def api_ads_task_center_complete():
     except Exception as e:
         logger.warning(f"[Ads] Could not log ad completion: {e}")
 
-    logger.info(f"[Ads] User {user_id} completed task center ad, earned {ad_reward} S-E")
+    logger.info(f"[Ads] User {user_id} completed task center ad, earned {ad_reward} PXC")
 
     # Get updated balance
     updated_user = get_user(user_id)
-    new_balance = float(updated_user.get('se_balance', 0)) if updated_user else new_balance
+    new_balance = float(updated_user.get('pxc_balance', 0)) if updated_user else new_balance
 
     return jsonify({
         'success': True,
         'reward': ad_reward,
         'new_balance': new_balance,
         'ads_remaining': max_daily_ads - (ads_watched_today + 1),
-        'message': f'Reward granted! +{ad_reward} S-E'
+        'message': f'Reward granted! +{ad_reward} PXC'
     })
 
 
@@ -2510,7 +2510,7 @@ def telega_ad_reward_callback():
             # Verificar si el usuario existe y no está baneado
             # NOTA: La columna es user_id, no telegram_id; y banned, no is_banned
             cursor.execute(
-                "SELECT user_id, se_balance, banned FROM users WHERE user_id = %s",
+                "SELECT user_id, pxc_balance, banned FROM users WHERE user_id = %s",
                 (str(user_id),)
             )
             user = cursor.fetchone()
@@ -2566,11 +2566,11 @@ def telega_ad_reward_callback():
             # ¡OTORGAR RECOMPENSA!
             new_videos_count = videos_today + 1
             new_total_earned = total_earned + reward_amount
-            new_balance = float(user.get('se_balance', 0)) + reward_amount
+            new_balance = float(user.get('pxc_balance', 0)) + reward_amount
 
             # Actualizar balance del usuario
             cursor.execute(
-                "UPDATE users SET se_balance = %s WHERE user_id = %s",
+                "UPDATE users SET pxc_balance = %s WHERE user_id = %s",
                 (new_balance, str(user_id))
             )
 
@@ -2752,7 +2752,7 @@ def api_task_complete():
             logger.warning(f"[referral] {_ref_err}")
 
         user = get_user(user_id)
-        new_balance = user.get('se_balance', 0) if user else 0
+        new_balance = user.get('pxc_balance', 0) if user else 0
         completed_count = len(user.get('completed_tasks', [])) if user else 0
         print(f"[api_task_complete] ✅ Tarea completada. Nuevo balance: {new_balance}, Total completadas: {completed_count}")
         return jsonify({
@@ -2814,14 +2814,14 @@ def api_promo_redeem():
         return jsonify({
             'success': True,
             'message': message,
-            'new_balance': float(user.get('se_balance', 0)) if user else 0
+            'new_balance': float(user.get('pxc_balance', 0)) if user else 0
         })
 
     return jsonify({'success': False, 'error': message, 'message': message}), 400
 
 @app.route('/api/swap', methods=['POST'])
 def api_swap():
-    """Swap S-E to USDT, DOGE or TON"""
+    """Swap PXC to USDT, DOGE or TON"""
     user_id = get_user_id()
     if not user_id:
         return jsonify({'success': False, 'error': 'User ID required'}), 400
@@ -2840,20 +2840,20 @@ def api_swap():
     if to_currency not in ['USDT', 'DOGE', 'TON']:
         return jsonify({'success': False, 'error': 'Invalid currency'}), 400
 
-    se_balance = float(user.get('se_balance', 0))
-    if amount > se_balance:
-        return jsonify({'success': False, 'error': 'Insufficient S-E balance'}), 400
+    pxc_balance = float(user.get('pxc_balance', 0))
+    if amount > pxc_balance:
+        return jsonify({'success': False, 'error': 'Insufficient PXC balance'}), 400
 
     if to_currency == 'USDT':
-        rate = float(get_config('se_to_usdt_rate', 0.01))
+        rate = float(get_config('pxc_to_usdt_rate', 0.01))
     elif to_currency == 'DOGE':
-        rate = float(get_config('se_to_doge_rate', 0.06))
+        rate = float(get_config('pxc_to_doge_rate', 0.06))
     else:  # TON
-        rate = float(get_config('se_to_ton_rate', 0.005))
+        rate = float(get_config('pxc_to_ton_rate', 0.005))
 
     received = round(amount * rate, 6)
 
-    update_balance(user_id, 'se', amount, 'subtract', f'Swap: {amount} S-E to {to_currency}')
+    update_balance(user_id, 'pxc', amount, 'subtract', f'Swap: {amount} PXC to {to_currency}')
     update_balance(user_id, to_currency.lower(), received, 'add', f'Swap: Received {received} {to_currency}')
 
     user = get_user(user_id)
@@ -2862,7 +2862,7 @@ def api_swap():
         'success': True,
         'swapped': amount,
         'received': received,
-        'new_se_balance': float(user.get('se_balance', 0)),
+        'new_pxc_balance': float(user.get('pxc_balance', 0)),
         'new_usdt_balance': float(user.get('usdt_balance', 0)),
         'new_doge_balance': float(user.get('doge_balance', 0)),
         'new_ton_balance': float(user.get('ton_balance', 0))
@@ -3003,9 +3003,9 @@ def api_referrals_list():
     # Obtener referidos paginados
     paginated_data = get_referrals_paginated(user_id, page, per_page)
 
-    # Calculate total SE earned from validated referrals only
+    # Calculate total PXC earned from validated referrals only
     referral_bonus = float(get_config('referral_bonus', 1.0))
-    total_se_earned = validated_count * referral_bonus
+    total_pxc_earned = validated_count * referral_bonus
 
     # Format referrals for frontend
     formatted_refs = []
@@ -3029,7 +3029,7 @@ def api_referrals_list():
         'total_referrals': total_refs,
         'validated_count': validated_count,
         'pending_count': pending_count,
-        'total_se_earned': total_se_earned,
+        'total_pxc_earned': total_pxc_earned,
         'total_commission': 0,  # TODO: Calculate from mining activity
         # Datos de paginación
         'page': page,
@@ -3317,7 +3317,7 @@ def api_wallet_balance(user_id):
 
     return jsonify({
         'success': True,
-        'se_balance': user.get('se_balance', 0),
+        'pxc_balance': user.get('pxc_balance', 0),
         'usdt_balance': user.get('usdt_balance', 0),
         'doge_balance': user.get('doge_balance', 0),
         'ton_balance': user.get('ton_balance', 0),
@@ -3593,7 +3593,7 @@ def api_wallet_info():
 
 @app.route('/api/transactions')
 def api_transactions():
-    """Get unified user transactions history - supports all currencies (DOGE, TON, USDT, SE)"""
+    """Get unified user transactions history - supports all currencies (DOGE, TON, USDT, PXC)"""
     user_id = request.args.get('user_id') or get_user_id()
     if not user_id:
         return jsonify({'success': False, 'error': 'User ID required'}), 400
@@ -3627,7 +3627,7 @@ def api_transactions():
             }
 
             for tx in transactions:
-                curr = tx.get('currency', 'SE')
+                curr = tx.get('currency', 'PXC')
                 amount = float(tx.get('amount', 0))
 
                 if curr not in stats['by_currency']:
@@ -3645,7 +3645,7 @@ def api_transactions():
                 'transactions': formatted,
                 'count': len(formatted),
                 'stats': stats,
-                'currencies': list(CURRENCIES.keys()) if TRANSACTIONS_SYSTEM_AVAILABLE else ['SE', 'DOGE', 'TON', 'USDT']
+                'currencies': list(CURRENCIES.keys()) if TRANSACTIONS_SYSTEM_AVAILABLE else ['PXC', 'DOGE', 'TON', 'USDT']
             })
 
         # Fallback to legacy implementation
@@ -3713,7 +3713,7 @@ def api_transactions():
                         'type': tx_type_detected,
                         'description': row.get('description') or row.get('action', ''),
                         'amount': float(row.get('amount', 0)),
-                        'currency': row.get('currency', 'SE'),
+                        'currency': row.get('currency', 'PXC'),
                         'status': 'completed',
                         'timestamp': row.get('created_at').isoformat() if row.get('created_at') else None,
                         'date': row.get('created_at').isoformat() if row.get('created_at') else None
@@ -3736,9 +3736,9 @@ def api_transactions():
                     transactions.append({
                         'id': row.get('id'),
                         'type': 'withdrawal',
-                        'description': f"Retiro de {row.get('currency', 'SE')}",
+                        'description': f"Retiro de {row.get('currency', 'PXC')}",
                         'amount': float(row.get('amount', 0)),
-                        'currency': row.get('currency', 'SE'),
+                        'currency': row.get('currency', 'PXC'),
                         'status': row.get('status', 'pending'),
                         'tx_hash': row.get('tx_hash'),
                         'wallet_address': row.get('wallet_address'),
@@ -3816,8 +3816,8 @@ def api_mines_start():
     if mine_count < 1 or mine_count > 24:
         return jsonify({'success': False, 'error': 'Mine count must be between 1 and 24'}), 400
 
-    se_balance = float(user.get('se_balance', 0))
-    if bet_amount > se_balance:
+    pxc_balance = float(user.get('pxc_balance', 0))
+    if bet_amount > pxc_balance:
         return jsonify({'success': False, 'error': 'Insufficient balance'}), 400
 
     # Check for existing active game
@@ -3828,7 +3828,7 @@ def api_mines_start():
             'success': True,
             'message': 'Resuming active game',
             'session_id': existing_game.get('session_id'),
-            'new_balance': se_balance,
+            'new_balance': pxc_balance,
             'bet_amount': float(existing_game.get('bet_amount', 0)),
             'mine_count': existing_game.get('mine_count', 3),
             'mine_positions': existing_game.get('mine_positions', []),
@@ -3839,7 +3839,7 @@ def api_mines_start():
         })
 
     # Deduct bet FIRST - before creating session
-    success = update_balance(user_id, 'se', bet_amount, 'subtract', f'Mines game bet')
+    success = update_balance(user_id, 'pxc', bet_amount, 'subtract', f'Mines game bet')
     if not success:
         return jsonify({'success': False, 'error': 'Error deducting balance'}), 500
 
@@ -3857,7 +3857,7 @@ def api_mines_start():
 
     if not session_id:
         # Refund if session creation failed
-        update_balance(user_id, 'se', bet_amount, 'add', 'Mines game refund - session error')
+        update_balance(user_id, 'pxc', bet_amount, 'add', 'Mines game refund - session error')
         return jsonify({'success': False, 'error': 'Error creating game session'}), 500
 
     # Also store in Flask session for backwards compatibility
@@ -3873,7 +3873,7 @@ def api_mines_start():
 
     # Get updated balance
     user = get_user(user_id)
-    new_balance = float(user.get('se_balance', 0)) if user else se_balance - bet_amount
+    new_balance = float(user.get('pxc_balance', 0)) if user else pxc_balance - bet_amount
 
     return jsonify({
         'success': True,
@@ -4015,7 +4015,7 @@ def api_mines_cashout():
     winnings = round(bet_amount * multiplier, 4)
 
     # Add winnings to balance
-    success = update_balance(user_id, 'se', winnings, 'add', f'Mines game win - {multiplier:.2f}x')
+    success = update_balance(user_id, 'pxc', winnings, 'add', f'Mines game win - {multiplier:.2f}x')
     if not success:
         return jsonify({'success': False, 'error': 'Error adding winnings'}), 500
 
@@ -4033,7 +4033,7 @@ def api_mines_cashout():
         'success': True,
         'winnings': winnings,
         'multiplier': multiplier,
-        'new_balance': float(user.get('se_balance', 0)) if user else 0
+        'new_balance': float(user.get('pxc_balance', 0)) if user else 0
     })
 
 
@@ -4120,18 +4120,18 @@ ROULETTE_CONFIG = {
     'spin_cost': 2,
     'required_ads': 3,
     'prizes': [
-        {'text': '2 S-E', 'value': 2, 'currency': 'SE', 'color': '#FF0080'},
+        {'text': '2 PXC', 'value': 2, 'currency': 'PXC', 'color': '#FF0080'},
         {'text': '0.02 TON', 'value': 0.02, 'currency': 'TON', 'color': '#0088CC'},
         {'text': ':((', 'value': 0, 'currency': 'NONE', 'color': '#2D2D3D'},
-        {'text': '1 S-E', 'value': 1, 'currency': 'SE', 'color': '#4C00FF'},
+        {'text': '1 PXC', 'value': 1, 'currency': 'PXC', 'color': '#4C00FF'},
         {'text': 'T_T', 'value': 0, 'currency': 'NONE', 'color': '#1a1a2e'},
         {'text': '0.01 TON', 'value': 0.01, 'currency': 'TON', 'color': '#0098EA'},
-        {'text': '0.5 S-E', 'value': 0.5, 'currency': 'SE', 'color': '#FF006E'},
+        {'text': '0.5 PXC', 'value': 0.5, 'currency': 'PXC', 'color': '#FF006E'},
         {'text': ':_(', 'value': 0, 'currency': 'NONE', 'color': '#2D2D3D'},
         {'text': '0.002 TON', 'value': 0.002, 'currency': 'TON', 'color': '#0077B5'},
-        {'text': '0.5 S-E', 'value': 0.5, 'currency': 'SE', 'color': '#E91E63'},
+        {'text': '0.5 PXC', 'value': 0.5, 'currency': 'PXC', 'color': '#E91E63'},
         {'text': '>_<', 'value': 0, 'currency': 'NONE', 'color': '#1a1a2e'},
-        {'text': '1 S-E', 'value': 1, 'currency': 'SE', 'color': '#673AB7'}
+        {'text': '1 PXC', 'value': 1, 'currency': 'PXC', 'color': '#673AB7'}
     ],
     'weights': [4, 5, 18, 12, 18, 8, 10, 18, 12, 10, 18, 7]
 }
@@ -4163,17 +4163,17 @@ def api_roulette_spin():
             }), 400
 
         # Verificar balance
-        se_balance = float(user.get('se_balance', 0))
+        pxc_balance = float(user.get('pxc_balance', 0))
         spin_cost = config['spin_cost']
 
-        if se_balance < spin_cost:
+        if pxc_balance < spin_cost:
             return jsonify({
                 'success': False,
-                'error': f'Balance insuficiente. Necesitas {spin_cost} S-E'
+                'error': f'Balance insuficiente. Necesitas {spin_cost} PXC'
             }), 400
 
         # DESCONTAR COSTO
-        update_balance(user_id, 'se', spin_cost, 'subtract', f'Roulette spin cost')
+        update_balance(user_id, 'pxc', spin_cost, 'subtract', f'Roulette spin cost')
 
         # CALCULAR PREMIO
         prizes = config['prizes']
@@ -4184,7 +4184,7 @@ def api_roulette_spin():
         # ENTREGAR RECOMPENSA
         if prize['value'] > 0 and prize['currency'] != 'NONE':
             currency_map = {
-                'SE': 'se',
+                'PXC': 'pxc',
                 'DOGE': 'doge',
                 'USDT': 'usdt',
                 'TON': 'ton'
@@ -4195,7 +4195,7 @@ def api_roulette_spin():
 
         # Obtener nuevo balance
         user = get_user(user_id)
-        new_balance = float(user.get('se_balance', 0))
+        new_balance = float(user.get('pxc_balance', 0))
 
         return jsonify({
             'success': True,
@@ -4223,7 +4223,7 @@ def api_roulette_config():
         user_id = request.args.get('user_id') or get_user_id()
 
         user = get_user(user_id) if user_id else None
-        se_balance = float(user.get('se_balance', 0)) if user else 0
+        pxc_balance = float(user.get('pxc_balance', 0)) if user else 0
 
         config = ROULETTE_CONFIG
 
@@ -4231,8 +4231,8 @@ def api_roulette_config():
             'success': True,
             'spin_cost': config['spin_cost'],
             'required_ads': config['required_ads'],
-            'balance': se_balance,
-            'can_afford': se_balance >= config['spin_cost']
+            'balance': pxc_balance,
+            'can_afford': pxc_balance >= config['spin_cost']
         })
 
     except Exception as e:
@@ -4301,17 +4301,17 @@ def admin_dashboard():
         with get_cursor() as cursor:
             cursor.execute("""
                 SELECT
-                    COALESCE(SUM(se_balance), 0) as total_se,
+                    COALESCE(SUM(pxc_balance), 0) as total_se,
                     COALESCE(SUM(usdt_balance), 0) as total_usdt,
                     COALESCE(SUM(doge_balance), 0) as total_doge
                 FROM users
             """)
             balances = cursor.fetchone()
-        total_se_balance = float(balances.get('total_se', 0) if balances else 0)
+        total_pxc_balance = float(balances.get('total_se', 0) if balances else 0)
         total_usdt = float(balances.get('total_usdt', 0) if balances else 0)
         total_doge = float(balances.get('total_doge', 0) if balances else 0)
     except:
-        total_se_balance = 0.0
+        total_pxc_balance = 0.0
         total_usdt = 0.0
         total_doge = 0.0
 
@@ -4361,7 +4361,7 @@ def admin_dashboard():
     stats = Stats()
     stats.total_users = total_users
     stats.active_users = active_users
-    stats.total_se_balance = total_se_balance
+    stats.total_pxc_balance = total_pxc_balance
     stats.total_usdt = total_usdt
     stats.total_doge = total_doge
     stats.total_tasks = total_tasks
@@ -4503,7 +4503,7 @@ def api_security_search():
         from ban_system import get_user_ban_status
         with __import__('db').get_cursor() as cur:
             cur.execute("""SELECT user_id, username, first_name, banned,
-                                  ban_reason, se_balance, created_at
+                                  ban_reason, pxc_balance, created_at
                            FROM users
                            WHERE user_id=%s OR username LIKE %s OR first_name LIKE %s
                            LIMIT 20""", (q, f'%{q}%', f'%{q}%'))
@@ -4517,7 +4517,7 @@ def api_security_search():
                     'first_name': r.get('first_name') or '',
                     'banned':     bool(r.get('banned')),
                     'ban_reason': r.get('ban_reason') or '',
-                    'balance':    float(r.get('se_balance') or 0),
+                    'balance':    float(r.get('pxc_balance') or 0),
                     'created_at': str(r.get('created_at') or ''),
                 })
         return jsonify({'success': True, 'users': users})
@@ -4539,7 +4539,7 @@ def api_security_user(user_id):
 
         # Enriquecer con datos completos del usuario
         full_user = get_user(user_id) or {}
-        status['se_balance']       = float(full_user.get('se_balance') or 0)
+        status['pxc_balance']       = float(full_user.get('pxc_balance') or 0)
         status['created_at']       = str(full_user.get('created_at') or '')
         status['last_interaction'] = str(full_user.get('last_interaction') or '')
         status['referral_count']   = int(full_user.get('referral_count') or 0)
@@ -4819,7 +4819,7 @@ def admin_update_balance(user_id):
     """Update user balance (add/subtract)"""
     action = request.form.get('action', 'add')
     amount = request.form.get('amount')
-    currency = request.form.get('currency', 'SE').upper()
+    currency = request.form.get('currency', 'PXC').upper()
     reason = request.form.get('reason', f'{action} by admin')
     allow_negative = request.form.get('allow_negative') == 'on'  # Para penalizaciones/deudas
 
@@ -4829,8 +4829,8 @@ def admin_update_balance(user_id):
 
     try:
         amount = float(amount)
-        currency_map = {'SE': 'se', 'USDT': 'usdt', 'DOGE': 'doge', 'TON': 'ton'}
-        currency_key = currency_map.get(currency, 'se')
+        currency_map = {'PXC': 'pxc', 'USDT': 'usdt', 'DOGE': 'doge', 'TON': 'ton'}
+        currency_key = currency_map.get(currency, 'pxc')
 
         if action == 'add':
             update_balance(user_id, currency_key, amount, 'add', reason)
@@ -4852,15 +4852,15 @@ def admin_update_balance(user_id):
 def admin_update_user(user_id):
     """Update user details"""
     mining_power = request.form.get('mining_power')
-    se_balance = request.form.get('se_balance')
+    pxc_balance = request.form.get('pxc_balance')
     usdt_balance = request.form.get('usdt_balance')
     doge_balance = request.form.get('doge_balance')
 
     updates = {}
     if mining_power:
         updates['mining_power'] = float(mining_power)
-    if se_balance:
-        updates['se_balance'] = float(se_balance)
+    if pxc_balance:
+        updates['pxc_balance'] = float(pxc_balance)
     if usdt_balance:
         updates['usdt_balance'] = float(usdt_balance)
     if doge_balance:
@@ -5777,7 +5777,7 @@ def admin_promo_new():
     if request.method == 'POST':
         code = request.form.get('code', '').strip().upper()
         reward = float(request.form.get('reward', 0))
-        currency = request.form.get('currency', 'SE')
+        currency = request.form.get('currency', 'PXC')
         max_uses = request.form.get('max_uses', '').strip()
         max_uses = int(max_uses) if max_uses else None
 
@@ -6227,7 +6227,7 @@ def render_premium_error(title=None, message=None, error_type="general"):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title} - SALLY-E</title>
+    <title>{title} - ARCADE PXC</title>
     <style>
         *{{margin:0;padding:0;box-sizing:border-box}}
         body{{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:linear-gradient(135deg,#0D0A1A,#1A0E2E,#2D1B4E);min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff}}
@@ -6519,7 +6519,7 @@ def api_emergency_validate_referral():
 def api_emergency_restore_balance():
     """Restore user balance"""
     user_id = request.form.get('user_id')
-    currency = request.form.get('currency', 'SE').upper()
+    currency = request.form.get('currency', 'PXC').upper()
     amount = request.form.get('amount')
     reason = request.form.get('reason', 'Emergency restore')
 
@@ -6529,8 +6529,8 @@ def api_emergency_restore_balance():
 
     try:
         amount = float(amount)
-        currency_map = {'SE': 'se', 'USDT': 'usdt', 'DOGE': 'doge'}
-        currency_key = currency_map.get(currency, 'se')
+        currency_map = {'PXC': 'pxc', 'USDT': 'usdt', 'DOGE': 'doge'}
+        currency_key = currency_map.get(currency, 'pxc')
 
         update_balance(user_id, currency_key, amount, 'add', reason)
         flash(f'Balance restaurado: +{amount} {currency} para {user_id}', 'success')
@@ -7161,9 +7161,9 @@ def explore_link_center():
 # BOT DE TELEGRAM — handlers y thread integrados en web.py
 # ══════════════════════════════════════════════════════════════
 
-_BOT_TITLE        = os.environ.get('BOT_TITLE', 'PixieLand')
-_OFFICIAL_CHANNEL = os.environ.get('OFFICIAL_CHANNEL', '@PixieLand_Community')
-_SUPPORT_GROUP    = os.environ.get('SUPPORT_GROUP', 'https://t.me/PixieLand_Support')
+_BOT_TITLE        = os.environ.get('BOT_TITLE', 'ARCADE PXC')
+_OFFICIAL_CHANNEL = os.environ.get('OFFICIAL_CHANNEL', '@ArcadePXC_Community')
+_SUPPORT_GROUP    = os.environ.get('SUPPORT_GROUP', 'https://t.me/ArcadePXC_Support')
 _ADMIN_IDS        = os.environ.get('ADMIN_IDS', '5515244003').split(',')
 
 # ── Notificaciones ────────────────────────────────────────────

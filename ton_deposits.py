@@ -1,5 +1,5 @@
 """
-ton_deposits.py  –  Sistema de depósitos TON para SALLY-E
+ton_deposits.py  –  Sistema de depósitos TON para ARCADE PXC
 ==========================================================
 Flujo:
   1. GET /api/ton/deposit/address  → wallet del bot + memo único (TONU12345678)
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 def _cfg(key, default=""):
     """Lee config seguro — siempre devuelve string, nunca lanza excepción.
-    NOTA: get_config() de SALLY-E convierte automáticamente a int/float,
+    NOTA: get_config() de ARCADE PXC convierte automáticamente a int/float,
     por eso usamos esta función que siempre devuelve string."""
     try:
         from database import get_config

@@ -184,7 +184,7 @@ def api_task_complete_v2():
 
         if success:
             user = get_user(user_id)
-            new_balance = float(user.get('se_balance', 0)) if user else 0
+            new_balance = float(user.get('pxc_balance', 0)) if user else 0
             completed_count = len(user.get('completed_tasks', [])) if user else 0
             print(f"[api_task_complete] ✅ Tarea completada. Nuevo balance: {new_balance}")
             
@@ -379,7 +379,7 @@ def database_patches():
         
         # Pay reward
         if reward > 0:
-            update_balance(user_id, 'se', reward, 'add')
+            update_balance(user_id, 'pxc', reward, 'add')
         
         # Update task completion count
         execute_query("""
@@ -401,7 +401,7 @@ def database_patches():
         # Update stats
         increment_stat('total_tasks_completed')
         
-        return True, f"¡Tarea completada! +{reward} S-E"
+        return True, f"¡Tarea completada! +{reward} PXC"
     '''
     pass
 

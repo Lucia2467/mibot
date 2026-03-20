@@ -146,7 +146,7 @@ def api_ad_task_watch():
 
     # Obtener balance actualizado
     updated_user = get_user(user_id)
-    new_balance = float(updated_user.get('se_balance', 0)) if updated_user else 0
+    new_balance = float(updated_user.get('pxc_balance', 0)) if updated_user else 0
 
     logger.info(f"[AdTask] User {user_id} watched ad in {task_id}: {ads_watched}/{ads_required}")
 
@@ -158,7 +158,7 @@ def api_ad_task_watch():
         'total_earned': total_earned,
         'task_completed': task_completed,
         'new_balance': new_balance,
-        'message': f'+{reward_per_ad} S-E'
+        'message': f'+{reward_per_ad} PXC'
     })
 
 

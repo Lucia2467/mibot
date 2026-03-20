@@ -130,11 +130,11 @@ MESSAGES.update({
         'ar': 'الرجاء اختيار باقة',
     },
     'channel_required': {
-        'es': 'Proporciona el @username del canal y agrega @SallyEDogeBot como admin',
-        'en': 'Provide the channel @username and add @SallyEDogeBot as admin',
-        'pt': 'Forneça o @username do canal e adicione @SallyEDogeBot como admin',
-        'ru': 'Укажите @username канала и добавьте @SallyEDogeBot как администратора',
-        'ar': 'أدخل @username للقناة وأضف @SallyEDogeBot كمشرف',
+        'es': 'Proporciona el @username del canal y agrega @ArcadePXCBot como admin',
+        'en': 'Provide the channel @username and add @ArcadePXCBot as admin',
+        'pt': 'Forneça o @username do canal e adicione @ArcadePXCBot como admin',
+        'ru': 'Укажите @username канала и добавьте @ArcadePXCBot как администратора',
+        'ar': 'أدخل @username للقناة وأضف @ArcadePXCBot كمشرف',
     },
     'params_missing': {
         'es': 'Parámetros faltantes',

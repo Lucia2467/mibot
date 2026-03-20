@@ -1,11 +1,11 @@
 """
 app_transaction_patches.py - Parches para integrar el sistema de transacciones
-SALLY-E / DOGE PIXEL
+ARCADE PXC / ARCADE PXC
 
 Este archivo contiene el código que debe integrarse en app.py para:
 1. Usar el nuevo sistema unificado de transacciones
 2. Enviar notificaciones de retiros a Telegram
-3. Soportar todas las monedas (DOGE, TON, USDT, SE)
+3. Soportar todas las monedas (DOGE, TON, USDT, PXC)
 
 INSTRUCCIONES DE INTEGRACIÓN:
 =============================
@@ -24,7 +24,7 @@ INSTRUCCIONES DE INTEGRACIÓN:
 def new_api_transactions():
     """
     Nuevo endpoint unificado de transacciones
-    Soporta: DOGE, TON, USDT, SE
+    Soporta: DOGE, TON, USDT, PXC
     Incluye: balance_history, withdrawals, ton_payments
     
     Reemplaza: @app.route('/api/transactions')
@@ -37,7 +37,7 @@ def new_api_transactions():
         return jsonify({'success': False, 'error': 'User ID required'}), 400
     
     # Parámetros opcionales
-    currency = request.args.get('currency')  # DOGE, TON, USDT, SE o None
+    currency = request.args.get('currency')  # DOGE, TON, USDT, PXC o None
     tx_type = request.args.get('type')  # withdrawal, mining, referral, etc.
     limit = int(request.args.get('limit', 100))
     offset = int(request.args.get('offset', 0))
@@ -64,7 +64,7 @@ def new_api_transactions():
         }
         
         for tx in transactions:
-            currency_code = tx.get('currency', 'SE')
+            currency_code = tx.get('currency', 'PXC')
             amount = float(tx.get('amount', 0))
             
             if currency_code not in stats['by_currency']:
@@ -272,7 +272,7 @@ def api_transactions():
         }
         
         for tx in transactions:
-            curr = tx.get('currency', 'SE')
+            curr = tx.get('currency', 'PXC')
             amount = float(tx.get('amount', 0))
             
             if curr not in stats['by_currency']:

@@ -9,10 +9,10 @@ load_dotenv()
 
 # Configuration
 BOT_TOKEN = os.environ.get('BOT_TOKEN', '')
-WEBAPP_URL = os.environ.get('WEBAPP_URL', 'https://mibot-production.up.railway.app')
-BOT_USERNAME = os.environ.get('BOT_USERNAME', 'SallyEbot')
-OFFICIAL_CHANNEL = os.environ.get('OFFICIAL_CHANNEL', '@SallyE_Comunity')
-SUPPORT_GROUP = os.environ.get('SUPPORT_GROUP', 'https://t.me/Soporte_Sally')
+WEBAPP_URL = os.environ.get('WEBAPP_URL', 'https://arcadepxc.pythonanywhere.com')
+BOT_USERNAME = os.environ.get('BOT_USERNAME', 'ArcadePXCBot')
+OFFICIAL_CHANNEL = os.environ.get('OFFICIAL_CHANNEL', '@ArcadePXC_Community')
+SUPPORT_GROUP = os.environ.get('SUPPORT_GROUP', 'https://t.me/Soporte_ArcadePXC')
 
 # Admin IDs
 ADMIN_IDS = os.environ.get('ADMIN_IDS', '5515244003').split(',')
@@ -67,7 +67,7 @@ def get_main_menu_keyboard(user_id: int) -> InlineKeyboardMarkup:
     
     keyboard = [
         [InlineKeyboardButton(
-            "🚀 Abrir SALLY-E", 
+            "🚀 Abrir ARCADE PXC", 
             web_app=WebAppInfo(url=webapp_url)
         )],
         [
@@ -131,7 +131,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Show join channel prompt
         welcome_text = (
             f"👋 ¡Hola {first_name}!\n\n"
-            f"🌟 Bienvenido a *SALLY-E Bot*\n\n"
+            f"🌟 Bienvenido a *ARCADE PXC*\n\n"
             f"Para acceder a todas las funciones, primero debes unirte a nuestro canal oficial:\n\n"
             f"📢 {OFFICIAL_CHANNEL}\n\n"
             f"Una vez que te unas, presiona el botón *Ya me uní* para continuar."
@@ -147,7 +147,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Show main menu
     welcome_text = (
         f"👋 ¡Hola {first_name}!\n\n"
-        f"🌟 Bienvenido a *SALLY-E Bot*\n\n"
+        f"🌟 Bienvenido a *ARCADE PXC*\n\n"
         f"💰 Gana tokens minando\n"
         f"✅ Completa tareas para obtener recompensas\n"
         f"👥 Invita amigos y gana comisiones\n"
@@ -178,7 +178,7 @@ async def verify_channel_callback(update: Update, context: ContextTypes.DEFAULT_
     # Show main menu
     welcome_text = (
         f"✅ ¡Verificación exitosa!\n\n"
-        f"🌟 Ya puedes acceder a *SALLY-E Bot*\n\n"
+        f"🌟 Ya puedes acceder a *ARCADE PXC*\n\n"
         f"💰 Gana tokens minando\n"
         f"✅ Completa tareas para obtener recompensas\n"
         f"👥 Invita amigos y gana comisiones\n"
@@ -209,7 +209,7 @@ async def my_referrals_callback(update: Update, context: ContextTypes.DEFAULT_TY
         text = (
             "👥 *Mis Referidos*\n\n"
             "Aún no tienes referidos.\n\n"
-            "💡 Comparte tu link de referido para invitar amigos y ganar 1 S-E por cada uno que complete una tarea."
+            "💡 Comparte tu link de referido para invitar amigos y ganar 1 PXC por cada uno que complete una tarea."
         )
     else:
         text = f"👥 *Mis Referidos* ({len(referrals)} total)\n\n"
@@ -243,13 +243,13 @@ async def share_referral_callback(update: Update, context: ContextTypes.DEFAULT_
     text = (
         "📤 *Comparte tu Link de Referido*\n\n"
         f"🔗 Tu link personal:\n`{referral_link}`\n\n"
-        "💰 Gana *1 S-E* por cada amigo que invite y complete al menos una tarea.\n\n"
+        "💰 Gana *1 PXC* por cada amigo que invite y complete al menos una tarea.\n\n"
         "📊 Además, recibes *5% de comisión* de todo lo que tus referidos minen."
     )
     
     keyboard = [
         [InlineKeyboardButton("📤 Compartir Link", 
-                            switch_inline_query=f"¡Únete a SALLY-E y gana tokens! {referral_link}")],
+                            switch_inline_query=f"¡Únete a ARCADE PXC y gana tokens! {referral_link}")],
         [InlineKeyboardButton("⬅️ Volver", callback_data="start")]
     ]
     
@@ -270,7 +270,7 @@ async def start_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     welcome_text = (
         f"👋 ¡Hola {first_name}!\n\n"
-        f"🌟 Bienvenido a *SALLY-E Bot*\n\n"
+        f"🌟 Bienvenido a *ARCADE PXC*\n\n"
         f"💰 Gana tokens minando\n"
         f"✅ Completa tareas para obtener recompensas\n"
         f"👥 Invita amigos y gana comisiones\n"
@@ -470,7 +470,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = str(update.effective_user.id)
     
     text = (
-        "ℹ️ *Ayuda de SALLY-E Bot*\n\n"
+        "ℹ️ *Ayuda de ARCADE PXC*\n\n"
         "*Comandos disponibles:*\n"
         "/start - Iniciar el bot\n"
         "/help - Ver esta ayuda\n"
@@ -529,7 +529,7 @@ def main():
     application.add_error_handler(error_handler)
     
     # Start bot
-    print("🤖 SALLY-E Bot starting...")
+    print("🤖 ARCADE PXC starting...")
     print(f"📢 Channel: {OFFICIAL_CHANNEL}")
     print(f"🌐 WebApp: {WEBAPP_URL}")
     

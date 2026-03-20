@@ -1,5 +1,5 @@
 """
-ad_validation.py - Sistema de Validación de Anuncios para SALLY-E
+ad_validation.py - Sistema de Validación de Anuncios para ARCADE PXC
 =================================================================
 Este módulo implementa un sistema robusto de validación de anuncios
 que previene el fraude y asegura que solo se den recompensas cuando

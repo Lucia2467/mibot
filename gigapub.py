@@ -722,7 +722,7 @@ def gigapub_pts_reward():
         total_pts = pts_earned + bonus_earned
         try:
             from database import update_balance
-            update_balance(user_id, 'se', total_pts, 'add', f'Ad PXC{" + bonus" if bonus_earned > 0 else ""}')
+            update_balance(user_id, 'pxc', total_pts, 'add', f'Ad PXC{" + bonus" if bonus_earned > 0 else ""}')
         except Exception as pts_error:
             logger.warning(f"[GigaPub] Error adding PXC: {pts_error}")
         

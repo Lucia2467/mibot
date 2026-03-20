@@ -1,5 +1,5 @@
 -- ================================================================
--- MIGRACIÓN TON DEPOSITS — SALLY-E
+-- MIGRACIÓN TON DEPOSITS — ARCADE PXC
 -- Ejecuta esto en la consola MySQL de Railway
 -- ================================================================
 

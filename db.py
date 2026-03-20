@@ -51,7 +51,7 @@ DB_CONFIG = {
 
 # Pool settings
 POOL_SIZE = 10          # Aumentado de 3 a 10 para soportar mas conexiones simultaneas
-POOL_NAME = 'sally_pool'
+POOL_NAME = 'arcadepxc_pool'
 MAX_RETRIES = 3
 RETRY_DELAY = 0.3       # Reducido para recuperarse mas rapido
 

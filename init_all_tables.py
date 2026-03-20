@@ -31,7 +31,7 @@ ALL_TABLES = [
         last_name VARCHAR(100) DEFAULT NULL,
         language_code VARCHAR(10) DEFAULT NULL,
         photo_url TEXT DEFAULT NULL,
-        se_balance DECIMAL(20,8) DEFAULT 0.00000000,
+        pxc_balance DECIMAL(20,8) DEFAULT 0.00000000,
         usdt_balance DECIMAL(20,8) DEFAULT 0.00000000,
         doge_balance DECIMAL(20,8) DEFAULT 0.00000000,
         ton_balance DECIMAL(20,9) DEFAULT 0.000000000,
@@ -126,7 +126,7 @@ ALL_TABLES = [
         id INT AUTO_INCREMENT PRIMARY KEY,
         code VARCHAR(50) NOT NULL UNIQUE,
         reward DECIMAL(10,4) NOT NULL DEFAULT 0.0000,
-        currency VARCHAR(10) DEFAULT 'SE',
+        currency VARCHAR(10) DEFAULT 'PXC',
         max_uses INT DEFAULT 100,
         current_uses INT DEFAULT 0,
         active TINYINT(1) DEFAULT 1,
@@ -144,7 +144,7 @@ ALL_TABLES = [
         user_id VARCHAR(50) NOT NULL,
         code VARCHAR(50) NOT NULL,
         reward DECIMAL(10,4) NOT NULL,
-        currency VARCHAR(10) DEFAULT 'SE',
+        currency VARCHAR(10) DEFAULT 'PXC',
         redeemed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         UNIQUE KEY unique_redemption (user_id, code),
         INDEX idx_user_id (user_id)
@@ -204,7 +204,7 @@ ALL_TABLES = [
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id VARCHAR(50) NOT NULL,
         action VARCHAR(100) NOT NULL,
-        currency VARCHAR(10) DEFAULT 'SE',
+        currency VARCHAR(10) DEFAULT 'PXC',
         amount DECIMAL(20,8) NOT NULL,
         balance_before DECIMAL(20,8) DEFAULT 0.00000000,
         balance_after DECIMAL(20,8) DEFAULT 0.00000000,
@@ -968,7 +968,7 @@ ALL_TABLES = [
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     """,
 
-    # ── RULETA (juego SE) ─────────────────────────────────────────────────────
+    # ── RULETA (juego PXC) ─────────────────────────────────────────────────────
     """
     CREATE TABLE IF NOT EXISTS roulette_sessions (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -1179,7 +1179,7 @@ ALL_TABLES = [
         tx_id VARCHAR(100) NOT NULL UNIQUE,
         user_id VARCHAR(50) NOT NULL,
         tx_type VARCHAR(50) NOT NULL,
-        currency VARCHAR(20) DEFAULT 'SE',
+        currency VARCHAR(20) DEFAULT 'PXC',
         amount DECIMAL(20,8) NOT NULL,
         status VARCHAR(30) DEFAULT 'completed',
         description TEXT DEFAULT NULL,
@@ -1488,8 +1488,8 @@ DEFAULT_CONFIG = [
     ('min_withdrawal_se', '100'),
     ('min_withdrawal_ton', '0.1'),
     ('withdrawal_mode', 'manual'),
-    ('se_to_usdt_rate', '0.01'),
-    ('se_to_doge_rate', '0.06'),
+    ('pxc_to_usdt_rate', '0.01'),
+    ('pxc_to_doge_rate', '0.06'),
     ('auto_ban_duplicate_ip', 'false'),
     ('show_promo_fab', 'true'),
     ('admin_password', ''),  # OBLIGATORIO: Configura la contraseña desde el panel de administración antes de usar el sistema.

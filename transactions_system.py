@@ -1,6 +1,6 @@
 """
 transactions_system.py - Sistema Unificado de Transacciones
-SALLY-E / DOGE PIXEL - Soporte para DOGE, TON, USDT y futuras monedas
+ARCADE PXC / ARCADE PXC - Soporte para DOGE, TON, USDT y futuras monedas
 
 Características:
 - Historial unificado de todas las monedas
@@ -16,9 +16,9 @@ from db import execute_query, get_cursor
 
 # ============== CONFIGURACIÓN DE MONEDAS ==============
 CURRENCIES = {
-    'SE': {
-        'name': 'SALLY-E',
-        'symbol': 'SE',
+    'PXC': {
+        'name': 'ARCADE PXC',
+        'symbol': 'PXC',
         'decimals': 4,
         'color': '#00F5FF',
         'icon': '⚡',
@@ -355,7 +355,7 @@ def get_user_unified_transactions(user_id, currency=None, tx_type=None, limit=50
     
     Args:
         user_id: ID del usuario
-        currency: Filtrar por moneda (DOGE, TON, USDT, SE) o None para todas
+        currency: Filtrar por moneda (DOGE, TON, USDT, PXC) o None para todas
         tx_type: Filtrar por tipo (withdrawal, deposit, mining, etc.) o None para todos
         limit: Número máximo de resultados
         offset: Desplazamiento para paginación
@@ -368,7 +368,7 @@ def get_user_unified_transactions(user_id, currency=None, tx_type=None, limit=50
     
     try:
         with get_cursor() as cursor:
-            # 1. Obtener de balance_history (SE y otras monedas internas)
+            # 1. Obtener de balance_history (PXC y otras monedas internas)
             cursor.execute("""
                 SELECT 
                     id,
@@ -412,7 +412,7 @@ def get_user_unified_transactions(user_id, currency=None, tx_type=None, limit=50
                 
                 # Normalizar tipo de transacción
                 tx['tx_type'] = normalize_transaction_type(tx.get('tx_type'), tx.get('description'))
-                tx['currency'] = (tx.get('currency') or 'SE').upper()
+                tx['currency'] = (tx.get('currency') or 'PXC').upper()
                 transactions.append(tx)
             
             # 2. Obtener de withdrawals (DOGE, USDT, TON)
@@ -683,8 +683,8 @@ def format_transaction_for_display(tx, lang='es'):
     if not tx:
         return None
     
-    currency = (tx.get('currency') or 'SE').upper()
-    currency_config = CURRENCIES.get(currency, CURRENCIES['SE'])
+    currency = (tx.get('currency') or 'PXC').upper()
+    currency_config = CURRENCIES.get(currency, CURRENCIES['PXC'])
     
     tx_type = tx.get('tx_type', 'other')
     status = tx.get('status', 'completed')
@@ -768,8 +768,8 @@ def format_transaction_for_api(tx, lang='en'):
     if not tx:
         return None
     
-    currency = (tx.get('currency') or 'SE').upper()
-    currency_config = CURRENCIES.get(currency, CURRENCIES['SE'])
+    currency = (tx.get('currency') or 'PXC').upper()
+    currency_config = CURRENCIES.get(currency, CURRENCIES['PXC'])
     
     tx_type = tx.get('tx_type', 'mining')
     status = tx.get('status', 'completed')
@@ -854,7 +854,7 @@ def get_transaction_stats(user_id):
     }
     
     for tx in transactions:
-        currency = tx.get('currency', 'SE')
+        currency = tx.get('currency', 'PXC')
         tx_type = tx.get('tx_type', 'other')
         status = tx.get('status', 'completed')
         amount = float(tx.get('amount', 0))

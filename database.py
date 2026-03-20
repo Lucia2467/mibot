@@ -1,5 +1,5 @@
 """
-database.py - Operaciones principales de base de datos para SALLY-E Bot
+database.py - Operaciones principales de base de datos para ARCADE PXC
 Usa el pool de conexiones de db.py
 FIXED VERSION - Referral validation only after first task completion
 """
@@ -32,7 +32,7 @@ _THROTTLED_FIELDS = {
 # language_code is NOT throttled - it should update immediately for notifications
 
 # Fields that are CRITICAL (always update immediately, no throttling)
-# These include: se_balance, total_mined, last_claim, completed_tasks, 
+# These include: pxc_balance, total_mined, last_claim, completed_tasks, 
 # referral_count, referral_validated, pending_referrer, mining_power,
 # wallet_address, usdt_balance, doge_balance, and any other field not in _THROTTLED_FIELDS
 
@@ -205,7 +205,7 @@ def update_user(user_id, **kwargs):
     
     OPTIMIZED: Profile fields (username, first_name, last_ip, banned, etc.) are 
     throttled to update only once every 5 hours to reduce log spam and DB writes.
-    Critical fields (se_balance, total_mined, last_claim, etc.) always update immediately.
+    Critical fields (pxc_balance, total_mined, last_claim, etc.) always update immediately.
     """
     if not kwargs:
         return False
@@ -387,8 +387,7 @@ def update_balance(user_id, currency, amount, operation='add', description=None,
         allow_negative: Si True, permite saldo negativo (para penalizaciones/deudas)
     """
     column_map = {
-        'se': 'se_balance',
-        's-e': 'se_balance',
+        'pxc': 'pxc_balance',
         'usdt': 'usdt_balance',
         'doge': 'doge_balance',
         'ton': 'ton_balance'
@@ -544,7 +543,7 @@ def validate_referral(referrer_id, referred_id):
             print(f"[validate_referral] is_fraud update skipped (columna pendiente de migración): {_isf_err}")
 
         if not bonus_paid or float(bonus_paid) == 0:
-            update_balance(referrer_id, 'se', bonus, 'add',
+            update_balance(referrer_id, 'pxc', bonus, 'add',
                            f'Referral bonus: user {referred_id} completed first task')
             print(f"[validate_referral] bonus {bonus} PXC -> {referrer_id}")
 
@@ -970,7 +969,7 @@ def complete_task(user_id, task_id, reward=None):
     
     # Pay reward
     if reward > 0:
-        update_balance(user_id, 'se', reward, 'add', f'Task completed: {task_id}')
+        update_balance(user_id, 'pxc', reward, 'add', f'Task completed: {task_id}')
     
     # Update task completion count
     execute_query("""
@@ -1091,7 +1090,7 @@ def get_promo_code(code):
             promo['active'] = bool(promo.get('active', 1))
         return promo
 
-def create_promo_code(code, reward, currency='SE', max_uses=None, expires_at=None, active=True):
+def create_promo_code(code, reward, currency='PXC', max_uses=None, expires_at=None, active=True):
     """Crea un nuevo código promocional"""
     try:
         execute_query("""
@@ -1144,7 +1143,7 @@ def redeem_promo_code(user_id, code):
         
         # Redeem
         reward = float(promo.get('reward', 0))
-        currency = promo.get('currency', 'SE').lower()
+        currency = promo.get('currency', 'PXC').lower()
         
         # Add balance
         update_balance(user_id, currency, reward, 'add', f'Promo code: {code}')
@@ -1439,10 +1438,10 @@ def get_top_users_by_balance(limit=50):
     """Top usuarios por balance"""
     with get_cursor() as cursor:
         cursor.execute("""
-            SELECT user_id, username, first_name, se_balance, referral_count
+            SELECT user_id, username, first_name, pxc_balance, referral_count
             FROM users
             WHERE banned = FALSE
-            ORDER BY se_balance DESC
+            ORDER BY pxc_balance DESC
             LIMIT %s
         """, (limit,))
         return rows_to_list(cursor, cursor.fetchall())
@@ -1451,7 +1450,7 @@ def get_top_users_by_referrals(limit=50):
     """Top usuarios por referidos VALIDADOS"""
     with get_cursor() as cursor:
         cursor.execute("""
-            SELECT user_id, username, first_name, se_balance, referral_count
+            SELECT user_id, username, first_name, pxc_balance, referral_count
             FROM users
             WHERE banned = FALSE
             ORDER BY referral_count DESC

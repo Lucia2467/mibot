@@ -155,7 +155,7 @@ def add_bscscan_api_key_to_env():
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("DOGE PIXEL - Deposit System Initialization")
+    print("ARCADE PXC - Deposit System Initialization")
     print("=" * 60)
     
     # Verificar si las tablas ya existen

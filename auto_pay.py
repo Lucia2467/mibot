@@ -1,5 +1,5 @@
 """
-auto_pay.py - Procesador automático de pagos para SALLY-E Bot
+auto_pay.py - Procesador automático de pagos para ARCADE PXC
 Procesa retiros automáticamente usando payments.py para BEP20 y ton_payments.py para TON
 """
 
@@ -132,7 +132,7 @@ def process_ton_withdrawal(withdrawal):
     update_withdrawal(withdrawal_id, status='processing')
 
     try:
-        memo = f"SALLY-E Withdrawal {withdrawal_id}"
+        memo = f"ARCADE PXC Withdrawal {withdrawal_id}"
         success, tx_hash, error = send_ton_payment(
             to_address=address,
             amount=float(withdrawal['amount']),
@@ -426,5 +426,5 @@ if __name__ == '__main__':
             print(f"Unknown command: {command}")
             print("Usage: python auto_pay.py [status|process [withdrawal_id]|check <withdrawal_id>]")
     else:
-        print("SALLY-E Auto Payment Processor")
+        print("ARCADE PXC Auto Payment Processor")
         print("Usage: python auto_pay.py [status|process [withdrawal_id]|check <withdrawal_id>]")

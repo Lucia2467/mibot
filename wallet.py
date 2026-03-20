@@ -1,5 +1,5 @@
 """
-wallet.py - Sistema de retiros para SALLY-E Bot / DOGE PIXEL
+wallet.py - Sistema de retiros para ARCADE PXC / ARCADE PXC
 Maneja solicitudes de retiro, validación y procesamiento
 Soporta: USDT (BEP20), DOGE (BEP20), TON (TON Network)
 """
@@ -154,15 +154,15 @@ def create_withdrawal_request(user_id, currency, amount, wallet_address=None, la
     user_balance = float(user.get(balance_key, 0))
     
     # Check for negative balance (debt) in any currency - block withdrawals
-    se_balance = float(user.get('se_balance', 0) or 0)
+    pxc_balance = float(user.get('pxc_balance', 0) or 0)
     doge_balance = float(user.get('doge_balance', 0) or 0)
     usdt_balance = float(user.get('usdt_balance', 0) or 0)
     ton_balance = float(user.get('ton_balance', 0) or 0)
     
-    if se_balance < 0 or doge_balance < 0 or usdt_balance < 0 or ton_balance < 0:
+    if pxc_balance < 0 or doge_balance < 0 or usdt_balance < 0 or ton_balance < 0:
         debt_info = []
-        if se_balance < 0:
-            debt_info.append(f"PXC: {se_balance:.4f}")
+        if pxc_balance < 0:
+            debt_info.append(f"PXC: {pxc_balance:.4f}")
         if doge_balance < 0:
             debt_info.append(f"DOGE: {doge_balance:.4f}")
         if usdt_balance < 0:

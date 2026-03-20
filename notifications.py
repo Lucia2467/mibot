@@ -1,5 +1,5 @@
 """
-notifications.py - Notificaciones privadas PixieLand
+notifications.py - Notificaciones privadas ARCADE PXC
 Usa requests (síncrono) — compatible con Flask/Gunicorn sin asyncio.
 Detecta idioma automáticamente por language_code de Telegram.
 """
@@ -11,8 +11,8 @@ logger = logging.getLogger(__name__)
 
 BOT_TOKEN    = os.environ.get('BOT_TOKEN', '')
 WEBAPP_URL   = os.environ.get('WEBAPP_URL', '')
-BOT_USERNAME = os.environ.get('BOT_USERNAME', 'PixiieLandbot')
-_BOT_TITLE   = os.environ.get('BOT_TITLE', 'PixieLand')
+BOT_USERNAME = os.environ.get('BOT_USERNAME', 'ArcadePXCBot')
+_BOT_TITLE   = os.environ.get('BOT_TITLE', 'ARCADE PXC')
 
 # ──────────────────────────────────────────────────────────
 # DETECCIÓN DE IDIOMA

@@ -37,7 +37,7 @@ def run_migration():
         # Usamos DECIMAL SIGNED (sin UNSIGNED) para permitir negativos
         migrations = [
             # Tabla users - columnas de balance
-            ("users", "se_balance", "DECIMAL(20, 8) DEFAULT 0.00000000"),
+            ("users", "pxc_balance", "DECIMAL(20, 8) DEFAULT 0.00000000"),
             ("users", "usdt_balance", "DECIMAL(20, 8) DEFAULT 0.00000000"),
             ("users", "doge_balance", "DECIMAL(20, 8) DEFAULT 0.00000000"),
             ("users", "ton_balance", "DECIMAL(20, 8) DEFAULT 0.00000000"),
@@ -88,22 +88,22 @@ def run_migration():
         with get_cursor() as cursor:
             # Crear usuario de prueba temporal
             cursor.execute("""
-                INSERT INTO users (user_id, username, se_balance) 
+                INSERT INTO users (user_id, username, pxc_balance) 
                 VALUES ('_test_negative_balance_', '_test_', 0)
-                ON DUPLICATE KEY UPDATE se_balance = 0
+                ON DUPLICATE KEY UPDATE pxc_balance = 0
             """)
             
             # Intentar poner balance negativo
             cursor.execute("""
-                UPDATE users SET se_balance = -10.5 WHERE user_id = '_test_negative_balance_'
+                UPDATE users SET pxc_balance = -10.5 WHERE user_id = '_test_negative_balance_'
             """)
             
             # Verificar
             cursor.execute("""
-                SELECT se_balance FROM users WHERE user_id = '_test_negative_balance_'
+                SELECT pxc_balance FROM users WHERE user_id = '_test_negative_balance_'
             """)
             result = cursor.fetchone()
-            balance = float(result[0] if isinstance(result, tuple) else result.get('se_balance', 0))
+            balance = float(result[0] if isinstance(result, tuple) else result.get('pxc_balance', 0))
             
             # Limpiar usuario de prueba
             cursor.execute("DELETE FROM users WHERE user_id = '_test_negative_balance_'")

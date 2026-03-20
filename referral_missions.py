@@ -475,7 +475,7 @@ def claim_mission_reward(user_id, mission_id, ip_address=None):
     # Determinar campo de balance según moneda
     balance_field_map = {
         'DOGE': 'doge_balance',
-        'SE': 'se_balance',
+        'PXC': 'pxc_balance',
         'USDT': 'usdt_balance'
     }
     balance_field = balance_field_map.get(reward_currency, 'doge_balance')

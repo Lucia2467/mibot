@@ -1,5 +1,5 @@
 """
-ton_payments_system.py — Sistema TON para SALLY-E Bot
+ton_payments_system.py — Sistema TON para ARCADE PXC
 Wrapper limpio sobre ton_wallet.py (tonutils + ToncenterClient)
 
 Usa la tabla estándar 'withdrawals' — sin tablas propias.
@@ -140,7 +140,7 @@ def process_ton_withdrawal_auto(withdrawal_id: str):
 
     update_withdrawal(withdrawal_id, status='processing')
 
-    memo = f'SALLY-E Withdrawal {withdrawal_id}'
+    memo = f'ARCADE PXC Withdrawal {withdrawal_id}'
     success, tx_hash, error = send_ton_payment(
         to_address=address,
         amount=float(withdrawal['amount']),

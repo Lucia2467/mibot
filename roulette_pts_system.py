@@ -39,7 +39,7 @@ PRIZE_WEIGHTS = {
 
 # Telegram Bot Config
 BOT_TOKEN = os.environ.get('BOT_TOKEN', '')
-WEBAPP_URL = os.environ.get('WEBAPP_URL', 'https://isaax23.pythonanywhere.com')
+WEBAPP_URL = os.environ.get('WEBAPP_URL', 'https://arcadepxc.pythonanywhere.com')
 
 roulette_pts_bp = Blueprint('roulette_pts', __name__)
 

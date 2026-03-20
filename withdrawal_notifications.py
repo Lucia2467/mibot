@@ -1,6 +1,6 @@
 """
 withdrawal_notifications.py - Sistema de Notificaciones de Retiros
-SALLY-E / DOGE PIXEL - PARTE 1/2
+ARCADE PXC - PARTE 1/2
 
 TODAS las notificaciones se envían en el idioma del usuario.
 Cada idioma tiene su propio banner.
@@ -38,7 +38,7 @@ CURRENCY_CONFIG = {
     'DOGE': {'network': 'BEP-20', 'explorer': 'https://bscscan.com/tx/'},
     'TON': {'network': 'TON Network', 'explorer': 'https://tonscan.org/tx/'},
     'USDT': {'network': 'BEP-20', 'explorer': 'https://bscscan.com/tx/'},
-    'SE': {'network': 'Internal', 'explorer': None}
+    'PXC': {'network': 'Internal', 'explorer': None}
 }
 
 # ============== BANNER CONFIGURATION BY LANGUAGE ==============
@@ -78,7 +78,7 @@ TRANSLATIONS = {
         'requires_approval': 'Requires manual approval',
         'processed_success': 'Withdrawal processed successfully',
         'balance_refunded': 'Balance has been refunded to your account',
-        'thanks': 'Thank you for using SALLY-E BOT!',
+        'thanks': 'Thank you for using ARCADE PXC!',
         'withdrawal_id': 'Withdrawal ID',
         'btn_bot': '🤖 Go to Bot',
         'btn_channel': '📢 Official Channel'
@@ -103,7 +103,7 @@ TRANSLATIONS = {
         'requires_approval': 'Requiere aprobación manual',
         'processed_success': 'Retiro procesado exitosamente',
         'balance_refunded': 'El saldo ha sido devuelto a tu cuenta',
-        'thanks': '¡Gracias por usar Sally-E Bot!',
+        'thanks': '¡Gracias por usar ARCADE PXC!',
         'withdrawal_id': 'ID Retiro',
         'btn_bot': '🤖 Ir al Bot',
         'btn_channel': '📢 Canal Oficial'
@@ -128,7 +128,7 @@ TRANSLATIONS = {
         'requires_approval': 'Requer aprovação manual',
         'processed_success': 'Saque processado com sucesso',
         'balance_refunded': 'O saldo foi devolvido à sua conta',
-        'thanks': 'Obrigado por usar o Sally-E Bot!',
+        'thanks': 'Obrigado por usar o ARCADE PXC!',
         'withdrawal_id': 'ID Saque',
         'btn_bot': '🤖 Ir ao Bot',
         'btn_channel': '📢 Canal Oficial'
@@ -153,7 +153,7 @@ TRANSLATIONS = {
         'requires_approval': 'Требуется ручное подтверждение',
         'processed_success': 'Вывод успешно обработан',
         'balance_refunded': 'Баланс был возвращен на ваш счет',
-        'thanks': 'Спасибо за использование Sally-E Bot!',
+        'thanks': 'Спасибо за использование ARCADE PXC!',
         'withdrawal_id': 'ID Вывода',
         'btn_bot': '🤖 Перейти к боту',
         'btn_channel': '📢 Официальный канал'
@@ -178,7 +178,7 @@ TRANSLATIONS = {
         'requires_approval': 'يتطلب موافقة يدوية',
         'processed_success': 'تمت معالجة السحب بنجاح',
         'balance_refunded': 'تم إعادة الرصيد إلى حسابك',
-        'thanks': 'شكرا لاستخدامك Sally-E Bot!',
+        'thanks': 'شكرا لاستخدامك ARCADE PXC!',
         'withdrawal_id': 'معرف السحب',
         'btn_bot': '🤖 اذهب إلى البوت',
         'btn_channel': '📢 القناة الرسمية'
@@ -246,11 +246,11 @@ def get_inline_keyboard(lang='es'):
             [
                 {
                     "text": txt('btn_bot', lang),
-                    "url": "https://t.me/SallyEbot?start=ref_8134043864"
+                    "url": "https://t.me/ArcadePXCBot"
                 },
                 {
                     "text": txt('btn_channel', lang),
-                    "url": "https://t.me/SallyE_Comunity"
+                    "url": "https://t.me/ArcadePXC_Community"
                 }
             ]
         ]
