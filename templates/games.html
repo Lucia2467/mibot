@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}SALLY-E | Juegos{% endblock %}
+{% block title %}ARCADE PXC | Juegos{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -13,7 +13,7 @@
         </a>
         <div>
             <h1 style="font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: var(--space-1);" data-i18n="games">Juegos</h1>
-            <p style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="bet_multiply">Apuesta y multiplica tus S-E</p>
+            <p style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="bet_multiply">Apuesta y multiplica tus PXC</p>
         </div>
     </div>
 
@@ -22,7 +22,7 @@
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <div>
                 <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);" data-i18n="your_balance">Tu Balance</div>
-                <div style="font-size: 1.5rem; font-weight: 800; color: #FFD700;">{{ "%.4f"|format(user.se_balance) }} S-E</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #FFD700;">{{ "%.4f"|format(user.pxc_balance) }} PXC</div>
             </div>
             <div style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; background: rgba(255, 215, 0, 0.15); border-radius: 14px;">
                 <i data-lucide="coins" style="width: 28px; height: 28px; color: #FFD700;"></i>
@@ -51,12 +51,12 @@
                                 <span style="background: linear-gradient(135deg, #FFB400 0%, #FF5000 100%); border-radius: 20px; padding: 2px 10px; font-size: 0.6875rem; font-weight: 700; color: #0B0B0F;">NUEVO</span>
                             </div>
                             <p style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5; margin-bottom: var(--space-3);">
-                                Juega ajedrez, sudoku, solitario y más. Gana 1 S-E por cada minuto jugado.
+                                Juega ajedrez, sudoku, solitario y más. Gana 1 PXC por cada minuto jugado.
                             </p>
                             <div style="display: flex; gap: var(--space-3);">
                                 <div style="display: flex; align-items: center; gap: var(--space-1);">
                                     <i data-lucide="timer" style="width: 14px; height: 14px; color: #FFB400;"></i>
-                                    <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">1 S-E / min</span>
+                                    <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">1 PXC / min</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: var(--space-1);">
                                     <i data-lucide="clock" style="width: 14px; height: 14px; color: #FFB400;"></i>
@@ -121,12 +121,12 @@
                                 <span style="background: linear-gradient(135deg, #0066FF 0%, #0052CC 100%); border-radius: 20px; padding: 2px 10px; font-size: 0.6875rem; font-weight: 700; color: white;">NUEVO</span>
                             </div>
                             <p style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5; margin-bottom: var(--space-3);" data-i18n="roulette_desc">
-                                Gira la ruleta y gana S-E, DOGE, TON, USDT al instante
+                                Gira la ruleta y gana PXC, DOGE, TON, USDT al instante
                             </p>
                             <div style="display: flex; gap: var(--space-3);">
                                 <div style="display: flex; align-items: center; gap: var(--space-1);">
                                     <i data-lucide="coins" style="width: 14px; height: 14px; color: #FFD700;"></i>
-                                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);" data-i18n="cost_per_spin">2 S-E/giro</span>
+                                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);" data-i18n="cost_per_spin">2 PXC/giro</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: var(--space-1);">
                                     <i data-lucide="gift" style="width: 14px; height: 14px; color: #0066FF;"></i>

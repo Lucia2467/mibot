@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ 'Editar' if task else 'Crear' }} Tarea - SALLY-E Admin</title>
+    <title>{{ 'Editar' if task else 'Crear' }} Tarea - ARCADE PXC Admin</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -182,7 +182,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Recompensa (S-E)</label>
+                        <label>Recompensa (PXC)</label>
                         <input type="number" name="reward" step="0.0001" min="0" value="{{ task.reward if task else '0.1' }}" required>
                     </div>
                 </div>

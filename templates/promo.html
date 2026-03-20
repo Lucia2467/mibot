@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}SALLY-E | Código Promocional{% endblock %}
+{% block title %}ARCADE PXC | Código Promocional{% endblock %}
 
 {% block content %}
 <div class="container" style="padding-top: 20px;">
@@ -58,7 +58,7 @@
     <div class="card" style="margin-top: 20px; text-align: center;">
         <p style="color: var(--color-text-secondary); font-size: 0.8rem; margin-bottom: 5px;" data-i18n="your_current_balance">Tu balance actual</p>
         <p style="font-size: 1.5rem; font-weight: 700; color: var(--color-neon-cyan);">
-            {{ "%.4f"|format(user.se_balance or 0) }} S-E
+            {{ "%.4f"|format(user.pxc_balance or 0) }} PXC
         </p>
     </div>
 </div>

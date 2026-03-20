@@ -134,7 +134,7 @@ button[onclick*="swap-form"]::after {
 </style>
 {% endblock %}
 
-SALLY-E | Wallet{% endblock %}
+ARCADE PXC | Wallet{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -176,11 +176,11 @@ SALLY-E | Wallet{% endblock %}
         <div class="balance-label" style="font-size:0.75rem;letter-spacing:0.08em;color:rgba(255,255,255,0.45);text-transform:uppercase;margin-bottom:6px;" data-i18n="available_balances">Balances Disponibles</div>
 
         <!-- PXC Amount -->
-        <div class="balance-amount" id="se-balance" style="font-size:2.6rem;font-weight:900;letter-spacing:-0.02em;line-height:1;margin-bottom:4px;{% if user.se_balance < 0 %}color:#ef4444 !important;{% endif %}">{{ "%.2f"|format(user.se_balance) }}</div>
-        <div class="balance-currency" style="font-size:0.8rem;font-weight:600;letter-spacing:0.12em;color:rgba(255,255,255,0.45);margin-bottom:22px;" data-i18n="se_tokens">TOKENS PXC</div>
+        <div class="balance-amount" id="pxc-balance" style="font-size:2.6rem;font-weight:900;letter-spacing:-0.02em;line-height:1;margin-bottom:4px;{% if user.pxc_balance < 0 %}color:#ef4444 !important;{% endif %}">{{ "%.2f"|format(user.pxc_balance) }}</div>
+        <div class="balance-currency" style="font-size:0.8rem;font-weight:600;letter-spacing:0.12em;color:rgba(255,255,255,0.45);margin-bottom:22px;" data-i18n="pxc_tokens">TOKENS PXC</div>
 
         <!-- Alerta deuda -->
-        {% if user.se_balance < 0 or user.usdt_balance < 0 or user.doge_balance < 0 or user.ton_balance < 0 %}
+        {% if user.pxc_balance < 0 or user.usdt_balance < 0 or user.doge_balance < 0 or user.ton_balance < 0 %}
         <div style="background:rgba(239,68,68,0.15);border-top:1px solid rgba(239,68,68,0.40);border-bottom:2px solid rgba(0,0,0,0.55);border-radius:10px;padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;gap:10px;">
             <i data-lucide="alert-triangle" style="width:18px;height:18px;color:#ef4444;flex-shrink:0;"></i>
             <div>
@@ -511,8 +511,8 @@ SALLY-E | Wallet{% endblock %}
                 <!-- Cantidad PXC -->
                 <div style="margin-bottom:18px;">
                     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;">
-                        <label style="font-size:0.63rem;font-weight:800;color:rgba(255,255,255,0.30);text-transform:uppercase;letter-spacing:.10em;" data-i18n="se_amount">Cantidad PXC</label>
-                        <span style="font-size:0.70rem;color:rgba(255,255,255,0.32);"><span data-i18n="balance">Balance</span>: <span id="se-balance-swap" style="color:#a78bfa;font-weight:700;">{{ "%.3f"|format(user.se_balance) }}</span> PXC</span>
+                        <label style="font-size:0.63rem;font-weight:800;color:rgba(255,255,255,0.30);text-transform:uppercase;letter-spacing:.10em;" data-i18n="pxc_amount">Cantidad PXC</label>
+                        <span style="font-size:0.70rem;color:rgba(255,255,255,0.32);"><span data-i18n="balance">Balance</span>: <span id="pxc-balance-swap" style="color:#a78bfa;font-weight:700;">{{ "%.3f"|format(user.pxc_balance) }}</span> PXC</span>
                     </div>
                     <div style="display:flex;align-items:stretch;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.10);border-radius:16px;overflow:hidden;transition:border-color .2s,box-shadow .2s;" id="sw-amount-wrap">
                         <input type="number" id="swap-amount" placeholder="0.00" step="1" min="1" required
@@ -1292,7 +1292,7 @@ async function submitSwap(event) {
 
     const currency = document.getElementById('swap-currency').value;
     const seAmount = parseFloat(document.getElementById('swap-amount').value);
-    const currentBalance = parseFloat(document.getElementById('se-balance').textContent);
+    const currentBalance = parseFloat(document.getElementById('pxc-balance').textContent);
 
     // Validaciones
     if (seAmount < 100) {
@@ -1315,7 +1315,7 @@ async function submitSwap(event) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                from_currency: 'SE',
+                from_currency: 'PXC',
                 to_currency: currency,
                 amount: seAmount,
                 receive_amount: receiveAmount
@@ -1438,7 +1438,7 @@ const userBalances = {
     'USDT': parseFloat('{{ user.usdt_balance|default(0) }}'),
     'DOGE': parseFloat('{{ user.doge_balance|default(0) }}'),
     'TON': parseFloat('{{ user.ton_balance|default(0) }}'),
-    'SE': parseFloat('{{ user.se_balance|default(0) }}')
+    'PXC': parseFloat('{{ user.pxc_balance|default(0) }}')
 };
 
 // Linked addresses

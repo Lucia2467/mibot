@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Códigos Promocionales - SALLY-E Admin</title>
+    <title>Códigos Promocionales - ARCADE PXC Admin</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -503,7 +503,7 @@
                 </div>
                 <div class="stat-box">
                     <div class="value">{{ "%.2f"|format(promo_stats.total_rewards_given|float if promo_stats and promo_stats.total_rewards_given else 0) }}</div>
-                    <div class="label">S-E Repartidos</div>
+                    <div class="label">PXC Repartidos</div>
                 </div>
             </div>
 
@@ -542,7 +542,7 @@
                         <div class="promo-stats">
                             <div class="stat-item">
                                 <div class="stat-label">💰 Recompensa</div>
-                                <div class="stat-value">{{ "%.4f"|format(promo.reward|float if promo.reward else 0) }} {{ promo.currency|default('S-E') }}</div>
+                                <div class="stat-value">{{ "%.4f"|format(promo.reward|float if promo.reward else 0) }} {{ promo.currency|default('PXC') }}</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-label">✅ Canjeados</div>

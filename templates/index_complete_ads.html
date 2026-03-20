@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}SALLY-E | Dashboard{% endblock %}
+{% block title %}ARCADE PXC | Dashboard{% endblock %}
 
 {% block content %}
 <!-- Splash Screen Simplificado -->
@@ -16,8 +16,8 @@
     <!-- Hero Balance Card -->
     <div class="card balance-card card-highlight">
         <div class="balance-label">Balance Total</div>
-        <div class="balance-amount" id="total-balance">{{ "%.4f"|format(user.se_balance or 0) }}</div>
-        <div class="balance-currency">S-E</div>
+        <div class="balance-amount" id="total-balance">{{ "%.4f"|format(user.pxc_balance or 0) }}</div>
+        <div class="balance-currency">PXC</div>
     </div>
 
     <!-- Stats Grid -->
@@ -32,7 +32,7 @@
         </div>
         <div class="stat-card">
             <div class="stat-value">{{ mining_rate or user.mining_power or 0.02 }}</div>
-            <div class="stat-label">S-E/Hora</div>
+            <div class="stat-label">PXC/Hora</div>
         </div>
     </div>
 
@@ -52,7 +52,7 @@
             <div style="font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: var(--space-2);" id="unclaimed-balance">
                 {{ "%.4f"|format(unclaimed or 0) }}
             </div>
-            <div style="font-size: 0.875rem; color: var(--color-text-tertiary);">S-E pendientes</div>
+            <div style="font-size: 0.875rem; color: var(--color-text-tertiary);">PXC pendientes</div>
         </div>
 
         <div class="progress mb-4">
@@ -119,7 +119,7 @@
                 </div>
                 <div class="item-content">
                     <div class="item-title">Tasa de Minería</div>
-                    <div class="item-subtitle">{{ mining_rate or user.mining_power or 1.0 }} S-E por hora</div>
+                    <div class="item-subtitle">{{ mining_rate or user.mining_power or 1.0 }} PXC por hora</div>
                 </div>
                 <div class="item-action">
                     <div class="badge badge-success">Activo</div>
@@ -938,7 +938,7 @@ const AD_CONFIG = {
     taskCenter: {
         cooldown: 20,           // 20 seconds cooldown
         minWatchTime: 5,        // Minimum 5 seconds to watch
-        reward: 0.05,           // 0.05 S-E per ad
+        reward: 0.05,           // 0.05 PXC per ad
         maxPerDay: 20           // Maximum 20 ads per day
     }
 };
@@ -1278,7 +1278,7 @@ async function processClaimReward(userId, unclaimedAmount) {
         if (window.showProcessingToast) {
             window.showProcessingToast(
                 'Processing...',
-                `🎉 Reward successfully granted! +${unclaimedAmount.toFixed(4)} S-E`,
+                `🎉 Reward successfully granted! +${unclaimedAmount.toFixed(4)} PXC`,
                 null,
                 1800
             );
@@ -1331,7 +1331,7 @@ async function processTaskCenterAdReward(userId) {
         const data = await response.json();
 
         if (data.success) {
-            showToast(`🎉 Reward successfully granted! +${data.reward} S-E`, 'success');
+            showToast(`🎉 Reward successfully granted! +${data.reward} PXC`, 'success');
             
             // Update UI if elements exist
             if (document.getElementById('total-balance')) {

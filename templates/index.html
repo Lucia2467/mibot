@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}SALLY-E | Dashboard{% endblock %}
+{% block title %}ARCADE PXC | Dashboard{% endblock %}
 
 {% block extra_head %}
 <!-- 3D Premium styles are inline below -->
@@ -447,7 +447,7 @@ button[onclick*="claimReward"] {
         <!-- Main balance -->
         <div style="text-align:center;flex:1;padding:0 10px;">
             <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.14em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:2px;" data-i18n="index_balance_label">Balance Total</div>
-            <div id="tap-balance-display" style="font-size:2.1rem;font-weight:900;letter-spacing:-0.03em;color:#fff;line-height:1;{% if user.se_balance < 0 %}color:#ef4444!important;{% endif %}">{{ "%.2f"|format(user.se_balance or 0) }}</div>
+            <div id="tap-balance-display" style="font-size:2.1rem;font-weight:900;letter-spacing:-0.03em;color:#fff;line-height:1;{% if user.pxc_balance < 0 %}color:#ef4444!important;{% endif %}">{{ "%.2f"|format(user.pxc_balance or 0) }}</div>
             <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.16em;color:rgba(255,255,255,0.30);margin-top:1px;" data-i18n="index_pxc_tokens">PXC TOKENS</div>
         </div>
 
@@ -790,7 +790,7 @@ const TAP_REWARD  = parseFloat(( {{ (mining_rate or user.mining_power or 0.1)|fl
 const MAX_ENERGY  = 500;
 const REGEN_RATE  = 1;
 
-let currentBalance = {{ (user.se_balance or 0)|float }};
+let currentBalance = {{ (user.pxc_balance or 0)|float }};
 let energy         = MAX_ENERGY;
 let isAnimating    = false;
 

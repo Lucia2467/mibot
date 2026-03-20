@@ -339,7 +339,7 @@
                 <div class="form-group">
                     <label class="form-label">Moneda</label>
                     <div class="currency-toggle">
-                        <div class="currency-btn active" id="btn-se" onclick="setCurrency('se')">S-E</div>
+                        <div class="currency-btn active" id="btn-se" onclick="setCurrency('pxc')">PXC</div>
                         <div class="currency-btn" id="btn-doge" onclick="setCurrency('doge')">DOGE</div>
                     </div>
                 </div>
@@ -421,11 +421,11 @@
 <div class="toast" id="toast"></div>
 
 <script>
-let selectedCurrency = 'se';
+let selectedCurrency = 'pxc';
 
 function setCurrency(c) {
     selectedCurrency = c;
-    document.getElementById('btn-se').classList.toggle('active', c === 'se');
+    document.getElementById('btn-se').classList.toggle('active', c === 'pxc');
     document.getElementById('btn-doge').classList.toggle('active', c === 'doge');
 }
 

@@ -945,7 +945,7 @@
             const tbody = document.getElementById('search-tbody');
             tbody.innerHTML = users.map(user => {
                 const state = user.account_state || (user.banned == 1 ? 'BANNED' : 'ACTIVE');
-                const balance = user.se_balance || user.balance || 0;
+                const balance = user.pxc_balance || user.balance || 0;
                 return `
                     <tr>
                         <td>
@@ -1000,7 +1000,7 @@
         function renderUserDetails(details) {
             const user = details.user || {};
             const state = user.account_state || (user.banned == 1 ? 'BANNED' : 'ACTIVE');
-            const balance = user.se_balance || user.balance || 0;
+            const balance = user.pxc_balance || user.balance || 0;
             
             let html = `
                 <div class="modal-section">
@@ -1023,7 +1023,7 @@
                             <div class="value"><span class="badge badge-${state.toLowerCase()}">${state}</span></div>
                         </div>
                         <div class="detail-item">
-                            <div class="label">Balance SE</div>
+                            <div class="label">Balance PXC</div>
                             <div class="value">${parseFloat(balance).toFixed(4)}</div>
                         </div>
                         <div class="detail-item">

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}SALLY-E | Tasks{% endblock %}
+{% block title %}ARCADE PXC | Tasks{% endblock %}
 {% block content %}
 <div class="container">
     <h1 class="page-title">
@@ -29,7 +29,7 @@
             </h2>
             <div id="shrinkearn-mini-stats" style="display: flex; gap: 12px; font-size: 0.8rem;">
                 <span class="badge" style="background: linear-gradient(135deg, rgba(255,204,0,0.2), rgba(255,204,0,0.1)); color: #ffcc00; padding: 4px 10px; border-radius: 20px;">
-                    <span id="se-earned">0.0000</span> DOGE
+                    <span id="pxc-earned">0.0000</span> DOGE
                 </span>
             </div>
         </div>
@@ -67,7 +67,7 @@
                     <!-- Contenido de la tarea -->
                     <div class="item-content">
                         <div class="item-title">{{ task.title }}</div>
-                        <div class="item-subtitle">+{{ task.reward }} S-E</div>
+                        <div class="item-subtitle">+{{ task.reward }} PXC</div>
                     </div>
 
                     <!-- Botón de completar -->
@@ -98,7 +98,7 @@
                 </div>
                 <div class="item-content">
                     <div class="item-title">{{ task.title }}</div>
-                    <div class="item-subtitle">{{ task.reward }} S-E</div>
+                    <div class="item-subtitle">{{ task.reward }} PXC</div>
                 </div>
                 <div style="color: #00aa00; font-weight: 600; font-size: 0.875rem;">
                     ✓ <span data-i18n="completed">Completed</span>
@@ -150,7 +150,7 @@ async function initializeShrinkEarn() {
 
 // Actualizar mini estadísticas en el header
 function updateShrinkEarnMiniStats() {
-    const earnedEl = document.getElementById('se-earned');
+    const earnedEl = document.getElementById('pxc-earned');
     if (earnedEl && ShrinkEarnState.dailyStats) {
         earnedEl.textContent = ShrinkEarnState.dailyStats.earned_doge.toFixed(4);
     }
@@ -261,7 +261,7 @@ async function submitTaskCompletion(taskId, userId, btn) {
 
         if (data.success) {
             const taskCompletedText = window.tt ? window.tt('toast_task_completed') : '¡Tarea completada!';
-            showToast(`${taskCompletedText} +${data.reward} S-E`, 'success');
+            showToast(`${taskCompletedText} +${data.reward} PXC`, 'success');
 
             // Vibración de éxito
             if (window.Telegram && window.Telegram.WebApp) {

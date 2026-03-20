@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil | SALLY-E</title>
+    <title>Mi Perfil | ARCADE PXC</title>
     <meta name="theme-color" content="#0B0B0F">
     
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -278,9 +278,9 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                         </svg>
-                        Balance S-E
+                        Balance PXC
                     </span>
-                    <span class="info-value balance">{{ "%.4f"|format(user.se_balance or 0) }}</span>
+                    <span class="info-value balance">{{ "%.4f"|format(user.pxc_balance or 0) }}</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">
@@ -351,7 +351,7 @@
                         <div class="history-date">{{ item.created_at[:16] if item.created_at else '' }}</div>
                     </div>
                     <div class="history-amount {% if item.amount > 0 %}positive{% else %}negative{% endif %}">
-                        {% if item.amount > 0 %}+{% endif %}{{ "%.4f"|format(item.amount or 0) }} {{ item.currency or 'S-E' }}
+                        {% if item.amount > 0 %}+{% endif %}{{ "%.4f"|format(item.amount or 0) }} {{ item.currency or 'PXC' }}
                     </div>
                 </div>
                 {% endfor %}

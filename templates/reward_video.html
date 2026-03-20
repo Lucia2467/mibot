@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}SALLY-E | Reward Video{% endblock %}
+{% block title %}ARCADE PXC | Reward Video{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -367,7 +367,7 @@ function checkRewardStatus(isFirstCheck = false) {
                 document.getElementById('rv-earned-amount').textContent =
                     `${currentProgress.total_earned.toFixed(3)} DOGE`;
 
-                // VERIFICAR SI REALMENTE SE OTORGÓ LA RECOMPENSA
+                // VERIFICAR SI REALMENTE PXC OTORGÓ LA RECOMPENSA
                 // Comparar con el valor anterior guardado
                 if (newVideosWatched > rvPreviousVideosWatched) {
                     // ¡SÍ se recibió la recompensa del callback!

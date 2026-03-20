@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}SALLY-E | Ruleta de Premios{% endblock %}
+{% block title %}ARCADE PXC | Ruleta de Premios{% endblock %}
 
 {% block extra_head %}
 <!-- SDK de Monetag - OBLIGATORIO -->
@@ -386,7 +386,7 @@
 
     <div class="balance-display">
         <div class="balance-label">Tu balance</div>
-        <div class="balance-value" id="balanceDisplay">{{ user.se_balance|default(0)|round(4) }} S-E</div>
+        <div class="balance-value" id="balanceDisplay">{{ user.pxc_balance|default(0)|round(4) }} PXC</div>
     </div>
 
     <div class="ads-section" id="adsSection">
@@ -421,7 +421,7 @@
     <button class="spin-btn" id="spinBtn" disabled>
         <span id="spinBtnText">COMPLETA 3 ANUNCIOS</span>
     </button>
-    <div class="spin-cost">Costo por giro: 2 S-E</div>
+    <div class="spin-cost">Costo por giro: 2 PXC</div>
 </div>
 
 <div class="result-modal" id="resultModal">
@@ -430,7 +430,7 @@
             <i data-lucide="gift"></i>
         </div>
         <div class="result-title" id="resultTitle">¡Felicidades!</div>
-        <div class="result-prize" id="resultPrize">2 S-E</div>
+        <div class="result-prize" id="resultPrize">2 PXC</div>
         <div class="result-balance">Nuevo balance: <span id="newBalance">0</span></div>
         <button class="close-btn" id="closeResultBtn">CERRAR</button>
     </div>
@@ -450,23 +450,23 @@
 
     // Premios
     const PRIZES = [
-        { text: '2 S-E', value: 2, currency: 'SE', color: '#0066FF' },
+        { text: '2 PXC', value: 2, currency: 'PXC', color: '#0066FF' },
         { text: '0.02 TON', value: 0.02, currency: 'TON', color: '#0088CC' },
         { text: ':((', value: 0, currency: 'NONE', color: '#2D2D3D' },
-        { text: '1 S-E', value: 1, currency: 'SE', color: '#0040FF' },
+        { text: '1 PXC', value: 1, currency: 'PXC', color: '#0040FF' },
         { text: 'T_T', value: 0, currency: 'NONE', color: '#1a1a2e' },
         { text: '0.01 TON', value: 0.01, currency: 'TON', color: '#0098EA' },
-        { text: '0.5 S-E', value: 0.5, currency: 'SE', color: '#00A3FF' },
+        { text: '0.5 PXC', value: 0.5, currency: 'PXC', color: '#00A3FF' },
         { text: ':_(', value: 0, currency: 'NONE', color: '#2D2D3D' },
         { text: '0.002 TON', value: 0.002, currency: 'TON', color: '#0077B5' },
-        { text: '0.5 S-E', value: 0.5, currency: 'SE', color: '#E91E63' },
+        { text: '0.5 PXC', value: 0.5, currency: 'PXC', color: '#E91E63' },
         { text: '>_<', value: 0, currency: 'NONE', color: '#1a1a2e' },
-        { text: '1 S-E', value: 1, currency: 'SE', color: '#673AB7' }
+        { text: '1 PXC', value: 1, currency: 'PXC', color: '#673AB7' }
     ];
 
     // Estado
     let adsWatched = 0;
-    let currentBalance = {{ user.se_balance|default(0) }};
+    let currentBalance = {{ user.pxc_balance|default(0) }};
     let isSpinning = false;
     let isWatchingAd = false;
     let currentRotation = 0;
@@ -530,7 +530,7 @@
         if (isWatchingAd || adsWatched >= REQUIRED_ADS) return;
         
         if (currentBalance < SPIN_COST) {
-            showAlert('Balance insuficiente. Necesitas ' + SPIN_COST + ' S-E');
+            showAlert('Balance insuficiente. Necesitas ' + SPIN_COST + ' PXC');
             return;
         }
         
@@ -735,7 +735,7 @@
         prizeEl.className = 'result-prize ' + (isWin ? 'win' : 'lose');
         prizeEl.textContent = prize.text;
         
-        document.getElementById('newBalance').textContent = newBalance.toFixed(4) + ' S-E';
+        document.getElementById('newBalance').textContent = newBalance.toFixed(4) + ' PXC';
         
         resultModal.classList.add('active');
         if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -751,7 +751,7 @@
     }
 
     function updateBalance() {
-        document.getElementById('balanceDisplay').textContent = currentBalance.toFixed(4) + ' S-E';
+        document.getElementById('balanceDisplay').textContent = currentBalance.toFixed(4) + ' PXC';
     }
 
     function showAlert(msg) {

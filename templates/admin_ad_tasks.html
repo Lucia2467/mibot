@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tareas de Anuncios - Admin SALLY-E</title>
+    <title>Tareas de Anuncios - Admin ARCADE PXC</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -436,7 +436,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">{{ "%.2f"|format(total_rewards_paid) }}</div>
-                    <div class="stat-label">S-E Pagados</div>
+                    <div class="stat-label">PXC Pagados</div>
                 </div>
             </div>
         </div>
@@ -466,7 +466,7 @@
                     
                     <div class="form-group">
                         <label>Recompensa por Anuncio</label>
-                        <div class="description">S-E por cada anuncio visto</div>
+                        <div class="description">PXC por cada anuncio visto</div>
                         <input type="number" name="reward_per_ad" id="new_reward_per_ad" value="0.1" min="0.01" max="10" step="0.01">
                     </div>
                     
@@ -522,7 +522,7 @@
                             <small style="color: #888;">{{ task.task_id }}</small>
                         </td>
                         <td>{{ task.ads_required or 20 }}</td>
-                        <td>{{ "%.2f"|format(task.reward_per_ad or 0.1) }} S-E</td>
+                        <td>{{ "%.2f"|format(task.reward_per_ad or 0.1) }} PXC</td>
                         <td>{{ task.ad_cooldown or 30 }}s</td>
                         <td>
                             <span title="Completados">✅ {{ stats.completed_users or 0 }}</span>
@@ -580,7 +580,7 @@
                     
                     <div class="form-group">
                         <label>Recompensa por Defecto</label>
-                        <div class="description">S-E por anuncio (nuevas tareas)</div>
+                        <div class="description">PXC por anuncio (nuevas tareas)</div>
                         <input type="number" name="ad_default_reward" id="ad_default_reward" 
                                value="{{ config.get('ad_default_reward', '0.1') }}" min="0.01" max="10" step="0.01">
                     </div>
@@ -633,7 +633,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Recompensa por Anuncio (S-E)</label>
+                    <label>Recompensa por Anuncio (PXC)</label>
                     <input type="number" name="reward_per_ad" id="edit_reward_per_ad" min="0.01" max="10" step="0.01">
                 </div>
                 

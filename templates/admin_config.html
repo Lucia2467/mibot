@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Configuration - SALLY-E Admin</title>
+    <title>System Configuration - ARCADE PXC Admin</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -352,9 +352,9 @@
                                    min="0" 
                                    value="{{ config.base_mining_rate or '1.0' }}"
                                    required>
-                            <span class="unit-label">S-E/hr</span>
+                            <span class="unit-label">PXC/hr</span>
                         </div>
-                        <small>Base amount of S-E tokens mined per hour by each user.</small>
+                        <small>Base amount of PXC tokens mined per hour by each user.</small>
                     </div>
                     <div class="config-item">
                         <label>Global Mining Power <span class="required">*</span></label>
@@ -402,7 +402,7 @@
                                    min="0" 
                                    value="{{ config.referral_bonus or '1.0' }}"
                                    required>
-                            <span class="unit-label">S-E</span>
+                            <span class="unit-label">PXC</span>
                         </div>
                         <small>One-time bonus paid when a new referral is validated.</small>
                     </div>
@@ -417,7 +417,7 @@
                 </div>
                 <div class="config-grid">
                     <div class="config-item">
-                        <label>Minimum S-E Withdrawal <span class="required">*</span></label>
+                        <label>Minimum PXC Withdrawal <span class="required">*</span></label>
                         <div class="unit">
                             <input type="number" 
                                    name="min_withdrawal_se" 
@@ -425,9 +425,9 @@
                                    min="0" 
                                    value="{{ config.min_withdrawal_se or config.min_withdrawal or '100' }}"
                                    required>
-                            <span class="unit-label">S-E</span>
+                            <span class="unit-label">PXC</span>
                         </div>
-                        <small>Minimum amount of S-E tokens required to withdraw.</small>
+                        <small>Minimum amount of PXC tokens required to withdraw.</small>
                     </div>
                     <div class="config-item" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-color: #4caf50;">
                         <label>Minimum USDT Withdrawal <span class="required">*</span></label>
@@ -475,44 +475,44 @@
                     <span>💱</span> Exchange Rates
                 </div>
                 <div class="section-description">
-                    Configure conversion rates for S-E tokens to other currencies.
+                    Configure conversion rates for PXC tokens to other currencies.
                 </div>
                 <div class="config-grid">
                     <div class="config-item">
-                        <label>S-E to USDT Rate</label>
+                        <label>PXC to USDT Rate</label>
                         <div class="unit">
                             <input type="number" 
-                                   name="se_to_usdt_rate" 
+                                   name="pxc_to_usdt_rate" 
                                    step="0.0001" 
                                    min="0" 
-                                   value="{{ config.se_to_usdt_rate or '0.01' }}">
+                                   value="{{ config.pxc_to_usdt_rate or '0.01' }}">
                             <span class="unit-label">USDT</span>
                         </div>
-                        <small>How much 1 S-E is worth in USDT.</small>
+                        <small>How much 1 PXC is worth in USDT.</small>
                     </div>
                     <div class="config-item">
-                        <label>S-E to DOGE Rate</label>
+                        <label>PXC to DOGE Rate</label>
                         <div class="unit">
                             <input type="number" 
-                                   name="se_to_doge_rate" 
+                                   name="pxc_to_doge_rate" 
                                    step="0.0001" 
                                    min="0" 
-                                   value="{{ config.se_to_doge_rate or '0.06' }}">
+                                   value="{{ config.pxc_to_doge_rate or '0.06' }}">
                             <span class="unit-label">DOGE</span>
                         </div>
-                        <small>How much 1 S-E is worth in DOGE.</small>
+                        <small>How much 1 PXC is worth in DOGE.</small>
                     </div>
                     <div class="config-item" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-color: #0098EA;">
-                        <label>S-E to TON Rate</label>
+                        <label>PXC to TON Rate</label>
                         <div class="unit">
                             <input type="number" 
-                                   name="se_to_ton_rate" 
+                                   name="pxc_to_ton_rate" 
                                    step="0.0001" 
                                    min="0" 
-                                   value="{{ config.se_to_ton_rate or '0.005' }}">
+                                   value="{{ config.pxc_to_ton_rate or '0.005' }}">
                             <span class="unit-label">TON</span>
                         </div>
-                        <small>How much 1 S-E is worth in TON.</small>
+                        <small>How much 1 PXC is worth in TON.</small>
                     </div>
                 </div>
 
@@ -616,10 +616,10 @@
                 <div class="current-values">
                     <h4>📋 Current Configuration Summary</h4>
                     <ul>
-                        <li>Mining Rate: <strong>{{ config.base_mining_rate or '1.0' }} S-E/hr</strong> × <strong>{{ config.global_mining_power or '1.0' }}</strong> global power</li>
-                        <li>Referral Bonus: <strong>{{ config.referral_bonus or '1.0' }} S-E</strong> + <strong>{{ (config.referral_commission|float * 100) if config.referral_commission else '5' }}%</strong> commission</li>
-                        <li>Min Withdrawal: S-E: <strong>{{ config.min_withdrawal_se or config.min_withdrawal or '100' }}</strong> | USDT: <strong>{{ config.min_withdrawal_usdt or '0.5' }}</strong> | DOGE: <strong>{{ config.min_withdrawal_doge or '0.3' }}</strong> | TON: <strong>{{ config.min_withdrawal_ton or '0.1' }}</strong></li>
-                        <li>Swap Rates: USDT: <strong>{{ config.se_to_usdt_rate or '0.01' }}</strong> | DOGE: <strong>{{ config.se_to_doge_rate or '0.06' }}</strong> | TON: <strong>{{ config.se_to_ton_rate or '0.005' }}</strong></li>
+                        <li>Mining Rate: <strong>{{ config.base_mining_rate or '1.0' }} PXC/hr</strong> × <strong>{{ config.global_mining_power or '1.0' }}</strong> global power</li>
+                        <li>Referral Bonus: <strong>{{ config.referral_bonus or '1.0' }} PXC</strong> + <strong>{{ (config.referral_commission|float * 100) if config.referral_commission else '5' }}%</strong> commission</li>
+                        <li>Min Withdrawal: PXC: <strong>{{ config.min_withdrawal_se or config.min_withdrawal or '100' }}</strong> | USDT: <strong>{{ config.min_withdrawal_usdt or '0.5' }}</strong> | DOGE: <strong>{{ config.min_withdrawal_doge or '0.3' }}</strong> | TON: <strong>{{ config.min_withdrawal_ton or '0.1' }}</strong></li>
+                        <li>Swap Rates: USDT: <strong>{{ config.pxc_to_usdt_rate or '0.01' }}</strong> | DOGE: <strong>{{ config.pxc_to_doge_rate or '0.06' }}</strong> | TON: <strong>{{ config.pxc_to_ton_rate or '0.005' }}</strong></li>
                     </ul>
                 </div>
             </form>

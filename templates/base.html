@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover">
-    <title>{% block title %}SALLY-E | {% endblock %}</title>
+    <title>{% block title %}ARCADE PXC | {% endblock %}</title>
 
     <!-- VPN Detection System - MUST LOAD FIRST -->
     <script src="{{ url_for('static', filename='js/vpn_detector.js') }}"></script>
@@ -39,7 +39,7 @@
             };
             var tt=function(k){try{return typeof window.t==='function'?window.t(k):null;}catch(e){return null;}};
             // Mini-diccionario inline para cuando window.t no está disponible aún
-            var _rl=localStorage.getItem('sally_lang')||'es';
+            var _rl=localStorage.getItem('arcadepxc_lang')||'es';
             var _fb={
                 reward_label:       {es:'Recompensa',en:'Reward',     pt:'Recompensa', ru:'Награда',       ar:'مكافأة'},
                 error_label:        {es:'Error',     en:'Error',      pt:'Erro',       ru:'Ошибка',        ar:'خطأ'},
@@ -96,7 +96,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <!-- Meta Tags Premium -->
-    <meta name="description" content="SALLY-E - La plataforma más avanzada de minería de criptomonedas">
+    <meta name="description" content="ARCADE PXC - La plataforma más avanzada de minería de criptomonedas">
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -913,13 +913,13 @@
         // User Data
         window.USER_ID = "{{ user_id if user_id else '' }}";
         window.USER_TELEGRAM_ID = "{{ user.user_id if user else '' }}";
-        window.USER_BALANCE = {{ user.se_balance if user else 0 }};
+        window.USER_BALANCE = {{ user.pxc_balance if user else 0 }};
         window.USER_UNCLAIMED = {{ unclaimed if unclaimed else 0 }};
 
         // App Config
-        window.BOT_USERNAME = "{{ bot_username if bot_username else 'SallyEbot' }}";
-        window.APP_NAME = "SALLY-E";
-        window.CURRENCY_NAME = "S-E";
+        window.BOT_USERNAME = "{{ bot_username if bot_username else 'ArcadePXCBot' }}";
+        window.APP_NAME = "ARCADE PXC";
+        window.CURRENCY_NAME = "PXC";
 
         // Initialize Telegram WebApp
         if (window.Telegram && window.Telegram.WebApp) {
@@ -1190,7 +1190,7 @@
 !function(){
   function getCurLang(){
     return (typeof getCurrentLanguage==='function'?getCurrentLanguage():null)
-      || localStorage.getItem('sally_lang') || localStorage.getItem('pixie_lang') || 'es';
+      || localStorage.getItem('arcadepxc_lang') || localStorage.getItem('arcadepxc_lang') || 'es';
   }
   function refreshUI(){
     var lang=getCurLang();

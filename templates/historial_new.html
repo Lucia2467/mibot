@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}DOGE PIXEL | History{% endblock %}
+{% block title %}ARCADE PXC | History{% endblock %}
 
 {% block content %}
 <!-- ══════════════════════════════
@@ -71,7 +71,7 @@
   <div style="display:flex;align-items:center;padding:10px 20px;border-bottom:1px solid rgba(255,255,255,0.04);gap:10px;">
     <div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;flex:1;">
       <button class="bh-cpill active" data-currency="all" onclick="bhCurr(this,'all')" data-i18n="all_currencies">All</button>
-      <button class="bh-cpill" data-currency="SE" onclick="bhCurr(this,'SE')">PXC</button>
+      <button class="bh-cpill" data-currency="PXC" onclick="bhCurr(this,'PXC')">PXC</button>
       <button class="bh-cpill" data-currency="DOGE" onclick="bhCurr(this,'DOGE')">
         <img src="{{ url_for('static', filename='images/logo_doge.png') }}" width="12" height="12" style="border-radius:50%;object-fit:cover;">DOGE
       </button>
@@ -200,7 +200,7 @@ div[style*="overflow-x:auto"]::-webkit-scrollbar { display:none; }
 .tx-info{flex:1;min-width:0;}
 .tx-type{font-size:0.84rem;font-weight:600;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
 .tx-curr{font-size:0.58rem;padding:1px 6px;border-radius:3px;font-weight:800;letter-spacing:.02em;}
-.tx-curr.SE  {background:rgba(0,220,255,0.10);color:#00cfff;}
+.tx-curr.PXC  {background:rgba(0,220,255,0.10);color:#00cfff;}
 .tx-curr.DOGE{background:rgba(201,166,53,0.12);color:#C9A635;}
 .tx-curr.TON {background:rgba(0,152,234,0.10);color:#0098EA;}
 .tx-curr.USDT{background:rgba(38,161,123,0.10);color:#26A17B;}
@@ -373,7 +373,7 @@ function getTypeLabel(type) {
 }
 
 const CURRENCIES = {
-    SE: { decimals: 4, network: 'Internal', explorer: null },
+    PXC: { decimals: 4, network: 'Internal', explorer: null },
     DOGE: { decimals: 8, network: 'BEP-20', explorer: 'https://bscscan.com/tx/' },
     TON: { decimals: 9, network: 'TON', explorer: 'https://tonscan.org/tx/' },
     USDT: { decimals: 6, network: 'BEP-20', explorer: 'https://bscscan.com/tx/' }
@@ -435,7 +435,7 @@ async function loadTx() {
                 const ts = tx.timestamp || tx.date || '';
                 // Clave por minuto (sin segundos) + amount + currency
                 const minute = ts ? ts.slice(0, 16) : '';
-                const wkey = `${minute}_${tx.amount}_${tx.currency || 'SE'}`;
+                const wkey = `${minute}_${tx.amount}_${tx.currency || 'PXC'}`;
                 if (!withdrawalMap[wkey]) {
                     withdrawalMap[wkey] = tx;
                 } else {
@@ -455,13 +455,13 @@ async function loadTx() {
                 if (tx.type === 'withdrawal') {
                     const ts = tx.timestamp || tx.date || '';
                     const minute = ts ? ts.slice(0, 16) : '';
-                    const wkey = `${minute}_${tx.amount}_${tx.currency || 'SE'}`;
+                    const wkey = `${minute}_${tx.amount}_${tx.currency || 'PXC'}`;
                     if (usedWkeys.has(wkey)) return false;
                     usedWkeys.add(wkey);
                     // Solo incluir si es el elegido en withdrawalMap
                     return withdrawalMap[wkey] === tx;
                 }
-                const key = tx.id ? String(tx.id) : `${tx.type}_${tx.amount}_${tx.timestamp || tx.date}_${tx.currency || 'SE'}`;
+                const key = tx.id ? String(tx.id) : `${tx.type}_${tx.amount}_${tx.timestamp || tx.date}_${tx.currency || 'PXC'}`;
                 if (seen.has(key)) return false;
                 seen.add(key);
                 return true;
@@ -501,7 +501,7 @@ function bhCurr(el, curr) { filterByCurrency(curr); }
 
 function applyFilters() {
     filtered = allTx.filter(tx => {
-        const cMatch = currFilter === 'all' || (tx.currency || 'SE') === currFilter;
+        const cMatch = currFilter === 'all' || (tx.currency || 'PXC') === currFilter;
         const tMatch = typeFilter === 'all' || tx.type === typeFilter;
         return cMatch && tMatch;
     });
@@ -513,7 +513,7 @@ function applyFilters() {
 // Stats
 function updateStats() {
     let recv = 0, sent = 0;
-    const list = currFilter === 'all' ? allTx : allTx.filter(t => (t.currency || 'SE') === currFilter);
+    const list = currFilter === 'all' ? allTx : allTx.filter(t => (t.currency || 'PXC') === currFilter);
     const negativeTypes = ['withdrawal', 'upgrade', 'penalty'];
     list.forEach(tx => {
         const amt = parseFloat(tx.amount) || 0;
@@ -549,7 +549,7 @@ function render() {
 
 function txHTML(tx, i) {
     const type = TX_TYPES[tx.type] || TX_TYPES.other;
-    const curr = tx.currency || 'SE';
+    const curr = tx.currency || 'PXC';
     const amt = parseFloat(tx.amount) || 0;
     const negativeTypes = ['withdrawal', 'upgrade', 'penalty', 'subtract'];
     const isNeg = negativeTypes.includes(tx.type) || type.sign === '-';
@@ -574,7 +574,7 @@ function txHTML(tx, i) {
     <div class="tx-item" onclick="showDetails('${txId}')" style="animation-delay:${i * 0.025}s">
         <div class="tx-icon ${tx.type}">${type.icon}</div>
         <div class="tx-info">
-            <div class="tx-type">${label}<span class="tx-curr ${curr}">${curr === "SE" ? "PXC" : curr}</span></div>
+            <div class="tx-type">${label}<span class="tx-curr ${curr}">${curr === "PXC" ? "PXC" : curr}</span></div>
             <div class="tx-date">${date}</div>
         </div>
         <div class="tx-amount">
@@ -592,8 +592,8 @@ function showDetails(key) {
     const tx = window['_txd_' + key];
     if (!tx) return;
     const type = TX_TYPES[tx.type] || TX_TYPES.other;
-    const curr = tx.currency || 'SE';
-    const info = CURRENCIES[curr] || CURRENCIES.SE;
+    const curr = tx.currency || 'PXC';
+    const info = CURRENCIES[curr] || CURRENCIES.PXC;
     const isNeg = tx.type === 'withdrawal' || tx.type === 'upgrade' || tx.type === 'penalty' || type.sign === '-';
     const date = new Date(tx.timestamp || tx.date).toLocaleString();
     const isPend = tx.status === 'pending' || tx.status === 'pendiente' || tx.status === 'processing';
@@ -621,7 +621,7 @@ function showDetails(key) {
         </div>
         <div style="font-size:0.70rem;font-weight:700;text-transform:uppercase;letter-spacing:.10em;color:rgba(255,255,255,0.35);margin-bottom:6px;">${typeLabel}</div>
         <div style="font-size:2.0rem;font-weight:800;color:${amtColor};letter-spacing:-.03em;line-height:1;">${amtSign}${fmtNum(tx.amount, curr)}</div>
-        <div style="font-size:0.78rem;color:rgba(255,255,255,0.35);margin-top:4px;">${curr === 'SE' ? 'PXC' : curr}${info.network ? ' · ' + info.network : ''}</div>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.35);margin-top:4px;">${curr === 'PXC' ? 'PXC' : curr}${info.network ? ' · ' + info.network : ''}</div>
         <div style="display:inline-flex;align-items:center;gap:5px;margin-top:12px;padding:5px 12px;border-radius:20px;background:${statusBg};border:1px solid ${statusBorder};color:${statusColor};font-size:0.72rem;font-weight:700;">
             ${statusIcon} ${status}
         </div>
@@ -733,7 +733,7 @@ function exportCSV() {
     const rows = filtered.map(tx => {
         const d = new Date(tx.timestamp || tx.date).toLocaleString();
         const sign = (tx.type === 'withdrawal' || tx.type === 'upgrade') ? '-' : '+';
-        return `"${d}","${tx.type}","${sign}${tx.amount}","${tx.currency||'SE'}","${tx.status||'completed'}","${tx.tx_hash||''}","${tx.wallet_address||''}"`;
+        return `"${d}","${tx.type}","${sign}${tx.amount}","${tx.currency||'PXC'}","${tx.status||'completed'}","${tx.tx_hash||''}","${tx.wallet_address||''}"`;
     }).join('\n');
     const blob = new Blob([headers + rows], {type:'text/csv'});
     const a = document.createElement('a');

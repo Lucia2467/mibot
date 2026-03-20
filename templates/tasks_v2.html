@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}SALLY-E | Tareas{% endblock %}
+{% block title %}ARCADE PXC | Tareas{% endblock %}
 {% block content %}
 <div class="container">
     <!-- Header de Tareas Premium -->
@@ -7,7 +7,7 @@
         <h1 class="page-title">
             <i data-lucide="clipboard-check"></i> Tareas
         </h1>
-        <p class="page-subtitle">Completa tareas y gana recompensas S-E</p>
+        <p class="page-subtitle">Completa tareas y gana recompensas PXC</p>
     </div>
 
     <!-- Estadísticas de Tareas - Premium Cards -->
@@ -44,7 +44,7 @@
                 <div class="daily-task-info">
                     <span class="daily-task-label">TAREA DIARIA</span>
                     <span class="daily-task-title">{{ task.title }}</span>
-                    <span class="daily-task-reward">+{{ "%.2f"|format(task.reward) }} S-E</span>
+                    <span class="daily-task-reward">+{{ "%.2f"|format(task.reward) }} PXC</span>
                 </div>
                 <button class="btn btn-daily" onclick="completeTask('{{ task_id }}', '', 'daily')">
                     <i data-lucide="gift"></i>
@@ -107,7 +107,7 @@
                         <div class="task-meta">
                             <div class="task-reward">
                                 <i data-lucide="coins"></i>
-                                <span>+{{ "%.2f"|format(task.reward) }} S-E</span>
+                                <span>+{{ "%.2f"|format(task.reward) }} PXC</span>
                             </div>
                             
                             {% if task.max_completions %}
@@ -169,7 +169,7 @@
                     <div class="task-meta">
                         <div class="task-reward earned">
                             <i data-lucide="coins"></i>
-                            <span>{{ "%.2f"|format(task.reward) }} S-E ganados</span>
+                            <span>{{ "%.2f"|format(task.reward) }} PXC ganados</span>
                         </div>
                     </div>
                 </div>
@@ -929,7 +929,7 @@ async function submitTaskCompletion(taskId, btn, originalText) {
         const data = await response.json();
 
         if (data.success) {
-            showToast(`🎉 ¡Tarea completada! +${data.reward} S-E`, 'success');
+            showToast(`🎉 ¡Tarea completada! +${data.reward} PXC`, 'success');
             
             // Haptic feedback
             if (window.Telegram && window.Telegram.WebApp) {

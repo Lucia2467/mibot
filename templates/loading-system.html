@@ -145,7 +145,7 @@ body.loading-active .nav-item {
 </div>
 
 <script>
-let isFirstLoad = !sessionStorage.getItem('sally_app_loaded');
+let isFirstLoad = !sessionStorage.getItem('arcadepxc_app_loaded');
 
 function hideGlobalLoader() {
     const loader = document.getElementById('global-loader');
@@ -153,7 +153,7 @@ function hideGlobalLoader() {
         loader.classList.add('hidden');
         setTimeout(() => { loader.style.display = 'none'; }, 500);
     }
-    sessionStorage.setItem('sally_app_loaded', 'true');
+    sessionStorage.setItem('arcadepxc_app_loaded', 'true');
 }
 
 const SATURATION_DURATION = 0;

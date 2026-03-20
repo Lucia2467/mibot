@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}SALLY-E | Promote Task{% endblock %}
+{% block title %}ARCADE PXC | Promote Task{% endblock %}
 {% block content %}
 <style>
 /* ==================== PROMOTE TASK STYLES ==================== */
@@ -660,7 +660,7 @@
     <div class="balance-display">
         <div class="balance-label">YOUR PXC BALANCE</div>
         <div class="balance-value">
-            <span id="userDogeBalance">{{ "%.4f"|format(user.se_balance|default(0)|float) }}</span>
+            <span id="userDogeBalance">{{ "%.4f"|format(user.pxc_balance|default(0)|float) }}</span>
             <span>PXC</span>
         </div>
     </div>
@@ -765,7 +765,7 @@
                     </div>
                     <div class="warning-box-text" data-i18n="bot_admin_warning">
                         Para verificar que los usuarios se unan a tu canal, debes agregar a 
-                        <strong>@SallyEDogeBot</strong> como <strong>administrador</strong> de tu canal.
+                        <strong>@ArcadePXCBot</strong> como <strong>administrador</strong> de tu canal.
                         El bot solo necesita el permiso de ver miembros.
                     </div>
                 </div>
@@ -801,7 +801,7 @@
                     </div>
                     <div class="term-item-content">
                         <p><strong data-i18n="terms_1_guarantee">Garantía por Objetivo:</strong> <span data-i18n="terms_1_guarantee_desc">La vigencia de la publicidad no está sujeta a un tiempo cronológico (horas o días), sino al cumplimiento de la meta de suscriptores/usuarios establecida en el plan elegido.</span></p>
-                        <p style="margin-top: 8px;"><strong data-i18n="terms_1_finalization">Finalización de Tarea:</strong> <span data-i18n="terms_1_finalization_desc">Una vez que el sistema detecte que se ha alcanzado la cantidad de usuarios pagados, la tarea se considerará finalizada y será eliminada automáticamente de Sally-E.</span></p>
+                        <p style="margin-top: 8px;"><strong data-i18n="terms_1_finalization">Finalización de Tarea:</strong> <span data-i18n="terms_1_finalization_desc">Una vez que el sistema detecte que se ha alcanzado la cantidad de usuarios pagados, la tarea se considerará finalizada y será eliminada automáticamente de ARCADE PXC.</span></p>
                     </div>
                 </div>
 
@@ -859,7 +859,7 @@
                     <span class="terms-checkbox-text">
                         <span data-i18n="terms_accept_text">He leído y acepto los</span>
                         <strong data-i18n="terms_accept_link">Términos y Condiciones del Servicio</strong>
-                        <span data-i18n="terms_accept_text_2">de promoción de tareas en Sally-E</span>
+                        <span data-i18n="terms_accept_text_2">de promoción de tareas en ARCADE PXC</span>
                     </span>
                 </label>
                 <div class="terms-error" id="termsError" data-i18n="terms_error">Debes aceptar los términos y condiciones para continuar</div>
@@ -947,7 +947,7 @@
 // Variables globales
 let selectedPackage = null;
 const userId = '{{ user_id }}';
-const userDogeBalance = {{ user.se_balance|default(0)|float }};
+const userDogeBalance = {{ user.pxc_balance|default(0)|float }};
 
 const packages = {{ packages|tojson|safe }};
 

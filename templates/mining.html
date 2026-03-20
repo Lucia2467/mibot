@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}SALLY-E | Minería{% endblock %}
+{% block title %}ARCADE PXC | Minería{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <!-- Mining Hero Card (S-E Mining) -->
+    <!-- Mining Hero Card (PXC Mining) -->
     <div class="card" style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.08) 0%, rgba(18, 18, 18, 0.95) 100%); border: 1px solid rgba(0, 255, 136, 0.25); position: relative; overflow: hidden; margin-bottom: var(--space-4);">
         <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0, 255, 136, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite;"></div>
         
@@ -26,9 +26,9 @@
                 <i data-lucide="cpu" style="width: 40px; height: 40px; color: #00FF88;"></i>
             </div>
             
-            <div data-i18n="unclaimed_se" style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-2);">Ganancias S-E Sin Reclamar</div>
+            <div data-i18n="unclaimed_se" style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-2);">Ganancias PXC Sin Reclamar</div>
             <div style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #00FF88 0%, #00CC66 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: var(--space-4);">
-                {{ "%.4f"|format(unclaimed or 0) }} S-E
+                {{ "%.4f"|format(unclaimed or 0) }} PXC
             </div>
             
             <a href="/?user_id={{ user_id }}" style="text-decoration: none;">
@@ -185,7 +185,7 @@
                 <i data-lucide="gauge" style="width: 24px; height: 24px; color: #00D4FF;"></i>
             </div>
             <div style="font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: var(--space-1);">{{ user.mining_power or 1.0 }}</div>
-            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);" data-i18n="se_per_hour_stat">S-E por Hora</div>
+            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);" data-i18n="pxc_per_hour_stat">PXC por Hora</div>
         </div>
         
         <div class="card" style="text-align: center; padding: var(--space-4);">
@@ -218,7 +218,7 @@
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <div>
                 <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);" data-i18n="total_wallet_balance">Balance Total en Wallet</div>
-                <div style="font-size: 1.75rem; font-weight: 800; color: #FFD700;">{{ "%.4f"|format(user.se_balance) }} S-E</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #FFD700;">{{ "%.4f"|format(user.pxc_balance) }} PXC</div>
                 <div style="font-size: 1rem; font-weight: 600; color: #FFA500; margin-top: 4px;">{{ "%.4f"|format(user.doge_balance or 0) }} DOGE</div>
             </div>
             <div style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; background: rgba(255, 215, 0, 0.15); border-radius: 14px;">
@@ -241,7 +241,7 @@
                 </div>
                 <div>
                     <div style="font-weight: 600; color: white; margin-bottom: 2px;" data-i18n="auto_mining">Minería Automática</div>
-                    <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="auto_mining_desc">Tu estación mina S-E automáticamente cada hora</div>
+                    <div style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.5);" data-i18n="auto_mining_desc">Tu estación mina PXC automáticamente cada hora</div>
                 </div>
             </div>
             

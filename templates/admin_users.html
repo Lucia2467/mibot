@@ -672,7 +672,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
-                        <th>Balance SE</th>
+                        <th>Balance PXC</th>
                         <th>Balance DOGE</th>
                         <th>PTS</th>
                         <th>Refs</th>
@@ -688,7 +688,7 @@
                             <strong>{{ user.username or 'Sin username' }}</strong><br>
                             <small style="color: var(--text-secondary);">{{ user.first_name or '' }}</small>
                         </td>
-                        <td>{{ "%.4f"|format(user.se_balance or 0) }}</td>
+                        <td>{{ "%.4f"|format(user.pxc_balance or 0) }}</td>
                         <td>{{ "%.4f"|format(user.doge_balance or 0) }}</td>
                         <td>{{ user.pts_balance|default(0)|int }}</td>
                         <td>{{ user.referral_count|default(0)|int }}</td>
@@ -701,7 +701,7 @@
                         </td>
                         <td>
                             <div class="actions-cell">
-                                <button class="action-btn edit" onclick="openEditModal('{{ user.user_id }}', '{{ user.username or '' }}', '{{ user.first_name or '' }}', {{ user.se_balance or 0 }}, {{ user.doge_balance or 0 }}, {{ user.pts_balance|default(0) }}, {{ user.referral_count|default(0) }})">✏️</button>
+                                <button class="action-btn edit" onclick="openEditModal('{{ user.user_id }}', '{{ user.username or '' }}', '{{ user.first_name or '' }}', {{ user.pxc_balance or 0 }}, {{ user.doge_balance or 0 }}, {{ user.pts_balance|default(0) }}, {{ user.referral_count|default(0) }})">✏️</button>
                                 <button class="action-btn info" onclick="openHistoryModal('{{ user.user_id }}', '{{ user.username or user.first_name or user.user_id }}')" title="Historial">📊</button>
                                 <button class="action-btn warning" onclick="openRelatedModal('{{ user.user_id }}', '{{ user.username or user.first_name or user.user_id }}')" title="Cuentas Relacionadas">🔗</button>
                                 <button class="action-btn warning" onclick="clearUserIP('{{ user.user_id }}')" title="Limpiar IP">🧹</button>
@@ -781,7 +781,7 @@
                             <div class="form-group">
                                 <label>Moneda</label>
                                 <select name="currency">
-                                    <option value="SE">SE</option>
+                                    <option value="PXC">PXC</option>
                                     <option value="DOGE">DOGE</option>
                                     <option value="USDT">USDT</option>
                                     <option value="TON">TON</option>
@@ -1031,7 +1031,7 @@
                             <tr>
                                 <td>${formatDate(h.created_at)}</td>
                                 <td>${h.action || h.transaction_type || '-'}</td>
-                                <td>${(h.currency || 'SE').toUpperCase()}</td>
+                                <td>${(h.currency || 'PXC').toUpperCase()}</td>
                                 <td style="${amountClass}">${amount >= 0 ? '+' : ''}${amount.toFixed(4)}</td>
                                 <td>${h.description || h.reason || '-'}</td>
                             </tr>

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}SALLY-E | Mines{% endblock %}
+{% block title %}ARCADE PXC | Mines{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -42,11 +42,11 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
             <div>
                 <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);">Tu Balance</div>
-                <div style="font-size: 1.25rem; font-weight: 700; color: #00D4FF;" id="user-balance">{{ "%.4f"|format(user.se_balance) }} S-E</div>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #00D4FF;" id="user-balance">{{ "%.4f"|format(user.pxc_balance) }} PXC</div>
             </div>
             <div>
                 <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: var(--space-1);">Ganancia Potencial</div>
-                <div style="font-size: 1.25rem; font-weight: 700; color: #00FF88;" id="potential-win">0.0000 S-E</div>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #00FF88;" id="potential-win">0.0000 PXC</div>
             </div>
         </div>
     </div>
@@ -57,9 +57,9 @@
 
         <!-- Apuesta -->
         <div style="margin-bottom: var(--space-6);">
-            <label style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-2); display: block;">Cantidad a apostar (S-E)</label>
+            <label style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--space-2); display: block;">Cantidad a apostar (PXC)</label>
             <div style="display: flex; gap: var(--space-2);">
-                <input type="number" id="bet-amount" step="0.0001" min="0.0001" max="{{ user.se_balance }}" value="0.01"
+                <input type="number" id="bet-amount" step="0.0001" min="0.0001" max="{{ user.pxc_balance }}" value="0.01"
                     style="flex: 1; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 12px 16px; color: white; font-size: 1rem; font-weight: 600; outline: none;">
                 <button onclick="setHalfBet()" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 12px 16px; color: white; font-weight: 600; cursor: pointer;">½</button>
                 <button onclick="setMaxBet()" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 12px 16px; color: white; font-weight: 600; cursor: pointer;">Max</button>
@@ -118,7 +118,7 @@
                     <i data-lucide="banknote" class="cashout-icon"></i>
                     <span>Cobrar </span>
                     <span id="cashout-amount">0.0000</span>
-                    <span> S-E</span>
+                    <span> PXC</span>
                 </span>
             </button>
         </div>
@@ -319,7 +319,7 @@ let currentMultiplier = 1;
 let gemsFound = 0;
 let minePositions = [];
 let revealedCells = [];
-let userBalance = {{ user.se_balance }};
+let userBalance = {{ user.pxc_balance }};
 const USER_ID = "{{ user_id }}";
 
 // Multiplicadores base por número de minas
@@ -369,7 +369,7 @@ function updateMultiplierDisplay() {
 
 function updatePotentialWin() {
     const potential = betAmount * multipliers[mineCount];
-    document.getElementById('potential-win').textContent = potential.toFixed(4) + ' S-E';
+    document.getElementById('potential-win').textContent = potential.toFixed(4) + ' PXC';
 }
 
 function setHalfBet() {
@@ -422,7 +422,7 @@ function startGame() {
             // Store session_id for API calls
             window.currentSessionId = data.session_id;
 
-            document.getElementById('user-balance').textContent = userBalance.toFixed(4) + ' S-E';
+            document.getElementById('user-balance').textContent = userBalance.toFixed(4) + ' PXC';
             document.getElementById('game-config').style.display = 'none';
             document.getElementById('game-board-container').style.display = 'block';
             document.getElementById('game-result').style.display = 'none';
@@ -617,7 +617,7 @@ function cashout() {
     .then(data => {
         if (data.success) {
             userBalance = data.new_balance;
-            document.getElementById('user-balance').textContent = userBalance.toFixed(4) + ' S-E';
+            document.getElementById('user-balance').textContent = userBalance.toFixed(4) + ' PXC';
 
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
@@ -650,7 +650,7 @@ function showResult(won, amount) {
         iconDiv.innerHTML = '<i data-lucide="trophy" style="width: 40px; height: 40px; color: #00FF88;"></i>';
         titleEl.style.color = '#00FF88';
         titleEl.textContent = '¡Ganaste!';
-        messageEl.textContent = `Has ganado ${amount.toFixed(4)} S-E con un multiplicador de ${currentMultiplier.toFixed(2)}x`;
+        messageEl.textContent = `Has ganado ${amount.toFixed(4)} PXC con un multiplicador de ${currentMultiplier.toFixed(2)}x`;
     } else {
         resultDiv.style.background = 'linear-gradient(135deg, rgba(255, 51, 102, 0.1) 0%, rgba(18, 18, 18, 0.95) 100%)';
         resultDiv.style.borderColor = 'rgba(255, 51, 102, 0.3)';
@@ -658,7 +658,7 @@ function showResult(won, amount) {
         iconDiv.innerHTML = '<i data-lucide="bomb" style="width: 40px; height: 40px; color: #FF3366;"></i>';
         titleEl.style.color = '#FF3366';
         titleEl.textContent = '¡Boom!';
-        messageEl.textContent = `Encontraste una mina. Perdiste ${betAmount.toFixed(4)} S-E`;
+        messageEl.textContent = `Encontraste una mina. Perdiste ${betAmount.toFixed(4)} PXC`;
     }
 
     if (typeof lucide !== 'undefined') {
@@ -768,7 +768,7 @@ function loadGameHistory() {
                             <div style="text-align: right;">
                                 <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Apuesta: ${parseFloat(game.bet_amount).toFixed(4)}</div>
                                 <div style="font-size: 0.875rem; font-weight: 700; color: ${isWin ? '#00FF88' : '#FF3366'};">
-                                    ${isWin ? '+' : ''}${parseFloat(game.profit).toFixed(4)} S-E
+                                    ${isWin ? '+' : ''}${parseFloat(game.profit).toFixed(4)} PXC
                                 </div>
                                 ${game.multiplier > 1 ? `<div style="font-size: 0.75rem; color: #FFD700;">${parseFloat(game.multiplier).toFixed(2)}x</div>` : ''}
                             </div>

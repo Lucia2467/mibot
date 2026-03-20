@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - SALLY-E Admin</title>
+    <title>Dashboard - ARCADE PXC Admin</title>
     <style>
         * {
             margin: 0;
@@ -249,7 +249,7 @@
 <body>
     <div class="admin-container">
         <div class="admin-header">
-            <h1>🎛️ Panel de Administración SALLY-E</h1>
+            <h1>🎛️ Panel de Administración ARCADE PXC</h1>
             <div class="header-actions">
                 <a href="{{ url_for('index') }}" class="nav-btn">🏠 Ir a la App</a>
                 <a href="{{ url_for('admin_logout') }}" class="nav-btn danger">🚪 Cerrar Sesión</a>
@@ -341,8 +341,8 @@
                 </div>
                 <div class="stat-box warning">
                     <div class="icon">💰</div>
-                    <div class="value">{{ "%.2f"|format(stats.total_se_balance if stats else 0) }}</div>
-                    <div class="label">Total S-E en Circulación</div>
+                    <div class="value">{{ "%.2f"|format(stats.total_pxc_balance if stats else 0) }}</div>
+                    <div class="label">Total PXC en Circulación</div>
                 </div>
                 <div class="stat-box info">
                     <div class="icon">📋</div>

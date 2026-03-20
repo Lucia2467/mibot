@@ -420,7 +420,7 @@
 </style>
 {% endblock %}
 
-SALLY-E | Invitar{% endblock %}
+ARCADE PXC | Invitar{% endblock %}
 
 {% block content %}
 <div style="padding: 0 var(--space-4) 120px;">
@@ -473,7 +473,7 @@ SALLY-E | Invitar{% endblock %}
             <div class="inv-stat-lbl">Total</div>
         </div>
         <div class="inv-stat">
-            <div class="inv-stat-val" id="se-earned-display" style="color:#00D4FF;">{{ total_se_earned|default(0)|round }}</div>
+            <div class="inv-stat-val" id="pxc-earned-display" style="color:#00D4FF;">{{ total_pxc_earned|default(0)|round }}</div>
             <div class="inv-stat-lbl">Bonus PXC</div>
         </div>
     </div>
@@ -486,7 +486,7 @@ SALLY-E | Invitar{% endblock %}
         </div>
         <div class="inv-link-row">
             <input class="inv-link-input" type="text" id="referral-link" readonly
-                value="https://t.me/PixiieLandbot?startapp=ref_{{ user_id }}">
+                value="https://t.me/ArcadePXCBot?startapp=ref_{{ user_id }}">
             <button class="inv-copy-btn" onclick="copyReferralLink()" title="Copiar">
                 <i data-lucide="copy" style="width:15px;height:15px;"></i>
             </button>
@@ -572,7 +572,7 @@ function shareReferralLink() {
             `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('¡Únete y comienza a ganar PXC! 💎')}`
         );
     } else if (navigator.share) {
-        navigator.share({ title:'SALLY-E', text:'¡Únete y gana PXC! 💎', url:link }).catch(()=>{});
+        navigator.share({ title:'ARCADE PXC', text:'¡Únete y gana PXC! 💎', url:link }).catch(()=>{});
     } else { copyReferralLink(); }
 }
 
@@ -631,7 +631,7 @@ async function loadReferrals(append=false) {
             /* update stats */
             const updates = {
                 'referral-count-display': data.stats?.total_referrals,
-                'se-earned-display': data.total_se_earned,
+                'pxc-earned-display': data.total_pxc_earned,
                 'validated-count-display': data.validated_count,
                 'pending-count-display': data.pending_count
             };

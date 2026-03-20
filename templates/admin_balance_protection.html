@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}SALLY-E | Admin - Balance Protection{% endblock %}
+{% block title %}ARCADE PXC | Admin - Balance Protection{% endblock %}
 
 {% block content %}
 <div class="container" style="padding-bottom: 120px;">
@@ -321,7 +321,7 @@ function loadSnapshots() {
             data.snapshots.forEach(s => {
                 const option = document.createElement('option');
                 option.value = s.id;
-                option.textContent = `${s.created_at} - ${s.se_balance.toFixed(4)} S-E (${s.snapshot_type})`;
+                option.textContent = `${s.created_at} - ${s.pxc_balance.toFixed(4)} PXC (${s.snapshot_type})`;
                 select.appendChild(option);
             });
         } else {

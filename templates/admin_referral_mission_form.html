@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ 'Editar' if mission else 'Nueva' }} Misión - SALLY-E Admin</title>
+    <title>{{ 'Editar' if mission else 'Nueva' }} Misión - ARCADE PXC Admin</title>
     <style>
         * {
             margin: 0;
@@ -393,7 +393,7 @@
                         <label for="reward_currency">Moneda *</label>
                         <select id="reward_currency" name="reward_currency" class="form-control" required>
                             <option value="DOGE" {{ 'selected' if not mission or mission.reward_currency == 'DOGE' else '' }}>DOGE</option>
-                            <option value="SE" {{ 'selected' if mission and mission.reward_currency == 'SE' else '' }}>S-E</option>
+                            <option value="PXC" {{ 'selected' if mission and mission.reward_currency == 'PXC' else '' }}>PXC</option>
                             <option value="USDT" {{ 'selected' if mission and mission.reward_currency == 'USDT' else '' }}>USDT</option>
                         </select>
                     </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ 'Editar' if promo else 'Crear' }} Código Promocional - SALLY-E Admin</title>
+    <title>{{ 'Editar' if promo else 'Crear' }} Código Promocional - ARCADE PXC Admin</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -436,7 +436,7 @@
                         <div class="form-group">
                             <label for="currency">Moneda</label>
                             <select name="currency" id="currency" onchange="updatePreview();">
-                                <option value="SE" {% if not promo or promo.currency == 'SE' %}selected{% endif %}>S-E</option>
+                                <option value="PXC" {% if not promo or promo.currency == 'PXC' %}selected{% endif %}>PXC</option>
                                 <option value="USDT" {% if promo and promo.currency == 'USDT' %}selected{% endif %}>USDT</option>
                                 <option value="DOGE" {% if promo and promo.currency == 'DOGE' %}selected{% endif %}>DOGE</option>
                             </select>
@@ -493,7 +493,7 @@
                     <div class="preview-label">Vista Previa</div>
                     <div class="preview-code" id="preview-code">{{ promo.code if promo else 'CODIGO' }}</div>
                     <div class="preview-reward" id="preview-reward">
-                        +{{ "%.4f"|format(promo.reward|float if promo else 1.0) }} {{ promo.currency if promo else 'S-E' }}
+                        +{{ "%.4f"|format(promo.reward|float if promo else 1.0) }} {{ promo.currency if promo else 'PXC' }}
                     </div>
                 </div>
 
@@ -541,7 +541,7 @@
         function updatePreview() {
             const code = document.getElementById('code').value || 'CODIGO';
             const reward = parseFloat(document.getElementById('reward').value) || 0;
-            const currency = document.getElementById('currency').value || 'S-E';
+            const currency = document.getElementById('currency').value || 'PXC';
             
             document.getElementById('preview-code').textContent = code.toUpperCase();
             document.getElementById('preview-reward').textContent = '+' + reward.toFixed(4) + ' ' + currency;

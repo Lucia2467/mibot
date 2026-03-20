@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover">
-    <title>Dashboard | SALLY-E</title>
+    <title>Dashboard | ARCADE PXC</title>
     
     <meta name="theme-color" content="#0B0B0F">
     
@@ -553,10 +553,10 @@
         <!-- Balance Section -->
         <section class="balance-section">
             <div class="main-balance-card">
-                <div class="balance-label">Balance S-E</div>
+                <div class="balance-label">Balance PXC</div>
                 <div class="balance-value">
-                    {{ "%.4f"|format(user.se_balance or 0) }}
-                    <span class="currency">S-E</span>
+                    {{ "%.4f"|format(user.pxc_balance or 0) }}
+                    <span class="currency">PXC</span>
                 </div>
             </div>
             
@@ -643,7 +643,7 @@
         <section class="actions-section">
             <h3 class="section-title">Acciones Rápidas</h3>
             <div class="actions-grid">
-                <a href="https://t.me/SallyEbot/app?startapp={{ user.user_id }}" class="action-btn miniapp" target="_blank">
+                <a href="https://t.me/ArcadePXCBot/app?startapp={{ user.user_id }}" class="action-btn miniapp" target="_blank">
                     <div class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
@@ -702,7 +702,7 @@
                 </div>
             </div>
             <div class="referral-link-box">
-                <input type="text" id="refLink" value="https://t.me/SallyEbot?start={{ user.user_id }}" readonly>
+                <input type="text" id="refLink" value="https://t.me/ArcadePXCBot?start={{ user.user_id }}" readonly>
                 <button class="copy-btn" onclick="copyRefLink()">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial de Canjes - {{ promo.code }} - SALLY-E Admin</title>
+    <title>Historial de Canjes - {{ promo.code }} - ARCADE PXC Admin</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -237,7 +237,7 @@
                 </div>
                 <div class="summary-item">
                     <div class="summary-value">{{ "%.4f"|format(promo.reward|float) }}</div>
-                    <div class="summary-label">Recompensa {{ promo.currency|default('S-E') }}</div>
+                    <div class="summary-label">Recompensa {{ promo.currency|default('PXC') }}</div>
                 </div>
                 <div class="summary-item">
                     <div class="summary-value">{{ promo.current_uses|default(0) }}</div>
@@ -290,7 +290,7 @@
                                 <span class="user-id">{{ redemption.user_id }}</span>
                             </td>
                             <td>
-                                <span class="reward-value">+{{ "%.4f"|format(redemption.reward|float) }} {{ redemption.currency|default('SE') }}</span>
+                                <span class="reward-value">+{{ "%.4f"|format(redemption.reward|float) }} {{ redemption.currency|default('PXC') }}</span>
                             </td>
                             <td>
                                 <span class="date-value">

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}SALLY-E | Historial Ultra Pro{% endblock %}
+{% block title %}ARCADE PXC | Historial Ultra Pro{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -514,8 +514,8 @@ function updateStats(txs) {
         }
     });
 
-    document.getElementById('total-received').textContent = `+${totalReceived.toFixed(4)} S-E`;
-    document.getElementById('total-sent').textContent = `-${totalSent.toFixed(4)} S-E`;
+    document.getElementById('total-received').textContent = `+${totalReceived.toFixed(4)} PXC`;
+    document.getElementById('total-sent').textContent = `-${totalSent.toFixed(4)} PXC`;
 }
 
 // Mostrar estado vacío
@@ -569,7 +569,7 @@ function renderTransactions(txs) {
 
         const isProcessed = tx.tx_hash || tx.status === 'completed' || tx.status === 'exitoso';
         const isWithdrawal = tx.type === 'withdrawal';
-        const currency = tx.currency || 'S-E';
+        const currency = tx.currency || 'PXC';
         const amount = typeof tx.amount === 'number' ? tx.amount.toFixed(4) : '0.0000';
 
         // Determinar badge según estado
@@ -656,7 +656,7 @@ function showTransactionDetails(tx) {
             </div>
             <div class="detail-row">
                 <span class="detail-label">Monto</span>
-                <span class="detail-value" style="color: var(--color-error);">-${tx.amount?.toFixed(4) || '0.0000'} ${tx.currency || 'S-E'}</span>
+                <span class="detail-value" style="color: var(--color-error);">-${tx.amount?.toFixed(4) || '0.0000'} ${tx.currency || 'PXC'}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Fecha</span>
@@ -767,14 +767,14 @@ function exportTransactions() {
     const rows = transactions.map(tx => {
         const date = new Date(tx.date || tx.timestamp).toLocaleString('es-ES');
         const typeInfo = transactionTypes[tx.type] || transactionTypes.mining;
-        return `"${date}","${tx.type}","${tx.description}","${typeInfo.sign}${tx.amount?.toFixed(4) || 0}","${tx.currency || 'S-E'}","${tx.status}","${tx.tx_hash || 'N/A'}"`;
+        return `"${date}","${tx.type}","${tx.description}","${typeInfo.sign}${tx.amount?.toFixed(4) || 0}","${tx.currency || 'PXC'}","${tx.status}","${tx.tx_hash || 'N/A'}"`;
     }).join('\n');
 
     const csv = headers + rows;
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `sally-e-historial-${Date.now()}.csv`;
+    link.download = `arcadepxc-historial-${Date.now()}.csv`;
     link.click();
 
     if (window.showToast) {
