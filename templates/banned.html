@@ -1,318 +1,401 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARCADE PXC | Cuenta Suspendida</title>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ARCADE PXC | Cuenta Suspendida</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --red:#FF1744;--red2:#FF6D00;--dark:#04020a;
+  --card:#0d0010;--glass:rgba(255,23,68,0.07);
+  --t1:#fff;--t2:rgba(255,255,255,0.6);--t3:rgba(255,255,255,0.25);
+}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Space Grotesk',sans-serif;
+  background:var(--dark);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  perspective:1200px;
+}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a1a 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
+/* ── CANVAS 3D BACKGROUND ── */
+#bg{position:fixed;inset:0;z-index:0}
 
-        /* Animated background */
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(139, 0, 0, 0.1) 0%, transparent 50%);
-            animation: pulse 8s ease-in-out infinite;
-            pointer-events: none;
-        }
+/* ── 3D SCENE WRAPPER ── */
+.scene{
+  position:relative;z-index:1;
+  width:100%;max-width:420px;
+  transform-style:preserve-3d;
+  animation:sceneFloat 6s ease-in-out infinite;
+}
+@keyframes sceneFloat{
+  0%,100%{transform:rotateX(1deg) rotateY(-1deg)}
+  25%{transform:rotateX(-1deg) rotateY(1.5deg)}
+  50%{transform:rotateX(0.5deg) rotateY(0.5deg)}
+  75%{transform:rotateX(-0.5deg) rotateY(-1.5deg)}
+}
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.8; }
-        }
+/* ── CARD 3D ── */
+.card{
+  background:linear-gradient(135deg,rgba(13,0,16,0.97) 0%,rgba(20,2,8,0.97) 100%);
+  border:1px solid rgba(255,23,68,0.4);
+  border-radius:24px;
+  padding:0;
+  overflow:visible;
+  transform-style:preserve-3d;
+  box-shadow:
+    0 0 0 1px rgba(255,23,68,0.1) inset,
+    0 40px 80px rgba(0,0,0,0.9),
+    0 0 120px rgba(255,23,68,0.2),
+    0 0 40px rgba(255,23,68,0.1);
+  animation:cardIn 0.8s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes cardIn{
+  from{opacity:0;transform:translateZ(-120px) rotateX(15deg) scale(0.85)}
+  to{opacity:1;transform:translateZ(0) rotateX(0) scale(1)}
+}
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
+/* ── TOP GLOW BAR ── */
+.card-glow{
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--red),#ff6d00,var(--red),transparent);
+  border-radius:24px 24px 0 0;
+  box-shadow:0 0 30px rgba(255,23,68,0.8),0 0 60px rgba(255,23,68,0.4);
+  animation:glowBar 2s ease-in-out infinite;
+}
+@keyframes glowBar{0%,100%{opacity:0.7}50%{opacity:1}}
 
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 40px rgba(220, 53, 69, 0.5), 0 0 80px rgba(220, 53, 69, 0.2), inset 0 0 60px rgba(220, 53, 69, 0.1); }
-            50% { box-shadow: 0 0 60px rgba(220, 53, 69, 0.7), 0 0 120px rgba(220, 53, 69, 0.3), inset 0 0 80px rgba(220, 53, 69, 0.15); }
-        }
+.card-inner{padding:32px 28px 28px;transform-style:preserve-3d}
 
-        .container {
-            max-width: 500px;
-            width: 100%;
-            position: relative;
-            z-index: 1;
-        }
+/* ── FLOATING 3D ICON ── */
+.icon-3d-wrap{
+  position:relative;
+  width:110px;height:110px;
+  margin:0 auto 28px;
+  transform-style:preserve-3d;
+  animation:iconRotate 8s linear infinite;
+}
+@keyframes iconRotate{
+  0%{transform:rotateY(0deg) rotateX(10deg)}
+  100%{transform:rotateY(360deg) rotateX(10deg)}
+}
+.icon-cube{
+  width:100%;height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+}
+.face{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,23,68,0.5);
+  font-size:38px;
+  backface-visibility:visible;
+}
+.face-front{
+  background:radial-gradient(circle at 40% 40%,rgba(255,23,68,0.25),rgba(13,0,16,0.9));
+  transform:translateZ(55px);
+  border-radius:16px;
+  box-shadow:0 0 40px rgba(255,23,68,0.4) inset;
+}
+.face-back{
+  background:rgba(20,0,5,0.9);
+  transform:translateZ(-55px) rotateY(180deg);
+  border-radius:16px;
+}
+.face-right{
+  background:rgba(255,23,68,0.08);
+  transform:rotateY(90deg) translateZ(55px);
+  width:110px;
+  border-radius:4px;
+}
+.face-left{
+  background:rgba(255,23,68,0.04);
+  transform:rotateY(-90deg) translateZ(55px);
+  width:110px;
+  border-radius:4px;
+}
+.face-top{
+  background:linear-gradient(rgba(255,23,68,0.15),transparent);
+  transform:rotateX(90deg) translateZ(55px);
+  height:110px;
+  border-radius:4px;
+}
+.face-bottom{
+  background:rgba(0,0,0,0.5);
+  transform:rotateX(-90deg) translateZ(55px);
+  height:110px;
+  border-radius:4px;
+}
+/* shadow below cube */
+.icon-shadow{
+  position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);
+  width:80px;height:12px;
+  background:radial-gradient(ellipse,rgba(255,23,68,0.4),transparent 70%);
+  filter:blur(6px);
+  animation:shadowPulse 8s linear infinite;
+}
+@keyframes shadowPulse{0%,100%{width:80px;opacity:0.5}50%{width:50px;opacity:0.8}}
 
-        .banned-card {
-            background: linear-gradient(135deg, rgba(26, 10, 10, 0.95) 0%, rgba(13, 2, 2, 0.95) 100%);
-            border: 2px solid rgba(220, 53, 69, 0.5);
-            border-radius: 24px;
-            padding: 40px 30px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 0 40px rgba(220, 53, 69, 0.5),
-                        0 0 80px rgba(220, 53, 69, 0.2),
-                        inset 0 0 60px rgba(220, 53, 69, 0.1);
-            animation: glow 3s ease-in-out infinite;
-            position: relative;
-            overflow: hidden;
-        }
+/* ── STATUS CHIP ── */
+.status-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,23,68,0.12);
+  border:1px solid rgba(255,23,68,0.4);
+  border-radius:100px;padding:6px 16px;
+  margin-bottom:16px;
+  font-size:11px;font-weight:700;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--red);
+  position:relative;overflow:hidden;
+}
+.status-chip::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,23,68,0.2),transparent);
+  animation:chipShimmer 2.5s linear infinite;
+}
+@keyframes chipShimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.chip-dot{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red);animation:dotBlink 1.5s ease-in-out infinite}
+@keyframes dotBlink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
 
-        .banned-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #dc3545 0%, #c82333 50%, #dc3545 100%);
-            box-shadow: 0 0 20px rgba(220, 53, 69, 0.8);
-        }
+/* ── TITLE ── */
+.title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:42px;letter-spacing:0.06em;
+  background:linear-gradient(135deg,#fff 0%,#ffb3c1 50%,var(--red) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;margin-bottom:10px;
+  filter:drop-shadow(0 0 20px rgba(255,23,68,0.4));
+}
+.subtitle{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:26px}
 
-        .icon-container {
-            text-align: center;
-            margin-bottom: 30px;
-            animation: float 4s ease-in-out infinite;
-        }
+/* ── USER CARD (3D LIFT) ── */
+.user-row{
+  display:flex;align-items:center;gap:13px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;padding:14px 16px;margin-bottom:14px;
+  transform:translateZ(20px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.04) inset;
+  transition:transform 0.3s ease,box-shadow 0.3s ease;
+}
+.user-row:hover{transform:translateZ(30px) scale(1.02);box-shadow:0 16px 40px rgba(0,0,0,0.6)}
+.avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,23,68,0.3),rgba(20,0,8,0.8));
+  border:2px solid rgba(255,23,68,0.4);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+  box-shadow:0 0 20px rgba(255,23,68,0.3);
+}
+.uname{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:3px}
+.uid{font-size:11px;color:var(--t3);font-family:'Courier New',monospace}
 
-        .ban-icon {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto;
-            background: linear-gradient(135deg, rgba(220, 53, 69, 0.3) 0%, rgba(139, 0, 0, 0.2) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-            box-shadow: 0 0 40px rgba(220, 53, 69, 0.4),
-                        inset 0 0 30px rgba(220, 53, 69, 0.2);
-            position: relative;
-        }
+/* ── INFO BLOCK (3D LIFT) ── */
+.info-block{
+  background:linear-gradient(135deg,rgba(255,23,68,0.1),rgba(255,109,0,0.05));
+  border:1px solid rgba(255,23,68,0.35);
+  border-left:3px solid var(--red);
+  border-radius:14px;padding:16px 18px;margin-bottom:14px;
+  transform:translateZ(12px);
+  box-shadow:0 6px 20px rgba(0,0,0,0.4),0 0 30px rgba(255,23,68,0.08) inset;
+  position:relative;overflow:hidden;
+}
+.info-block::after{
+  content:'';position:absolute;top:-50%;right:-20px;
+  width:100px;height:200%;
+  background:linear-gradient(90deg,transparent,rgba(255,23,68,0.06),transparent);
+  transform:rotate(20deg);
+  animation:infoSheen 4s ease-in-out infinite;
+}
+@keyframes infoSheen{0%,100%{opacity:0;transform:rotate(20deg) translateX(0)}50%{opacity:1;transform:rotate(20deg) translateX(20px)}}
+.info-label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--red);margin-bottom:6px}
+.info-value{font-size:14px;color:var(--t1);font-weight:500;line-height:1.5}
 
-        .ban-icon::after {
-            content: '🚫';
-            filter: drop-shadow(0 0 10px rgba(220, 53, 69, 0.8));
-        }
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);margin:18px 0}
 
-        h1 {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #dc3545 0%, #ff6b6b 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 15px;
-            text-shadow: 0 0 30px rgba(220, 53, 69, 0.3);
-        }
-
-        .subtitle {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 15px;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        .info-box {
-            background: rgba(220, 53, 69, 0.1);
-            border: 1px solid rgba(220, 53, 69, 0.3);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-
-        .info-label {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .info-value {
-            color: #ffffff;
-            font-size: 15px;
-            line-height: 1.6;
-            font-weight: 500;
-        }
-
-        .user-info {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(220, 53, 69, 0.2) 0%, rgba(139, 0, 0, 0.2) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            flex-shrink: 0;
-        }
-
-        .user-details {
-            flex: 1;
-        }
-
-        .user-name {
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 16px;
-            margin-bottom: 2px;
-        }
-
-        .user-id {
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 13px;
-            font-family: monospace;
-        }
-
-        .support-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.4),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .support-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .support-btn:hover::before {
-            left: 100%;
-        }
-
-        .support-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 30px rgba(220, 53, 69, 0.6),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-        }
-
-        .support-btn:active {
-            transform: translateY(0);
-        }
-
-        .note {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 13px;
-            margin-top: 20px;
-            line-height: 1.5;
-        }
-
-        .telegram-icon {
-            font-size: 20px;
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .banned-card {
-                padding: 30px 20px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .ban-icon {
-                width: 80px;
-                height: 80px;
-                font-size: 40px;
-            }
-        }
-    </style>
+/* ── CTA BUTTON ── */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:17px;
+  background:linear-gradient(135deg,var(--red),#c8001a);
+  color:#fff;border:none;border-radius:14px;
+  font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.05em;
+  text-decoration:none;cursor:pointer;
+  transform:translateZ(30px);
+  box-shadow:0 8px 30px rgba(255,23,68,0.5),0 2px 0 rgba(255,255,255,0.15) inset;
+  transition:all 0.25s cubic-bezier(0.22,1,0.36,1);
+  position:relative;overflow:hidden;
+}
+.btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent 50%);
+  opacity:0;transition:opacity 0.25s;
+}
+.btn:hover{transform:translateZ(40px) translateY(-3px);box-shadow:0 16px 50px rgba(255,23,68,0.65),0 2px 0 rgba(255,255,255,0.15) inset}
+.btn:hover::before{opacity:1}
+.btn:active{transform:translateZ(20px) translateY(0)}
+.note{text-align:center;font-size:12px;color:var(--t3);margin-top:18px;line-height:1.6}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="banned-card">
-            <div class="icon-container">
-                <div class="ban-icon"></div>
-            </div>
+<canvas id="bg"></canvas>
 
-            <h1>Cuenta Suspendida</h1>
-            <p class="subtitle">
-                Tu acceso a ARCADE PXC ha sido restringido por violar nuestros términos de servicio.
-            </p>
+<div class="scene">
+  <div class="card">
+    <div class="card-glow"></div>
+    <div class="card-inner">
 
-            <div class="user-info">
-                <div class="user-avatar">👤</div>
-                <div class="user-details">
-                    <div class="user-name">{{ user.first_name or 'Usuario' }}</div>
-                    <div class="user-id">ID: {{ user.user_id[:12] if user.user_id|length > 12 else user.user_id }}...</div>
-                </div>
-            </div>
-
-            <div class="info-box">
-                <div class="info-label">Razón de la suspensión</div>
-                <div class="info-value">{{ user.ban_reason or 'Violación de términos de servicio' }}</div>
-            </div>
-
-            {% if user.updated_at %}
-            <div class="info-box">
-                <div class="info-label">Fecha de suspensión</div>
-                <div class="info-value">{{ user.updated_at[:10] if user.updated_at is string else (user.updated_at.strftime('%Y-%m-%d') if user.updated_at else 'N/A') }}</div>
-            </div>
-            {% endif %}
-
-            <a href="https://t.me/Soporte_ArcadePXC" class="support-btn" target="_blank">
-                <span class="telegram-icon">✈️</span>
-                <span>Contactar Soporte</span>
-            </a>
-
-            <p class="note">
-                Si crees que esto es un error, contacta a nuestro equipo de soporte para resolver la situación.
-            </p>
+      <div style="text-align:center">
+        <div class="icon-3d-wrap">
+          <div class="icon-cube">
+            <div class="face face-front">🚫</div>
+            <div class="face face-back">✕</div>
+            <div class="face face-right"></div>
+            <div class="face face-left"></div>
+            <div class="face face-top"></div>
+            <div class="face face-bottom"></div>
+          </div>
+          <div class="icon-shadow"></div>
         </div>
+        <div class="status-chip"><div class="chip-dot"></div>CUENTA SUSPENDIDA</div>
+      </div>
+
+      <h1 class="title">ACCESO<br>DENEGADO</h1>
+      <p class="subtitle">Tu cuenta en ARCADE PXC ha sido restringida por violar los términos de servicio.</p>
+
+      <div class="user-row">
+        <div class="avatar">👤</div>
+        <div>
+          <div class="uname">{{ user.first_name or 'Usuario' }}</div>
+          <div class="uid">UID · {{ user.user_id[:16] if user.user_id|length > 16 else user.user_id }}</div>
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-label">⚠ Motivo</div>
+        <div class="info-value">{{ user.ban_reason or 'Violación de términos de servicio' }}</div>
+      </div>
+
+      {% if user.updated_at %}
+      <div class="info-block">
+        <div class="info-label">📅 Fecha</div>
+        <div class="info-value">{{ user.updated_at[:10] if user.updated_at is string else (user.updated_at.strftime('%d/%m/%Y') if user.updated_at else '—') }}</div>
+      </div>
+      {% endif %}
+
+      <div class="divider"></div>
+
+      <a href="https://t.me/Soporte_ArcadePXC" class="btn" target="_blank">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2L2 9.5l7 3 3 7 4-8 5 5"/></svg>
+        Contactar Soporte
+      </a>
+      <p class="note">Si crees que esto es un error, nuestro equipo puede ayudarte a resolverlo.</p>
     </div>
+  </div>
+</div>
+
+<script>
+// ── THREE.JS-FREE 3D PARTICLE FIELD ──
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], mouse = {x:0,y:0};
+
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',resize);
+
+// Create 3D particles
+for(let i=0;i<120;i++){
+  particles.push({
+    x:Math.random()*W, y:Math.random()*H,
+    z:Math.random()*800+200,
+    vx:(Math.random()-0.5)*0.4,
+    vy:(Math.random()-0.5)*0.4,
+    vz:Math.random()*0.8+0.2,
+    r:Math.random()*2+0.5,
+    hue:Math.random()>0.7?20:0 // mostly red, some orange
+  });
+}
+
+// Hex grid lines
+function drawHexGrid(){
+  const size=40,cols=Math.ceil(W/size)+2,rows=Math.ceil(H/(size*0.866))+2;
+  ctx.strokeStyle='rgba(255,23,68,0.04)';ctx.lineWidth=0.5;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const x=(c+((r%2)*0.5))*size-size,y=r*size*0.866-size;
+      ctx.beginPath();
+      for(let a=0;a<6;a++){const ang=a*Math.PI/3+Math.PI/6;ctx.lineTo(x+Math.cos(ang)*size/2,y+Math.sin(ang)*size/2)}
+      ctx.closePath();ctx.stroke();
+    }
+  }
+}
+
+// Draw 3D projection line between nearby particles
+function drawConnections(){
+  for(let i=0;i<particles.length;i++){
+    const a=particles[i];
+    const ax=a.x+(mouse.x-W/2)*0.02;const ay=a.y+(mouse.y-H/2)*0.02;
+    for(let j=i+1;j<particles.length;j++){
+      const b=particles[j];
+      const bx=b.x+(mouse.x-W/2)*0.02;const by=b.y+(mouse.y-H/2)*0.02;
+      const dist=Math.hypot(ax-bx,ay-by);
+      if(dist<120){
+        const alpha=(1-dist/120)*0.12*(1000/((a.z+b.z)/2));
+        ctx.strokeStyle=`rgba(255,23,68,${alpha})`;
+        ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
+      }
+    }
+  }
+}
+
+let t=0;
+function frame(){
+  t+=0.005;
+  ctx.fillStyle='rgba(4,2,10,0.18)';ctx.fillRect(0,0,W,H);
+  drawHexGrid();
+
+  // Radial glow top center
+  const grd=ctx.createRadialGradient(W/2,0,0,W/2,0,H*0.55);
+  grd.addColorStop(0,'rgba(255,23,68,0.08)');grd.addColorStop(1,'transparent');
+  ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+
+  // Bottom glow
+  const grd2=ctx.createRadialGradient(W*0.8,H,0,W*0.8,H,H*0.4);
+  grd2.addColorStop(0,'rgba(255,109,0,0.05)');grd2.addColorStop(1,'transparent');
+  ctx.fillStyle=grd2;ctx.fillRect(0,0,W,H);
+
+  drawConnections();
+  particles.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.z-=p.vz;
+    if(p.z<1){p.z=1000;p.x=Math.random()*W;p.y=Math.random()*H}
+    if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+    const scale=800/p.z;
+    const px=p.x+(mouse.x-W/2)*0.03*(1-p.z/1000);
+    const py=p.y+(mouse.y-H/2)*0.03*(1-p.z/1000);
+    const alpha=Math.min(0.9,scale)*0.8;
+    const size=p.r*scale;
+    ctx.beginPath();ctx.arc(px,py,Math.max(0.3,size),0,Math.PI*2);
+    ctx.fillStyle=`hsla(${p.hue},100%,65%,${alpha})`;
+    ctx.shadowColor=`hsl(${p.hue},100%,60%)`;ctx.shadowBlur=size*4;
+    ctx.fill();ctx.shadowBlur=0;
+  });
+  requestAnimationFrame(frame);
+}
+frame();
+
+document.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+document.addEventListener('touchmove',e=>{mouse.x=e.touches[0].clientX;mouse.y=e.touches[0].clientY},{passive:true});
+
+// 3D card tilt on mouse
+const scene=document.querySelector('.scene');
+document.addEventListener('mousemove',e=>{
+  const rx=((e.clientY/window.innerHeight)-0.5)*12;
+  const ry=((e.clientX/window.innerWidth)-0.5)*-12;
+  scene.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`;
+});
+document.addEventListener('mouseleave',()=>{scene.style.transform='rotateX(1deg) rotateY(-1deg)'});
+</script>
 </body>
 </html>
