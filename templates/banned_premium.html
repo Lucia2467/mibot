@@ -1,378 +1,260 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Account Restricted - ARCADE PXC</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            --primary-dark: #003D99;
-            --primary: #0066FF;
-            --primary-light: #3B82F6;
-            --accent: #FFB6C1;
-            --text-dark: #1a1a2e;
-            --text-light: #fff;
-            --card-bg: rgba(255, 255, 255, 0.95);
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-x: hidden;
-        }
-        
-        /* Animated background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 40%);
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 420px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* Main Card */
-        .ban-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 35px 25px;
-            box-shadow: 
-                0 20px 60px rgba(0, 61, 153, 0.4),
-                0 4px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            backdrop-filter: blur(10px);
-            animation: slideUp 0.6s ease-out;
-        }
-        
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Icon */
-        .status-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-            box-shadow: 0 8px 25px rgba(0, 102, 255, 0.35);
-        }
-        
-        .status-icon svg {
-            width: 40px;
-            height: 40px;
-            stroke: white;
-            stroke-width: 2;
-            fill: none;
-        }
-        
-        /* Title */
-        .ban-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 12px;
-            letter-spacing: -0.3px;
-        }
-        
-        /* Subtitle */
-        .ban-subtitle {
-            font-size: 15px;
-            color: #666;
-            line-height: 1.5;
-            margin-bottom: 25px;
-        }
-        
-        /* User Info Card */
-        .user-info {
-            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(0, 61, 153, 0.1);
-        }
-        
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 12px;
-            font-size: 22px;
-            color: white;
-            font-weight: 600;
-        }
-        
-        .user-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 4px;
-        }
-        
-        .user-id {
-            font-size: 12px;
-            color: #888;
-            font-family: 'Courier New', monospace;
-        }
-        
-        /* Reason Box */
-        .reason-box {
-            background: linear-gradient(135deg, #fff8f8 0%, #fff0f3 100%);
-            border-radius: 14px;
-            padding: 18px;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .reason-label {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--primary);
-            letter-spacing: 0.8px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .reason-text {
-            font-size: 14px;
-            color: #444;
-            line-height: 1.5;
-        }
-        
-        /* Ban Type Badge */
-        .ban-type-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 15px;
-        }
-        
-        .ban-type-badge.automatic {
-            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-            color: white;
-        }
-        
-        .ban-type-badge.manual {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        /* Date Info */
-        .date-info {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 25px;
-        }
-        
-        .date-info span {
-            color: #666;
-            font-weight: 500;
-        }
-        
-        /* Support Section */
-        .support-section {
-            background: #f9fafb;
-            border-radius: 14px;
-            padding: 18px;
-            margin-top: 5px;
-        }
-        
-        .support-text {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-        
-        .support-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-            color: white;
-            text-decoration: none;
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3);
-            width: 100%;
-        }
-        
-        .support-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 102, 255, 0.4);
-        }
-        
-        .support-btn svg {
-            width: 18px;
-            height: 18px;
-        }
-        
-        /* Footer */
-        .footer-note {
-            margin-top: 20px;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.7);
-            text-align: center;
-        }
-        
-        /* Responsive */
-        @media (max-width: 360px) {
-            .ban-card {
-                padding: 25px 18px;
-            }
-            
-            .ban-title {
-                font-size: 20px;
-            }
-            
-            .status-icon {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .status-icon svg {
-                width: 35px;
-                height: 35px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Account Restricted — ARCADE PXC</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --c1:#FF2D55;--c2:#FF9500;--c3:#BF5AF2;
+  --dark:#02000a;--surface:rgba(10,5,20,0.96);
+  --t1:#fff;--t2:rgba(255,255,255,0.6);--t3:rgba(255,255,255,0.25);
+}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Rajdhani',sans-serif;
+  background:var(--dark);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;perspective:1000px;
+}
+canvas#bg{position:fixed;inset:0;z-index:0}
+
+/* ── HOLOGRAPHIC GRID FLOOR ── */
+.floor{
+  position:fixed;bottom:0;left:0;width:100%;height:55%;
+  z-index:1;pointer-events:none;
+  background:
+    linear-gradient(transparent 0%,rgba(191,90,242,0.03) 100%),
+    repeating-linear-gradient(90deg,rgba(191,90,242,0.06) 0px,transparent 1px,transparent 40px,rgba(191,90,242,0.06) 41px),
+    repeating-linear-gradient(0deg,rgba(191,90,242,0.06) 0px,transparent 1px,transparent 40px,rgba(191,90,242,0.06) 41px);
+  transform:perspective(400px) rotateX(70deg);
+  transform-origin:bottom center;
+  mask-image:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%);
+  -webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%);
+}
+
+/* ── MAIN CARD ── */
+.stage{position:relative;z-index:10;width:100%;max-width:400px;transform-style:preserve-3d}
+.card{
+  background:var(--surface);
+  border:1px solid rgba(191,90,242,0.3);
+  border-radius:20px;overflow:hidden;
+  transform-style:preserve-3d;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04) inset,
+    0 40px 80px rgba(0,0,0,0.9),
+    0 0 60px rgba(191,90,242,0.15),
+    -4px 4px 0 rgba(255,45,85,0.2),
+    4px -4px 0 rgba(255,149,0,0.1);
+  animation:cardIn 0.9s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes cardIn{
+  from{opacity:0;transform:perspective(800px) rotateX(20deg) translateY(40px) scale(0.9)}
+  to{opacity:1;transform:perspective(800px) rotateX(0) translateY(0) scale(1)}
+}
+/* Holographic top edge */
+.holo-edge{
+  height:3px;
+  background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c1));
+  background-size:200% 100%;
+  animation:holoShift 3s linear infinite;
+  box-shadow:0 0 20px rgba(191,90,242,0.6);
+}
+@keyframes holoShift{from{background-position:0% 50%}to{background-position:200% 50%}}
+.card-body{padding:30px 26px 26px}
+
+/* ── 3D SPINNING RING ── */
+.ring-wrap{
+  width:100px;height:100px;margin:0 auto 24px;
+  position:relative;transform-style:preserve-3d;
+  animation:ringSystem 10s linear infinite;
+}
+@keyframes ringSystem{from{transform:rotateX(20deg) rotateY(0)}to{transform:rotateX(20deg) rotateY(360deg)}}
+.ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:3px solid transparent;
+}
+.ring-1{border-top-color:var(--c1);border-bottom-color:var(--c1);animation:ring1 2s linear infinite;box-shadow:0 0 15px var(--c1)}
+.ring-2{inset:8px;border-left-color:var(--c2);border-right-color:var(--c2);animation:ring2 3s linear infinite reverse;box-shadow:0 0 10px var(--c2)}
+.ring-3{inset:18px;border-top-color:var(--c3);border-bottom-color:var(--c3);animation:ring1 4s linear infinite reverse;box-shadow:0 0 8px var(--c3)}
+@keyframes ring1{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes ring2{from{transform:rotate(0) rotateX(60deg)}to{transform:rotate(360deg) rotateX(60deg)}}
+.ring-center{
+  position:absolute;inset:28px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,45,85,0.3),rgba(10,5,20,0.9));
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+}
+
+/* ── BADGES ── */
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  border-radius:100px;padding:5px 13px;
+  font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+  position:relative;overflow:hidden;
+}
+.badge-restricted{background:rgba(255,45,85,0.12);border:1px solid rgba(255,45,85,0.35);color:var(--c1)}
+.badge-auto{background:rgba(255,149,0,0.12);border:1px solid rgba(255,149,0,0.35);color:var(--c2)}
+.badge-manual{background:rgba(191,90,242,0.12);border:1px solid rgba(191,90,242,0.35);color:var(--c3)}
+.badge::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);animation:badgeShimmer 2s linear infinite}
+@keyframes badgeShimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.bdot{width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 6px currentColor;animation:dotBlink 1.5s ease-in-out infinite}
+@keyframes dotBlink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ── TITLE ── */
+.title{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:var(--t1);letter-spacing:0.05em;margin-bottom:8px;
+  text-shadow:0 0 30px rgba(191,90,242,0.5),0 0 60px rgba(255,45,85,0.2)}
+.subtitle{font-size:14px;color:var(--t2);line-height:1.65;margin-bottom:22px}
+
+/* ── USER ── */
+.user-card{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;padding:14px 16px;margin-bottom:14px;
+  transform:translateZ(15px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.03) inset;
+}
+.uavatar{
+  width:42px;height:42px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--c3),var(--c1));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;color:#fff;
+  box-shadow:0 0 20px rgba(191,90,242,0.4);
+}
+.uname{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.uid{font-size:11px;color:var(--t3);font-family:'Courier New',monospace}
+
+/* ── REASON BOX ── */
+.reason{
+  background:linear-gradient(135deg,rgba(255,45,85,0.08),rgba(255,149,0,0.05));
+  border:1px solid rgba(255,45,85,0.3);border-left:3px solid var(--c1);
+  border-radius:13px;padding:15px 17px;margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.reason::before{content:'';position:absolute;top:0;right:0;width:80px;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,45,85,0.06));pointer-events:none}
+.rlabel{font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--c1);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.rvalue{font-size:14px;color:var(--t1);line-height:1.5;font-weight:500}
+.rdate{font-size:11px;color:var(--t3);margin-top:4px}
+
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);margin:16px 0}
+
+/* ── SUPPORT BOX ── */
+.support-box{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px}
+.stext{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:14px}
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,var(--c3),rgba(191,90,242,0.7));
+  color:#fff;border:none;border-radius:12px;
+  font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;
+  text-decoration:none;cursor:pointer;
+  box-shadow:0 4px 24px rgba(191,90,242,0.4),0 2px 0 rgba(255,255,255,0.1) inset;
+  transform:translateZ(20px);
+  transition:all 0.25s cubic-bezier(0.22,1,0.36,1);
+  position:relative;overflow:hidden;
+}
+.btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent 50%);opacity:0;transition:opacity 0.25s}
+.btn:hover{transform:translateZ(28px) translateY(-2px);box-shadow:0 8px 40px rgba(191,90,242,0.6)}
+.btn:hover::before{opacity:1}
+.footer{text-align:center;margin-top:18px;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:0.2em;color:var(--t3)}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="ban-card">
-            <!-- Status Icon -->
-            <div class="status-icon">
-                <svg viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
-                </svg>
-            </div>
-            
-            <!-- Title -->
-            <h1 class="ban-title">Account Restricted</h1>
-            <p class="ban-subtitle">Your account access has been limited due to a security review.</p>
-            
-            <!-- User Info -->
-            <div class="user-info">
-                <div class="user-avatar">
-                    {{ (user.first_name or user.username or 'U')[0]|upper }}
-                </div>
-                <div class="user-name">{{ user.first_name or user.username or 'User' }}</div>
-                <div class="user-id">ID: {{ user.user_id }}</div>
-            </div>
-            
-            <!-- Ban Type Badge -->
-            {% if user.ban_type %}
-            <div class="ban-type-badge {{ user.ban_type }}">
-                {% if user.ban_type == 'automatic' %}
-                ⚡ Automatic Detection
-                {% else %}
-                ✋ Manual Review
-                {% endif %}
-            </div>
-            {% endif %}
-            
-            <!-- Reason Box -->
-            <div class="reason-box">
-                <div class="reason-label">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="8" x2="12" y2="12"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16"/>
-                    </svg>
-                    Reason
-                </div>
-                <div class="reason-text">
-                    {{ user.ban_reason or 'Security policy violation detected.' }}
-                </div>
-            </div>
-            
-            <!-- Date Info -->
-            {% if user.ban_date %}
-            <div class="date-info">
-                Restricted on <span>{{ user.ban_date.strftime('%B %d, %Y') if user.ban_date else 'N/A' }}</span>
-            </div>
-            {% endif %}
-            
-            <!-- Support Section -->
-            <div class="support-section">
-                <p class="support-text">
-                    If you believe this is a mistake, please contact our support team for assistance.
-                </p>
-                <a href="{{ support_link or 'https://t.me/Soporte_ArcadePXC' }}" class="support-btn" target="_blank">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                    </svg>
-                    Contact Support
-                </a>
-            </div>
+<canvas id="bg"></canvas>
+<div class="floor"></div>
+
+<div class="stage" id="stage">
+  <div class="card">
+    <div class="holo-edge"></div>
+    <div class="card-body">
+
+      <div style="text-align:center">
+        <div class="ring-wrap">
+          <div class="ring ring-1"></div>
+          <div class="ring ring-2"></div>
+          <div class="ring ring-3"></div>
+          <div class="ring-center">⊘</div>
         </div>
-        
-        <p class="footer-note">ARCADE PXC Security System</p>
+      </div>
+
+      <div class="badges">
+        <div class="badge badge-restricted"><div class="bdot"></div>RESTRICTED</div>
+        {% if user.ban_type == 'automatic' %}
+        <div class="badge badge-auto"><div class="bdot"></div>⚡ AUTO-DETECTED</div>
+        {% elif user.ban_type == 'manual' %}
+        <div class="badge badge-manual"><div class="bdot"></div>✋ MANUAL REVIEW</div>
+        {% endif %}
+      </div>
+
+      <h1 class="title">ACCESS<br>SUSPENDED</h1>
+      <p class="subtitle">Your account access has been restricted following a security review.</p>
+
+      <div class="user-card">
+        <div class="uavatar">{{ (user.first_name or user.username or 'U')[0]|upper }}</div>
+        <div>
+          <div class="uname">{{ user.first_name or user.username or 'User' }}</div>
+          <div class="uid">ID: {{ user.user_id }}</div>
+        </div>
+      </div>
+
+      <div class="reason">
+        <div class="rlabel">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Restriction Reason
+        </div>
+        <div class="rvalue">{{ user.ban_reason or 'Security policy violation detected.' }}</div>
+        {% if user.ban_date %}
+        <div class="rdate">{{ user.ban_date.strftime('%B %d, %Y') if user.ban_date else '' }}</div>
+        {% endif %}
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="support-box">
+        <p class="stext">Believe this is a mistake? Our security team can review your case.</p>
+        <a href="{{ support_link or 'https://t.me/Soporte_ArcadePXC' }}" class="btn" target="_blank">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2L2 9.5l7 3 3 7 4-8 5 5"/></svg>
+          Contact Support
+        </a>
+      </div>
     </div>
-    
-    <script>
-        // Initialize Telegram WebApp
-        if (window.Telegram && window.Telegram.WebApp) {
-            const tg = window.Telegram.WebApp;
-            tg.ready();
-            tg.expand();
-            
-            // Set header color to match theme
-            tg.setHeaderColor('#003D99');
-            tg.setBackgroundColor('#003D99');
-        }
-    </script>
+  </div>
+</div>
+<div class="footer">ARCADE PXC · SECURITY SYSTEM v2.0</div>
+
+<script>
+const c=document.getElementById('bg'),x=c.getContext('2d');
+let W,H;function rs(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}rs();window.addEventListener('resize',rs);
+const pts=[];for(let i=0;i<80;i++)pts.push({x:Math.random()*W,y:Math.random()*H,z:Math.random()*600+100,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,vz:.5+Math.random(),hue:[320,30,270][Math.floor(Math.random()*3)]});
+let mx=W/2,my=H/2;
+function draw(){
+  x.fillStyle='rgba(2,0,10,0.15)';x.fillRect(0,0,W,H);
+  // scanlines
+  for(let i=0;i<H;i+=4){x.fillStyle='rgba(0,0,0,0.03)';x.fillRect(0,i,W,2)}
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.z-=p.vz;
+    if(p.z<1){p.z=600;p.x=Math.random()*W;p.y=Math.random()*H}
+    if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+    const s=400/p.z,px=p.x+(mx-W/2)*.02,py=p.y+(my-H/2)*.02;
+    const a=Math.min(.9,s)*.7;
+    x.beginPath();x.arc(px,py,Math.max(.3,p.r||1*s),0,Math.PI*2);
+    x.fillStyle=`hsla(${p.hue},100%,70%,${a})`;
+    x.shadowColor=`hsl(${p.hue},100%,60%)`;x.shadowBlur=s*6;x.fill();x.shadowBlur=0;
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+const stage=document.getElementById('stage');
+document.addEventListener('mousemove',e=>{
+  const rx=((e.clientY/innerHeight)-.5)*10,ry=((e.clientX/innerWidth)-.5)*-10;
+  stage.style.transform=`perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+});
+if(window.Telegram&&window.Telegram.WebApp){const tg=window.Telegram.WebApp;tg.ready();tg.expand();tg.setHeaderColor('#02000a');tg.setBackgroundColor('#02000a')}
+</script>
 </body>
 </html>
