@@ -1,5 +1,5 @@
 /* ============================================
-   SALLY-E PREMIUM MAINTENANCE & ERROR STYLES
+   ARCADE PXC PREMIUM MAINTENANCE & ERROR STYLES
    Ultra HD / 8K Quality Design System
    Version: 1.0.0
    ============================================ */
@@ -201,7 +201,7 @@
    ============================================ */
 
 /* Glass Card */
-.se-glass-card {
+.pxc-glass-card {
     background: var(--se-glass-bg);
     backdrop-filter: blur(40px);
     -webkit-backdrop-filter: blur(40px);
@@ -216,7 +216,7 @@
 }
 
 /* Premium Button */
-.se-btn-primary {
+.pxc-btn-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -238,19 +238,19 @@
         0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
 
-.se-btn-primary:hover {
+.pxc-btn-primary:hover {
     transform: translateY(-3px);
     box-shadow: 
         0 15px 30px -10px rgba(0, 102, 255, 0.6),
         0 0 0 1px rgba(255, 255, 255, 0.15) inset;
 }
 
-.se-btn-primary:active {
+.pxc-btn-primary:active {
     transform: translateY(-1px);
 }
 
 /* Secondary Button */
-.se-btn-secondary {
+.pxc-btn-secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -268,7 +268,7 @@
     transition: all var(--se-transition-normal);
 }
 
-.se-btn-secondary:hover {
+.pxc-btn-secondary:hover {
     background: var(--se-glass-bg);
     border-color: var(--se-primary-light);
     color: var(--se-text-primary);
@@ -276,7 +276,7 @@
 }
 
 /* Loading Spinner */
-.se-spinner {
+.pxc-spinner {
     width: 50px;
     height: 50px;
     border: 4px solid rgba(255, 255, 255, 0.3);
@@ -286,7 +286,7 @@
 }
 
 /* Premium Badge */
-.se-badge {
+.pxc-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -296,41 +296,41 @@
     font-weight: 600;
 }
 
-.se-badge-warning {
+.pxc-badge-warning {
     background: linear-gradient(135deg, rgba(255, 167, 38, 0.1) 0%, rgba(255, 107, 157, 0.1) 100%);
     border: 1px solid rgba(255, 167, 38, 0.2);
     color: var(--se-warning);
 }
 
-.se-badge-success {
+.pxc-badge-success {
     background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(129, 199, 132, 0.1) 100%);
     border: 1px solid rgba(76, 175, 80, 0.2);
     color: var(--se-success);
 }
 
-.se-badge-error {
+.pxc-badge-error {
     background: linear-gradient(135deg, rgba(239, 83, 80, 0.1) 0%, rgba(255, 107, 107, 0.1) 100%);
     border: 1px solid rgba(239, 83, 80, 0.2);
     color: var(--se-error);
 }
 
 /* Status Indicator */
-.se-status-dot {
+.pxc-status-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
     animation: se-pulseGlow 1.5s ease-in-out infinite;
 }
 
-.se-status-dot-warning {
+.pxc-status-dot-warning {
     background: var(--se-warning);
 }
 
-.se-status-dot-success {
+.pxc-status-dot-success {
     background: var(--se-success);
 }
 
-.se-status-dot-error {
+.pxc-status-dot-error {
     background: var(--se-error);
 }
 
@@ -339,7 +339,7 @@
    ============================================ */
 
 /* Gradient Orb */
-.se-orb {
+.pxc-orb {
     position: absolute;
     border-radius: 50%;
     filter: blur(80px);
@@ -347,7 +347,7 @@
 }
 
 /* Grid Pattern */
-.se-grid-pattern {
+.pxc-grid-pattern {
     position: absolute;
     inset: 0;
     background-image: 
@@ -358,7 +358,7 @@
 }
 
 /* Scan Lines */
-.se-scan-lines {
+.pxc-scan-lines {
     position: absolute;
     inset: 0;
     background: repeating-linear-gradient(
@@ -377,53 +377,53 @@
    ============================================ */
 
 /* Animation Delays */
-.se-delay-1 { animation-delay: 0.1s; }
-.se-delay-2 { animation-delay: 0.2s; }
-.se-delay-3 { animation-delay: 0.3s; }
-.se-delay-4 { animation-delay: 0.4s; }
-.se-delay-5 { animation-delay: 0.5s; }
+.pxc-delay-1 { animation-delay: 0.1s; }
+.pxc-delay-2 { animation-delay: 0.2s; }
+.pxc-delay-3 { animation-delay: 0.3s; }
+.pxc-delay-4 { animation-delay: 0.4s; }
+.pxc-delay-5 { animation-delay: 0.5s; }
 
 /* Text Utilities */
-.se-text-gradient {
+.pxc-text-gradient {
     background: linear-gradient(135deg, var(--se-text-primary) 0%, var(--se-primary-light) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.se-text-center { text-align: center; }
-.se-text-primary { color: var(--se-text-primary); }
-.se-text-secondary { color: var(--se-text-secondary); }
-.se-text-muted { color: var(--se-text-muted); }
+.pxc-text-center { text-align: center; }
+.pxc-text-primary { color: var(--se-text-primary); }
+.pxc-text-secondary { color: var(--se-text-secondary); }
+.pxc-text-muted { color: var(--se-text-muted); }
 
 /* Spacing */
-.se-mt-1 { margin-top: 0.5rem; }
-.se-mt-2 { margin-top: 1rem; }
-.se-mt-3 { margin-top: 1.5rem; }
-.se-mt-4 { margin-top: 2rem; }
-.se-mb-1 { margin-bottom: 0.5rem; }
-.se-mb-2 { margin-bottom: 1rem; }
-.se-mb-3 { margin-bottom: 1.5rem; }
-.se-mb-4 { margin-bottom: 2rem; }
+.pxc-mt-1 { margin-top: 0.5rem; }
+.pxc-mt-2 { margin-top: 1rem; }
+.pxc-mt-3 { margin-top: 1.5rem; }
+.pxc-mt-4 { margin-top: 2rem; }
+.pxc-mb-1 { margin-bottom: 0.5rem; }
+.pxc-mb-2 { margin-bottom: 1rem; }
+.pxc-mb-3 { margin-bottom: 1.5rem; }
+.pxc-mb-4 { margin-bottom: 2rem; }
 
 /* ============================================
    RESPONSIVE BREAKPOINTS
    ============================================ */
 
 @media (max-width: 768px) {
-    .se-glass-card {
+    .pxc-glass-card {
         padding: 30px 20px;
         border-radius: var(--se-radius-xl);
     }
     
-    .se-btn-primary {
+    .pxc-btn-primary {
         padding: 14px 24px;
         font-size: 14px;
     }
 }
 
 @media (max-width: 480px) {
-    .se-glass-card {
+    .pxc-glass-card {
         padding: 25px 15px;
         border-radius: var(--se-radius-lg);
     }
