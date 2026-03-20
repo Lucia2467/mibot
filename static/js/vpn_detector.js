@@ -1,5 +1,5 @@
 /**
- * SALLY-E VPN/Proxy Detection System
+ * ARCADE PXC VPN/Proxy Detection System
  * Verificación silenciosa en segundo plano — sin overlay de espera
  */
 

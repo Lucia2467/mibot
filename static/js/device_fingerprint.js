@@ -1,5 +1,5 @@
 /**
- * SALLY-E Device Fingerprint
+ * ARCADE PXC Device Fingerprint
  * Client-side device identification for fraud detection
  */
 
@@ -20,9 +20,9 @@
                 ctx.fillStyle = '#f60';
                 ctx.fillRect(0, 0, 125, 62);
                 ctx.fillStyle = '#069';
-                ctx.fillText('SE-Device-FP', 2, 15);
+                ctx.fillText('PXC-Device-FP', 2, 15);
                 ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
-                ctx.fillText('SE-Device-FP', 4, 17);
+                ctx.fillText('PXC-Device-FP', 4, 17);
                 
                 // Add some unique shapes
                 ctx.beginPath();
@@ -218,7 +218,7 @@
                 })
             }).then(response => {
                 if (!response.ok) {
-                    console.log('[SE-FP] Server check completed');
+                    console.log('[PXC-FP] Server check completed');
                 }
             }).catch(error => {
                 // Silent fail - don't expose fingerprinting to user

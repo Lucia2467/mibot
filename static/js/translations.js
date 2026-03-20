@@ -1,6 +1,6 @@
 /* v2 */
 /**
- * SALLY-E Multi-Language Translation System
+ * ARCADE PXC Multi-Language Translation System
  * Languages: English (en), Spanish (es), Portuguese (pt), Russian (ru), Arabic (ar)
  */
 
@@ -36,7 +36,7 @@ const LANG = {
         total_balance: "Total Balance",
         level: "Level",
         referrals: "Referrals",
-        se_per_hour: "PXC/Hour",
+        pxc_per_hour: "PXC/Hour",
         mining_station: "Mining Station ",
         unclaimed_earnings: "Unclaimed Earnings",
         pending_se: "pending PXC",
@@ -49,7 +49,7 @@ const LANG = {
         wallet: "Wallet",
         your_activity: "Your Activity",
         mining_rate: "Mining Rate",
-        se_per_hour_text: "PXC per hour",
+        pxc_per_hour_text: "PXC per hour",
         last_claim: "Last Claim",
         hours_ago: "hours ago",
         current_level: "Current Level",
@@ -71,7 +71,7 @@ const LANG = {
         // Wallet
         wallet_title: "Wallet",
         available_balances: "Available Balances",
-        se_tokens: "PXC Tokens",
+        pxc_tokens: "PXC Tokens",
         swap: "Swap",
         withdraw: "Withdraw",
         link: "Link",
@@ -104,7 +104,7 @@ const LANG = {
         convert_to: "Convert to:",
         select_currency: "Select currency",
         select_currency_first: "Please select a currency first",
-        se_amount: "PXC Amount:",
+        pxc_amount: "PXC Amount:",
         balance: "Balance",
         you_will_receive: "You will receive:",
         instant_conversion: "Instant conversion • No fees",
@@ -230,7 +230,7 @@ const LANG = {
         require_join: "Verify channel join",
         require_join_desc: "Users must join to complete the task",
         important: "Important",
-        bot_admin_warning: "To verify that users join your channel, you must add @SallyEDogeBot as an administrator of your channel. The bot only needs permission to view members.",
+        bot_admin_warning: "To verify that users join your channel, you must add @ArcadePXCBot as an administrator of your channel. The bot only needs permission to view members.",
         reward_info: "Each user who completes your task will receive",
         publish_task: "Publish Task",
         pkg_desc_starter: "Ideal to start",
@@ -259,7 +259,7 @@ const LANG = {
         terms_1_guarantee: "Objective Guarantee:",
         terms_1_guarantee_desc: "The validity of advertising is not subject to chronological time (hours or days), but to meeting the subscriber/user goal established in the chosen plan.",
         terms_1_finalization: "Task Completion:",
-        terms_1_finalization_desc: "Once the system detects that the paid user target has been reached, the task will be considered finished and automatically removed from Sally-E.",
+        terms_1_finalization_desc: "Once the system detects that the paid user target has been reached, the task will be considered finished and automatically removed from ARCADE PXC.",
         terms_2_title: "Payment Verification and Fraud",
         terms_2_validation: "Manual Validation:",
         terms_2_validation_desc: "All payments must be verified by an administrator.",
@@ -280,7 +280,7 @@ const LANG = {
         terms_5_acceptance_desc: "Continued use of the platform and contracting new plans after a modification implies full acceptance of the new terms and conditions.",
         terms_accept_text: "I have read and accept the",
         terms_accept_link: "Terms and Conditions of Service",
-        terms_accept_text_2: "for task promotion on Sally-E",
+        terms_accept_text_2: "for task promotion on ARCADE PXC",
         terms_error: "You must accept the terms and conditions to continue",
         
         // Explore
@@ -333,7 +333,7 @@ const LANG = {
         
         // VPN
         vpn_blocked: "VPN Detected",
-        vpn_message: "Please disable your VPN to continue using SALLY-E.",
+        vpn_message: "Please disable your VPN to continue using ARCADE PXC.",
         
         // Language
         language: "Language",
@@ -654,7 +654,7 @@ const LANG = {
         
         // Banned page
         banned_title: "Account Suspended",
-        banned_message: "Your access to SALLY-E has been restricted for violating our terms of service.",
+        banned_message: "Your access to ARCADE PXC has been restricted for violating our terms of service.",
         ban_reason_label: "Suspension Reason",
         ban_date_label: "Suspension Date",
         contact_support: "Contact Support",
@@ -675,7 +675,7 @@ const LANG = {
         
         // Channel Required page
         channel_required_title: "Join the Channels!",
-        channel_required_message: "To access SALLY-E, you must join our official channels.",
+        channel_required_message: "To access ARCADE PXC, you must join our official channels.",
         channels: "channels",
         join: "Join",
         joined: "Joined",
@@ -865,7 +865,7 @@ const LANG = {
         // ============================================
         referrals_earn_per_ref: "Earn {amount} per referral",
         referrals_bonus_info: "Bonus: {doge} DOGE + {pts} PTS per validated referral",
-        referrals_share_message: "Join SALLY-E and earn free crypto! 💰",
+        referrals_share_message: "Join ARCADE PXC and earn free crypto! 💰",
         referrals_copy_success: "Referral link copied!",
         referrals_pending_validation: "Pending validation",
         referrals_validated: "Validated",
@@ -874,9 +874,9 @@ const LANG = {
         // ============================================
         // TELEGRAM BOT (translations)
         // ============================================
-        bot_welcome: "Welcome to SALLY-E Bot!",
+        bot_welcome: "Welcome to ARCADE PXC!",
         bot_welcome_desc: "Earn tokens mining, complete tasks and withdraw in USDT or DOGE",
-        bot_open_app: "🚀 Open SALLY-E",
+        bot_open_app: "🚀 Open ARCADE PXC",
         bot_my_referrals: "👥 My Referrals",
         bot_share: "📤 Share",
         bot_official_channel: "📢 Official Channel",
@@ -887,11 +887,11 @@ const LANG = {
         bot_verify_success: "✅ Verification successful!",
         bot_no_referrals: "You don't have any referrals yet.",
         bot_referral_tip: "💡 Share your referral link to invite friends and earn rewards.",
-        bot_share_message: "Join SALLY-E and earn free crypto! 🚀\n\nMine tokens, complete tasks and withdraw in USDT or DOGE.\n\n{link}",
+        bot_share_message: "Join ARCADE PXC and earn free crypto! 🚀\n\nMine tokens, complete tasks and withdraw in USDT or DOGE.\n\n{link}",
         bot_roulette_ready: "🎰 Your PTS Roulette spin is ready!",
         bot_roulette_ready_desc: "You have a free spin available.\nWin between 5-15 PTS and double by watching an ad!",
         bot_spin_now: "🎰 Spin Now",
-        bot_help_title: "ℹ️ SALLY-E Bot Help",
+        bot_help_title: "ℹ️ ARCADE PXC Help",
         bot_how_it_works: "How does it work?",
         bot_step_1: "1️⃣ Open the app with the button",
         bot_step_2: "2️⃣ Mine tokens automatically",
@@ -920,7 +920,7 @@ const LANG = {
         available_to_claim: "Available to claim",
         claim_doge_earnings: "Claim DOGE Earnings",
         daily_rate_info: "Daily rate: 0.5 DOGE/day",
-        se_per_hour_stat: "PXC per Hour",
+        pxc_per_hour_stat: "PXC per Hour",
         mining_level: "Mining Level",
         max_capacity: "Max Capacity",
         active_referrals: "Active Referrals",
@@ -970,8 +970,8 @@ const LANG = {
         // TASK CENTER RULES
         // ============================================
         task_rules_title: "Task Center Regulations",
-        task_rules_subtitle: "SALLY-E",
-        task_rules_intro: "The SALLY-E Task Center is an automated rewards system that allows users to earn PTS and PXC by completing verifiable activities within the platform.",
+        task_rules_subtitle: "ARCADE PXC",
+        task_rules_intro: "The ARCADE PXC Task Center is an automated rewards system that allows users to earn PTS and PXC by completing verifiable activities within the platform.",
         task_rules_acceptance: "Participation in the Task Center implies total and unconditional acceptance of these regulations.",
         task_rules_understood: "Understood",
         
@@ -986,7 +986,7 @@ const LANG = {
         task_rules_2_1_title: "2.1 Minimum Stay",
         task_rules_2_1_text: "Users must remain joined to the channel or group for a minimum period of three (3) continuous days, counted from when the task is marked as completed.",
         task_rules_2_2_title: "2.2 Subsequent Verification",
-        task_rules_2_2_text: "SALLY-E's system performs periodic and subsequent checks to confirm users maintain their membership during the required period, even after receiving the reward.",
+        task_rules_2_2_text: "ARCADE PXC's system performs periodic and subsequent checks to confirm users maintain their membership during the required period, even after receiving the reward.",
         task_rules_2_3_title: "2.3 Non-compliance Due to Early Exit",
         task_rules_2_3_text: "Leaving the channel or group before fulfilling the minimum required period will result in automatic task invalidation, without right to claim.",
         task_rules_2_4_title: "2.4 Reward Withdrawal and Penalty",
@@ -1021,7 +1021,7 @@ const LANG = {
         task_rules_5_conclusion: "Detection of any of these conducts may result in reward withdrawal, penalty application, and definitive account ban, without prior notice.",
         
         task_rules_6_title: "6. Modifications and System Decisions",
-        task_rules_6_1: "SALLY-E reserves the right to modify these regulations at any time.",
+        task_rules_6_1: "ARCADE PXC reserves the right to modify these regulations at any time.",
         task_rules_6_2: "All validations and sanctions are performed automatically.",
         task_rules_6_3: "System decisions are final and not subject to appeal.",
         
@@ -1029,8 +1029,8 @@ const LANG = {
         // WITHDRAWAL RULES
         // ============================================
         withdrawal_rules_title: "Withdrawal Regulations",
-        withdrawal_rules_subtitle: "SALLY-E",
-        withdrawal_rules_intro: "SALLY-E's withdrawal system allows users to request conversion and withdrawal of accumulated rewards, provided the conditions established in these regulations are met.",
+        withdrawal_rules_subtitle: "ARCADE PXC",
+        withdrawal_rules_intro: "ARCADE PXC's withdrawal system allows users to request conversion and withdrawal of accumulated rewards, provided the conditions established in these regulations are met.",
         withdrawal_rules_acceptance: "By requesting a withdrawal, the user expressly accepts all the rules described below.",
         withdrawal_rules_understood: "Understood",
         
@@ -1047,7 +1047,7 @@ const LANG = {
         withdrawal_rules_2_1_1: "Payment method.",
         withdrawal_rules_2_1_2: "Network used.",
         withdrawal_rules_2_1_3: "System conditions.",
-        withdrawal_rules_2_2: "SALLY-E reserves the right to establish:",
+        withdrawal_rules_2_2: "ARCADE PXC reserves the right to establish:",
         withdrawal_rules_2_2_1: "Daily limits.",
         withdrawal_rules_2_2_2: "Weekly or monthly limits.",
         withdrawal_rules_2_2_3: "Limits per user or account.",
@@ -1066,7 +1066,7 @@ const LANG = {
         withdrawal_rules_4_2: "Early abandonment of channels.",
         withdrawal_rules_4_3: "Exploitation of errors or system failures.",
         withdrawal_rules_4_4: "Fraudulent activity.",
-        withdrawal_rules_4_action: "SALLY-E may:",
+        withdrawal_rules_4_action: "ARCADE PXC may:",
         withdrawal_rules_4_action_1: "Withdraw involved rewards.",
         withdrawal_rules_4_action_2: "Apply additional penalties.",
         withdrawal_rules_4_action_3: "Adjust or reset user balance.",
@@ -1084,14 +1084,14 @@ const LANG = {
         withdrawal_rules_6_intro: "The user is fully responsible for correctly entering:",
         withdrawal_rules_6_1: "Wallet address.",
         withdrawal_rules_6_2: "Corresponding network.",
-        withdrawal_rules_6_disclaimer: "SALLY-E is not responsible for:",
+        withdrawal_rules_6_disclaimer: "ARCADE PXC is not responsible for:",
         withdrawal_rules_6_disclaimer_1: "Incorrect addresses.",
         withdrawal_rules_6_disclaimer_2: "Wrong networks.",
         withdrawal_rules_6_disclaimer_3: "Loss of funds due to user error.",
         withdrawal_rules_6_conclusion: "Sent withdrawals cannot be reversed.",
         
         withdrawal_rules_7_title: "7. Withdrawal Suspension",
-        withdrawal_rules_7_intro: "SALLY-E reserves the right to temporarily or permanently suspend withdrawals for a user or the entire system in case of:",
+        withdrawal_rules_7_intro: "ARCADE PXC reserves the right to temporarily or permanently suspend withdrawals for a user or the entire system in case of:",
         withdrawal_rules_7_1: "Maintenance.",
         withdrawal_rules_7_2: "Security updates.",
         withdrawal_rules_7_3: "Detection of abuse or fraud.",
@@ -1107,7 +1107,7 @@ const LANG = {
         withdrawal_rules_9_title: "9. Final Decisions",
         withdrawal_rules_9_1: "All withdrawal requests are subject to validation.",
         withdrawal_rules_9_2: "System decisions are final, irrevocable, and not subject to appeal.",
-        withdrawal_rules_9_3: "SALLY-E reserves the right to modify these conditions at any time.",
+        withdrawal_rules_9_3: "ARCADE PXC reserves the right to modify these conditions at any time.",
         
         // ============================================
         // PTS TASKS PAGE
@@ -1321,7 +1321,7 @@ const LANG = {
         total_balance: "Balance Total",
         level: "Nivel",
         referrals: "Referidos",
-        se_per_hour: "PXC/Hora",
+        pxc_per_hour: "PXC/Hora",
         mining_station: "Estación de Minería ",
         unclaimed_earnings: "Ganancias Sin Reclamar",
         pending_se: "PXC pendientes",
@@ -1334,7 +1334,7 @@ const LANG = {
         wallet: "Billetera",
         your_activity: "Tu Actividad",
         mining_rate: "Tasa de Minería",
-        se_per_hour_text: "PXC por hora",
+        pxc_per_hour_text: "PXC por hora",
         last_claim: "Último Reclamo",
         hours_ago: "horas atrás",
         current_level: "Nivel Actual",
@@ -1356,7 +1356,7 @@ const LANG = {
         // Billetera
         wallet_title: "Billetera",
         available_balances: "Balances Disponibles",
-        se_tokens: "Tokens PXC",
+        pxc_tokens: "Tokens PXC",
         swap: "Cambiar",
         withdraw: "Retirar",
         link: "Vincular",
@@ -1389,7 +1389,7 @@ const LANG = {
         convert_to: "Convertir a:",
         select_currency: "Seleccionar moneda",
         select_currency_first: "Por favor selecciona una moneda primero",
-        se_amount: "Cantidad PXC:",
+        pxc_amount: "Cantidad PXC:",
         balance: "Balance",
         you_will_receive: "Recibirás:",
         instant_conversion: "Conversión instantánea • Sin comisiones",
@@ -1515,7 +1515,7 @@ const LANG = {
         require_join: "Verificar unión al canal",
         require_join_desc: "Los usuarios deben unirse para completar la tarea",
         important: "Importante",
-        bot_admin_warning: "Para verificar que los usuarios se unan a tu canal, debes agregar a @SallyEDogeBot como administrador de tu canal. El bot solo necesita el permiso de ver miembros.",
+        bot_admin_warning: "Para verificar que los usuarios se unan a tu canal, debes agregar a @ArcadePXCBot como administrador de tu canal. El bot solo necesita el permiso de ver miembros.",
         reward_info: "Cada usuario que complete tu tarea recibirá",
         publish_task: "Publicar Tarea",
         pkg_desc_starter: "Ideal para empezar",
@@ -1544,7 +1544,7 @@ const LANG = {
         terms_1_guarantee: "Garantía por Objetivo:",
         terms_1_guarantee_desc: "La vigencia de la publicidad no está sujeta a un tiempo cronológico (horas o días), sino al cumplimiento de la meta de suscriptores/usuarios establecida en el plan elegido.",
         terms_1_finalization: "Finalización de Tarea:",
-        terms_1_finalization_desc: "Una vez que el sistema detecte que se ha alcanzado la cantidad de usuarios pagados, la tarea se considerará finalizada y será eliminada automáticamente de Sally-E.",
+        terms_1_finalization_desc: "Una vez que el sistema detecte que se ha alcanzado la cantidad de usuarios pagados, la tarea se considerará finalizada y será eliminada automáticamente de ARCADE PXC.",
         terms_2_title: "Verificación de Pagos y Fraude",
         terms_2_validation: "Validación Manual:",
         terms_2_validation_desc: "Todo pago debe ser verificado por un administrador.",
@@ -1565,7 +1565,7 @@ const LANG = {
         terms_5_acceptance_desc: "El uso continuo de la plataforma y la contratación de nuevos planes tras una modificación implica la aceptación total de los nuevos términos y condiciones.",
         terms_accept_text: "He leído y acepto los",
         terms_accept_link: "Términos y Condiciones del Servicio",
-        terms_accept_text_2: "de promoción de tareas en Sally-E",
+        terms_accept_text_2: "de promoción de tareas en ARCADE PXC",
         terms_error: "Debes aceptar los términos y condiciones para continuar",
         
         // Explorar
@@ -1618,7 +1618,7 @@ const LANG = {
         
         // VPN
         vpn_blocked: "VPN Detectada",
-        vpn_message: "Por favor desactiva tu VPN para continuar usando SALLY-E.",
+        vpn_message: "Por favor desactiva tu VPN para continuar usando ARCADE PXC.",
         
         // Idioma
         language: "Idioma",
@@ -1939,7 +1939,7 @@ const LANG = {
         
         // Página de baneo
         banned_title: "Cuenta Suspendida",
-        banned_message: "Tu acceso a SALLY-E ha sido restringido por violar nuestros términos de servicio.",
+        banned_message: "Tu acceso a ARCADE PXC ha sido restringido por violar nuestros términos de servicio.",
         ban_reason_label: "Razón de la suspensión",
         ban_date_label: "Fecha de suspensión",
         contact_support: "Contactar Soporte",
@@ -1960,7 +1960,7 @@ const LANG = {
         
         // Página Canal Requerido
         channel_required_title: "¡Únete a los Canales!",
-        channel_required_message: "Para acceder a SALLY-E, debes unirte a nuestros canales oficiales.",
+        channel_required_message: "Para acceder a ARCADE PXC, debes unirte a nuestros canales oficiales.",
         channels: "canales",
         join: "Unirse",
         joined: "Unido",
@@ -2150,7 +2150,7 @@ const LANG = {
         // ============================================
         referrals_earn_per_ref: "Gana {amount} por cada referido",
         referrals_bonus_info: "Bono: {doge} DOGE + {pts} PTS por referido validado",
-        referrals_share_message: "¡Únete a SALLY-E y gana crypto gratis! 💰",
+        referrals_share_message: "¡Únete a ARCADE PXC y gana crypto gratis! 💰",
         referrals_copy_success: "¡Link de referido copiado!",
         referrals_pending_validation: "Pendiente de validación",
         referrals_validated: "Validado",
@@ -2159,9 +2159,9 @@ const LANG = {
         // ============================================
         // BOT TELEGRAM (traducciones)
         // ============================================
-        bot_welcome: "¡Bienvenido a SALLY-E Bot!",
+        bot_welcome: "¡Bienvenido a ARCADE PXC!",
         bot_welcome_desc: "Gana tokens minando, completa tareas y retira en USDT o DOGE",
-        bot_open_app: "🚀 Abrir SALLY-E",
+        bot_open_app: "🚀 Abrir ARCADE PXC",
         bot_my_referrals: "👥 Mis Referidos",
         bot_share: "📤 Compartir",
         bot_official_channel: "📢 Canal Oficial",
@@ -2172,11 +2172,11 @@ const LANG = {
         bot_verify_success: "✅ ¡Verificación exitosa!",
         bot_no_referrals: "Aún no tienes referidos.",
         bot_referral_tip: "💡 Comparte tu link de referido para invitar amigos y ganar recompensas.",
-        bot_share_message: "¡Únete a SALLY-E y gana crypto gratis! 🚀\n\nMina tokens, completa tareas y retira en USDT o DOGE.\n\n{link}",
+        bot_share_message: "¡Únete a ARCADE PXC y gana crypto gratis! 🚀\n\nMina tokens, completa tareas y retira en USDT o DOGE.\n\n{link}",
         bot_roulette_ready: "🎰 ¡Tu giro de la Ruleta PTS está listo!",
         bot_roulette_ready_desc: "Tienes un giro gratuito disponible.\nGana entre 5-15 PTS y ¡duplica viendo un anuncio!",
         bot_spin_now: "🎰 Girar Ahora",
-        bot_help_title: "ℹ️ Ayuda de SALLY-E Bot",
+        bot_help_title: "ℹ️ Ayuda de ARCADE PXC",
         bot_how_it_works: "¿Cómo funciona?",
         bot_step_1: "1️⃣ Abre la aplicación con el botón",
         bot_step_2: "2️⃣ Mina tokens automáticamente",
@@ -2205,7 +2205,7 @@ const LANG = {
         available_to_claim: "Disponible para reclamar",
         claim_doge_earnings: "Reclamar Ganancias DOGE",
         daily_rate_info: "Tasa diaria: 0.5 DOGE/día",
-        se_per_hour_stat: "PXC por Hora",
+        pxc_per_hour_stat: "PXC por Hora",
         mining_level: "Nivel de Minería",
         max_capacity: "Capacidad Máx.",
         active_referrals: "Referidos Activos",
@@ -2255,8 +2255,8 @@ const LANG = {
         // REGLAS DEL CENTRO DE TAREAS
         // ============================================
         task_rules_title: "Reglamento del Centro de Tareas",
-        task_rules_subtitle: "SALLY-E",
-        task_rules_intro: "El Centro de Tareas de SALLY-E es un sistema automatizado de recompensas que permite a los usuarios obtener PTS y PXC al completar actividades verificables dentro de la plataforma.",
+        task_rules_subtitle: "ARCADE PXC",
+        task_rules_intro: "El Centro de Tareas de ARCADE PXC es un sistema automatizado de recompensas que permite a los usuarios obtener PTS y PXC al completar actividades verificables dentro de la plataforma.",
         task_rules_acceptance: "La participación en el Centro de Tareas implica la aceptación total e incondicional del presente reglamento.",
         task_rules_understood: "Entendido",
         
@@ -2271,7 +2271,7 @@ const LANG = {
         task_rules_2_1_title: "2.1 Permanencia mínima",
         task_rules_2_1_text: "El usuario deberá permanecer unido al canal o grupo durante un período mínimo de tres (3) días continuos, contados a partir del momento en que la tarea sea marcada como completada.",
         task_rules_2_2_title: "2.2 Verificación posterior",
-        task_rules_2_2_text: "El sistema de SALLY-E realiza verificaciones periódicas y posteriores para confirmar que el usuario mantiene su membresía durante el período exigido, incluso después de haber recibido la recompensa.",
+        task_rules_2_2_text: "El sistema de ARCADE PXC realiza verificaciones periódicas y posteriores para confirmar que el usuario mantiene su membresía durante el período exigido, incluso después de haber recibido la recompensa.",
         task_rules_2_3_title: "2.3 Incumplimiento por salida anticipada",
         task_rules_2_3_text: "La salida del canal o grupo antes de cumplir el período mínimo establecido dará lugar a la invalidación automática de la tarea, sin derecho a reclamo.",
         task_rules_2_4_title: "2.4 Retiro de recompensa y penalización",
@@ -2306,7 +2306,7 @@ const LANG = {
         task_rules_5_conclusion: "La detección de cualquiera de estas conductas podrá resultar en la retirada de recompensas, aplicación de penalizaciones y bloqueo definitivo de la cuenta, sin previo aviso.",
         
         task_rules_6_title: "6. Modificaciones y Decisiones del Sistema",
-        task_rules_6_1: "SALLY-E se reserva el derecho de modificar este reglamento en cualquier momento.",
+        task_rules_6_1: "ARCADE PXC se reserva el derecho de modificar este reglamento en cualquier momento.",
         task_rules_6_2: "Todas las validaciones y sanciones se realizan de forma automática.",
         task_rules_6_3: "Las decisiones del sistema son definitivas y no están sujetas a apelación.",
         
@@ -2314,8 +2314,8 @@ const LANG = {
         // REGLAS DE RETIROS
         // ============================================
         withdrawal_rules_title: "Reglamento de Retiros",
-        withdrawal_rules_subtitle: "SALLY-E",
-        withdrawal_rules_intro: "El sistema de retiros de SALLY-E permite a los usuarios solicitar la conversión y retiro de sus recompensas acumuladas, siempre que se cumplan las condiciones establecidas en el presente reglamento.",
+        withdrawal_rules_subtitle: "ARCADE PXC",
+        withdrawal_rules_intro: "El sistema de retiros de ARCADE PXC permite a los usuarios solicitar la conversión y retiro de sus recompensas acumuladas, siempre que se cumplan las condiciones establecidas en el presente reglamento.",
         withdrawal_rules_acceptance: "Al solicitar un retiro, el usuario acepta expresamente todas las normas descritas a continuación.",
         withdrawal_rules_understood: "Entendido",
         
@@ -2332,7 +2332,7 @@ const LANG = {
         withdrawal_rules_2_1_1: "El método de pago.",
         withdrawal_rules_2_1_2: "La red utilizada.",
         withdrawal_rules_2_1_3: "Las condiciones del sistema.",
-        withdrawal_rules_2_2: "SALLY-E se reserva el derecho de establecer:",
+        withdrawal_rules_2_2: "ARCADE PXC se reserva el derecho de establecer:",
         withdrawal_rules_2_2_1: "Límites diarios.",
         withdrawal_rules_2_2_2: "Límites semanales o mensuales.",
         withdrawal_rules_2_2_3: "Límites por usuario o por cuenta.",
@@ -2351,7 +2351,7 @@ const LANG = {
         withdrawal_rules_4_2: "Abandono anticipado de canales.",
         withdrawal_rules_4_3: "Aprovechamiento de errores o fallos del sistema.",
         withdrawal_rules_4_4: "Actividad fraudulenta.",
-        withdrawal_rules_4_action: "SALLY-E podrá:",
+        withdrawal_rules_4_action: "ARCADE PXC podrá:",
         withdrawal_rules_4_action_1: "Retirar las recompensas involucradas.",
         withdrawal_rules_4_action_2: "Aplicar penalizaciones adicionales.",
         withdrawal_rules_4_action_3: "Ajustar o reiniciar el balance del usuario.",
@@ -2369,14 +2369,14 @@ const LANG = {
         withdrawal_rules_6_intro: "El usuario es totalmente responsable de ingresar correctamente:",
         withdrawal_rules_6_1: "Dirección de la wallet.",
         withdrawal_rules_6_2: "Red correspondiente.",
-        withdrawal_rules_6_disclaimer: "SALLY-E no se hace responsable por:",
+        withdrawal_rules_6_disclaimer: "ARCADE PXC no se hace responsable por:",
         withdrawal_rules_6_disclaimer_1: "Direcciones incorrectas.",
         withdrawal_rules_6_disclaimer_2: "Redes equivocadas.",
         withdrawal_rules_6_disclaimer_3: "Pérdida de fondos por error del usuario.",
         withdrawal_rules_6_conclusion: "Los retiros enviados no pueden ser revertidos.",
         
         withdrawal_rules_7_title: "7. Suspensión de Retiros",
-        withdrawal_rules_7_intro: "SALLY-E se reserva el derecho de suspender temporal o permanentemente los retiros de un usuario o del sistema completo en caso de:",
+        withdrawal_rules_7_intro: "ARCADE PXC se reserva el derecho de suspender temporal o permanentemente los retiros de un usuario o del sistema completo en caso de:",
         withdrawal_rules_7_1: "Mantenimiento.",
         withdrawal_rules_7_2: "Actualizaciones de seguridad.",
         withdrawal_rules_7_3: "Detección de abuso o fraude.",
@@ -2392,7 +2392,7 @@ const LANG = {
         withdrawal_rules_9_title: "9. Decisiones Finales",
         withdrawal_rules_9_1: "Todas las solicitudes de retiro están sujetas a validación.",
         withdrawal_rules_9_2: "Las decisiones del sistema son finales, irrevocables y no admiten apelación.",
-        withdrawal_rules_9_3: "SALLY-E se reserva el derecho de modificar estas condiciones en cualquier momento.",
+        withdrawal_rules_9_3: "ARCADE PXC se reserva el derecho de modificar estas condiciones en cualquier momento.",
         
         // ============================================
         // PÁGINA DE TAREAS PTS
@@ -2606,7 +2606,7 @@ const LANG = {
         total_balance: "Saldo Total",
         level: "Nível",
         referrals: "Indicações",
-        se_per_hour: "PXC/Hora",
+        pxc_per_hour: "PXC/Hora",
         mining_station: "Estação de Mineração ",
         unclaimed_earnings: "Ganhos Não Resgatados",
         pending_se: "PXC pendentes",
@@ -2619,7 +2619,7 @@ const LANG = {
         wallet: "Carteira",
         your_activity: "Sua Atividade",
         mining_rate: "Taxa de Mineração",
-        se_per_hour_text: "PXC por hora",
+        pxc_per_hour_text: "PXC por hora",
         last_claim: "Último Resgate",
         hours_ago: "horas atrás",
         current_level: "Nível Atual",
@@ -2641,7 +2641,7 @@ const LANG = {
         // Carteira
         wallet_title: "Carteira",
         available_balances: "Saldos Disponíveis",
-        se_tokens: "Tokens PXC",
+        pxc_tokens: "Tokens PXC",
         swap: "Trocar",
         withdraw: "Sacar",
         link: "Vincular",
@@ -2674,7 +2674,7 @@ const LANG = {
         convert_to: "Converter para:",
         select_currency: "Selecionar moeda",
         select_currency_first: "Por favor selecione uma moeda primeiro",
-        se_amount: "Quantidade PXC:",
+        pxc_amount: "Quantidade PXC:",
         balance: "Saldo",
         you_will_receive: "Você receberá:",
         instant_conversion: "Conversão instantânea • Sem taxas",
@@ -2799,7 +2799,7 @@ const LANG = {
         channel_username: "Nome de usuário do Canal",
         require_join: "Verificar entrada no canal",
         require_join_desc: "Os usuários devem entrar para completar a tarefa",
-        bot_admin_warning: "Para verificar se os usuários entram no seu canal, você deve adicionar @SallyEDogeBot como administrador do seu canal. O bot só precisa de permissão para ver membros.",
+        bot_admin_warning: "Para verificar se os usuários entram no seu canal, você deve adicionar @ArcadePXCBot como administrador do seu canal. O bot só precisa de permissão para ver membros.",
         reward_info: "Cada usuário que completar sua tarefa receberá",
         publish_task: "Publicar Tarefa",
         pkg_desc_starter: "Ideal para começar",
@@ -2828,7 +2828,7 @@ const LANG = {
         terms_1_guarantee: "Garantia por Objetivo:",
         terms_1_guarantee_desc: "A validade da publicidade não está sujeita a tempo cronológico (horas ou dias), mas ao cumprimento da meta de assinantes/usuários estabelecida no plano escolhido.",
         terms_1_finalization: "Finalização da Tarefa:",
-        terms_1_finalization_desc: "Uma vez que o sistema detecte que a quantidade de usuários pagos foi alcançada, a tarefa será considerada concluída e removida automaticamente do Sally-E.",
+        terms_1_finalization_desc: "Uma vez que o sistema detecte que a quantidade de usuários pagos foi alcançada, a tarefa será considerada concluída e removida automaticamente do ARCADE PXC.",
         terms_2_title: "Verificação de Pagamentos e Fraude",
         terms_2_validation: "Validação Manual:",
         terms_2_validation_desc: "Todos os pagamentos devem ser verificados por um administrador.",
@@ -2849,7 +2849,7 @@ const LANG = {
         terms_5_acceptance_desc: "O uso contínuo da plataforma e a contratação de novos planos após uma modificação implica aceitação total dos novos termos e condições.",
         terms_accept_text: "Li e aceito os",
         terms_accept_link: "Termos e Condições do Serviço",
-        terms_accept_text_2: "de promoção de tarefas no Sally-E",
+        terms_accept_text_2: "de promoção de tarefas no ARCADE PXC",
         terms_error: "Você deve aceitar os termos e condições para continuar",
         
         // Explorar
@@ -2902,7 +2902,7 @@ const LANG = {
         
         // VPN
         vpn_blocked: "VPN Detectada",
-        vpn_message: "Por favor, desative sua VPN para continuar usando SALLY-E.",
+        vpn_message: "Por favor, desative sua VPN para continuar usando ARCADE PXC.",
         
         // Idioma
         language: "Idioma",
@@ -3222,7 +3222,7 @@ const LANG = {
         
         // Página de banimento
         banned_title: "Conta Suspensa",
-        banned_message: "Seu acesso ao SALLY-E foi restrito por violar nossos termos de serviço.",
+        banned_message: "Seu acesso ao ARCADE PXC foi restrito por violar nossos termos de serviço.",
         ban_reason_label: "Motivo da suspensão",
         ban_date_label: "Data da suspensão",
         contact_support: "Contatar Suporte",
@@ -3243,7 +3243,7 @@ const LANG = {
         
         // Página Canal Necessário
         channel_required_title: "Junte-se aos Canais!",
-        channel_required_message: "Para acessar o SALLY-E, você deve se juntar aos nossos canais oficiais.",
+        channel_required_message: "Para acessar o ARCADE PXC, você deve se juntar aos nossos canais oficiais.",
         channels: "canais",
         join: "Entrar",
         joined: "Entrou",
@@ -3427,7 +3427,7 @@ const LANG = {
         referrals_copy_success: "Link de indicação copiado!",
         
         // BOT
-        bot_welcome: "Bem-vindo ao SALLY-E Bot!",
+        bot_welcome: "Bem-vindo ao ARCADE PXC!",
         bot_roulette_ready: "🎰 Seu giro da Roleta PTS está pronto!",
         bot_spin_now: "🎰 Girar Agora",
         
@@ -3452,7 +3452,7 @@ const LANG = {
         available_to_claim: "Disponível para reivindicar",
         claim_doge_earnings: "Reivindicar Ganhos DOGE",
         daily_rate_info: "Taxa diária: 0.5 DOGE/dia",
-        se_per_hour_stat: "PXC por Hora",
+        pxc_per_hour_stat: "PXC por Hora",
         mining_level: "Nível de Mineração",
         max_capacity: "Capacidade Máx.",
         active_referrals: "Indicações Ativas",
@@ -3502,8 +3502,8 @@ const LANG = {
         // REGRAS DO CENTRO DE TAREFAS
         // ============================================
         task_rules_title: "Regulamento do Centro de Tarefas",
-        task_rules_subtitle: "SALLY-E",
-        task_rules_intro: "O Centro de Tarefas do SALLY-E é um sistema automatizado de recompensas que permite aos usuários ganhar PTS e PXC ao completar atividades verificáveis dentro da plataforma.",
+        task_rules_subtitle: "ARCADE PXC",
+        task_rules_intro: "O Centro de Tarefas do ARCADE PXC é um sistema automatizado de recompensas que permite aos usuários ganhar PTS e PXC ao completar atividades verificáveis dentro da plataforma.",
         task_rules_acceptance: "A participação no Centro de Tarefas implica a aceitação total e incondicional deste regulamento.",
         task_rules_understood: "Entendido",
         
@@ -3518,7 +3518,7 @@ const LANG = {
         task_rules_2_1_title: "2.1 Permanência mínima",
         task_rules_2_1_text: "O usuário deve permanecer no canal ou grupo por um período mínimo de três (3) dias contínuos, contados a partir do momento em que a tarefa for marcada como concluída.",
         task_rules_2_2_title: "2.2 Verificação posterior",
-        task_rules_2_2_text: "O sistema SALLY-E realiza verificações periódicas e posteriores para confirmar que o usuário mantém sua associação durante o período exigido, mesmo depois de ter recebido a recompensa.",
+        task_rules_2_2_text: "O sistema ARCADE PXC realiza verificações periódicas e posteriores para confirmar que o usuário mantém sua associação durante o período exigido, mesmo depois de ter recebido a recompensa.",
         task_rules_2_3_title: "2.3 Descumprimento por saída antecipada",
         task_rules_2_3_text: "A saída do canal ou grupo antes de cumprir o período mínimo estabelecido resultará na invalidação automática da tarefa, sem direito a reclamação.",
         task_rules_2_4_title: "2.4 Retirada de recompensa e penalização",
@@ -3553,7 +3553,7 @@ const LANG = {
         task_rules_5_conclusion: "A detecção de qualquer uma destas condutas pode resultar na retirada de recompensas, aplicação de penalizações e bloqueio definitivo da conta, sem aviso prévio.",
         
         task_rules_6_title: "6. Modificações e Decisões do Sistema",
-        task_rules_6_1: "SALLY-E se reserva o direito de modificar este regulamento a qualquer momento.",
+        task_rules_6_1: "ARCADE PXC se reserva o direito de modificar este regulamento a qualquer momento.",
         task_rules_6_2: "Todas as validações e sanções são realizadas de forma automática.",
         task_rules_6_3: "As decisões do sistema são definitivas e não estão sujeitas a apelação.",
         
@@ -3561,8 +3561,8 @@ const LANG = {
         // REGRAS DE SAQUES
         // ============================================
         withdrawal_rules_title: "Regulamento de Saques",
-        withdrawal_rules_subtitle: "SALLY-E",
-        withdrawal_rules_intro: "O sistema de saques do SALLY-E permite aos usuários solicitar a conversão e saque de suas recompensas acumuladas, desde que sejam cumpridas as condições estabelecidas neste regulamento.",
+        withdrawal_rules_subtitle: "ARCADE PXC",
+        withdrawal_rules_intro: "O sistema de saques do ARCADE PXC permite aos usuários solicitar a conversão e saque de suas recompensas acumuladas, desde que sejam cumpridas as condições estabelecidas neste regulamento.",
         withdrawal_rules_acceptance: "Ao solicitar um saque, o usuário aceita expressamente todas as normas descritas abaixo.",
         withdrawal_rules_understood: "Entendido",
         
@@ -3579,7 +3579,7 @@ const LANG = {
         withdrawal_rules_2_1_1: "O método de pagamento.",
         withdrawal_rules_2_1_2: "A rede utilizada.",
         withdrawal_rules_2_1_3: "As condições do sistema.",
-        withdrawal_rules_2_2: "SALLY-E se reserva o direito de estabelecer:",
+        withdrawal_rules_2_2: "ARCADE PXC se reserva o direito de estabelecer:",
         withdrawal_rules_2_2_1: "Limites diários.",
         withdrawal_rules_2_2_2: "Limites semanais ou mensais.",
         withdrawal_rules_2_2_3: "Limites por usuário ou por conta.",
@@ -3598,7 +3598,7 @@ const LANG = {
         withdrawal_rules_4_2: "Abandono antecipado de canais.",
         withdrawal_rules_4_3: "Aproveitamento de erros ou falhas do sistema.",
         withdrawal_rules_4_4: "Atividade fraudulenta.",
-        withdrawal_rules_4_action: "SALLY-E poderá:",
+        withdrawal_rules_4_action: "ARCADE PXC poderá:",
         withdrawal_rules_4_action_1: "Retirar as recompensas envolvidas.",
         withdrawal_rules_4_action_2: "Aplicar penalizações adicionais.",
         withdrawal_rules_4_action_3: "Ajustar ou reiniciar o saldo do usuário.",
@@ -3616,14 +3616,14 @@ const LANG = {
         withdrawal_rules_6_intro: "O usuário é totalmente responsável por inserir corretamente:",
         withdrawal_rules_6_1: "Endereço da carteira.",
         withdrawal_rules_6_2: "Rede correspondente.",
-        withdrawal_rules_6_disclaimer: "SALLY-E não se responsabiliza por:",
+        withdrawal_rules_6_disclaimer: "ARCADE PXC não se responsabiliza por:",
         withdrawal_rules_6_disclaimer_1: "Endereços incorretos.",
         withdrawal_rules_6_disclaimer_2: "Redes equivocadas.",
         withdrawal_rules_6_disclaimer_3: "Perda de fundos por erro do usuário.",
         withdrawal_rules_6_conclusion: "Os saques enviados não podem ser revertidos.",
         
         withdrawal_rules_7_title: "7. Suspensão de Saques",
-        withdrawal_rules_7_intro: "SALLY-E se reserva o direito de suspender temporária ou permanentemente os saques de um usuário ou do sistema completo em caso de:",
+        withdrawal_rules_7_intro: "ARCADE PXC se reserva o direito de suspender temporária ou permanentemente os saques de um usuário ou do sistema completo em caso de:",
         withdrawal_rules_7_1: "Manutenção.",
         withdrawal_rules_7_2: "Atualizações de segurança.",
         withdrawal_rules_7_3: "Detecção de abuso ou fraude.",
@@ -3639,7 +3639,7 @@ const LANG = {
         withdrawal_rules_9_title: "9. Decisões Finais",
         withdrawal_rules_9_1: "Todas as solicitações de saque estão sujeitas a validação.",
         withdrawal_rules_9_2: "As decisões do sistema são finais, irrevogáveis e não admitem apelação.",
-        withdrawal_rules_9_3: "SALLY-E se reserva o direito de modificar estas condições a qualquer momento.",
+        withdrawal_rules_9_3: "ARCADE PXC se reserva o direito de modificar estas condições a qualquer momento.",
         
         // ============================================
         // PÁGINA DE TAREFAS PTS
@@ -3853,7 +3853,7 @@ const LANG = {
         total_balance: "Общий Баланс",
         level: "Уровень",
         referrals: "Рефералы",
-        se_per_hour: "PXC/Час",
+        pxc_per_hour: "PXC/Час",
         mining_station: "Станция Майнинга ",
         unclaimed_earnings: "Невостребованные Доходы",
         pending_se: "ожидающих PXC",
@@ -3866,7 +3866,7 @@ const LANG = {
         wallet: "Кошелёк",
         your_activity: "Ваша Активность",
         mining_rate: "Скорость Майнинга",
-        se_per_hour_text: "PXC в час",
+        pxc_per_hour_text: "PXC в час",
         last_claim: "Последнее Получение",
         hours_ago: "часов назад",
         current_level: "Текущий Уровень",
@@ -3888,7 +3888,7 @@ const LANG = {
         // Кошелёк
         wallet_title: "Кошелёк",
         available_balances: "Доступные Балансы",
-        se_tokens: "Токены PXC",
+        pxc_tokens: "Токены PXC",
         swap: "Обмен",
         withdraw: "Вывод",
         link: "Привязать",
@@ -3921,7 +3921,7 @@ const LANG = {
         convert_to: "Конвертировать в:",
         select_currency: "Выберите валюту",
         select_currency_first: "Пожалуйста, сначала выберите валюту",
-        se_amount: "Сумма PXC:",
+        pxc_amount: "Сумма PXC:",
         balance: "Баланс",
         you_will_receive: "Вы получите:",
         instant_conversion: "Мгновенная конвертация • Без комиссий",
@@ -4046,7 +4046,7 @@ const LANG = {
         channel_username: "Имя пользователя канала",
         require_join: "Проверить вступление в канал",
         require_join_desc: "Пользователи должны вступить, чтобы выполнить задание",
-        bot_admin_warning: "Чтобы проверить, вступают ли пользователи в ваш канал, вы должны добавить @SallyEDogeBot в качестве администратора канала. Боту нужно только разрешение на просмотр участников.",
+        bot_admin_warning: "Чтобы проверить, вступают ли пользователи в ваш канал, вы должны добавить @ArcadePXCBot в качестве администратора канала. Боту нужно только разрешение на просмотр участников.",
         reward_info: "Каждый пользователь, выполнивший ваше задание, получит",
         publish_task: "Опубликовать Задание",
         tasks_created: "Создано Заданий",
@@ -4062,7 +4062,7 @@ const LANG = {
         terms_1_guarantee: "Гарантия по Цели:",
         terms_1_guarantee_desc: "Срок действия рекламы не привязан к хронологическому времени (часам или дням), а к достижению цели по подписчикам/пользователям, установленной в выбранном плане.",
         terms_1_finalization: "Завершение Задания:",
-        terms_1_finalization_desc: "Как только система обнаружит, что достигнуто оплаченное количество пользователей, задание будет считаться завершённым и автоматически удалено из Sally-E.",
+        terms_1_finalization_desc: "Как только система обнаружит, что достигнуто оплаченное количество пользователей, задание будет считаться завершённым и автоматически удалено из ARCADE PXC.",
         terms_2_title: "Проверка Платежей и Мошенничество",
         terms_2_validation: "Ручная Проверка:",
         terms_2_validation_desc: "Все платежи должны быть проверены администратором.",
@@ -4083,7 +4083,7 @@ const LANG = {
         terms_5_acceptance_desc: "Продолжение использования платформы и заключение новых планов после изменения подразумевает полное принятие новых условий и положений.",
         terms_accept_text: "Я прочитал и принимаю",
         terms_accept_link: "Условия и Положения Сервиса",
-        terms_accept_text_2: "по продвижению заданий в Sally-E",
+        terms_accept_text_2: "по продвижению заданий в ARCADE PXC",
         terms_error: "Вы должны принять условия и положения, чтобы продолжить",
         
         // Обзор
@@ -4136,7 +4136,7 @@ const LANG = {
         
         // VPN
         vpn_blocked: "Обнаружен VPN",
-        vpn_message: "Пожалуйста, отключите VPN, чтобы продолжить использование SALLY-E.",
+        vpn_message: "Пожалуйста, отключите VPN, чтобы продолжить использование ARCADE PXC.",
         
         // Язык
         language: "Язык",
@@ -4456,7 +4456,7 @@ const LANG = {
         
         // Страница бана
         banned_title: "Аккаунт Заблокирован",
-        banned_message: "Ваш доступ к SALLY-E ограничен за нарушение условий использования.",
+        banned_message: "Ваш доступ к ARCADE PXC ограничен за нарушение условий использования.",
         ban_reason_label: "Причина блокировки",
         ban_date_label: "Дата блокировки",
         contact_support: "Связаться с Поддержкой",
@@ -4477,7 +4477,7 @@ const LANG = {
         
         // Страница Требуется Канал
         channel_required_title: "Присоединитесь к Каналам!",
-        channel_required_message: "Для доступа к SALLY-E необходимо присоединиться к официальным каналам.",
+        channel_required_message: "Для доступа к ARCADE PXC необходимо присоединиться к официальным каналам.",
         channels: "каналов",
         join: "Вступить",
         joined: "Вступил",
@@ -4645,7 +4645,7 @@ const LANG = {
         referrals_copy_success: "Реферальная ссылка скопирована!",
         
         // БОТ
-        bot_welcome: "Добро пожаловать в SALLY-E Bot!",
+        bot_welcome: "Добро пожаловать в ARCADE PXC!",
         bot_roulette_ready: "🎰 Ваш спин Рулетки PTS готов!",
         bot_spin_now: "🎰 Крутить сейчас",
         
@@ -4670,7 +4670,7 @@ const LANG = {
         available_to_claim: "Доступно к получению",
         claim_doge_earnings: "Получить DOGE",
         daily_rate_info: "Дневная ставка: 0.5 DOGE/день",
-        se_per_hour_stat: "PXC в час",
+        pxc_per_hour_stat: "PXC в час",
         mining_level: "Уровень майнинга",
         max_capacity: "Макс. ёмкость",
         active_referrals: "Активные рефералы",
@@ -4720,8 +4720,8 @@ const LANG = {
         // ПРАВИЛА ЦЕНТРА ЗАДАЧ
         // ============================================
         task_rules_title: "Правила Центра Задач",
-        task_rules_subtitle: "SALLY-E",
-        task_rules_intro: "Центр задач SALLY-E — это автоматизированная система вознаграждений, которая позволяет пользователям зарабатывать PTS и PXC, выполняя проверяемые действия на платформе.",
+        task_rules_subtitle: "ARCADE PXC",
+        task_rules_intro: "Центр задач ARCADE PXC — это автоматизированная система вознаграждений, которая позволяет пользователям зарабатывать PTS и PXC, выполняя проверяемые действия на платформе.",
         task_rules_acceptance: "Участие в Центре задач подразумевает полное и безоговорочное принятие настоящих правил.",
         task_rules_understood: "Понятно",
         
@@ -4736,7 +4736,7 @@ const LANG = {
         task_rules_2_1_title: "2.1 Минимальное пребывание",
         task_rules_2_1_text: "Пользователь должен оставаться в канале или группе в течение минимум трех (3) непрерывных дней, считая с момента, когда задача отмечена как выполненная.",
         task_rules_2_2_title: "2.2 Последующая проверка",
-        task_rules_2_2_text: "Система SALLY-E проводит периодические и последующие проверки для подтверждения, что пользователь сохраняет членство в течение требуемого периода, даже после получения вознаграждения.",
+        task_rules_2_2_text: "Система ARCADE PXC проводит периодические и последующие проверки для подтверждения, что пользователь сохраняет членство в течение требуемого периода, даже после получения вознаграждения.",
         task_rules_2_3_title: "2.3 Нарушение из-за преждевременного выхода",
         task_rules_2_3_text: "Выход из канала или группы до истечения минимального установленного периода приведет к автоматической аннулированию задачи без права на претензии.",
         task_rules_2_4_title: "2.4 Изъятие вознаграждения и штраф",
@@ -4771,7 +4771,7 @@ const LANG = {
         task_rules_5_conclusion: "Обнаружение любого из этих действий может привести к изъятию вознаграждений, применению штрафов и окончательной блокировке аккаунта без предварительного уведомления.",
         
         task_rules_6_title: "6. Изменения и решения системы",
-        task_rules_6_1: "SALLY-E оставляет за собой право изменять эти правила в любое время.",
+        task_rules_6_1: "ARCADE PXC оставляет за собой право изменять эти правила в любое время.",
         task_rules_6_2: "Все проверки и санкции выполняются автоматически.",
         task_rules_6_3: "Решения системы являются окончательными и не подлежат обжалованию.",
         
@@ -4779,8 +4779,8 @@ const LANG = {
         // ПРАВИЛА ВЫВОДА СРЕДСТВ
         // ============================================
         withdrawal_rules_title: "Правила вывода средств",
-        withdrawal_rules_subtitle: "SALLY-E",
-        withdrawal_rules_intro: "Система вывода средств SALLY-E позволяет пользователям запрашивать конверсию и вывод накопленных вознаграждений при условии соблюдения условий, установленных в настоящих правилах.",
+        withdrawal_rules_subtitle: "ARCADE PXC",
+        withdrawal_rules_intro: "Система вывода средств ARCADE PXC позволяет пользователям запрашивать конверсию и вывод накопленных вознаграждений при условии соблюдения условий, установленных в настоящих правилах.",
         withdrawal_rules_acceptance: "Запрашивая вывод средств, пользователь явно принимает все правила, описанные ниже.",
         withdrawal_rules_understood: "Понятно",
         
@@ -4797,7 +4797,7 @@ const LANG = {
         withdrawal_rules_2_1_1: "Способа оплаты.",
         withdrawal_rules_2_1_2: "Используемой сети.",
         withdrawal_rules_2_1_3: "Условий системы.",
-        withdrawal_rules_2_2: "SALLY-E оставляет за собой право устанавливать:",
+        withdrawal_rules_2_2: "ARCADE PXC оставляет за собой право устанавливать:",
         withdrawal_rules_2_2_1: "Дневные лимиты.",
         withdrawal_rules_2_2_2: "Недельные или месячные лимиты.",
         withdrawal_rules_2_2_3: "Лимиты на пользователя или на аккаунт.",
@@ -4816,7 +4816,7 @@ const LANG = {
         withdrawal_rules_4_2: "Преждевременного выхода из каналов.",
         withdrawal_rules_4_3: "Использования ошибок или сбоев системы.",
         withdrawal_rules_4_4: "Мошеннической активности.",
-        withdrawal_rules_4_action: "SALLY-E может:",
+        withdrawal_rules_4_action: "ARCADE PXC может:",
         withdrawal_rules_4_action_1: "Изъять связанные вознаграждения.",
         withdrawal_rules_4_action_2: "Применить дополнительные штрафы.",
         withdrawal_rules_4_action_3: "Скорректировать или сбросить баланс пользователя.",
@@ -4834,14 +4834,14 @@ const LANG = {
         withdrawal_rules_6_intro: "Пользователь полностью несет ответственность за правильный ввод:",
         withdrawal_rules_6_1: "Адреса кошелька.",
         withdrawal_rules_6_2: "Соответствующей сети.",
-        withdrawal_rules_6_disclaimer: "SALLY-E не несет ответственности за:",
+        withdrawal_rules_6_disclaimer: "ARCADE PXC не несет ответственности за:",
         withdrawal_rules_6_disclaimer_1: "Неправильные адреса.",
         withdrawal_rules_6_disclaimer_2: "Неправильные сети.",
         withdrawal_rules_6_disclaimer_3: "Потерю средств из-за ошибки пользователя.",
         withdrawal_rules_6_conclusion: "Отправленные выводы не могут быть отменены.",
         
         withdrawal_rules_7_title: "7. Приостановка выводов",
-        withdrawal_rules_7_intro: "SALLY-E оставляет за собой право временно или навсегда приостановить выводы пользователя или всей системы в случае:",
+        withdrawal_rules_7_intro: "ARCADE PXC оставляет за собой право временно или навсегда приостановить выводы пользователя или всей системы в случае:",
         withdrawal_rules_7_1: "Обслуживания.",
         withdrawal_rules_7_2: "Обновлений безопасности.",
         withdrawal_rules_7_3: "Обнаружения злоупотребления или мошенничества.",
@@ -4857,7 +4857,7 @@ const LANG = {
         withdrawal_rules_9_title: "9. Окончательные решения",
         withdrawal_rules_9_1: "Все запросы на вывод подлежат проверке.",
         withdrawal_rules_9_2: "Решения системы являются окончательными, безотзывными и не подлежат обжалованию.",
-        withdrawal_rules_9_3: "SALLY-E оставляет за собой право изменять эти условия в любое время.",
+        withdrawal_rules_9_3: "ARCADE PXC оставляет за собой право изменять эти условия в любое время.",
         
         // ============================================
         // СТРАНИЦА ЗАДАЧ PTS
@@ -5071,7 +5071,7 @@ const LANG = {
         total_balance: "الرصيد الإجمالي",
         level: "المستوى",
         referrals: "الإحالات",
-        se_per_hour: "PXC/ساعة",
+        pxc_per_hour: "PXC/ساعة",
         mining_station: "محطة التعدين ",
         unclaimed_earnings: "الأرباح غير المطالب بها",
         pending_se: "PXC معلقة",
@@ -5084,7 +5084,7 @@ const LANG = {
         wallet: "المحفظة",
         your_activity: "نشاطك",
         mining_rate: "معدل التعدين",
-        se_per_hour_text: "PXC في الساعة",
+        pxc_per_hour_text: "PXC في الساعة",
         last_claim: "آخر استلام",
         hours_ago: "ساعات مضت",
         current_level: "المستوى الحالي",
@@ -5106,7 +5106,7 @@ const LANG = {
         // المحفظة
         wallet_title: "المحفظة",
         available_balances: "الأرصدة المتاحة",
-        se_tokens: "رموز PXC",
+        pxc_tokens: "رموز PXC",
         swap: "تبديل",
         withdraw: "سحب",
         link: "ربط",
@@ -5139,7 +5139,7 @@ const LANG = {
         convert_to: "تحويل إلى:",
         select_currency: "اختر العملة",
         select_currency_first: "يرجى اختيار عملة أولاً",
-        se_amount: "مبلغ PXC:",
+        pxc_amount: "مبلغ PXC:",
         balance: "الرصيد",
         you_will_receive: "ستحصل على:",
         instant_conversion: "تحويل فوري • بدون رسوم",
@@ -5264,7 +5264,7 @@ const LANG = {
         channel_username: "اسم مستخدم القناة",
         require_join: "التحقق من الانضمام للقناة",
         require_join_desc: "يجب على المستخدمين الانضمام لإكمال المهمة",
-        bot_admin_warning: "للتحقق من انضمام المستخدمين لقناتك، يجب إضافة @SallyEDogeBot كمسؤول في قناتك. يحتاج البوت فقط إلى صلاحية عرض الأعضاء.",
+        bot_admin_warning: "للتحقق من انضمام المستخدمين لقناتك، يجب إضافة @ArcadePXCBot كمسؤول في قناتك. يحتاج البوت فقط إلى صلاحية عرض الأعضاء.",
         reward_info: "سيحصل كل مستخدم يكمل مهمتك على",
         publish_task: "نشر المهمة",
         tasks_created: "المهام المنشأة",
@@ -5280,7 +5280,7 @@ const LANG = {
         terms_1_guarantee: "ضمان الهدف:",
         terms_1_guarantee_desc: "صلاحية الإعلان ليست مرتبطة بالوقت الزمني (ساعات أو أيام)، بل بتحقيق هدف المشتركين/المستخدمين المحدد في الباقة المختارة.",
         terms_1_finalization: "إنهاء المهمة:",
-        terms_1_finalization_desc: "بمجرد اكتشاف النظام أنه تم الوصول إلى العدد المدفوع من المستخدمين، ستعتبر المهمة منتهية وستُزال تلقائياً من Sally-E.",
+        terms_1_finalization_desc: "بمجرد اكتشاف النظام أنه تم الوصول إلى العدد المدفوع من المستخدمين، ستعتبر المهمة منتهية وستُزال تلقائياً من ARCADE PXC.",
         terms_2_title: "التحقق من الدفع والاحتيال",
         terms_2_validation: "التحقق اليدوي:",
         terms_2_validation_desc: "يجب التحقق من جميع المدفوعات من قبل المسؤول.",
@@ -5301,7 +5301,7 @@ const LANG = {
         terms_5_acceptance_desc: "الاستمرار في استخدام المنصة والتعاقد على خطط جديدة بعد التعديل يعني القبول الكامل للشروط والأحكام الجديدة.",
         terms_accept_text: "لقد قرأت وأقبل",
         terms_accept_link: "شروط وأحكام الخدمة",
-        terms_accept_text_2: "لترويج المهام في Sally-E",
+        terms_accept_text_2: "لترويج المهام في ARCADE PXC",
         terms_error: "يجب قبول الشروط والأحكام للمتابعة",
         
         // استكشاف
@@ -5354,7 +5354,7 @@ const LANG = {
         
         // VPN
         vpn_blocked: "تم اكتشاف VPN",
-        vpn_message: "يرجى تعطيل VPN للاستمرار في استخدام SALLY-E.",
+        vpn_message: "يرجى تعطيل VPN للاستمرار في استخدام ARCADE PXC.",
         
         // اللغة
         language: "اللغة",
@@ -5674,7 +5674,7 @@ const LANG = {
         
         // صفحة الحظر
         banned_title: "الحساب معلق",
-        banned_message: "تم تقييد وصولك إلى SALLY-E بسبب انتهاك شروط الخدمة.",
+        banned_message: "تم تقييد وصولك إلى ARCADE PXC بسبب انتهاك شروط الخدمة.",
         ban_reason_label: "سبب التعليق",
         ban_date_label: "تاريخ التعليق",
         contact_support: "تواصل مع الدعم",
@@ -5695,7 +5695,7 @@ const LANG = {
         
         // صفحة القناة مطلوبة
         channel_required_title: "انضم للقنوات!",
-        channel_required_message: "للوصول إلى SALLY-E، يجب الانضمام لقنواتنا الرسمية.",
+        channel_required_message: "للوصول إلى ARCADE PXC، يجب الانضمام لقنواتنا الرسمية.",
         channels: "قنوات",
         join: "انضم",
         joined: "انضممت",
@@ -5863,7 +5863,7 @@ const LANG = {
         referrals_copy_success: "تم نسخ رابط الإحالة!",
         
         // البوت
-        bot_welcome: "مرحباً بك في SALLY-E Bot!",
+        bot_welcome: "مرحباً بك في ARCADE PXC!",
         bot_roulette_ready: "🎰 دورة روليت PTS جاهزة!",
         bot_spin_now: "🎰 أدر الآن",
         
@@ -5888,7 +5888,7 @@ const LANG = {
         available_to_claim: "متاح للمطالبة",
         claim_doge_earnings: "المطالبة بأرباح DOGE",
         daily_rate_info: "المعدل اليومي: 0.5 DOGE/يوم",
-        se_per_hour_stat: "PXC في الساعة",
+        pxc_per_hour_stat: "PXC في الساعة",
         mining_level: "مستوى التعدين",
         max_capacity: "السعة القصوى",
         active_referrals: "الإحالات النشطة",
@@ -5938,8 +5938,8 @@ const LANG = {
         // قواعد مركز المهام
         // ============================================
         task_rules_title: "لوائح مركز المهام",
-        task_rules_subtitle: "SALLY-E",
-        task_rules_intro: "مركز مهام SALLY-E هو نظام مكافآت آلي يسمح للمستخدمين بكسب PTS و PXC من خلال إكمال الأنشطة القابلة للتحقق داخل المنصة.",
+        task_rules_subtitle: "ARCADE PXC",
+        task_rules_intro: "مركز مهام ARCADE PXC هو نظام مكافآت آلي يسمح للمستخدمين بكسب PTS و PXC من خلال إكمال الأنشطة القابلة للتحقق داخل المنصة.",
         task_rules_acceptance: "المشاركة في مركز المهام تعني القبول الكامل وغير المشروط لهذه اللوائح.",
         task_rules_understood: "مفهوم",
         
@@ -5954,7 +5954,7 @@ const LANG = {
         task_rules_2_1_title: "2.1 الحد الأدنى للإقامة",
         task_rules_2_1_text: "يجب على المستخدم البقاء في القناة أو المجموعة لمدة لا تقل عن ثلاثة (3) أيام متواصلة، تحسب من اللحظة التي يتم فيها تمييز المهمة على أنها مكتملة.",
         task_rules_2_2_title: "2.2 التحقق اللاحق",
-        task_rules_2_2_text: "يقوم نظام SALLY-E بإجراء فحوصات دورية ولاحقة للتأكد من أن المستخدم يحافظ على عضويته خلال الفترة المطلوبة، حتى بعد تلقي المكافأة.",
+        task_rules_2_2_text: "يقوم نظام ARCADE PXC بإجراء فحوصات دورية ولاحقة للتأكد من أن المستخدم يحافظ على عضويته خلال الفترة المطلوبة، حتى بعد تلقي المكافأة.",
         task_rules_2_3_title: "2.3 عدم الامتثال بسبب الخروج المبكر",
         task_rules_2_3_text: "ترك القناة أو المجموعة قبل استيفاء الحد الأدنى للفترة المحددة سيؤدي إلى إلغاء المهمة تلقائياً، دون حق في المطالبة.",
         task_rules_2_4_title: "2.4 سحب المكافأة والعقوبة",
@@ -5989,7 +5989,7 @@ const LANG = {
         task_rules_5_conclusion: "قد يؤدي اكتشاف أي من هذه السلوكيات إلى سحب المكافآت وتطبيق العقوبات والحظر النهائي للحساب، دون سابق إنذار.",
         
         task_rules_6_title: "6. التعديلات وقرارات النظام",
-        task_rules_6_1: "يحتفظ SALLY-E بالحق في تعديل هذه اللوائح في أي وقت.",
+        task_rules_6_1: "يحتفظ ARCADE PXC بالحق في تعديل هذه اللوائح في أي وقت.",
         task_rules_6_2: "يتم إجراء جميع عمليات التحقق والعقوبات تلقائياً.",
         task_rules_6_3: "قرارات النظام نهائية وغير قابلة للاستئناف.",
         
@@ -5997,8 +5997,8 @@ const LANG = {
         // قواعد السحب
         // ============================================
         withdrawal_rules_title: "لوائح السحب",
-        withdrawal_rules_subtitle: "SALLY-E",
-        withdrawal_rules_intro: "يسمح نظام السحب في SALLY-E للمستخدمين بطلب تحويل وسحب المكافآت المتراكمة، بشرط استيفاء الشروط المحددة في هذه اللوائح.",
+        withdrawal_rules_subtitle: "ARCADE PXC",
+        withdrawal_rules_intro: "يسمح نظام السحب في ARCADE PXC للمستخدمين بطلب تحويل وسحب المكافآت المتراكمة، بشرط استيفاء الشروط المحددة في هذه اللوائح.",
         withdrawal_rules_acceptance: "عند طلب السحب، يقبل المستخدم صراحة جميع القواعد الموضحة أدناه.",
         withdrawal_rules_understood: "مفهوم",
         
@@ -6015,7 +6015,7 @@ const LANG = {
         withdrawal_rules_2_1_1: "طريقة الدفع.",
         withdrawal_rules_2_1_2: "الشبكة المستخدمة.",
         withdrawal_rules_2_1_3: "ظروف النظام.",
-        withdrawal_rules_2_2: "يحتفظ SALLY-E بالحق في وضع:",
+        withdrawal_rules_2_2: "يحتفظ ARCADE PXC بالحق في وضع:",
         withdrawal_rules_2_2_1: "حدود يومية.",
         withdrawal_rules_2_2_2: "حدود أسبوعية أو شهرية.",
         withdrawal_rules_2_2_3: "حدود لكل مستخدم أو لكل حساب.",
@@ -6034,7 +6034,7 @@ const LANG = {
         withdrawal_rules_4_2: "الخروج المبكر من القنوات.",
         withdrawal_rules_4_3: "استغلال أخطاء أو أعطال النظام.",
         withdrawal_rules_4_4: "نشاط احتيالي.",
-        withdrawal_rules_4_action: "يمكن لـ SALLY-E:",
+        withdrawal_rules_4_action: "يمكن لـ ARCADE PXC:",
         withdrawal_rules_4_action_1: "سحب المكافآت المعنية.",
         withdrawal_rules_4_action_2: "تطبيق عقوبات إضافية.",
         withdrawal_rules_4_action_3: "تعديل أو إعادة تعيين رصيد المستخدم.",
@@ -6052,14 +6052,14 @@ const LANG = {
         withdrawal_rules_6_intro: "المستخدم مسؤول بالكامل عن إدخال ما يلي بشكل صحيح:",
         withdrawal_rules_6_1: "عنوان المحفظة.",
         withdrawal_rules_6_2: "الشبكة المقابلة.",
-        withdrawal_rules_6_disclaimer: "SALLY-E غير مسؤول عن:",
+        withdrawal_rules_6_disclaimer: "ARCADE PXC غير مسؤول عن:",
         withdrawal_rules_6_disclaimer_1: "العناوين غير الصحيحة.",
         withdrawal_rules_6_disclaimer_2: "الشبكات الخاطئة.",
         withdrawal_rules_6_disclaimer_3: "فقدان الأموال بسبب خطأ المستخدم.",
         withdrawal_rules_6_conclusion: "لا يمكن عكس عمليات السحب المرسلة.",
         
         withdrawal_rules_7_title: "7. تعليق عمليات السحب",
-        withdrawal_rules_7_intro: "يحتفظ SALLY-E بالحق في تعليق عمليات السحب مؤقتاً أو نهائياً لمستخدم أو النظام بالكامل في حالة:",
+        withdrawal_rules_7_intro: "يحتفظ ARCADE PXC بالحق في تعليق عمليات السحب مؤقتاً أو نهائياً لمستخدم أو النظام بالكامل في حالة:",
         withdrawal_rules_7_1: "الصيانة.",
         withdrawal_rules_7_2: "تحديثات الأمان.",
         withdrawal_rules_7_3: "الكشف عن الإساءة أو الاحتيال.",
@@ -6075,7 +6075,7 @@ const LANG = {
         withdrawal_rules_9_title: "9. القرارات النهائية",
         withdrawal_rules_9_1: "جميع طلبات السحب خاضعة للتحقق.",
         withdrawal_rules_9_2: "قرارات النظام نهائية وغير قابلة للإلغاء وغير قابلة للاستئناف.",
-        withdrawal_rules_9_3: "يحتفظ SALLY-E بالحق في تعديل هذه الشروط في أي وقت.",
+        withdrawal_rules_9_3: "يحتفظ ARCADE PXC بالحق في تعديل هذه الشروط في أي وقت.",
         
         // ============================================
         // صفحة مهام PTS
@@ -6270,7 +6270,7 @@ const LANG_NAMES = {
 };
 
 // Current language
-let currentLang = localStorage.getItem('sally_lang') || 'es';
+let currentLang = localStorage.getItem('arcadepxc_lang') || 'es';
 
 /**
  * Get translation
@@ -6292,7 +6292,7 @@ function t(key, params = {}) {
 function setLanguage(lang) {
     if (!LANG[lang]) lang = 'en';
     currentLang = lang;
-    localStorage.setItem('sally_lang', lang);
+    localStorage.setItem('arcadepxc_lang', lang);
     
     // Handle RTL for Arabic
     if (lang === 'ar') {
@@ -6398,7 +6398,7 @@ function updateLanguageButton() {
 // Auto-detect language on load
 document.addEventListener('DOMContentLoaded', function() {
     // Check localStorage first
-    const savedLang = localStorage.getItem('sally_lang');
+    const savedLang = localStorage.getItem('arcadepxc_lang');
     if (savedLang && LANG[savedLang]) {
         currentLang = savedLang;
     } else {
@@ -6420,7 +6420,7 @@ document.addEventListener('DOMContentLoaded', function() {
             else if (browserLang?.startsWith('ar')) currentLang = 'ar';
             else currentLang = 'en';
         }
-        localStorage.setItem('sally_lang', currentLang);
+        localStorage.setItem('arcadepxc_lang', currentLang);
     }
     
     // Apply RTL if Arabic

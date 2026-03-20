@@ -1,4 +1,4 @@
-/* ==================== SALLY-E - EFECTOS ULTRA LIGEROS ==================== */
+/* ==================== ARCADE PXC - EFECTOS ULTRA LIGEROS ==================== */
 /* Versión OPTIMIZADA - Sin animaciones 3D, rendimiento máximo */
 
 // ==================== SISTEMA DE TOAST MEJORADO ====================
@@ -204,7 +204,7 @@ function initHapticFeedback() {
 
 // ==================== INICIALIZACIÓN ULTRA LIGERA ====================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Sally-E Lite iniciando...');
+    console.log('🚀 ARCADE PXC Lite iniciando...');
     
     // Verificar preferencias de movimiento reducido
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
         lucide.createIcons();
     }
     
-    console.log('✨ Sally-E Lite listo');
+    console.log('✨ ARCADE PXC Lite listo');
 });
 
 // ==================== EXPORTAR FUNCIONES GLOBALES ====================

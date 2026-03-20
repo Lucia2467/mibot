@@ -16,7 +16,7 @@ const WALLET_CONFIG = {
     apiBase: window.location.origin, // URL de tu app
     userId: null, // Se obtiene de Telegram WebApp
     colors: {
-        // Tus colores actuales de Sally-E
+        // Tus colores actuales de ARCADE PXC
         primary: '#0066FF',
         secondary: '#003D99',
         accent: '#3B82F6'
@@ -200,9 +200,9 @@ async function updateBalanceDisplay() {
     // Actualizar en tu HTML existente
     // Ajusta los IDs según tu HTML actual
     
-    const seBalanceEl = document.getElementById('se-balance');
+    const seBalanceEl = document.getElementById('pxc-balance');
     if (seBalanceEl) {
-        seBalanceEl.textContent = balance.se_balance.toFixed(2);
+        seBalanceEl.textContent = balance.pxc_balance.toFixed(2);
     }
     
     const usdtBalanceEl = document.getElementById('usdt-balance');
@@ -545,7 +545,7 @@ async function initWallet() {
                 minWithdrawalsEl.innerHTML = `
                     <div>USDT: ${systemInfo.min_withdrawals.USDT}</div>
                     <div>DOGE: ${systemInfo.min_withdrawals.DOGE}</div>
-                    <div>S-E: ${systemInfo.min_withdrawals.SE}</div>
+                    <div>PXC: ${systemInfo.min_withdrawals.PXC}</div>
                 `;
             }
         }

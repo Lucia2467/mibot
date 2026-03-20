@@ -1,7 +1,7 @@
 /**
  * shrinkearn.js - Frontend para Sistema ShrinkEarn
  * =================================================
- * Maneja la UI de misiones ShrinkEarn en SALLY-E
+ * Maneja la UI de misiones ShrinkEarn en ARCADE PXC
  */
 
 // Estado global de ShrinkEarn

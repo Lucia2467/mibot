@@ -1,4 +1,4 @@
-/* ==================== SALLY-E ULTRA PRO - EFECTOS ESPECIALES ==================== */
+/* ==================== ARCADE PXC ULTRA PRO - EFECTOS ESPECIALES ==================== */
 
 // ==================== SISTEMA DE PARTÍCULAS FLOTANTES ====================
 class ParticleSystem {
@@ -491,7 +491,7 @@ function initHapticFeedback() {
 
 // ==================== INICIALIZACIÓN ====================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Sally-E Ultra Pro Edition iniciando...');
+    console.log('🚀 ARCADE PXC Ultra Pro Edition iniciando...');
     
     // Verificar preferencias de movimiento reducido
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -519,7 +519,7 @@ document.addEventListener('DOMContentLoaded', function() {
         lucide.createIcons();
     }
     
-    console.log('✨ Sally-E Ultra Pro Edition listo');
+    console.log('✨ ARCADE PXC Ultra Pro Edition listo');
 });
 
 // ==================== EXPORTAR FUNCIONES GLOBALES ====================
@@ -672,12 +672,12 @@ function shareReferralLink() {
     }
     
     const link = input.value;
-    const text = '🚀 ¡Únete a SALLY-E y gana criptomonedas! 💰 Recibe 50 S-E de bono al unirte con mi enlace.';
+    const text = '🚀 ¡Únete a ARCADE PXC y gana criptomonedas! 💰 Recibe 50 PXC de bono al unirte con mi enlace.';
     
     // Intentar usar Web Share API si está disponible
     if (navigator.share) {
         navigator.share({
-            title: 'SALLY-E - Gana Criptomonedas',
+            title: 'ARCADE PXC - Gana Criptomonedas',
             text: text,
             url: link
         })
@@ -731,10 +731,10 @@ function updateReferralsDisplay(data) {
         animateCounter(countDisplay, data.total_referrals);
     }
     
-    // Actualizar S-E ganados
-    const seEarnedDisplay = document.getElementById('se-earned-display');
+    // Actualizar PXC ganados
+    const seEarnedDisplay = document.getElementById('pxc-earned-display');
     if (seEarnedDisplay) {
-        animateCounter(seEarnedDisplay, data.total_se_earned);
+        animateCounter(seEarnedDisplay, data.total_pxc_earned);
     }
     
     // Actualizar comisiones si existe el elemento
