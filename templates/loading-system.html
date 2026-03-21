@@ -1,179 +1,208 @@
 <!--
-    SISTEMA GLOBAL DE ANIMACIONES DE CARGA v2.0
+    SISTEMA GLOBAL DE ANIMACIONES DE CARGA v3.0
     - Primera carga: pantalla negra con dots
-    - Navegación lenta: loader persiste hasta que llegue la nueva página
-    - Detección real de internet lento (no solo timeout fijo)
+    - Navegación: barra de progreso superior + blocker
+    - >4s: alerta de conexión inestable impactante
 -->
 
 <style>
-/* ============================================
-   PANTALLA DE INICIO - DOTS CENTRADOS
-   ============================================ */
+/* ── Global loader (primera visita) ──────────────── */
 #global-loader {
-    position: fixed;
-    top: 0; left: 0;
+    position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
-    background: #000000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #000;
+    display: flex; align-items: center; justify-content: center;
     z-index: 9999999;
-    opacity: 1;
-    transition: opacity 0.45s ease;
+    opacity: 1; transition: opacity 0.45s ease;
 }
-#global-loader.hidden {
-    opacity: 0;
-    pointer-events: none;
-}
+#global-loader.hidden { opacity: 0; pointer-events: none; }
 
-/* ============================================
-   DOTS ESTILO FACEBOOK / WHATSAPP
-   ============================================ */
-.fb-dots {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
+.fb-dots { display: flex; align-items: center; justify-content: center; gap: 10px; }
 .fb-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: #0066FF;
+    width: 10px; height: 10px; border-radius: 50%; background: #0066FF;
     animation: fbDotBounce 1.4s ease-in-out infinite both;
 }
 .fb-dot:nth-child(1) { animation-delay: 0s; }
 .fb-dot:nth-child(2) { animation-delay: 0.2s; }
 .fb-dot:nth-child(3) { animation-delay: 0.4s; }
-
 @keyframes fbDotBounce {
-    0%, 80%, 100% { transform: scale(0.7); opacity: 0.35; }
-    40%           { transform: scale(1.2); opacity: 1; }
+    0%,80%,100% { transform: scale(0.7); opacity: 0.35; }
+    40%         { transform: scale(1.2); opacity: 1; }
 }
 
-/* ============================================
-   BLOQUEADOR DE NAVEGACIÓN LENTA
-   Se muestra al hacer click y persiste hasta
-   que la nueva página empiece a cargar
-   ============================================ */
-#saturation-blocker {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.88);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999998;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
-#saturation-blocker.active {
-    opacity: 1;
-    pointer-events: all;
-}
-
-/* Contenedor del spinner de navegación */
-.nav-loader-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 18px;
-}
-
-/* Dots iguales al global-loader */
-.saturation-dots {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-.saturation-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: #0066FF;
-    animation: fbDotBounce 1.4s ease-in-out infinite both;
-}
-.saturation-dot:nth-child(1) { animation-delay: 0s; }
-.saturation-dot:nth-child(2) { animation-delay: 0.2s; }
-.saturation-dot:nth-child(3) { animation-delay: 0.4s; }
-
-/* Texto "Cargando..." — visible solo con internet lento (>1.2s) */
-#nav-slow-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: rgba(255,255,255,0.3);
-    letter-spacing: 0.08em;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    font-family: -apple-system, 'DM Sans', sans-serif;
-}
-#nav-slow-label.visible {
-    opacity: 1;
-}
-
-/* Barra de progreso indeterminada en la parte superior */
+/* ── Barra de progreso superior ──────────────────── */
 #nav-progress-bar {
-    position: fixed;
-    top: 0; left: 0;
-    width: 0%;
-    height: 2.5px;
+    position: fixed; top: 0; left: 0;
+    width: 0%; height: 2.5px;
     background: linear-gradient(90deg, #0066FF, #3B9EFF, #0066FF);
     background-size: 200% 100%;
     z-index: 9999999;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    animation: progressShimmer 1.5s linear infinite;
+    opacity: 0; transition: opacity 0.2s ease;
     border-radius: 0 2px 2px 0;
 }
 #nav-progress-bar.active {
     opacity: 1;
     animation: progressShimmer 1.5s linear infinite, progressGrow 8s ease-out forwards;
 }
-@keyframes progressShimmer {
-    0%   { background-position: 200% center; }
-    100% { background-position: -200% center; }
-}
-/* Crece rápido al inicio, lento después (da sensación de progreso real) */
-@keyframes progressGrow {
-    0%   { width: 0%; }
-    15%  { width: 35%; }
-    40%  { width: 55%; }
-    70%  { width: 75%; }
-    90%  { width: 88%; }
-    100% { width: 92%; }
-}
-
-/* Cuando la página termina de cargar → completar la barra */
 #nav-progress-bar.complete {
-    width: 100% !important;
-    animation: none;
+    width: 100% !important; animation: none;
     transition: width 0.25s ease, opacity 0.3s ease 0.3s;
     opacity: 0;
 }
+@keyframes progressShimmer { 0%{background-position:200% center} 100%{background-position:-200% center} }
+@keyframes progressGrow {
+    0%{width:0%} 15%{width:35%} 40%{width:55%} 70%{width:75%} 90%{width:88%} 100%{width:92%}
+}
 
-/* Prevenir scroll mientras carga */
-body.loading-active {
+/* ── Bloqueador de navegación ────────────────────── */
+#saturation-blocker {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999998;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+#saturation-blocker.active { opacity: 1; pointer-events: all; }
+
+.saturation-dots { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.saturation-dot {
+    width: 10px; height: 10px; border-radius: 50%; background: #0066FF;
+    animation: fbDotBounce 1.4s ease-in-out infinite both;
+}
+.saturation-dot:nth-child(1) { animation-delay: 0s; }
+.saturation-dot:nth-child(2) { animation-delay: 0.2s; }
+.saturation-dot:nth-child(3) { animation-delay: 0.4s; }
+
+body.loading-active { overflow: hidden; pointer-events: none; }
+body.loading-active #saturation-blocker { pointer-events: all; }
+
+/* ── ALERTA CONEXIÓN INESTABLE ───────────────────── */
+#slow-connection-alert {
+    position: fixed;
+    bottom: 90px; left: 50%; transform: translateX(-50%) translateY(30px);
+    z-index: 9999999;
+    width: calc(100% - 32px); max-width: 360px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+#slow-connection-alert.visible {
+    opacity: 1; pointer-events: all;
+    transform: translateX(-50%) translateY(0);
+}
+
+.sca-inner {
+    background: linear-gradient(145deg, rgba(14,6,4,0.97), rgba(20,8,5,0.98));
+    border: 1px solid rgba(255,80,30,0.22);
+    border-top: 1.5px solid rgba(255,100,40,0.5);
+    border-radius: 20px;
     overflow: hidden;
+    box-shadow:
+        0 0 0 1px rgba(255,60,20,0.08),
+        0 20px 60px rgba(0,0,0,0.7),
+        0 0 40px rgba(255,60,20,0.06);
+    position: relative;
+}
+
+/* Top accent */
+.sca-inner::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent 5%, rgba(255,80,30,0.7) 35%, rgba(255,140,60,1) 50%, rgba(255,80,30,0.7) 65%, transparent 95%);
+}
+
+/* Animated radar bg */
+.sca-radar {
+    position: absolute; top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(255,70,20,0.06) 0%, transparent 70%);
+    animation: radarPulse 2.5s ease-in-out infinite;
     pointer-events: none;
 }
-body.loading-active #saturation-blocker {
-    pointer-events: all;
+@keyframes radarPulse {
+    0%,100% { transform: scale(1);   opacity: 0.6; }
+    50%     { transform: scale(1.4); opacity: 0; }
 }
 
-/* Ocultar contenido de la página actual mientras navega
-   (evita el "congelado sin indicación") */
-#saturation-blocker.active ~ * {
-    opacity: 0.4;
+.sca-body {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 18px;
+    position: relative; z-index: 1;
 }
+
+/* Icon */
+.sca-icon-wrap {
+    flex-shrink: 0;
+    width: 42px; height: 42px; border-radius: 12px;
+    background: linear-gradient(145deg, rgba(255,70,20,0.15), rgba(255,40,10,0.08));
+    border: 1px solid rgba(255,80,30,0.2);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 16px rgba(255,60,20,0.2), inset 0 1px 0 rgba(255,255,255,0.07);
+    animation: iconFlicker 2s ease-in-out infinite;
+}
+@keyframes iconFlicker {
+    0%,100% { box-shadow: 0 0 16px rgba(255,60,20,0.2), inset 0 1px 0 rgba(255,255,255,0.07); }
+    50%     { box-shadow: 0 0 28px rgba(255,80,30,0.45), inset 0 1px 0 rgba(255,255,255,0.07); }
+}
+.sca-icon-wrap svg { color: #FF6030; filter: drop-shadow(0 0 5px rgba(255,80,30,0.6)); }
+
+/* Text */
+.sca-text { flex: 1; min-width: 0; }
+.sca-title {
+    font-size: 0.85rem; font-weight: 700;
+    color: #fff; letter-spacing: -0.01em;
+    margin-bottom: 3px;
+    font-family: -apple-system, 'DM Sans', sans-serif;
+}
+.sca-sub {
+    font-size: 0.7rem; font-weight: 400;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.4;
+    font-family: -apple-system, 'DM Sans', sans-serif;
+}
+
+/* Signal bars (live indicator) */
+.sca-signal {
+    flex-shrink: 0;
+    display: flex; align-items: flex-end; gap: 3px;
+    height: 18px;
+}
+.sig-bar {
+    width: 3px; border-radius: 2px;
+    background: rgba(255,255,255,0.12);
+}
+.sig-bar:nth-child(1) { height: 6px; }
+.sig-bar:nth-child(2) { height: 10px; }
+.sig-bar:nth-child(3) { height: 14px; }
+.sig-bar:nth-child(4) { height: 18px; }
+
+/* Only first bar lit (1 bar = bad signal) */
+.sig-bar:nth-child(1) { background: #FF6030; animation: sigPulse 1.2s ease-in-out infinite; }
+@keyframes sigPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* Bottom progress strip */
+.sca-strip {
+    height: 2px;
+    background: rgba(255,255,255,0.04);
+    position: relative; overflow: hidden;
+}
+.sca-strip::after {
+    content: '';
+    position: absolute; top: 0; left: -60%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,80,30,0.6), transparent);
+    animation: stripSweep 2s linear infinite;
+}
+@keyframes stripSweep { to { left: 100%; } }
 </style>
 
-<!-- Barra de progreso superior -->
+<!-- Barra de progreso -->
 <div id="nav-progress-bar"></div>
 
-<!-- Pantalla de inicio (primera carga) -->
+<!-- Loader primera visita -->
 <div id="global-loader">
     <div class="fb-dots">
         <div class="fb-dot"></div>
@@ -182,34 +211,86 @@ body.loading-active #saturation-blocker {
     </div>
 </div>
 
-<!-- Bloqueador de navegación lenta -->
+<!-- Bloqueador navegación -->
 <div id="saturation-blocker">
-    <div class="nav-loader-inner">
-        <div class="saturation-dots">
-            <div class="saturation-dot"></div>
-            <div class="saturation-dot"></div>
-            <div class="saturation-dot"></div>
+    <div class="saturation-dots">
+        <div class="saturation-dot"></div>
+        <div class="saturation-dot"></div>
+        <div class="saturation-dot"></div>
+    </div>
+</div>
+
+<!-- Alerta conexión inestable (aparece >4s) -->
+<div id="slow-connection-alert">
+    <div class="sca-inner">
+        <div class="sca-radar"></div>
+        <div class="sca-body">
+            <div class="sca-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="1" y1="1" x2="23" y2="23"/>
+                    <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+                    <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+                    <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+                    <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+                    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                    <line x1="12" y1="20" x2="12.01" y2="20"/>
+                </svg>
+            </div>
+            <div class="sca-text">
+                <div class="sca-title" data-i18n="unstable_connection" id="sca-title-text">Conexión inestable</div>
+                <div class="sca-sub" data-i18n="unstable_connection_sub" id="sca-sub-text">La red está tardando más de lo normal</div>
+            </div>
+            <div class="sca-signal">
+                <div class="sig-bar"></div>
+                <div class="sig-bar"></div>
+                <div class="sig-bar"></div>
+                <div class="sig-bar"></div>
+            </div>
         </div>
-        <span id="nav-slow-label" data-i18n="loading">Cargando...</span>
+        <div class="sca-strip"></div>
     </div>
 </div>
 
 <script>
 (function () {
 
-    // ─── Estado ──────────────────────────────────────────────────────────────
     var isSaturationActive = false;
     var navStartTime       = 0;
-    var slowLabelTimer     = null;
+    var slowAlertTimer     = null;
     var safetyTimer        = null;
     var progressBar        = null;
     var satBlocker         = null;
 
-    // ─── Utilidades ──────────────────────────────────────────────────────────
-    function getProgressBar()  { return progressBar  || (progressBar  = document.getElementById('nav-progress-bar')); }
-    function getSatBlocker()   { return satBlocker   || (satBlocker   = document.getElementById('saturation-blocker')); }
+    function getProgressBar() { return progressBar || (progressBar = document.getElementById('nav-progress-bar')); }
+    function getSatBlocker()  { return satBlocker  || (satBlocker  = document.getElementById('saturation-blocker')); }
 
-    // ─── Mostrar loader de navegación ────────────────────────────────────────
+    // ── Mostrar alerta de conexión inestable ──
+    function showSlowAlert() {
+        var alert = document.getElementById('slow-connection-alert');
+        if (!alert || !isSaturationActive) return;
+
+        // Aplicar traducciones si están disponibles
+        var titleEl = document.getElementById('sca-title-text');
+        var subEl   = document.getElementById('sca-sub-text');
+        if (typeof t === 'function') {
+            if (titleEl) titleEl.textContent = t('unstable_connection') || 'Conexión inestable';
+            if (subEl)   subEl.textContent   = t('unstable_connection_sub') || 'La red está tardando más de lo normal';
+        }
+
+        alert.classList.add('visible');
+
+        // Haptic de advertencia
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.notificationOccurred('warning');
+        }
+    }
+
+    function hideSlowAlert() {
+        var alert = document.getElementById('slow-connection-alert');
+        if (alert) alert.classList.remove('visible');
+    }
+
+    // ── Mostrar loader de navegación ──
     function showSaturationBlocker() {
         if (isSaturationActive) return;
         isSaturationActive = true;
@@ -219,47 +300,38 @@ body.loading-active #saturation-blocker {
         if (blocker) blocker.classList.add('active');
         document.body.classList.add('loading-active');
 
-        // Barra de progreso superior
         var bar = getProgressBar();
         if (bar) {
             bar.classList.remove('complete');
-            void bar.offsetWidth; // reflow para reiniciar animación
+            void bar.offsetWidth;
             bar.classList.add('active');
         }
 
-        // Mostrar texto "Cargando..." solo si tarda más de 1.2s
-        slowLabelTimer = setTimeout(function () {
-            var label = document.getElementById('nav-slow-label');
-            if (label && isSaturationActive) label.classList.add('visible');
-        }, 1200);
+        // Alerta de conexión inestable a los 4s
+        slowAlertTimer = setTimeout(showSlowAlert, 4000);
 
-        // Safety máximo: 12s (para casos extremos de timeout de red)
-        safetyTimer = setTimeout(function () {
-            hideSaturationBlocker();
-        }, 12000);
+        // Safety máximo 12s
+        safetyTimer = setTimeout(hideSaturationBlocker, 12000);
 
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
             window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         }
     }
 
-    // ─── Ocultar loader de navegación ────────────────────────────────────────
+    // ── Ocultar loader de navegación ──
     function hideSaturationBlocker() {
         if (!isSaturationActive) return;
         isSaturationActive = false;
 
-        if (slowLabelTimer)  { clearTimeout(slowLabelTimer);  slowLabelTimer  = null; }
-        if (safetyTimer)     { clearTimeout(safetyTimer);     safetyTimer     = null; }
+        if (slowAlertTimer) { clearTimeout(slowAlertTimer); slowAlertTimer = null; }
+        if (safetyTimer)    { clearTimeout(safetyTimer);    safetyTimer    = null; }
 
         var blocker = getSatBlocker();
-        if (blocker) {
-            blocker.classList.remove('active');
-            var label = document.getElementById('nav-slow-label');
-            if (label) label.classList.remove('visible');
-        }
+        if (blocker) blocker.classList.remove('active');
         document.body.classList.remove('loading-active');
 
-        // Completar la barra de progreso
+        hideSlowAlert();
+
         var bar = getProgressBar();
         if (bar) {
             bar.classList.remove('active');
@@ -268,7 +340,7 @@ body.loading-active #saturation-blocker {
         }
     }
 
-    // ─── Primera carga ───────────────────────────────────────────────────────
+    // ── Primera carga ──
     var isFirstLoad = !sessionStorage.getItem('arcadepxc_app_loaded');
 
     function hideGlobalLoader() {
@@ -280,75 +352,52 @@ body.loading-active #saturation-blocker {
         sessionStorage.setItem('arcadepxc_app_loaded', 'true');
     }
 
-    // ─── Detectar cuándo el usuario REALMENTE navegó (nueva página) ──────────
-    // Cuando beforeunload dispara → la navegación ocurrió, mantener el loader
-    // hasta que el navegador descargue la página actual.
     window.addEventListener('beforeunload', function () {
-        // La nueva página ya viene — completar la barra pero mantener el blocker
-        // visible (el navegador lo descartará cuando cargue la nueva página)
         var bar = getProgressBar();
-        if (bar) {
-            bar.style.transition = 'width 0.3s ease';
-            bar.style.width = '95%';
-        }
+        if (bar) { bar.style.transition = 'width 0.3s ease'; bar.style.width = '95%'; }
     });
 
-    // ─── Sistema de clicks inteligente ───────────────────────────────────────
-    // Solo activar si el click lleva a otra URL, no para modales/actions inline
+    // ── Detección inteligente de clicks ──
     document.addEventListener('click', function (e) {
         var target = e.target;
-
-        // Encontrar el elemento navegable más cercano
-        var navEl =
+        var navEl  =
             target.closest('a[href]')    ||
             target.closest('.nav-item')  ||
             target.closest('[data-href]');
-
         if (!navEl) return;
 
-        // Excluir elementos que no navegan
         var excluded =
-            target.closest('#promo-modal')        ||
-            target.closest('.toast')              ||
-            target.closest('#support-fab')        ||
-            target.closest('[data-no-saturation]')||
-            target.closest('#lang-dialog')        ||
-            target.closest('.lang-toggle-wrapper')||
+            target.closest('#promo-modal')         ||
+            target.closest('.toast')               ||
+            target.closest('#support-fab')         ||
+            target.closest('[data-no-saturation]') ||
+            target.closest('#lang-dialog')         ||
+            target.closest('.lang-toggle-wrapper') ||
             target.closest('[data-lucide]');
-
         if (excluded) return;
 
-        // Obtener la URL destino
         var href = navEl.getAttribute('href') || navEl.getAttribute('data-href') || '';
-
-        // No activar para anchors locales, javascript:, mailto:, etc.
         if (!href || href === '#' || href.startsWith('javascript:') ||
             href.startsWith('mailto:') || href.startsWith('tel:')) return;
 
-        // No activar si ya estamos en esa página
-        var currentPath = window.location.pathname + window.location.search;
         try {
-            var destUrl = new URL(href, window.location.href);
-            if (destUrl.pathname === window.location.pathname &&
-                destUrl.search  === window.location.search) return;
+            var dest = new URL(href, window.location.href);
+            if (dest.pathname === window.location.pathname &&
+                dest.search   === window.location.search)  return;
         } catch (err) {}
 
         showSaturationBlocker();
-
     }, true);
 
-    // También capturar submit de formularios
-    document.addEventListener('submit', function (e) {
+    document.addEventListener('submit', function () {
         if (!isSaturationActive) showSaturationBlocker();
     }, true);
 
-    // ─── DOMContentLoaded ────────────────────────────────────────────────────
+    // ── DOMContentLoaded ──
     document.addEventListener('DOMContentLoaded', function () {
         if (isFirstLoad) {
-            // Primera visita: mostrar por mínimo 1.8s para que carguen los assets
-            var minTime = 1800;
-            var elapsed = Date.now() - performance.timing.navigationStart;
-            var remaining = Math.max(0, minTime - elapsed);
+            var elapsed   = Date.now() - performance.timing.navigationStart;
+            var remaining = Math.max(0, 1800 - elapsed);
             setTimeout(hideGlobalLoader, remaining);
         } else {
             var loader = document.getElementById('global-loader');
@@ -356,18 +405,14 @@ body.loading-active #saturation-blocker {
         }
     });
 
-    // ─── Página completamente cargada ────────────────────────────────────────
     window.addEventListener('load', function () {
-        // Si venimos de otra página (hay saturation activo del lado que cargó) → ocultar
-        // En teoría esto no se activa aquí (se activa en la página nueva),
-        // pero por seguridad en el caso de que el usuario llegue directo:
         if (!isFirstLoad) {
             var loader = document.getElementById('global-loader');
             if (loader) loader.style.display = 'none';
         }
     });
 
-    // ─── Exponer API global ───────────────────────────────────────────────────
+    // ── API global ──
     window.showSaturationBlocker = showSaturationBlocker;
     window.hideSaturationBlocker = hideSaturationBlocker;
     window.isSaturated           = function () { return isSaturationActive; };
