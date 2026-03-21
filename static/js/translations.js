@@ -16,6 +16,8 @@ const LANG = {
         
         // Common
         loading: "Loading...",
+        unstable_connection: "Unstable Connection",
+        unstable_connection_sub: "Network is taking longer than usual",
         error: "Error",
         success: "Success",
         confirm: "Confirm",
@@ -1301,6 +1303,8 @@ const LANG = {
         
         // Común
         loading: "Cargando...",
+        unstable_connection: "Conexión inestable",
+        unstable_connection_sub: "La red está tardando más de lo normal",
         error: "Error",
         success: "Éxito",
         confirm: "Confirmar",
@@ -2586,6 +2590,8 @@ const LANG = {
         
         // Comum
         loading: "Carregando...",
+        unstable_connection: "Conexão instável",
+        unstable_connection_sub: "A rede está demorando mais que o normal",
         error: "Erro",
         success: "Sucesso",
         confirm: "Confirmar",
@@ -3833,6 +3839,8 @@ const LANG = {
         
         // Общее
         loading: "Загрузка...",
+        unstable_connection: "Нестабильное соединение",
+        unstable_connection_sub: "Сеть работает медленнее обычного",
         error: "Ошибка",
         success: "Успех",
         confirm: "Подтвердить",
@@ -5051,6 +5059,8 @@ const LANG = {
         
         // عام
         loading: "جار التحميل...",
+        unstable_connection: "اتصال غير مستقر",
+        unstable_connection_sub: "الشبكة تستغرق وقتاً أطول من المعتاد",
         error: "خطأ",
         success: "نجاح",
         confirm: "تأكيد",
