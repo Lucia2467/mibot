@@ -1,24 +1,37 @@
 """
-wsgi.py - WSGI entry point for PythonAnywhere
-This file is used by the PythonAnywhere web server to run the Flask app
+wsgi.py — Entrypoint para Gunicorn
+Arranca el bot de Telegram en un hilo daemon y expone la app Flask.
+Gunicorn lo llama con: gunicorn wsgi:app
 """
-
-import sys
 import os
-
-# Add your project directory to the path
-project_home = '/home/ArcadePXC/mibot'
-if project_home not in sys.path:
-    sys.path.insert(0, project_home)
-
-# Load environment variables from .env file
+import logging
+import threading
 from dotenv import load_dotenv
-env_path = os.path.join(project_home, '.env')
-if os.path.exists(env_path):
-    load_dotenv(env_path)
 
-# Import the Flask app
-from app import app as application
+load_dotenv()
 
-# Disable debug mode in production
-application.debug = False
+logger = logging.getLogger(__name__)
+
+# 1. Migraciones (solo la primera vez, el resto es instantáneo)
+try:
+    from migrate_railway import run_migrations
+    run_migrations()
+except Exception as e:
+    logger.error(f"Migration error: {e}")
+
+try:
+    from migrate_arcade import run_arcade_migration
+    run_arcade_migration()
+except Exception:
+    pass
+
+# 2. Bot de Telegram en hilo daemon
+try:
+    from web import _start_bot_thread
+    threading.Thread(target=_start_bot_thread, daemon=True, name="TelegramBot").start()
+    logger.info("🤖 Bot thread started")
+except Exception as e:
+    logger.error(f"Bot thread error: {e}")
+
+# 3. Exponer la app Flask para Gunicorn
+from web import app
