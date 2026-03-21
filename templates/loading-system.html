@@ -1,6 +1,8 @@
 <!--
-    SISTEMA GLOBAL DE ANIMACIONES DE CARGA
-    - Sin logo, puntos centrados estilo Facebook/WhatsApp
+    SISTEMA GLOBAL DE ANIMACIONES DE CARGA v2.0
+    - Primera carga: pantalla negra con dots
+    - Navegación lenta: loader persiste hasta que llegue la nueva página
+    - Detección real de internet lento (no solo timeout fijo)
 -->
 
 <style>
@@ -9,19 +11,16 @@
    ============================================ */
 #global-loader {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: #000000;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999999;
     opacity: 1;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.45s ease;
 }
-
 #global-loader.hidden {
     opacity: 0;
     pointer-events: none;
@@ -36,97 +35,145 @@
     justify-content: center;
     gap: 10px;
 }
-
 .fb-dot {
-    width: 10px;
-    height: 10px;
+    width: 10px; height: 10px;
     border-radius: 50%;
     background: #0066FF;
     animation: fbDotBounce 1.4s ease-in-out infinite both;
 }
-
 .fb-dot:nth-child(1) { animation-delay: 0s; }
 .fb-dot:nth-child(2) { animation-delay: 0.2s; }
 .fb-dot:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes fbDotBounce {
-    0%, 80%, 100% {
-        transform: scale(0.7);
-        opacity: 0.35;
-    }
-    40% {
-        transform: scale(1.2);
-        opacity: 1;
-    }
+    0%, 80%, 100% { transform: scale(0.7); opacity: 0.35; }
+    40%           { transform: scale(1.2); opacity: 1; }
 }
 
 /* ============================================
-   BLOQUEADOR ANTI-SATURACIÓN - DOTS STYLE
+   BLOQUEADOR DE NAVEGACIÓN LENTA
+   Se muestra al hacer click y persiste hasta
+   que la nueva página empiece a cargar
    ============================================ */
 #saturation-blocker {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 999998;
     opacity: 0;
     pointer-events: none;
-    transition: none;
+    transition: opacity 0.2s ease;
 }
-
 #saturation-blocker.active {
     opacity: 1;
     pointer-events: all;
 }
 
+/* Contenedor del spinner de navegación */
+.nav-loader-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+}
+
+/* Dots iguales al global-loader */
 .saturation-dots {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
 }
-
 .saturation-dot {
-    width: 12px;
-    height: 12px;
+    width: 10px; height: 10px;
     border-radius: 50%;
     background: #0066FF;
     animation: fbDotBounce 1.4s ease-in-out infinite both;
 }
-
 .saturation-dot:nth-child(1) { animation-delay: 0s; }
 .saturation-dot:nth-child(2) { animation-delay: 0.2s; }
 .saturation-dot:nth-child(3) { animation-delay: 0.4s; }
 
-/* ============================================
-   BOTONES DESHABILITADOS DURANTE CARGA
-   ============================================ */
-body.loading-active button,
-body.loading-active .btn,
-body.loading-active [onclick],
-body.loading-active a[href],
-body.loading-active .nav-item,
-body.loading-active .item,
-body.loading-active input[type="submit"] {
-    pointer-events: none !important;
-    opacity: 0.5 !important;
-    cursor: not-allowed !important;
-    user-select: none !important;
+/* Texto "Cargando..." — visible solo con internet lento (>1.2s) */
+#nav-slow-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.08em;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    font-family: -apple-system, 'DM Sans', sans-serif;
+}
+#nav-slow-label.visible {
+    opacity: 1;
 }
 
-body.loading-active .nav-item {
-    opacity: 0.35 !important;
+/* Barra de progreso indeterminada en la parte superior */
+#nav-progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 0%;
+    height: 2.5px;
+    background: linear-gradient(90deg, #0066FF, #3B9EFF, #0066FF);
+    background-size: 200% 100%;
+    z-index: 9999999;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    animation: progressShimmer 1.5s linear infinite;
+    border-radius: 0 2px 2px 0;
+}
+#nav-progress-bar.active {
+    opacity: 1;
+    animation: progressShimmer 1.5s linear infinite, progressGrow 8s ease-out forwards;
+}
+@keyframes progressShimmer {
+    0%   { background-position: 200% center; }
+    100% { background-position: -200% center; }
+}
+/* Crece rápido al inicio, lento después (da sensación de progreso real) */
+@keyframes progressGrow {
+    0%   { width: 0%; }
+    15%  { width: 35%; }
+    40%  { width: 55%; }
+    70%  { width: 75%; }
+    90%  { width: 88%; }
+    100% { width: 92%; }
+}
+
+/* Cuando la página termina de cargar → completar la barra */
+#nav-progress-bar.complete {
+    width: 100% !important;
+    animation: none;
+    transition: width 0.25s ease, opacity 0.3s ease 0.3s;
+    opacity: 0;
+}
+
+/* Prevenir scroll mientras carga */
+body.loading-active {
+    overflow: hidden;
+    pointer-events: none;
+}
+body.loading-active #saturation-blocker {
+    pointer-events: all;
+}
+
+/* Ocultar contenido de la página actual mientras navega
+   (evita el "congelado sin indicación") */
+#saturation-blocker.active ~ * {
+    opacity: 0.4;
 }
 </style>
 
-<!-- Pantalla de Inicio -->
+<!-- Barra de progreso superior -->
+<div id="nav-progress-bar"></div>
+
+<!-- Pantalla de inicio (primera carga) -->
 <div id="global-loader">
     <div class="fb-dots">
         <div class="fb-dot"></div>
@@ -135,105 +182,198 @@ body.loading-active .nav-item {
     </div>
 </div>
 
-<!-- Bloqueador Anti-Saturación -->
+<!-- Bloqueador de navegación lenta -->
 <div id="saturation-blocker">
-    <div class="saturation-dots">
-        <div class="saturation-dot"></div>
-        <div class="saturation-dot"></div>
-        <div class="saturation-dot"></div>
+    <div class="nav-loader-inner">
+        <div class="saturation-dots">
+            <div class="saturation-dot"></div>
+            <div class="saturation-dot"></div>
+            <div class="saturation-dot"></div>
+        </div>
+        <span id="nav-slow-label" data-i18n="loading">Cargando...</span>
     </div>
 </div>
 
 <script>
-let isFirstLoad = !sessionStorage.getItem('arcadepxc_app_loaded');
+(function () {
 
-function hideGlobalLoader() {
-    const loader = document.getElementById('global-loader');
-    if (loader) {
-        loader.classList.add('hidden');
-        setTimeout(() => { loader.style.display = 'none'; }, 500);
-    }
-    sessionStorage.setItem('arcadepxc_app_loaded', 'true');
-}
+    // ─── Estado ──────────────────────────────────────────────────────────────
+    var isSaturationActive = false;
+    var navStartTime       = 0;
+    var slowLabelTimer     = null;
+    var safetyTimer        = null;
+    var progressBar        = null;
+    var satBlocker         = null;
 
-const SATURATION_DURATION = 0;
-let isSaturationActive = false;
-let saturationTimeout = null;
+    // ─── Utilidades ──────────────────────────────────────────────────────────
+    function getProgressBar()  { return progressBar  || (progressBar  = document.getElementById('nav-progress-bar')); }
+    function getSatBlocker()   { return satBlocker   || (satBlocker   = document.getElementById('saturation-blocker')); }
 
-function showSaturationBlocker(customMessage = null) {
-    if (isSaturationActive) return;
-    const blocker = document.getElementById('saturation-blocker');
-    if (!blocker) return;
-    isSaturationActive = true;
-    blocker.classList.add('active');
-    document.body.classList.add('loading-active');
-    if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-    }
-    // Safety: ocultar automáticamente máximo en 1.5s
-    if (saturationTimeout) clearTimeout(saturationTimeout);
-    saturationTimeout = setTimeout(hideSaturationBlocker, 1500);
-}
+    // ─── Mostrar loader de navegación ────────────────────────────────────────
+    function showSaturationBlocker() {
+        if (isSaturationActive) return;
+        isSaturationActive = true;
+        navStartTime = Date.now();
 
-function hideSaturationBlocker() {
-    const blocker = document.getElementById('saturation-blocker');
-    if (!blocker) return;
-    blocker.classList.remove('active');
-    document.body.classList.remove('loading-active');
-    isSaturationActive = false;
-}
+        var blocker = getSatBlocker();
+        if (blocker) blocker.classList.add('active');
+        document.body.classList.add('loading-active');
 
-function isSaturated() { return isSaturationActive; }
-
-function initSaturationSystem() {
-    document.addEventListener('click', function(e) {
-        const target = e.target;
-        const isInteractive =
-            target.closest('button') ||
-            target.closest('.btn') ||
-            target.closest('[onclick]') ||
-            target.closest('.nav-item') ||
-            target.closest('a[href]') ||
-            target.closest('.item[onclick]') ||
-            target.closest('input[type="submit"]');
-        const isExcluded =
-            target.closest('#promo-modal') ||
-            target.closest('.toast') ||
-            target.closest('#support-fab') ||
-            target.closest('.language-btn') ||
-            target.closest('#language-modal') ||
-            target.closest('.lang-toggle-wrapper') ||
-            target.closest('[data-no-saturation]');
-        if (isInteractive && !isExcluded && !isSaturationActive) {
-            showSaturationBlocker();
+        // Barra de progreso superior
+        var bar = getProgressBar();
+        if (bar) {
+            bar.classList.remove('complete');
+            void bar.offsetWidth; // reflow para reiniciar animación
+            bar.classList.add('active');
         }
+
+        // Mostrar texto "Cargando..." solo si tarda más de 1.2s
+        slowLabelTimer = setTimeout(function () {
+            var label = document.getElementById('nav-slow-label');
+            if (label && isSaturationActive) label.classList.add('visible');
+        }, 1200);
+
+        // Safety máximo: 12s (para casos extremos de timeout de red)
+        safetyTimer = setTimeout(function () {
+            hideSaturationBlocker();
+        }, 12000);
+
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        }
+    }
+
+    // ─── Ocultar loader de navegación ────────────────────────────────────────
+    function hideSaturationBlocker() {
+        if (!isSaturationActive) return;
+        isSaturationActive = false;
+
+        if (slowLabelTimer)  { clearTimeout(slowLabelTimer);  slowLabelTimer  = null; }
+        if (safetyTimer)     { clearTimeout(safetyTimer);     safetyTimer     = null; }
+
+        var blocker = getSatBlocker();
+        if (blocker) {
+            blocker.classList.remove('active');
+            var label = document.getElementById('nav-slow-label');
+            if (label) label.classList.remove('visible');
+        }
+        document.body.classList.remove('loading-active');
+
+        // Completar la barra de progreso
+        var bar = getProgressBar();
+        if (bar) {
+            bar.classList.remove('active');
+            bar.classList.add('complete');
+            setTimeout(function () { bar.classList.remove('complete'); }, 700);
+        }
+    }
+
+    // ─── Primera carga ───────────────────────────────────────────────────────
+    var isFirstLoad = !sessionStorage.getItem('arcadepxc_app_loaded');
+
+    function hideGlobalLoader() {
+        var loader = document.getElementById('global-loader');
+        if (loader) {
+            loader.classList.add('hidden');
+            setTimeout(function () { loader.style.display = 'none'; }, 500);
+        }
+        sessionStorage.setItem('arcadepxc_app_loaded', 'true');
+    }
+
+    // ─── Detectar cuándo el usuario REALMENTE navegó (nueva página) ──────────
+    // Cuando beforeunload dispara → la navegación ocurrió, mantener el loader
+    // hasta que el navegador descargue la página actual.
+    window.addEventListener('beforeunload', function () {
+        // La nueva página ya viene — completar la barra pero mantener el blocker
+        // visible (el navegador lo descartará cuando cargue la nueva página)
+        var bar = getProgressBar();
+        if (bar) {
+            bar.style.transition = 'width 0.3s ease';
+            bar.style.width = '95%';
+        }
+    });
+
+    // ─── Sistema de clicks inteligente ───────────────────────────────────────
+    // Solo activar si el click lleva a otra URL, no para modales/actions inline
+    document.addEventListener('click', function (e) {
+        var target = e.target;
+
+        // Encontrar el elemento navegable más cercano
+        var navEl =
+            target.closest('a[href]')    ||
+            target.closest('.nav-item')  ||
+            target.closest('[data-href]');
+
+        if (!navEl) return;
+
+        // Excluir elementos que no navegan
+        var excluded =
+            target.closest('#promo-modal')        ||
+            target.closest('.toast')              ||
+            target.closest('#support-fab')        ||
+            target.closest('[data-no-saturation]')||
+            target.closest('#lang-dialog')        ||
+            target.closest('.lang-toggle-wrapper')||
+            target.closest('[data-lucide]');
+
+        if (excluded) return;
+
+        // Obtener la URL destino
+        var href = navEl.getAttribute('href') || navEl.getAttribute('data-href') || '';
+
+        // No activar para anchors locales, javascript:, mailto:, etc.
+        if (!href || href === '#' || href.startsWith('javascript:') ||
+            href.startsWith('mailto:') || href.startsWith('tel:')) return;
+
+        // No activar si ya estamos en esa página
+        var currentPath = window.location.pathname + window.location.search;
+        try {
+            var destUrl = new URL(href, window.location.href);
+            if (destUrl.pathname === window.location.pathname &&
+                destUrl.search  === window.location.search) return;
+        } catch (err) {}
+
+        showSaturationBlocker();
+
     }, true);
-    document.addEventListener('submit', function(e) {
+
+    // También capturar submit de formularios
+    document.addEventListener('submit', function (e) {
         if (!isSaturationActive) showSaturationBlocker();
     }, true);
-}
 
-document.addEventListener('DOMContentLoaded', function() {
-    initSaturationSystem();
-    if (isFirstLoad) {
-        setTimeout(hideGlobalLoader, 2500);
-    } else {
-        const loader = document.getElementById('global-loader');
-        if (loader) loader.style.display = 'none';
-    }
-});
+    // ─── DOMContentLoaded ────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', function () {
+        if (isFirstLoad) {
+            // Primera visita: mostrar por mínimo 1.8s para que carguen los assets
+            var minTime = 1800;
+            var elapsed = Date.now() - performance.timing.navigationStart;
+            var remaining = Math.max(0, minTime - elapsed);
+            setTimeout(hideGlobalLoader, remaining);
+        } else {
+            var loader = document.getElementById('global-loader');
+            if (loader) loader.style.display = 'none';
+        }
+    });
 
-window.addEventListener('load', function() {
-    if (!isFirstLoad) {
-        const loader = document.getElementById('global-loader');
-        if (loader) loader.style.display = 'none';
-    }
-});
+    // ─── Página completamente cargada ────────────────────────────────────────
+    window.addEventListener('load', function () {
+        // Si venimos de otra página (hay saturation activo del lado que cargó) → ocultar
+        // En teoría esto no se activa aquí (se activa en la página nueva),
+        // pero por seguridad en el caso de que el usuario llegue directo:
+        if (!isFirstLoad) {
+            var loader = document.getElementById('global-loader');
+            if (loader) loader.style.display = 'none';
+        }
+    });
 
-window.showSaturationBlocker = showSaturationBlocker;
-window.hideSaturationBlocker = hideSaturationBlocker;
-window.isSaturated = isSaturated;
-window.hideGlobalLoader = hideGlobalLoader;
-window.showSectionLoader = showSaturationBlocker;
-window.hideSectionLoader = hideSaturationBlocker;
+    // ─── Exponer API global ───────────────────────────────────────────────────
+    window.showSaturationBlocker = showSaturationBlocker;
+    window.hideSaturationBlocker = hideSaturationBlocker;
+    window.isSaturated           = function () { return isSaturationActive; };
+    window.hideGlobalLoader      = hideGlobalLoader;
+    window.showSectionLoader     = showSaturationBlocker;
+    window.hideSectionLoader     = hideSaturationBlocker;
+
+})();
 </script>
