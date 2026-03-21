@@ -369,6 +369,38 @@ def migrate_user_tasks():
 # FUNCIÓN PRINCIPAL
 # ─────────────────────────────────────────────────────────────
 
+MIGRATION_VERSION = 14  # Incrementar cuando se agreguen nuevas migraciones
+
+
+def _get_migration_version() -> int:
+    """Lee la versión actual de migración guardada en la DB. Retorna 0 si no existe."""
+    try:
+        with get_cursor() as cursor:
+            cursor.execute("""
+                SELECT stat_value FROM stats
+                WHERE stat_key = '_migration_version'
+                LIMIT 1
+            """)
+            row = cursor.fetchone()
+            if row:
+                return int(row.get('stat_value', 0))
+    except Exception:
+        pass
+    return 0
+
+
+def _set_migration_version(version: int):
+    """Guarda la versión de migración en la DB."""
+    try:
+        execute_query("""
+            INSERT INTO stats (stat_key, stat_value)
+            VALUES ('_migration_version', %s)
+            ON DUPLICATE KEY UPDATE stat_value = %s
+        """, (version, version))
+    except Exception as e:
+        logger.warning(f"No se pudo guardar versión de migración: {e}")
+
+
 def run_migrations():
     logger.info("=" * 60)
     logger.info("MIGRACIONES DE BASE DE DATOS - INICIO")
@@ -377,6 +409,16 @@ def run_migrations():
     if not test_connection():
         logger.error("Sin conexion a la base de datos")
         return False
+
+    # ── FAST PATH: si la DB ya está en la versión actual, saltar todo ──
+    # Evita 80+ queries a INFORMATION_SCHEMA en cada arranque.
+    # Solo corre el ciclo completo la PRIMERA vez o cuando MIGRATION_VERSION suba.
+    current_version = _get_migration_version()
+    if current_version >= MIGRATION_VERSION:
+        logger.info(f"✅ Migraciones ya aplicadas (v{current_version}) — arranque rápido")
+        return True
+
+    logger.info(f"⚙️  Versión DB: {current_version} → actualizando a {MIGRATION_VERSION}")
 
     migrate_stats()
     migrate_config()
@@ -392,8 +434,10 @@ def run_migrations():
     migrate_user_device_history()
     migrate_user_tasks()
 
+    _set_migration_version(MIGRATION_VERSION)
+
     logger.info("\n" + "=" * 60)
-    logger.info("MIGRACIONES COMPLETADAS")
+    logger.info(f"MIGRACIONES COMPLETADAS — versión {MIGRATION_VERSION}")
     logger.info("=" * 60)
     return True
 
