@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (typeof initLanguage === 'function') initLanguage();
 });
 
-function retryConnection() {
+async function retryConnection() {
   const btn  = document.getElementById('retryBtn');
   const icon = document.getElementById('btnIcon');
   const text = document.getElementById('btnText');
@@ -315,7 +315,10 @@ function retryConnection() {
   btn.style.opacity = '0.7';
   icon.outerHTML = '<div class="spinner"></div>';
   text.textContent = '...';
-  setTimeout(() => window.location.reload(), 1300);
+  // Limpiar caché del servidor para esta IP antes de recargar
+  // Sin esto el usuario quedaba bloqueado hasta que expirara el caché
+  try { await fetch('/api/vpn-clear-cache', { method: 'POST' }); } catch(e) {}
+  setTimeout(() => window.location.reload(), 800);
 }
 
 if (window.Telegram && window.Telegram.WebApp) {
