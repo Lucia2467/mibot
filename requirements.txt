@@ -4,6 +4,9 @@
 Flask>=2.3.3
 Flask-Cors>=4.0.0
 
+# Servidor de producción (reemplaza Flask dev server → 4-8x más rápido)
+gunicorn>=21.2.0
+
 # Telegram bot
 python-telegram-bot>=20.6
 
