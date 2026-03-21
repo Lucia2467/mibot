@@ -1,8 +1,8 @@
 <!--
-    SISTEMA GLOBAL DE ANIMACIONES DE CARGA v3.0
+    SISTEMA GLOBAL DE ANIMACIONES DE CARGA v3.1
     - Primera carga: pantalla negra con dots
-    - Navegación: barra de progreso superior + blocker
-    - >4s: alerta de conexión inestable impactante
+    - Navegación: barra de progreso superior
+    - >4s: alerta de conexión inestable centrada
 -->
 
 <style>
@@ -39,6 +39,7 @@
     z-index: 9999999;
     opacity: 0; transition: opacity 0.2s ease;
     border-radius: 0 2px 2px 0;
+    pointer-events: none;
 }
 #nav-progress-bar.active {
     opacity: 1;
@@ -46,7 +47,7 @@
 }
 #nav-progress-bar.complete {
     width: 100% !important; animation: none;
-    transition: width 0.25s ease, opacity 0.3s ease 0.3s;
+    transition: width 0.25s ease, opacity 0.35s ease 0.3s;
     opacity: 0;
 }
 @keyframes progressShimmer { 0%{background-position:200% center} 100%{background-position:-200% center} }
@@ -79,30 +80,31 @@
 body.loading-active { overflow: hidden; pointer-events: none; }
 body.loading-active #saturation-blocker { pointer-events: all; }
 
-/* ── ALERTA CONEXIÓN INESTABLE ───────────────────── */
+/* ── ALERTA CONEXIÓN INESTABLE — CENTRADA ────────── */
 #slow-connection-alert {
     position: fixed;
-    bottom: 90px; left: 50%; transform: translateX(-50%) translateY(30px);
+    /* Centrado vertical y horizontal */
+    top: 50%; left: 50%;
+    transform: translate(-50%, -40%) scale(0.92);
     z-index: 9999999;
-    width: calc(100% - 32px); max-width: 360px;
+    width: calc(100% - 40px); max-width: 340px;
     opacity: 0; pointer-events: none;
-    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22,1,0.36,1);
+    transition: opacity 0.4s ease, transform 0.45s cubic-bezier(0.22,1,0.36,1);
 }
 #slow-connection-alert.visible {
     opacity: 1; pointer-events: all;
-    transform: translateX(-50%) translateY(0);
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .sca-inner {
-    background: linear-gradient(145deg, rgba(14,6,4,0.97), rgba(20,8,5,0.98));
-    border: 1px solid rgba(255,80,30,0.22);
-    border-top: 1.5px solid rgba(255,100,40,0.5);
-    border-radius: 20px;
-    overflow: hidden;
+    background: linear-gradient(145deg, rgba(14,6,4,0.98), rgba(22,9,5,0.99));
+    border: 1px solid rgba(255,80,30,0.2);
+    border-top: 1.5px solid rgba(255,110,40,0.55);
+    border-radius: 22px; overflow: hidden;
     box-shadow:
-        0 0 0 1px rgba(255,60,20,0.08),
-        0 20px 60px rgba(0,0,0,0.7),
-        0 0 40px rgba(255,60,20,0.06);
+        0 0 0 1px rgba(255,60,20,0.07),
+        0 24px 70px rgba(0,0,0,0.75),
+        0 0 50px rgba(255,60,20,0.07);
     position: relative;
 }
 
@@ -110,96 +112,92 @@ body.loading-active #saturation-blocker { pointer-events: all; }
 .sca-inner::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent 5%, rgba(255,80,30,0.7) 35%, rgba(255,140,60,1) 50%, rgba(255,80,30,0.7) 65%, transparent 95%);
+    background: linear-gradient(90deg,
+        transparent 5%,
+        rgba(255,80,30,0.65) 30%,
+        rgba(255,150,60,1) 50%,
+        rgba(255,80,30,0.65) 70%,
+        transparent 95%);
 }
 
-/* Animated radar bg */
+/* Radar bg */
 .sca-radar {
-    position: absolute; top: -30px; right: -30px;
-    width: 120px; height: 120px;
-    border-radius: 50%;
-    background: radial-gradient(circle at center, rgba(255,70,20,0.06) 0%, transparent 70%);
-    animation: radarPulse 2.5s ease-in-out infinite;
+    position: absolute; top: -40px; right: -40px;
+    width: 150px; height: 150px; border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(255,70,20,0.07) 0%, transparent 70%);
+    animation: radarPulse 2.8s ease-in-out infinite;
     pointer-events: none;
 }
 @keyframes radarPulse {
-    0%,100% { transform: scale(1);   opacity: 0.6; }
-    50%     { transform: scale(1.4); opacity: 0; }
+    0%,100% { transform: scale(1);   opacity: 0.7; }
+    50%     { transform: scale(1.5); opacity: 0; }
 }
 
 .sca-body {
-    display: flex; align-items: center; gap: 14px;
-    padding: 16px 18px;
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 20px 18px;
     position: relative; z-index: 1;
 }
 
 /* Icon */
 .sca-icon-wrap {
     flex-shrink: 0;
-    width: 42px; height: 42px; border-radius: 12px;
-    background: linear-gradient(145deg, rgba(255,70,20,0.15), rgba(255,40,10,0.08));
-    border: 1px solid rgba(255,80,30,0.2);
+    width: 48px; height: 48px; border-radius: 14px;
+    background: linear-gradient(145deg, rgba(255,70,20,0.14), rgba(255,40,10,0.07));
+    border: 1px solid rgba(255,80,30,0.22);
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 16px rgba(255,60,20,0.2), inset 0 1px 0 rgba(255,255,255,0.07);
-    animation: iconFlicker 2s ease-in-out infinite;
+    box-shadow: 0 0 18px rgba(255,60,20,0.22), inset 0 1px 0 rgba(255,255,255,0.06);
+    animation: iconFlicker 2.2s ease-in-out infinite;
 }
 @keyframes iconFlicker {
-    0%,100% { box-shadow: 0 0 16px rgba(255,60,20,0.2), inset 0 1px 0 rgba(255,255,255,0.07); }
-    50%     { box-shadow: 0 0 28px rgba(255,80,30,0.45), inset 0 1px 0 rgba(255,255,255,0.07); }
+    0%,100% { box-shadow: 0 0 18px rgba(255,60,20,0.22), inset 0 1px 0 rgba(255,255,255,0.06); }
+    50%     { box-shadow: 0 0 32px rgba(255,90,30,0.5),  inset 0 1px 0 rgba(255,255,255,0.06); }
 }
-.sca-icon-wrap svg { color: #FF6030; filter: drop-shadow(0 0 5px rgba(255,80,30,0.6)); }
+.sca-icon-wrap svg {
+    color: #FF6030;
+    filter: drop-shadow(0 0 6px rgba(255,80,30,0.65));
+}
 
 /* Text */
 .sca-text { flex: 1; min-width: 0; }
 .sca-title {
-    font-size: 0.85rem; font-weight: 700;
-    color: #fff; letter-spacing: -0.01em;
-    margin-bottom: 3px;
+    font-size: 0.88rem; font-weight: 700;
+    color: #fff; letter-spacing: -0.01em; margin-bottom: 4px;
     font-family: -apple-system, 'DM Sans', sans-serif;
 }
 .sca-sub {
-    font-size: 0.7rem; font-weight: 400;
-    color: rgba(255,255,255,0.35);
-    line-height: 1.4;
+    font-size: 0.72rem; font-weight: 400;
+    color: rgba(255,255,255,0.35); line-height: 1.4;
     font-family: -apple-system, 'DM Sans', sans-serif;
 }
 
-/* Signal bars (live indicator) */
+/* Signal bars */
 .sca-signal {
     flex-shrink: 0;
-    display: flex; align-items: flex-end; gap: 3px;
-    height: 18px;
+    display: flex; align-items: flex-end; gap: 3px; height: 20px;
 }
-.sig-bar {
-    width: 3px; border-radius: 2px;
-    background: rgba(255,255,255,0.12);
-}
-.sig-bar:nth-child(1) { height: 6px; }
-.sig-bar:nth-child(2) { height: 10px; }
-.sig-bar:nth-child(3) { height: 14px; }
-.sig-bar:nth-child(4) { height: 18px; }
+.sig-bar { width: 3.5px; border-radius: 2px; background: rgba(255,255,255,0.1); }
+.sig-bar:nth-child(1) { height: 6px;  background: #FF6030; animation: sigPulse 1.1s ease-in-out infinite; }
+.sig-bar:nth-child(2) { height: 11px; }
+.sig-bar:nth-child(3) { height: 16px; }
+.sig-bar:nth-child(4) { height: 20px; }
+@keyframes sigPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-/* Only first bar lit (1 bar = bad signal) */
-.sig-bar:nth-child(1) { background: #FF6030; animation: sigPulse 1.2s ease-in-out infinite; }
-@keyframes sigPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-/* Bottom progress strip */
+/* Bottom sweep strip */
 .sca-strip {
-    height: 2px;
-    background: rgba(255,255,255,0.04);
+    height: 2px; background: rgba(255,255,255,0.04);
     position: relative; overflow: hidden;
 }
 .sca-strip::after {
-    content: '';
-    position: absolute; top: 0; left: -60%;
+    content: ''; position: absolute; top: 0; left: -60%;
     width: 60%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,80,30,0.6), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,90,30,0.7), transparent);
     animation: stripSweep 2s linear infinite;
 }
-@keyframes stripSweep { to { left: 100%; } }
+@keyframes stripSweep { to { left: 110%; } }
 </style>
 
-<!-- Barra de progreso -->
+<!-- Barra de progreso superior -->
 <div id="nav-progress-bar"></div>
 
 <!-- Loader primera visita -->
@@ -211,7 +209,7 @@ body.loading-active #saturation-blocker { pointer-events: all; }
     </div>
 </div>
 
-<!-- Bloqueador navegación -->
+<!-- Bloqueador de navegación -->
 <div id="saturation-blocker">
     <div class="saturation-dots">
         <div class="saturation-dot"></div>
@@ -220,13 +218,13 @@ body.loading-active #saturation-blocker { pointer-events: all; }
     </div>
 </div>
 
-<!-- Alerta conexión inestable (aparece >4s) -->
+<!-- Alerta conexión inestable (>4s) — centrada -->
 <div id="slow-connection-alert">
     <div class="sca-inner">
         <div class="sca-radar"></div>
         <div class="sca-body">
             <div class="sca-icon-wrap">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="1" y1="1" x2="23" y2="23"/>
                     <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
                     <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
@@ -237,8 +235,8 @@ body.loading-active #saturation-blocker { pointer-events: all; }
                 </svg>
             </div>
             <div class="sca-text">
-                <div class="sca-title" data-i18n="unstable_connection" id="sca-title-text">Conexión inestable</div>
-                <div class="sca-sub" data-i18n="unstable_connection_sub" id="sca-sub-text">La red está tardando más de lo normal</div>
+                <div class="sca-title" id="sca-title-text">Conexión inestable</div>
+                <div class="sca-sub"   id="sca-sub-text">La red está tardando más de lo normal</div>
             </div>
             <div class="sca-signal">
                 <div class="sig-bar"></div>
@@ -260,26 +258,27 @@ body.loading-active #saturation-blocker { pointer-events: all; }
     var safetyTimer        = null;
     var progressBar        = null;
     var satBlocker         = null;
+    var pendingHref        = null;   // URL hacia la que realmente navegamos
 
     function getProgressBar() { return progressBar || (progressBar = document.getElementById('nav-progress-bar')); }
     function getSatBlocker()  { return satBlocker  || (satBlocker  = document.getElementById('saturation-blocker')); }
 
-    // ── Mostrar alerta de conexión inestable ──
-    function showSlowAlert() {
-        var alert = document.getElementById('slow-connection-alert');
-        if (!alert || !isSaturationActive) return;
-
-        // Aplicar traducciones si están disponibles
+    /* ── Traducción de la alerta ── */
+    function applySlowAlertText() {
         var titleEl = document.getElementById('sca-title-text');
         var subEl   = document.getElementById('sca-sub-text');
-        if (typeof t === 'function') {
-            if (titleEl) titleEl.textContent = t('unstable_connection') || 'Conexión inestable';
-            if (subEl)   subEl.textContent   = t('unstable_connection_sub') || 'La red está tardando más de lo normal';
-        }
+        var title   = (typeof t === 'function' && t('unstable_connection'))     || 'Conexión inestable';
+        var sub     = (typeof t === 'function' && t('unstable_connection_sub')) || 'La red está tardando más de lo normal';
+        if (titleEl) titleEl.textContent = title;
+        if (subEl)   subEl.textContent   = sub;
+    }
 
-        alert.classList.add('visible');
-
-        // Haptic de advertencia
+    /* ── Mostrar alerta de conexión inestable ── */
+    function showSlowAlert() {
+        if (!isSaturationActive) return;
+        applySlowAlertText();
+        var alert = document.getElementById('slow-connection-alert');
+        if (alert) alert.classList.add('visible');
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
             window.Telegram.WebApp.HapticFeedback.notificationOccurred('warning');
         }
@@ -290,7 +289,7 @@ body.loading-active #saturation-blocker { pointer-events: all; }
         if (alert) alert.classList.remove('visible');
     }
 
-    // ── Mostrar loader de navegación ──
+    /* ── Mostrar loader ── */
     function showSaturationBlocker() {
         if (isSaturationActive) return;
         isSaturationActive = true;
@@ -303,25 +302,26 @@ body.loading-active #saturation-blocker { pointer-events: all; }
         var bar = getProgressBar();
         if (bar) {
             bar.classList.remove('complete');
-            void bar.offsetWidth;
+            void bar.offsetWidth; // reflow
             bar.classList.add('active');
         }
 
-        // Alerta de conexión inestable a los 4s
+        // Alerta conexión inestable a los 4s
         slowAlertTimer = setTimeout(showSlowAlert, 4000);
 
-        // Safety máximo 12s
-        safetyTimer = setTimeout(hideSaturationBlocker, 12000);
+        // Safety: ocultar si nada ocurre en 10s
+        safetyTimer = setTimeout(hideSaturationBlocker, 10000);
 
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
             window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         }
     }
 
-    // ── Ocultar loader de navegación ──
+    /* ── Ocultar loader ── */
     function hideSaturationBlocker() {
         if (!isSaturationActive) return;
         isSaturationActive = false;
+        pendingHref = null;
 
         if (slowAlertTimer) { clearTimeout(slowAlertTimer); slowAlertTimer = null; }
         if (safetyTimer)    { clearTimeout(safetyTimer);    safetyTimer    = null; }
@@ -329,7 +329,6 @@ body.loading-active #saturation-blocker { pointer-events: all; }
         var blocker = getSatBlocker();
         if (blocker) blocker.classList.remove('active');
         document.body.classList.remove('loading-active');
-
         hideSlowAlert();
 
         var bar = getProgressBar();
@@ -340,7 +339,18 @@ body.loading-active #saturation-blocker { pointer-events: all; }
         }
     }
 
-    // ── Primera carga ──
+    /* ── Navegar con href y activar loader ── */
+    function navigateTo(href) {
+        if (!href) return;
+        pendingHref = href;
+        showSaturationBlocker();
+        // Pequeño delay para que el loader sea visible antes de que el navegador cargue
+        setTimeout(function () {
+            window.location.href = href;
+        }, 30);
+    }
+
+    /* ── Primera carga ── */
     var isFirstLoad = !sessionStorage.getItem('arcadepxc_app_loaded');
 
     function hideGlobalLoader() {
@@ -352,51 +362,90 @@ body.loading-active #saturation-blocker { pointer-events: all; }
         sessionStorage.setItem('arcadepxc_app_loaded', 'true');
     }
 
+    /* beforeunload: la página está desapareciendo → la nueva viene */
     window.addEventListener('beforeunload', function () {
         var bar = getProgressBar();
-        if (bar) { bar.style.transition = 'width 0.3s ease'; bar.style.width = '95%'; }
+        if (bar && isSaturationActive) {
+            bar.style.transition = 'width 0.3s ease';
+            bar.style.width = '95%';
+        }
     });
 
-    // ── Detección inteligente de clicks ──
+    /* ── Interceptar clicks en links y nav-items ──
+       FIX del congelado: NO activamos el blocker en el propio handler del click.
+       En cambio, dejamos que el nav-item maneje su data-href internamente,
+       y SOLO activamos el blocker cuando detectamos que location.href va a cambiar.
+       Para eso interceptamos el event ANTES de que llegue a los handlers de la app,
+       cancelamos el comportamiento original, y navegamos nosotros con navigateTo().
+    */
     document.addEventListener('click', function (e) {
         var target = e.target;
-        var navEl  =
-            target.closest('a[href]')    ||
-            target.closest('.nav-item')  ||
-            target.closest('[data-href]');
-        if (!navEl) return;
 
+        /* Buscar el elemento navegable más cercano */
+        var navEl =
+            target.closest('a[href]')    ||
+            target.closest('[data-href]');
+
+        /* Nav-items usan data-href y tienen su propio handler — los interceptamos */
+        var navItem = target.closest('.nav-item');
+
+        /* Excluidos: no deben activar el loader */
         var excluded =
+            target.closest('[data-no-saturation]') ||
             target.closest('#promo-modal')         ||
             target.closest('.toast')               ||
             target.closest('#support-fab')         ||
-            target.closest('[data-no-saturation]') ||
             target.closest('#lang-dialog')         ||
             target.closest('.lang-toggle-wrapper') ||
-            target.closest('[data-lucide]');
+            target.closest('#slow-connection-alert');
+
         if (excluded) return;
 
-        var href = navEl.getAttribute('href') || navEl.getAttribute('data-href') || '';
-        if (!href || href === '#' || href.startsWith('javascript:') ||
-            href.startsWith('mailto:') || href.startsWith('tel:')) return;
+        /* Manejar nav-items con data-href */
+        if (navItem) {
+            var href = navItem.getAttribute('data-href');
+            if (href && href !== '#' && !href.startsWith('javascript:')) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                try {
+                    var dest = new URL(href, window.location.href);
+                    if (dest.pathname === window.location.pathname &&
+                        dest.search   === window.location.search) return;
+                } catch (err) {}
+                navigateTo(href);
+            }
+            return;
+        }
 
-        try {
-            var dest = new URL(href, window.location.href);
-            if (dest.pathname === window.location.pathname &&
-                dest.search   === window.location.search)  return;
-        } catch (err) {}
+        /* Manejar <a href> normales */
+        if (navEl && navEl.tagName === 'A') {
+            var href2 = navEl.getAttribute('href') || '';
+            if (!href2 || href2 === '#' ||
+                href2.startsWith('javascript:') ||
+                href2.startsWith('mailto:')     ||
+                href2.startsWith('tel:')        ||
+                navEl.getAttribute('target') === '_blank') return;
+            try {
+                var dest2 = new URL(href2, window.location.href);
+                if (dest2.pathname === window.location.pathname &&
+                    dest2.search   === window.location.search) return;
+            } catch (err) {}
+            e.preventDefault();
+            navigateTo(href2);
+        }
 
-        showSaturationBlocker();
     }, true);
 
+    /* Formularios */
     document.addEventListener('submit', function () {
         if (!isSaturationActive) showSaturationBlocker();
     }, true);
 
-    // ── DOMContentLoaded ──
+    /* ── DOMContentLoaded ── */
     document.addEventListener('DOMContentLoaded', function () {
+        applySlowAlertText();
         if (isFirstLoad) {
-            var elapsed   = Date.now() - performance.timing.navigationStart;
+            var elapsed   = performance.now();
             var remaining = Math.max(0, 1800 - elapsed);
             setTimeout(hideGlobalLoader, remaining);
         } else {
@@ -412,7 +461,7 @@ body.loading-active #saturation-blocker { pointer-events: all; }
         }
     });
 
-    // ── API global ──
+    /* ── API global ── */
     window.showSaturationBlocker = showSaturationBlocker;
     window.hideSaturationBlocker = hideSaturationBlocker;
     window.isSaturated           = function () { return isSaturationActive; };
